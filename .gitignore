@@ -1,0 +1,34 @@
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+!*.xcworkspace/xcshareddata/
+*.xcuserstate
+*.xcuserdatad/
+
+# Sensitive files - DO NOT COMMIT
+GoogleService-Info.plist
+**/GoogleService-Info.plist
+Misoto/Info.plist
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Build
+build/
+DerivedData/
+
+# Swift Package Manager
+.swiftpm/
+
+# CocoaPods (if used)
+Pods/
+
+# Temporary files
+*.swp
+*~.nib
+
