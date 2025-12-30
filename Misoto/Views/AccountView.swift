@@ -15,6 +15,7 @@ struct AccountView: View {
     @State private var showDeleteConfirmation = false
     @State private var recipeToDelete: Recipe?
     @State private var showSettingsMenu = false
+    @State private var showEditProfile = false
     
     // Grid layout
     private let columns = [
@@ -34,48 +35,109 @@ struct AccountView: View {
                         // Profile Header
                         if let user = authViewModel.currentUser {
                             VStack(spacing: 16) {
-                                // Profile Picture
-                                ZStack(alignment: .bottomTrailing) {
-                                    if let imageURL = user.profileImageURL, let url = URL(string: imageURL) {
-                                        AsyncImage(url: url) { image in
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                        } placeholder: {
+                                // Profile Picture (Tappable to edit)
+                                Button(action: {
+                                    showEditProfile = true
+                                }) {
+                                    ZStack(alignment: .bottomTrailing) {
+                                        if let imageURL = user.profileImageURL, let url = URL(string: imageURL) {
+                                            AsyncImage(url: url) { phase in
+                                                switch phase {
+                                                case .success(let image):
+                                                    image
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fill)
+                                                case .failure(_), .empty:
+                                                    Circle()
+                                                        .fill(Color(.secondarySystemBackground))
+                                                        .overlay {
+                                                            Image(systemName: "person.fill")
+                                                                .font(.system(size: 40))
+                                                                .foregroundColor(.secondary)
+                                                        }
+                                                @unknown default:
+                                                    Circle()
+                                                        .fill(Color(.secondarySystemBackground))
+                                                        .overlay {
+                                                            Image(systemName: "person.fill")
+                                                                .font(.system(size: 40))
+                                                                .foregroundColor(.secondary)
+                                                        }
+                                                }
+                                            }
+                                            .frame(width: 100, height: 100)
+                                            .clipShape(Circle())
+                                            .id(imageURL) // Force refresh when URL changes
+                                        } else {
                                             Circle()
                                                 .fill(Color(.secondarySystemBackground))
+                                                .frame(width: 100, height: 100)
                                                 .overlay {
                                                     Image(systemName: "person.fill")
                                                         .font(.system(size: 40))
                                                         .foregroundColor(.secondary)
                                                 }
                                         }
-                                        .frame(width: 100, height: 100)
-                                        .clipShape(Circle())
-                                    } else {
-                                        Circle()
-                                            .fill(Color(.secondarySystemBackground))
-                                            .frame(width: 100, height: 100)
-                                            .overlay {
-                                                Image(systemName: "person.fill")
-                                                    .font(.system(size: 40))
-                                                    .foregroundColor(.secondary)
-                                            }
+                                        
+                                        // Camera Icon
+                                        Image(systemName: "camera.fill")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.white)
+                                            .padding(8)
+                                            .background(Color.accentColor)
+                                            .clipShape(Circle())
+                                            .offset(x: 4, y: 4)
                                     }
-                                    
-                                    // Camera Icon
-                                    Image(systemName: "camera.fill")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.white)
-                                        .padding(8)
-                                        .background(Color.accentColor)
-                                        .clipShape(Circle())
-                                        .offset(x: 4, y: 4)
                                 }
+                                .buttonStyle(PlainButtonStyle())
                                 
-                                // Username
+                                // Name
                                 Text(user.displayName)
                                     .font(.system(size: 22, weight: .bold))
+                                
+                                // Username
+                                if let username = user.username, !username.isEmpty {
+                                    Text("@\(username)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                // Bio
+                                if let bio = user.bio, !bio.isEmpty {
+                                    Text(bio)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.center)
+                                        .padding(.horizontal, 40)
+                                }
+                                
+                                // Edit Profile and Settings Buttons
+                                HStack(spacing: 12) {
+                                    Button(action: {
+                                        showEditProfile = true
+                                    }) {
+                                        Text(NSLocalizedString("Edit Profile", comment: "Edit profile button"))
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 24)
+                                            .padding(.vertical, 8)
+                                            .background(Color.accentColor)
+                                            .cornerRadius(8)
+                                    }
+                                    
+                                    Button(action: {
+                                        showSettingsMenu = true
+                                    }) {
+                                        Image(systemName: "gearshape.fill")
+                                            .font(.system(size: 16))
+                                            .foregroundColor(.primary)
+                                            .frame(width: 36, height: 36)
+                                            .background(Color(.secondarySystemBackground))
+                                            .cornerRadius(8)
+                                    }
+                                }
+                                .padding(.top, 4)
                                 
                                 // Stats
                                 HStack(spacing: 40) {
@@ -95,16 +157,23 @@ struct AccountView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 60)
                         } else if viewModel.userRecipes.isEmpty {
-                            VStack(spacing: 16) {
-                                Image(systemName: "book.closed")
-                                    .font(.system(size: 50))
-                                    .foregroundColor(.secondary)
-                                Text(NSLocalizedString("No recipes yet", comment: "No recipes message"))
-                                    .foregroundColor(.secondary)
-                                Text(NSLocalizedString("Start sharing your favorite recipes!", comment: "Recipes hint"))
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .multilineTextAlignment(.center)
+                            VStack(spacing: 24) {
+                                Image(systemName: "book.closed.fill")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(.secondary.opacity(0.6))
+                                
+                                VStack(spacing: 8) {
+                                    Text(NSLocalizedString("No recipes yet", comment: "No recipes message"))
+                                        .font(.title3)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.primary)
+                                    
+                                    Text(NSLocalizedString("Start sharing your favorite recipes with the community!", comment: "Recipes hint"))
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                        .multilineTextAlignment(.center)
+                                        .padding(.horizontal, 40)
+                                }
                                 
                                 if let errorMessage = viewModel.errorMessage {
                                     Text(errorMessage)
@@ -114,11 +183,12 @@ struct AccountView: View {
                                 }
                             }
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 60)
+                            .padding(.vertical, 80)
                         } else {
                             LazyVGrid(columns: columns, spacing: 1) {
-                                ForEach(viewModel.userRecipes) { recipe in
+                                ForEach(viewModel.userRecipes, id: \.id) { recipe in
                                     RecipeGridItem(recipe: recipe)
+                                        .id(recipe.id) // Stable ID for efficient updates
                                         .onTapGesture {
                                             selectedRecipe = recipe
                                         }
@@ -137,39 +207,24 @@ struct AccountView: View {
                     }
                 }
             }
+            .refreshable {
+                await viewModel.loadUserRecipes()
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    if let user = authViewModel.currentUser {
-                        HStack {
-                            Text(user.displayName)
-                                .font(.system(size: 18, weight: .bold))
-                            Image(systemName: "chevron.down")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-                
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 16) {
-                        Button(action: {}) {
-                            Image(systemName: "bell")
-                                .font(.system(size: 20))
-                        }
-                        
-                        Button(action: {
-                            showSettingsMenu = true
-                        }) {
-                            Image(systemName: "line.3.horizontal")
-                                .font(.system(size: 20))
-                        }
+                    Button(action: {}) {
+                        Image(systemName: "bell")
+                            .font(.system(size: 20))
                     }
                 }
             }
         }
         .task {
             await viewModel.loadUserRecipes()
+        }
+        .sheet(isPresented: $showEditProfile) {
+            EditProfileView(viewModel: viewModel, authViewModel: authViewModel)
         }
         .fullScreenCover(item: $selectedRecipe) { recipe in
             ModernRecipeDetailView(recipe: recipe)
@@ -181,12 +236,15 @@ struct AccountView: View {
         ) {
             Button(NSLocalizedString("Delete", comment: "Delete button"), role: .destructive) {
                 if let recipe = recipeToDelete {
-                    Task {
-                        await viewModel.deleteRecipe(recipe)
-                    }
+                    // Delete immediately (optimistic update - removes from UI instantly)
+                    viewModel.deleteRecipe(recipe)
+                    // Clear the selected recipe
+                    recipeToDelete = nil
                 }
             }
-            Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+            Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
+                recipeToDelete = nil
+            }
         } message: {
             Text(NSLocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))
         }
@@ -225,19 +283,29 @@ struct RecipeGridItem: View {
         GeometryReader { geometry in
             ZStack {
                 if let imageURL = recipe.imageURL, let url = URL(string: imageURL) {
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.3))
-                            .overlay {
-                                ProgressView()
-                            }
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        case .failure(_), .empty:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .overlay {
+                                    ProgressView()
+                                }
+                        @unknown default:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .overlay {
+                                    ProgressView()
+                                }
+                        }
                     }
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .clipped()
+                    .id(imageURL) // Cache key for image
                 } else {
                     Rectangle()
                         .fill(
@@ -263,4 +331,5 @@ struct RecipeGridItem: View {
 #Preview {
     AccountView()
 }
+
 

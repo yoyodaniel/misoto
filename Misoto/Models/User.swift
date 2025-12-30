@@ -11,6 +11,7 @@ struct AppUser: Identifiable, Codable {
     var id: String
     var email: String?
     var displayName: String
+    var username: String?
     var profileImageURL: String?
     var bio: String?
     var followerCount: Int
@@ -22,6 +23,7 @@ struct AppUser: Identifiable, Codable {
         id: String,
         email: String? = nil,
         displayName: String,
+        username: String? = nil,
         profileImageURL: String? = nil,
         bio: String? = nil,
         followerCount: Int = 0,
@@ -32,6 +34,7 @@ struct AppUser: Identifiable, Codable {
         self.id = id
         self.email = email
         self.displayName = displayName
+        self.username = username
         self.profileImageURL = profileImageURL
         self.bio = bio
         self.followerCount = followerCount

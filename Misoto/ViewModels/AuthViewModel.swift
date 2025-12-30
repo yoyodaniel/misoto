@@ -16,13 +16,24 @@ class AuthViewModel: ObservableObject {
     @Published var currentUser: AppUser?
     @Published var errorMessage: String?
     @Published var isLoading = false
+    @Published var isInitializing = true
     
     private let authService = AuthService()
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
-        Task {
-            await checkAuthState()
-        }
+        // Observe auth service state changes using Combine
+        authService.$isAuthenticated
+            .assign(to: \.isAuthenticated, on: self)
+            .store(in: &cancellables)
+        
+        authService.$currentUser
+            .assign(to: \.currentUser, on: self)
+            .store(in: &cancellables)
+        
+        authService.$isInitializing
+            .assign(to: \.isInitializing, on: self)
+            .store(in: &cancellables)
     }
     
     func checkAuthState() async {

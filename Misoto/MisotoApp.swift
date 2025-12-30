@@ -10,20 +10,46 @@ import FirebaseCore
 
 @main
 struct MisotoApp: App {
-    @StateObject private var authViewModel = AuthViewModel()
-    
+    // Configure Firebase first, before creating view models
     init() {
         FirebaseApp.configure()
     }
     
+    @StateObject private var authViewModel = AuthViewModel()
+    
     var body: some Scene {
         WindowGroup {
-            if authViewModel.isAuthenticated {
-                MainTabView()
-                    .environmentObject(authViewModel)
-            } else {
-                LoginView()
-                    .environmentObject(authViewModel)
+            Group {
+                if authViewModel.isInitializing {
+                    // Show loading screen while checking auth state
+                    LoadingView()
+                } else if authViewModel.isAuthenticated {
+                    MainTabView()
+                        .environmentObject(authViewModel)
+                } else {
+                    LoginView()
+                        .environmentObject(authViewModel)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Loading View
+
+struct LoadingView: View {
+    var body: some View {
+        ZStack {
+            Color(.systemBackground)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 20) {
+                ProgressView()
+                    .scaleEffect(1.5)
+                
+                Text("Loading...")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
             }
         }
     }

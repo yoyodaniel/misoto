@@ -18,19 +18,84 @@ import GoogleSignIn
 class AuthService: ObservableObject {
     @Published var currentUser: AppUser?
     @Published var isAuthenticated = false
+    @Published var isInitializing = true
     
     private let firestore = FirebaseManager.shared.firestore
     private var currentNonce: String?
+    private var authStateListener: AuthStateDidChangeListenerHandle?
     
     init() {
+        // Check cached auth state immediately (synchronous, no network call)
+        checkCachedAuthState()
+        // Set up listener for future changes
+        setupAuthStateListener()
+        
+        // Fallback: If still initializing after 0.1 seconds, assume not authenticated
+        // This prevents the loading screen from staying too long
         Task {
-            await checkAuthState()
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+            if isInitializing {
+                isInitializing = false
+                isAuthenticated = false
+                currentUser = nil
+                print("⚠️ Auth check timeout, assuming not authenticated")
+            }
+        }
+    }
+    
+    deinit {
+        if let listener = authStateListener {
+            Auth.auth().removeStateDidChangeListener(listener)
         }
     }
     
     // MARK: - Authentication State
     
+    /// Check cached auth state synchronously (instant, no network delay)
+    private func checkCachedAuthState() {
+        // Auth.auth().currentUser is available immediately from cache
+        // This doesn't require a network call, so it's instant
+        // Check immediately - if Firebase isn't ready, currentUser will be nil (which is fine)
+        if let firebaseUser = Auth.auth().currentUser {
+            // User is cached, mark as authenticated immediately
+            isAuthenticated = true
+            isInitializing = false
+            print("✅ User authenticated (cached): \(firebaseUser.uid)")
+            
+            // Load user data asynchronously (doesn't block UI)
+            Task {
+                await loadUserData(userID: firebaseUser.uid)
+            }
+        } else {
+            // No cached user, mark as not authenticated immediately
+            currentUser = nil
+            isAuthenticated = false
+            isInitializing = false
+            print("❌ No authenticated user (cached)")
+        }
+    }
+    
+    private func setupAuthStateListener() {
+        // Set up Firebase Auth state listener for real-time updates
+        authStateListener = Auth.auth().addStateDidChangeListener { [weak self] _, firebaseUser in
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                
+                if let firebaseUser = firebaseUser {
+                    await self.loadUserData(userID: firebaseUser.uid)
+                    self.isAuthenticated = true
+                    print("✅ User authenticated: \(firebaseUser.uid)")
+                } else {
+                    self.currentUser = nil
+                    self.isAuthenticated = false
+                    print("❌ No authenticated user")
+                }
+            }
+        }
+    }
+    
     func checkAuthState() async {
+        // This method is kept for manual checks, but the listener handles automatic updates
         if let firebaseUser = Auth.auth().currentUser {
             await loadUserData(userID: firebaseUser.uid)
             isAuthenticated = true
@@ -39,6 +104,11 @@ class AuthService: ObservableObject {
             currentUser = nil
             isAuthenticated = false
             print("❌ No authenticated user")
+        }
+        
+        // Mark initialization as complete
+        if isInitializing {
+            isInitializing = false
         }
     }
     
@@ -172,6 +242,145 @@ class AuthService: ObservableObject {
         }
     }
     
+    // MARK: - Profile Updates
+    
+    /// Check if username is available (not taken by another user)
+    func isUsernameAvailable(_ username: String, excludingUserID: String? = nil) async throws -> Bool {
+        // Clean username
+        let cleanUsername = username.hasPrefix("@") ? String(username.dropFirst()) : username
+        let lowercaseUsername = cleanUsername.lowercased()
+        
+        // Query Firestore for existing username
+        let snapshot = try await firestore.collection("users")
+            .whereField("username", isEqualTo: lowercaseUsername)
+            .limit(to: 1)
+            .getDocuments()
+        
+        // Check if any documents found (excluding current user if provided)
+        for document in snapshot.documents {
+            if let excludeID = excludingUserID, document.documentID == excludeID {
+                continue // Skip current user's own document
+            }
+            return false // Username is taken
+        }
+        
+        return true // Username is available
+    }
+    
+    /// Generate alternative username suggestions
+    func generateUsernameAlternatives(_ baseUsername: String) -> [String] {
+        let cleanUsername = baseUsername.hasPrefix("@") ? String(baseUsername.dropFirst()) : baseUsername
+        let lowercaseUsername = cleanUsername.lowercased()
+        
+        var alternatives: [String] = []
+        
+        // Add numbers
+        for i in 1...5 {
+            let alt = "\(lowercaseUsername)\(i)"
+            if alt.count >= 4 && alt.count <= 15 {
+                alternatives.append(alt)
+            }
+        }
+        
+        // Add underscore with numbers
+        for i in 1...3 {
+            let alt = "\(lowercaseUsername)_\(i)"
+            if alt.count >= 4 && alt.count <= 15 {
+                alternatives.append(alt)
+            }
+        }
+        
+        // Add random suffix if still need more
+        if alternatives.count < 3 {
+            let randomSuffix = String(Int.random(in: 100...999))
+            let alt = "\(lowercaseUsername)\(randomSuffix)"
+            if alt.count >= 4 && alt.count <= 15 {
+                alternatives.append(alt)
+            }
+        }
+        
+        return Array(alternatives.prefix(5)) // Return up to 5 alternatives
+    }
+    
+    /// Validate username format and length
+    private func validateUsername(_ username: String) throws {
+        let cleanUsername = username.hasPrefix("@") ? String(username.dropFirst()) : username
+        
+        // Check length
+        if cleanUsername.count < 4 {
+            throw AuthError.usernameTooShort
+        }
+        
+        if cleanUsername.count > 15 {
+            throw AuthError.usernameTooLong
+        }
+        
+        // Check for valid characters (alphanumeric and underscore only)
+        let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "_"))
+        if cleanUsername.rangeOfCharacter(from: allowedCharacters.inverted) != nil {
+            throw AuthError.invalidUsername
+        }
+    }
+    
+    func updateProfile(displayName: String?, username: String?, bio: String?) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw AuthError.unauthorized
+        }
+        
+        let userRef = firestore.collection("users").document(userID)
+        var updateData: [String: Any] = [
+            "updatedAt": Timestamp(date: Date())
+        ]
+        
+        if let displayName = displayName {
+            updateData["displayName"] = displayName
+        }
+        
+        if let username = username {
+            // Validate username
+            try validateUsername(username)
+            
+            // Remove @ if user added it
+            let cleanUsername = username.hasPrefix("@") ? String(username.dropFirst()) : username
+            let lowercaseUsername = cleanUsername.lowercased()
+            
+            // Check if username is available (excluding current user)
+            let isAvailable = try await isUsernameAvailable(username, excludingUserID: userID)
+            if !isAvailable {
+                throw AuthError.usernameTaken
+            }
+            
+            updateData["username"] = lowercaseUsername
+        }
+        
+        if let bio = bio {
+            updateData["bio"] = bio
+        }
+        
+        try await userRef.updateData(updateData)
+        await reloadUserData()
+    }
+    
+    func uploadProfileImage(_ image: UIImage) async throws -> String {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw AuthError.unauthorized
+        }
+        
+        let storageService = StorageService()
+        let path = "profile_images/\(userID).jpg"
+        let imageURL = try await storageService.uploadImage(image, path: path)
+        
+        // Update user document with new profile image URL
+        let userRef = firestore.collection("users").document(userID)
+        try await userRef.updateData([
+            "profileImageURL": imageURL,
+            "updatedAt": Timestamp(date: Date())
+        ])
+        
+        await reloadUserData()
+        return imageURL
+    }
+    
     // MARK: - Sign Out
     
     func signOut() throws {
@@ -224,12 +433,17 @@ class AuthService: ObservableObject {
     }
 }
 
-enum AuthError: LocalizedError {
+enum AuthError: LocalizedError, Equatable {
     case invalidCredential
     case invalidNonce
     case invalidToken
     case missingClientID
     case missingViewController
+    case unauthorized
+    case usernameTooShort
+    case usernameTooLong
+    case usernameTaken
+    case invalidUsername
     
     var errorDescription: String? {
         switch self {
@@ -243,6 +457,16 @@ enum AuthError: LocalizedError {
             return NSLocalizedString("Missing client ID", comment: "Missing client ID error")
         case .missingViewController:
             return NSLocalizedString("Missing view controller", comment: "Missing view controller error")
+        case .unauthorized:
+            return NSLocalizedString("You are not authorized to perform this action", comment: "Unauthorized error")
+        case .usernameTooShort:
+            return NSLocalizedString("Username must be at least 4 characters", comment: "Username too short error")
+        case .usernameTooLong:
+            return NSLocalizedString("Username must be no more than 15 characters", comment: "Username too long error")
+        case .usernameTaken:
+            return NSLocalizedString("This username is already taken", comment: "Username taken error")
+        case .invalidUsername:
+            return NSLocalizedString("Username contains invalid characters", comment: "Invalid username error")
         }
     }
 }

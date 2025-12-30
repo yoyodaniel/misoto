@@ -14,6 +14,14 @@ struct ModernRecipeDetailView: View {
     @StateObject private var recipeService = RecipeService()
     @State private var isFavorite = false
     @State private var currentStep = 0
+    @State private var showDeleteConfirmation = false
+    @State private var isDeleting = false
+    @State private var deleteError: String?
+    
+    private var isAuthor: Bool {
+        guard let userID = FirebaseAuth.Auth.auth().currentUser?.uid else { return false }
+        return recipe.authorID == userID
+    }
     
     var body: some View {
         ZStack {
@@ -74,13 +82,29 @@ struct ModernRecipeDetailView: View {
                                     
                                     Spacer()
                                     
-                                    Button(action: { toggleFavorite() }) {
-                                        Image(systemName: isFavorite ? "heart.fill" : "heart")
-                                            .font(.system(size: 20))
-                                            .foregroundColor(isFavorite ? .red : .white)
-                                            .padding(12)
-                                            .background(Color.black.opacity(0.4))
-                                            .clipShape(Circle())
+                                    HStack(spacing: 12) {
+                                        // Delete button (only show if user is author)
+                                        if isAuthor {
+                                            Button(action: {
+                                                showDeleteConfirmation = true
+                                            }) {
+                                                Image(systemName: "trash")
+                                                    .font(.system(size: 20))
+                                                    .foregroundColor(.white)
+                                                    .padding(12)
+                                                    .background(Color.red.opacity(0.7))
+                                                    .clipShape(Circle())
+                                            }
+                                        }
+                                        
+                                        Button(action: { toggleFavorite() }) {
+                                            Image(systemName: isFavorite ? "heart.fill" : "heart")
+                                                .font(.system(size: 20))
+                                                .foregroundColor(isFavorite ? .red : .white)
+                                                .padding(12)
+                                                .background(Color.black.opacity(0.4))
+                                                .clipShape(Circle())
+                                        }
                                     }
                                 }
                                 .padding(.horizontal, 20)
@@ -209,6 +233,29 @@ struct ModernRecipeDetailView: View {
         .task {
             await checkFavoriteStatus()
         }
+        .confirmationDialog(
+            NSLocalizedString("Delete Recipe", comment: "Delete confirmation title"),
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(NSLocalizedString("Delete", comment: "Delete button"), role: .destructive) {
+                Task {
+                    await deleteRecipe()
+                }
+            }
+            Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+        } message: {
+            Text(NSLocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))
+        }
+        .alert("Error", isPresented: .constant(deleteError != nil)) {
+            Button("OK", role: .cancel) {
+                deleteError = nil
+            }
+        } message: {
+            if let error = deleteError {
+                Text(error)
+            }
+        }
     }
     
     private func checkFavoriteStatus() async {
@@ -237,6 +284,24 @@ struct ModernRecipeDetailView: View {
                 // Silently fail
             }
         }
+    }
+    
+    private func deleteRecipe() async {
+        guard isAuthor else { return }
+        
+        isDeleting = true
+        deleteError = nil
+        
+        do {
+            try await recipeService.deleteRecipe(recipeID: recipe.id)
+            // Dismiss the view after successful deletion
+            dismiss()
+        } catch {
+            deleteError = error.localizedDescription
+            print("❌ Error deleting recipe: \(error.localizedDescription)")
+        }
+        
+        isDeleting = false
     }
 }
 
