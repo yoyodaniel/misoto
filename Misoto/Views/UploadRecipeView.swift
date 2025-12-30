@@ -586,7 +586,7 @@ struct UploadRecipeView: View {
     private var instructionsSection: some View {
         Section {
             DisclosureGroup(isExpanded: $isInstructionsExpanded) {
-                ForEach(Array(viewModel.instructions.enumerated()), id: \.element.id) { index, instruction in
+                ForEach(Array(viewModel.instructions.enumerated()), id: \.offset) { index, instruction in
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(alignment: .top, spacing: 16) {
                             // Blue circle with number (matching ModernRecipeDetailView style)
@@ -1236,7 +1236,7 @@ struct UploadRecipeView: View {
     
     @ViewBuilder
     private func makeInstructionsContent() -> some View {
-        ForEach(Array(viewModel.instructions.enumerated()), id: \.element.id) { index, instruction in
+        ForEach(Array(viewModel.instructions.enumerated()), id: \.offset) { index, instruction in
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .top, spacing: 16) {
                     // Blue circle with number (matching ModernRecipeDetailView style)

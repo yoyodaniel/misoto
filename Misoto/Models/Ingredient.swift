@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct Ingredient: Identifiable, Codable, Equatable {
-    var id: String
+struct Ingredient: Codable, Equatable {
     var amount: String
     var unit: String
     var name: String
@@ -26,13 +25,11 @@ struct Ingredient: Identifiable, Codable, Equatable {
     }
     
     init(
-        id: String = UUID().uuidString,
         amount: String,
         unit: String,
         name: String,
         category: Category? = nil
     ) {
-        self.id = id
         self.amount = amount
         self.unit = unit
         self.name = name

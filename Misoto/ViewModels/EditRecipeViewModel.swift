@@ -51,16 +51,14 @@ class EditRecipeViewModel: ObservableObject {
     private let recipeService = RecipeService()
     private let storageService = StorageService()
     
-    struct InstructionItem: Identifiable {
-        var id: String
+    struct InstructionItem {
         var text: String
         var image: UIImage?
         var videoURL: URL?
         var existingImageURL: String?
         var existingVideoURL: String?
         
-        init(id: String = UUID().uuidString, text: String, image: UIImage? = nil, videoURL: URL? = nil, existingImageURL: String? = nil, existingVideoURL: String? = nil) {
-            self.id = id
+        init(text: String, image: UIImage? = nil, videoURL: URL? = nil, existingImageURL: String? = nil, existingVideoURL: String? = nil) {
             self.text = text
             self.image = image
             self.videoURL = videoURL
@@ -135,7 +133,6 @@ class EditRecipeViewModel: ObservableObject {
         // Convert instructions
         instructions = recipe.instructions.map { instruction in
             InstructionItem(
-                id: instruction.id,
                 text: instruction.text,
                 existingImageURL: instruction.imageURL,
                 existingVideoURL: instruction.videoURL
@@ -458,7 +455,6 @@ class EditRecipeViewModel: ObservableObject {
                 }
                 
                 let instruction = Instruction(
-                    id: instructionItem.id,
                     text: instructionItem.text.trimmingCharacters(in: .whitespaces),
                     imageURL: imageURL,
                     videoURL: videoURL

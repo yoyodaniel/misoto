@@ -83,7 +83,7 @@ struct RecipeDetailView: View {
                             Text(NSLocalizedString("Ingredients", comment: "Ingredients section"))
                                 .font(.headline)
                             
-                            ForEach(recipe.ingredients) { ingredient in
+                            ForEach(Array(recipe.ingredients.enumerated()), id: \.offset) { index, ingredient in
                                 HStack(alignment: .top, spacing: 12) {
                                     Image(systemName: "circle.fill")
                                         .font(.system(size: 6))
@@ -102,7 +102,7 @@ struct RecipeDetailView: View {
                             Text(NSLocalizedString("Instructions", comment: "Instructions section"))
                                 .font(.headline)
                             
-                            ForEach(Array(recipe.instructions.enumerated()), id: \.element.id) { index, instruction in
+                            ForEach(Array(recipe.instructions.enumerated()), id: \.offset) { index, instruction in
                                 VStack(alignment: .leading, spacing: 8) {
                                     HStack(alignment: .top, spacing: 12) {
                                         Text("\(index + 1).")

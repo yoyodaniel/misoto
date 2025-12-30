@@ -142,7 +142,7 @@ struct ModernRecipeDetailView: View {
                                 Text(NSLocalizedString("Ingredients for \(recipe.servings) servings", comment: "Ingredients header"))
                                     .font(.system(size: 20, weight: .bold))
                                 
-                                ForEach(recipe.ingredients) { ingredient in
+                                ForEach(Array(recipe.ingredients.enumerated()), id: \.offset) { index, ingredient in
                                     HStack(alignment: .top, spacing: 12) {
                                         Circle()
                                             .fill(Color.accentColor)
@@ -163,7 +163,7 @@ struct ModernRecipeDetailView: View {
                                 Text(NSLocalizedString("Steps", comment: "Steps header"))
                                     .font(.system(size: 20, weight: .bold))
                                 
-                                ForEach(Array(recipe.instructions.enumerated()), id: \.element.id) { index, instruction in
+                                ForEach(Array(recipe.instructions.enumerated()), id: \.offset) { index, instruction in
                                     VStack(alignment: .leading, spacing: 12) {
                                         HStack(alignment: .top, spacing: 16) {
                                             Text("\(index + 1)")

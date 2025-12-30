@@ -7,19 +7,16 @@
 
 import Foundation
 
-struct Instruction: Identifiable, Codable {
-    var id: String
+struct Instruction: Codable {
     var text: String
     var imageURL: String?
     var videoURL: String?
     
     init(
-        id: String = UUID().uuidString,
         text: String,
         imageURL: String? = nil,
         videoURL: String? = nil
     ) {
-        self.id = id
         self.text = text
         self.imageURL = imageURL
         self.videoURL = videoURL

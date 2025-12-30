@@ -72,7 +72,7 @@ struct Recipe: Identifiable, Codable {
             ingredients = ingredientObjects
         } else if let ingredientStrings = try? container.decodeIfPresent([String].self, forKey: .ingredients) {
             // Convert old [String] format to [Ingredient] format for backward compatibility
-            ingredients = ingredientStrings.enumerated().map { index, string in
+            ingredients = ingredientStrings.map { string in
                 // Try to parse the string format "amount unit name" or "amount name" or just "name"
                 let parts = string.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
                 if parts.count >= 2 {
@@ -81,14 +81,12 @@ struct Recipe: Identifiable, Codable {
                         // Format: "amount unit name" or "amount name"
                         if parts.count >= 3 {
                             return Ingredient(
-                                id: UUID().uuidString,
                                 amount: parts[0],
                                 unit: parts[1],
                                 name: parts[2...].joined(separator: " ")
                             )
                         } else {
                             return Ingredient(
-                                id: UUID().uuidString,
                                 amount: parts[0],
                                 unit: "",
                                 name: parts[1]
@@ -98,7 +96,6 @@ struct Recipe: Identifiable, Codable {
                 }
                 // Just a name, no amount/unit
                 return Ingredient(
-                    id: UUID().uuidString,
                     amount: "",
                     unit: "",
                     name: string
@@ -107,6 +104,7 @@ struct Recipe: Identifiable, Codable {
         } else {
             ingredients = []
         }
+        // Decode instructions (IDs will be ignored if present in old data)
         instructions = try container.decodeIfPresent([Instruction].self, forKey: .instructions) ?? []
         
         // Numbers with defaults
