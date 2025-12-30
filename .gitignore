@@ -11,6 +11,8 @@
 # Sensitive files - DO NOT COMMIT
 GoogleService-Info.plist
 **/GoogleService-Info.plist
+GoogleService-Info*.plist
+**/GoogleService-Info*.plist
 Misoto/Info.plist
 
 # macOS
