@@ -143,7 +143,11 @@ struct ModernRecipeCard: View {
     ModernRecipeCard(recipe: Recipe(
         title: "Fresh & Firm! Salt-Baked Crab & Shrimp",
         description: "A delicious seafood dish with perfect texture",
-        ingredients: ["Sea salt", "Crabs", "Shrimp"],
+        ingredients: [
+            Ingredient(amount: "", unit: "", name: "Sea salt", category: .dish),
+            Ingredient(amount: "", unit: "", name: "Crabs", category: .dish),
+            Ingredient(amount: "", unit: "", name: "Shrimp", category: .dish)
+        ],
         instructions: [
             Instruction(text: "Prepare ingredients"),
             Instruction(text: "Bake with salt")

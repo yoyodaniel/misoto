@@ -130,7 +130,11 @@ struct RecipeCard: View {
     RecipeCard(recipe: Recipe(
         title: "Delicious Pasta",
         description: "A classic Italian pasta dish",
-        ingredients: ["Pasta", "Tomato", "Garlic"],
+        ingredients: [
+            Ingredient(amount: "", unit: "", name: "Pasta", category: .dish),
+            Ingredient(amount: "", unit: "", name: "Tomato", category: .dish),
+            Ingredient(amount: "", unit: "", name: "Garlic", category: .dish)
+        ],
         instructions: [
             Instruction(text: "Boil water"),
             Instruction(text: "Cook pasta"),

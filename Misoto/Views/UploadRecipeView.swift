@@ -102,7 +102,21 @@ struct UploadRecipeView: View {
     
     // Dismiss keyboard
     private func dismissKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        // Clear all focus states
+        focusedAmountField = nil
+        isTitleFocused = false
+        isDescriptionFocused = false
+        focusedIngredientNameField = nil
+        focusedInstructionField = nil
+        
+        // Dismiss keyboard using window's endEditing method (more reliable)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.endEditing(true)
+        } else {
+            // Fallback method
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
     }
     
     // Collapse/expand state for sections
@@ -926,12 +940,21 @@ struct UploadRecipeView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(NSLocalizedString("Upload", comment: "Upload button")) {
+                    Button(action: {
+                        dismissKeyboard()
                         Task {
                             await viewModel.uploadRecipe()
                             if viewModel.isSuccess {
                                 dismiss()
                             }
+                        }
+                    }) {
+                        HStack {
+                            if viewModel.isLoading {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            }
+                            Text(NSLocalizedString("Upload", comment: "Upload button"))
                         }
                     }
                     .disabled(viewModel.isLoading || viewModel.title.isEmpty)

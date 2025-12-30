@@ -127,11 +127,21 @@ struct ExtractMenuFromImageView: View {
     
     // Dismiss all keyboards
     private func dismissKeyboard() {
+        // Clear all focus states
         focusedAmountField = nil
         isTitleFocused = false
         isDescriptionFocused = false
         focusedIngredientNameField = nil
         focusedInstructionField = nil
+        
+        // Dismiss keyboard using window's endEditing method (more reliable)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            window.endEditing(true)
+        } else {
+            // Fallback method
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
     }
     
     private var titleSection: some View {
@@ -1034,7 +1044,8 @@ struct ExtractMenuFromImageView: View {
             }
             
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(NSLocalizedString("Save", comment: "Save button")) {
+                Button(action: {
+                    dismissKeyboard()
                     Task {
                         // Don't pass selectedImage - it's the extraction image, not a main recipe image
                         let success = await viewModel.saveRecipe(image: nil)
@@ -1042,6 +1053,14 @@ struct ExtractMenuFromImageView: View {
                             await authViewModel.reloadUserData()
                             dismiss()
                         }
+                    }
+                }) {
+                    HStack {
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        }
+                        Text(NSLocalizedString("Save", comment: "Save button"))
                     }
                 }
                 .disabled(viewModel.isLoading || viewModel.title.isEmpty)

@@ -78,6 +78,27 @@ class StorageService: ObservableObject {
         let storageRef = storage.reference().child(path)
         try await storageRef.delete()
     }
+    
+    // Delete file from Firebase Storage URL
+    func deleteFile(from urlString: String) async throws {
+        guard let path = extractStoragePath(from: urlString) else {
+            throw StorageError.invalidPath
+        }
+        try await deleteFile(at: path)
+    }
+    
+    // Extract storage path from Firebase Storage URL
+    private func extractStoragePath(from urlString: String) -> String? {
+        // Firebase Storage URLs look like: https://firebasestorage.googleapis.com/v0/b/PROJECT.appspot.com/o/PATH?alt=media&token=TOKEN
+        guard let url = URL(string: urlString),
+              let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let pathComponent = components.path.components(separatedBy: "/o/").last else {
+            return nil
+        }
+        // Remove query parameters and decode
+        let path = pathComponent.components(separatedBy: "?").first?.removingPercentEncoding
+        return path
+    }
 }
 
 enum StorageError: LocalizedError {

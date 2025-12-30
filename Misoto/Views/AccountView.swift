@@ -11,11 +11,17 @@ import FirebaseAuth
 struct AccountView: View {
     @StateObject private var viewModel = AccountViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
+    
+    init() {
+        // Note: We'll set authViewModel reference in onAppear since we can't access @EnvironmentObject in init
+    }
     @State private var selectedRecipe: Recipe?
     @State private var showDeleteConfirmation = false
     @State private var recipeToDelete: Recipe?
     @State private var showSettingsMenu = false
     @State private var showEditProfile = false
+    @State private var recipeToEdit: Recipe?
+    @State private var lastRefreshTime: Date?
     
     // Grid layout
     private let columns = [
@@ -193,6 +199,12 @@ struct AccountView: View {
                                             selectedRecipe = recipe
                                         }
                                         .contextMenu {
+                                            Button(action: {
+                                                recipeToEdit = recipe
+                                            }) {
+                                                Label(NSLocalizedString("Edit Recipe", comment: "Edit recipe button"), systemImage: "pencil")
+                                            }
+                                            
                                             Button(role: .destructive, action: {
                                                 recipeToDelete = recipe
                                                 showDeleteConfirmation = true
@@ -221,10 +233,42 @@ struct AccountView: View {
             }
         }
         .task {
+            // Set authViewModel reference for recipe deletion
+            viewModel.authViewModel = authViewModel
             await viewModel.loadUserRecipes()
+            lastRefreshTime = Date()
+        }
+        .onAppear {
+            // Refresh recipes when view appears (e.g., returning from recipe creation)
+            // Only refresh if it's been more than 1 second since last refresh to avoid unnecessary calls
+            if let lastRefresh = lastRefreshTime {
+                let timeSinceLastRefresh = Date().timeIntervalSince(lastRefresh)
+                if timeSinceLastRefresh > 1.0 {
+                    Task {
+                        await viewModel.loadUserRecipes()
+                        lastRefreshTime = Date()
+                    }
+                }
+            } else {
+                // First appear - refresh
+                Task {
+                    await viewModel.loadUserRecipes()
+                    lastRefreshTime = Date()
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeSaved"))) { _ in
+            // Refresh when a recipe is saved
+            Task {
+                await viewModel.loadUserRecipes()
+                lastRefreshTime = Date()
+            }
         }
         .sheet(isPresented: $showEditProfile) {
             EditProfileView(viewModel: viewModel, authViewModel: authViewModel)
+        }
+        .sheet(item: $recipeToEdit) { recipe in
+            EditRecipeView(recipe: recipe)
         }
         .fullScreenCover(item: $selectedRecipe) { recipe in
             ModernRecipeDetailView(recipe: recipe)

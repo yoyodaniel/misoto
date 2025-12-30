@@ -41,6 +41,7 @@ class UploadRecipeViewModel: ObservableObject {
     
     private let recipeService = RecipeService()
     private let storageService = StorageService()
+    private let authService = AuthService()
     
     struct InstructionItem: Identifiable {
         var id = UUID()
@@ -314,6 +315,10 @@ class UploadRecipeViewModel: ObservableObject {
             return
         }
         
+        // Get username from AuthService (ensure user data is loaded)
+        await authService.reloadUserData()
+        let username = authService.currentUser?.username
+        
         // Validate
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
             errorMessage = NSLocalizedString("Title is required", comment: "Title required error")
@@ -337,32 +342,36 @@ class UploadRecipeViewModel: ObservableObject {
             return
         }
         
-        // Convert ingredient items to strings for Recipe model (pluralize units if amount > 1)
-        let pluralForms: [String: String] = [
-            "cup": "cups",
-            "pinch": "pinches",
-            "piece": "pieces",
-            "pc": "pieces",
-            "slice": "slices",
-            "clove": "cloves",
-            "bunch": "bunches",
-            "head": "heads",
-            "strand": "strands"
-        ]
-        
-        let ingredientsStrings = allValidIngredients.map { item in
-            if item.unit.isEmpty {
-                return item.amount.isEmpty ? item.name : "\(item.amount) \(item.name)"
+        // Convert ingredient items to Ingredient objects with IDs
+        let ingredientObjects = allValidIngredients.map { item -> Ingredient in
+            // Determine category based on which array it came from
+            let category: Ingredient.Category?
+            if validDishItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .dish
+            } else if validMarinadeItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .marinade
+            } else if validSeasoningItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .seasoning
+            } else if validBatterItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .batter
+            } else if validSauceItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .sauce
+            } else if validBaseItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .base
+            } else if validDoughItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .dough
+            } else if validToppingItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .topping
             } else {
-                var unit = item.unit
-                // Pluralize unit if amount > 1
-                if let amountValue = Double(item.amount.trimmingCharacters(in: .whitespaces)), amountValue > 1 {
-                    if let plural = pluralForms[item.unit] {
-                        unit = plural
-                    }
-                }
-                return "\(item.amount) \(unit) \(item.name)"
+                category = nil
             }
+            
+            return Ingredient(
+                amount: item.amount,
+                unit: item.unit,
+                name: item.name,
+                category: category
+            )
         }
         
         let validInstructions = instructions.filter { !$0.text.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -376,21 +385,17 @@ class UploadRecipeViewModel: ObservableObject {
         isSuccess = false
         
         do {
-            // Upload main recipe images if present (use first image as main)
-            var mainImageURL: String? = nil
-            if let firstImage = mainRecipeImages.first {
-                let imagePath = "recipes/\(UUID().uuidString).jpg"
-                mainImageURL = try await storageService.uploadImage(firstImage, path: imagePath)
-            }
-            
-            // Upload additional recipe images
-            var additionalImageURLs: [String] = []
-            for image in mainRecipeImages.dropFirst() {
+            // Upload all recipe images (up to 5)
+            var allImageURLs: [String] = []
+            for image in mainRecipeImages {
                 let imagePath = "recipes/\(UUID().uuidString).jpg"
                 if let url = try? await storageService.uploadImage(image, path: imagePath) {
-                    additionalImageURLs.append(url)
+                    allImageURLs.append(url)
                 }
             }
+            
+            // Use first image URL for backward compatibility
+            let mainImageURL = allImageURLs.first
             
             // Upload instruction images/videos and create Instruction objects
             var uploadedInstructions: [Instruction] = []
@@ -422,7 +427,7 @@ class UploadRecipeViewModel: ObservableObject {
             let recipe = Recipe(
                 title: title.trimmingCharacters(in: .whitespaces),
                 description: description.trimmingCharacters(in: .whitespaces),
-                ingredients: ingredientsStrings,
+                ingredients: ingredientObjects,
                 instructions: uploadedInstructions,
                 prepTime: prepTime,
                 cookTime: cookTime,
@@ -431,14 +436,19 @@ class UploadRecipeViewModel: ObservableObject {
                 spicyLevel: spicyLevel,
                 tips: tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
-                imageURL: mainImageURL,
+                imageURL: mainImageURL, // For backward compatibility
+                imageURLs: allImageURLs, // Array of all image URLs
                 authorID: userID,
-                authorName: displayName
+                authorName: displayName,
+                authorUsername: username
             )
             
             try await recipeService.createRecipe(recipe)
             isSuccess = true
             resetForm()
+            
+            // Post notification to refresh account view
+            NotificationCenter.default.post(name: NSNotification.Name("RecipeSaved"), object: nil)
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -20,6 +20,7 @@ class AccountViewModel: ObservableObject {
     private let authService = AuthService()
     private let firestore = FirebaseManager.shared.firestore
     private var userListener: ListenerRegistration?
+    var authViewModel: AuthViewModel?
     
     init() {
         setupUserListener()
@@ -83,15 +84,34 @@ class AccountViewModel: ObservableObject {
         userRecipes.removeAll { $0.id == recipeID }
         print("✅ Recipe removed from UI instantly")
         
+        // Optimistically update recipe count in user object
+        if var currentUser = authService.currentUser {
+            currentUser.recipeCount = max(0, currentUser.recipeCount - 1)
+            authService.currentUser = currentUser
+            print("✅ Recipe count updated optimistically: \(currentUser.recipeCount)")
+        }
+        
         // Delete from backend asynchronously in background (don't block UI)
         Task { @MainActor in
             do {
+                // Delete recipe and update Firebase recipe count
                 try await recipeService.deleteRecipe(recipeID: recipeID)
-                print("✅ Recipe deleted from backend")
+                print("✅ Recipe deleted from backend and Firebase recipeCount decremented")
+                
+                // Explicitly reload user data to ensure UI reflects the updated count from Firebase
+                await authService.reloadUserData()
+                if let authVM = authViewModel {
+                    await authVM.reloadUserData()
+                }
+                print("✅ User data reloaded - recipe count should now be: \(authService.currentUser?.recipeCount ?? 0)")
             } catch {
                 // If deletion fails, log the error but don't disrupt UI
                 print("❌ Error deleting recipe from backend: \(error.localizedDescription)")
-                // Could optionally show a toast/alert, but don't re-add to avoid confusion
+                // Revert optimistic update if deletion failed
+                if var currentUser = authService.currentUser {
+                    currentUser.recipeCount += 1
+                    authService.currentUser = currentUser
+                }
             }
         }
     }

@@ -83,13 +83,13 @@ struct RecipeDetailView: View {
                             Text(NSLocalizedString("Ingredients", comment: "Ingredients section"))
                                 .font(.headline)
                             
-                            ForEach(recipe.ingredients, id: \.self) { ingredient in
+                            ForEach(recipe.ingredients) { ingredient in
                                 HStack(alignment: .top, spacing: 12) {
                                     Image(systemName: "circle.fill")
                                         .font(.system(size: 6))
                                         .foregroundColor(.accentColor)
                                         .padding(.top, 6)
-                                    Text(ingredient)
+                                    Text(ingredient.displayString)
                                         .font(.body)
                                 }
                             }
@@ -205,7 +205,13 @@ struct RecipeDetailView: View {
     RecipeDetailView(recipe: Recipe(
         title: "Delicious Pasta",
         description: "A classic Italian pasta dish that's perfect for any occasion.",
-        ingredients: ["500g pasta", "400g tomatoes", "3 cloves garlic", "Olive oil", "Salt and pepper"],
+        ingredients: [
+            Ingredient(amount: "500", unit: "g", name: "pasta", category: .dish),
+            Ingredient(amount: "400", unit: "g", name: "tomatoes", category: .dish),
+            Ingredient(amount: "3", unit: "cloves", name: "garlic", category: .dish),
+            Ingredient(amount: "", unit: "", name: "Olive oil", category: .dish),
+            Ingredient(amount: "", unit: "", name: "Salt and pepper", category: .seasoning)
+        ],
         instructions: [
             Instruction(text: "Bring a large pot of salted water to a boil"),
             Instruction(text: "Add pasta and cook according to package instructions"),

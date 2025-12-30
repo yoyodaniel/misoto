@@ -142,14 +142,14 @@ struct ModernRecipeDetailView: View {
                                 Text(NSLocalizedString("Ingredients for \(recipe.servings) servings", comment: "Ingredients header"))
                                     .font(.system(size: 20, weight: .bold))
                                 
-                                ForEach(recipe.ingredients, id: \.self) { ingredient in
+                                ForEach(recipe.ingredients) { ingredient in
                                     HStack(alignment: .top, spacing: 12) {
                                         Circle()
                                             .fill(Color.accentColor)
                                             .frame(width: 6, height: 6)
                                             .padding(.top, 8)
                                         
-                                        Text(ingredient)
+                                        Text(ingredient.displayString)
                                             .font(.system(size: 16))
                                     }
                                 }
@@ -329,7 +329,11 @@ struct RoundedCorner: Shape {
     ModernRecipeDetailView(recipe: Recipe(
         title: "Fresh & Firm! Salt-Baked Crab & Shrimp",
         description: "A delicious seafood dish with perfect texture and flavor",
-        ingredients: ["Sea salt 500g", "Crabs 4 pieces", "Shrimp 500g"],
+        ingredients: [
+            Ingredient(amount: "500", unit: "g", name: "Sea salt", category: .dish),
+            Ingredient(amount: "4", unit: "pieces", name: "Crabs", category: .dish),
+            Ingredient(amount: "500", unit: "g", name: "Shrimp", category: .dish)
+        ],
         instructions: [
             Instruction(text: "Prepare a non-stick wok or pot"),
             Instruction(text: "Add coarse sea salt and heat"),

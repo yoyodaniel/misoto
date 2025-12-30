@@ -1048,6 +1048,12 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             difficultySection
             spicyLevelSection
             recipeImagesSection
+            
+            // Optional additional content (e.g., source section) - after recipe images
+            if let optionalContent = optionalContent {
+                optionalContent()
+            }
+            
             dishIngredientsSection
             marinadeIngredientsSection
             seasoningIngredientsSection
@@ -1069,11 +1075,6 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             
             // Tips section
             tipsSection
-            
-            // Optional additional content (e.g., source section) - after tips
-            if let optionalContent = optionalContent {
-                optionalContent()
-            }
             
             if let errorMessage = errorMessage {
                 Section {

@@ -12,7 +12,7 @@ struct Recipe: Identifiable, Codable {
     var id: String
     var title: String
     var description: String
-    var ingredients: [String]
+    var ingredients: [Ingredient]
     var instructions: [Instruction]
     var prepTime: Int // in minutes
     var cookTime: Int // in minutes
@@ -21,9 +21,12 @@ struct Recipe: Identifiable, Codable {
     var spicyLevel: SpicyLevel
     var tips: [String]
     var cuisine: String?
-    var imageURL: String?
+    var imageURL: String? // Deprecated: use imageURLs instead, kept for backward compatibility
+    var imageURLs: [String] // Array of image URLs (up to 5)
+    var sourceImageURL: String? // URL of the source image used for extraction
     var authorID: String
     var authorName: String
+    var authorUsername: String?
     var createdAt: Date
     var updatedAt: Date
     var favoriteCount: Int
@@ -42,8 +45,11 @@ struct Recipe: Identifiable, Codable {
         case tips
         case cuisine
         case imageURL
+        case imageURLs
+        case sourceImageURL
         case authorID
         case authorName
+        case authorUsername
         case createdAt
         case updatedAt
         case favoriteCount
@@ -58,9 +64,49 @@ struct Recipe: Identifiable, Codable {
         description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
         authorID = try container.decode(String.self, forKey: .authorID)
         authorName = try container.decodeIfPresent(String.self, forKey: .authorName) ?? ""
+        authorUsername = try container.decodeIfPresent(String.self, forKey: .authorUsername)
         
         // Arrays with defaults
-        ingredients = try container.decodeIfPresent([String].self, forKey: .ingredients) ?? []
+        // Handle backward compatibility: decode [Ingredient] if available, otherwise try [String] and convert
+        if let ingredientObjects = try? container.decodeIfPresent([Ingredient].self, forKey: .ingredients) {
+            ingredients = ingredientObjects
+        } else if let ingredientStrings = try? container.decodeIfPresent([String].self, forKey: .ingredients) {
+            // Convert old [String] format to [Ingredient] format for backward compatibility
+            ingredients = ingredientStrings.enumerated().map { index, string in
+                // Try to parse the string format "amount unit name" or "amount name" or just "name"
+                let parts = string.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
+                if parts.count >= 2 {
+                    // Check if first part is a number
+                    if let _ = Double(parts[0]) {
+                        // Format: "amount unit name" or "amount name"
+                        if parts.count >= 3 {
+                            return Ingredient(
+                                id: UUID().uuidString,
+                                amount: parts[0],
+                                unit: parts[1],
+                                name: parts[2...].joined(separator: " ")
+                            )
+                        } else {
+                            return Ingredient(
+                                id: UUID().uuidString,
+                                amount: parts[0],
+                                unit: "",
+                                name: parts[1]
+                            )
+                        }
+                    }
+                }
+                // Just a name, no amount/unit
+                return Ingredient(
+                    id: UUID().uuidString,
+                    amount: "",
+                    unit: "",
+                    name: string
+                )
+            }
+        } else {
+            ingredients = []
+        }
         instructions = try container.decodeIfPresent([Instruction].self, forKey: .instructions) ?? []
         
         // Numbers with defaults
@@ -72,6 +118,22 @@ struct Recipe: Identifiable, Codable {
         // Optional fields
         cuisine = try container.decodeIfPresent(String.self, forKey: .cuisine)
         imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL)
+        
+        // Handle imageURLs: decode array if present, otherwise fall back to single imageURL for backward compatibility
+        if let imageURLsArray = try? container.decodeIfPresent([String].self, forKey: .imageURLs) {
+            imageURLs = imageURLsArray
+            // If imageURLs exists but imageURL doesn't, set imageURL to first item for backward compatibility
+            if imageURL == nil && !imageURLs.isEmpty {
+                imageURL = imageURLs.first
+            }
+        } else if let singleImageURL = imageURL {
+            // Backward compatibility: convert single imageURL to array
+            imageURLs = [singleImageURL]
+        } else {
+            imageURLs = []
+        }
+        
+        sourceImageURL = try container.decodeIfPresent(String.self, forKey: .sourceImageURL)
         tips = try container.decodeIfPresent([String].self, forKey: .tips) ?? []
         
         // Difficulty with fallback
@@ -166,7 +228,7 @@ struct Recipe: Identifiable, Codable {
         id: String = UUID().uuidString,
         title: String,
         description: String,
-        ingredients: [String],
+        ingredients: [Ingredient],
         instructions: [Instruction],
         prepTime: Int,
         cookTime: Int,
@@ -175,9 +237,11 @@ struct Recipe: Identifiable, Codable {
         spicyLevel: SpicyLevel = .none,
         tips: [String] = [],
         cuisine: String? = nil,
-        imageURL: String? = nil,
+        imageURL: String? = nil, // Deprecated: use imageURLs instead
+        imageURLs: [String] = [],
         authorID: String,
         authorName: String,
+        authorUsername: String? = nil,
         createdAt: Date = Date(),
         updatedAt: Date = Date(),
         favoriteCount: Int = 0
@@ -195,8 +259,21 @@ struct Recipe: Identifiable, Codable {
         self.tips = tips
         self.cuisine = cuisine
         self.imageURL = imageURL
+        // If imageURLs is provided, use it; otherwise convert imageURL to array for backward compatibility
+        if !imageURLs.isEmpty {
+            self.imageURLs = imageURLs
+            // Set imageURL to first item for backward compatibility if not already set
+            if self.imageURL == nil {
+                self.imageURL = imageURLs.first
+            }
+        } else if let imageURL = imageURL {
+            self.imageURLs = [imageURL]
+        } else {
+            self.imageURLs = []
+        }
         self.authorID = authorID
         self.authorName = authorName
+        self.authorUsername = authorUsername
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.favoriteCount = favoriteCount

@@ -42,11 +42,11 @@ class OpenAIService {
         var imageContentItems: [[String: Any]] = []
         
         for image in images {
-            // Optimize image before sending to API (resize and compress to reduce payload size)
-            let optimizedImage = await ImageOptimizer.resizeForProcessing(image)
-            
-            // Convert image to base64 with compression (reduced quality slightly to save on tokens)
-            guard let imageData = ImageOptimizer.compressImage(optimizedImage, quality: 0.75, maxFileSizeKB: 800) else {
+        // Optimize image before sending to API (resize and compress to reduce payload size)
+        let optimizedImage = await ImageOptimizer.resizeForProcessing(image)
+        
+        // Convert image to base64 with compression (reduced quality slightly to save on tokens)
+        guard let imageData = ImageOptimizer.compressImage(optimizedImage, quality: 0.75, maxFileSizeKB: 800) else {
                 continue // Skip this image if conversion fails
             }
             let base64Image = imageData.base64EncodedString()

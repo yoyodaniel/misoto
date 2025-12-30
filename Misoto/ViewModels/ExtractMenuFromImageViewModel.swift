@@ -328,6 +328,11 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             return false
         }
         
+        // Get username from AuthService (ensure user data is loaded)
+        let authService = AuthService()
+        await authService.reloadUserData()
+        let username = authService.currentUser?.username
+        
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
             errorMessage = NSLocalizedString("Title is required", comment: "Title required error")
             return false
@@ -349,33 +354,34 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             return false
         }
         
-        // Convert ingredient items to strings for Recipe model (pluralize units if amount > 1)
-        let pluralForms: [String: String] = [
-            "cup": "cups",
-            "pinch": "pinches",
-            "piece": "pieces",
-            "pc": "pieces",
-            "slice": "slices",
-            "clove": "cloves",
-            "bunch": "bunches",
-            "head": "heads",
-            "strand": "strands"
-        ]
+        // Convert ingredient items to Ingredient objects with IDs and categories
+        var ingredientObjects: [Ingredient] = []
         
-        let validIngredients = validIngredientItems.map { item in
-            if item.unit.isEmpty {
-                return item.amount.isEmpty ? item.name : "\(item.amount) \(item.name)"
-            } else {
-                var unit = item.unit
-                // Pluralize unit if amount > 1
-                if let amountValue = Double(item.amount.trimmingCharacters(in: .whitespaces)), amountValue > 1 {
-                    if let plural = pluralForms[item.unit] {
-                        unit = plural
-                    }
-                }
-                return "\(item.amount) \(unit) \(item.name)"
-            }
-        }
+        // Add ingredients with their respective categories
+        ingredientObjects.append(contentsOf: validDishItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .dish) 
+        })
+        ingredientObjects.append(contentsOf: validMarinadeItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .marinade) 
+        })
+        ingredientObjects.append(contentsOf: validSeasoningItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .seasoning) 
+        })
+        ingredientObjects.append(contentsOf: validBatterItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .batter) 
+        })
+        ingredientObjects.append(contentsOf: validSauceItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .sauce) 
+        })
+        ingredientObjects.append(contentsOf: validBaseItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .base) 
+        })
+        ingredientObjects.append(contentsOf: validDoughItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .dough) 
+        })
+        ingredientObjects.append(contentsOf: validToppingItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .topping) 
+        })
         
         let validInstructions = instructions.filter { !$0.text.trimmingCharacters(in: .whitespaces).isEmpty }
         guard !validInstructions.isEmpty else {
@@ -387,13 +393,17 @@ class ExtractMenuFromImageViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            // Upload main recipe images (up to 5) - use first one as primary imageURL
-            // Do NOT use the extraction image parameter - it's separate from main recipe images
-            var mainImageURL: String? = nil
-            if let firstImage = mainRecipeImages.first {
+            // Upload all recipe images (up to 5)
+            var allImageURLs: [String] = []
+            for image in mainRecipeImages {
                 let imagePath = "recipes/\(UUID().uuidString).jpg"
-                mainImageURL = try await storageService.uploadImage(firstImage, path: imagePath)
+                if let url = try? await storageService.uploadImage(image, path: imagePath) {
+                    allImageURLs.append(url)
+                }
             }
+            
+            // Use first image URL for backward compatibility
+            let mainImageURL = allImageURLs.first
             
             // Convert instructions to Instruction objects (upload images/videos if present)
             var instructionObjects: [Instruction] = []
@@ -428,7 +438,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             let recipe = Recipe(
                 title: title.trimmingCharacters(in: .whitespaces),
                 description: description.trimmingCharacters(in: .whitespaces),
-                ingredients: validIngredients,
+                ingredients: ingredientObjects,
                 instructions: instructionObjects,
                 prepTime: prepTime,
                 cookTime: cookTime,
@@ -437,13 +447,19 @@ class ExtractMenuFromImageViewModel: ObservableObject {
                 spicyLevel: spicyLevel,
                 tips: tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
-                imageURL: mainImageURL,
+                imageURL: mainImageURL, // For backward compatibility
+                imageURLs: allImageURLs, // Array of all image URLs
                 authorID: userID,
-                authorName: displayName
+                authorName: displayName,
+                authorUsername: username
             )
             
             try await recipeService.createRecipe(recipe)
             isLoading = false
+            
+            // Post notification to refresh account view
+            NotificationCenter.default.post(name: NSNotification.Name("RecipeSaved"), object: nil)
+            
             return true
         } catch {
             errorMessage = error.localizedDescription
