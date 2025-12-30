@@ -18,6 +18,8 @@ struct Recipe: Identifiable, Codable {
     var cookTime: Int // in minutes
     var servings: Int
     var difficulty: Difficulty
+    var spicyLevel: SpicyLevel
+    var tips: [String]
     var cuisine: String?
     var imageURL: String?
     var authorID: String
@@ -36,6 +38,8 @@ struct Recipe: Identifiable, Codable {
         case cookTime
         case servings
         case difficulty
+        case spicyLevel
+        case tips
         case cuisine
         case imageURL
         case authorID
@@ -68,6 +72,7 @@ struct Recipe: Identifiable, Codable {
         // Optional fields
         cuisine = try container.decodeIfPresent(String.self, forKey: .cuisine)
         imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL)
+        tips = try container.decodeIfPresent([String].self, forKey: .tips) ?? []
         
         // Difficulty with fallback
         if let difficultyString = try? container.decodeIfPresent(String.self, forKey: .difficulty),
@@ -75,6 +80,18 @@ struct Recipe: Identifiable, Codable {
             difficulty = decodedDifficulty
         } else {
             difficulty = .c // Default to C if decoding fails
+        }
+        
+        // SpicyLevel with fallback
+        if let spicyLevelInt = try? container.decodeIfPresent(Int.self, forKey: .spicyLevel),
+           let decodedSpicyLevel = SpicyLevel(rawValue: spicyLevelInt) {
+            spicyLevel = decodedSpicyLevel
+        } else if let spicyLevelString = try? container.decodeIfPresent(String.self, forKey: .spicyLevel),
+                  let spicyLevelInt = Int(spicyLevelString),
+                  let decodedSpicyLevel = SpicyLevel(rawValue: spicyLevelInt) {
+            spicyLevel = decodedSpicyLevel
+        } else {
+            spicyLevel = .none // Default to none if decoding fails
         }
         
         // Dates with defaults
@@ -128,6 +145,23 @@ struct Recipe: Identifiable, Codable {
         }
     }
     
+    enum SpicyLevel: Int, Codable, CaseIterable {
+        case none = 0
+        case one = 1
+        case two = 2
+        case three = 3
+        case four = 4
+        case five = 5
+        
+        var displayName: String {
+            return "\(self.rawValue)"
+        }
+        
+        var chiliCount: Int {
+            return self.rawValue
+        }
+    }
+    
     init(
         id: String = UUID().uuidString,
         title: String,
@@ -138,6 +172,8 @@ struct Recipe: Identifiable, Codable {
         cookTime: Int,
         servings: Int,
         difficulty: Difficulty,
+        spicyLevel: SpicyLevel = .none,
+        tips: [String] = [],
         cuisine: String? = nil,
         imageURL: String? = nil,
         authorID: String,
@@ -155,6 +191,8 @@ struct Recipe: Identifiable, Codable {
         self.cookTime = cookTime
         self.servings = servings
         self.difficulty = difficulty
+        self.spicyLevel = spicyLevel
+        self.tips = tips
         self.cuisine = cuisine
         self.imageURL = imageURL
         self.authorID = authorID

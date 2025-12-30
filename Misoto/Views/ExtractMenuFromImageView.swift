@@ -83,8 +83,8 @@ struct ExtractMenuFromImageView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = ExtractMenuFromImageViewModel()
-    @State private var selectedPhoto: PhotosPickerItem?
-    @State private var selectedImage: UIImage?
+    @State private var selectedPhotos: [PhotosPickerItem] = []
+    @State private var selectedImages: [UIImage] = []
     @State private var selectedRecipePhotos: [PhotosPickerItem] = []
     @State private var showCuisineSelection = false
     @State private var cuisineDetectionTask: Task<Void, Never>?
@@ -92,14 +92,16 @@ struct ExtractMenuFromImageView: View {
     @State private var fullScreenImage: UIImage?
     @State private var selectedInstructionPhotos: [Int: PhotosPickerItem] = [:]
     @State private var showingImagePickerForIndex: Int? = nil
+    @State private var showCamera = false
     
     let initialImage: UIImage?
     
     init(initialImage: UIImage? = nil) {
         self.initialImage = initialImage
-        // Initialize selectedImage with initialImage if provided
-        // This ensures immediate display while task optimizes it
-        _selectedImage = State(initialValue: initialImage)
+        // Initialize selectedImages with initialImage if provided
+        if let image = initialImage {
+            _selectedImages = State(initialValue: [image])
+        }
     }
     @FocusState private var focusedAmountField: Int?
     @FocusState private var isTitleFocused: Bool
@@ -281,29 +283,36 @@ struct ExtractMenuFromImageView: View {
     private var sourceSection: some View {
         Section {
             DisclosureGroup(isExpanded: $isSourceExpanded) {
-                if let sourceImage = selectedImage ?? initialImage {
-                    HStack(spacing: 12) {
-                        Button(action: {
-                            fullScreenImage = sourceImage
-                            showFullScreenImage = true
-                        }) {
-                            Image(uiImage: sourceImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 80, height: 80)
-                                .clipped()
-                                .cornerRadius(8)
+                let sourceImages = !selectedImages.isEmpty ? selectedImages : (initialImage != nil ? [initialImage!] : [])
+                
+                if !sourceImages.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(Array(sourceImages.enumerated()), id: \.offset) { index, sourceImage in
+                                Button(action: {
+                                    fullScreenImage = sourceImage
+                                    showFullScreenImage = true
+                                }) {
+                                    Image(uiImage: sourceImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 80, height: 80)
+                                        .clipped()
+                                        .cornerRadius(8)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        
-                        Text(NSLocalizedString("Source image used for recipe extraction", comment: "Source image description"))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.leading)
-                        
-                        Spacer()
+                        .padding(.horizontal, 4)
                     }
-                    .padding(.vertical, 4)
+                    
+                    Text(sourceImages.count > 1 ? 
+                         NSLocalizedString("Source images used for recipe extraction", comment: "Source images description") :
+                         NSLocalizedString("Source image used for recipe extraction", comment: "Source image description"))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
+                        .padding(.top, 4)
                 } else {
                     Text(NSLocalizedString("No source image available", comment: "No source image text"))
                         .foregroundColor(.secondary)
@@ -819,41 +828,62 @@ struct ExtractMenuFromImageView: View {
     
     private var imageSelectionView: some View {
         Form {
-            Section(header: Text(NSLocalizedString("Select Menu Image", comment: "Select menu image section"))) {
-                if let selectedImage = selectedImage {
+            Section(header: Text(NSLocalizedString("Select Dish images", comment: "Select dish images section"))) {
+                if !selectedImages.isEmpty {
                     VStack(spacing: 12) {
-                        // Display the captured/selected image as preview
-                        Image(uiImage: selectedImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(maxHeight: 400)
-                            .cornerRadius(12)
-                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                            .padding(.vertical, 8)
-                        
-                        // Option to change image
-                        PhotosPicker(
-                            selection: $selectedPhoto,
-                            matching: .images
-                        ) {
-                            HStack {
-                                Image(systemName: "photo.badge.plus")
-                                Text(NSLocalizedString("Change Image", comment: "Change image button"))
+                        // Display selected images in a scrollable horizontal view
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(Array(selectedImages.enumerated()), id: \.offset) { index, image in
+                                    ZStack(alignment: .topTrailing) {
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 120, height: 160)
+                                            .clipped()
+                                            .cornerRadius(8)
+                                            .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                                        
+                                        Button(action: {
+                                            selectedImages.remove(at: index)
+                                        }) {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .foregroundColor(.white)
+                                                .background(Color.black.opacity(0.6))
+                                                .clipShape(Circle())
+                                                .padding(4)
+                                        }
+                                    }
+                                }
                             }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
+                            .padding(.horizontal, 4)
+                        }
+                        
+                        // Option to take another picture (only if less than 10 images)
+                        if selectedImages.count < 10 {
+                            Button(action: {
+                                showCamera = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "camera.fill")
+                                    Text(NSLocalizedString("Take another picture", comment: "Take another picture button"))
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(8)
+                            }
                         }
                     }
                 } else {
                     PhotosPicker(
-                        selection: $selectedPhoto,
+                        selection: $selectedPhotos,
+                        maxSelectionCount: 10,
                         matching: .images
                     ) {
                         HStack {
                             Image(systemName: "photo.badge.plus")
-                            Text(NSLocalizedString("Select Menu Image", comment: "Select image button"))
+                            Text(NSLocalizedString("Select Dish images", comment: "Select dish images button"))
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -876,7 +906,9 @@ struct ExtractMenuFromImageView: View {
                     HStack {
                         Spacer()
                         ProgressView()
-                        Text(NSLocalizedString("Extracting recipe from image...", comment: "Extracting recipe message"))
+                        Text(selectedImages.count > 1 ? 
+                             NSLocalizedString("Extracting recipe from images...", comment: "Extracting recipe from multiple images message") :
+                             NSLocalizedString("Extracting recipe from image...", comment: "Extracting recipe message"))
                         Spacer()
                     }
                 }
@@ -893,21 +925,33 @@ struct ExtractMenuFromImageView: View {
             
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(NSLocalizedString("Extract", comment: "Extract button")) {
-                    if let image = selectedImage {
+                    if !selectedImages.isEmpty {
                         Task {
-                            await viewModel.extractText(from: image)
+                            await viewModel.extractText(from: selectedImages)
                         }
                     }
                 }
-                .disabled(selectedImage == nil || viewModel.isLoading)
+                .disabled(selectedImages.isEmpty || viewModel.isLoading)
             }
         }
-        .onChange(of: selectedPhoto) { _, newItem in
+        .onChange(of: selectedPhotos) { oldValue, newItems in
+            // Process when user finishes selecting images
+            guard !newItems.isEmpty else { return }
+            
             Task {
-                if let data = try? await newItem?.loadTransferable(type: Data.self),
-                   let image = UIImage(data: data) {
-                    // Optimize image for display to reduce memory usage
-                    selectedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 800)
+                for item in newItems {
+                    if let data = try? await item.loadTransferable(type: Data.self),
+                       let image = UIImage(data: data) {
+                        // Optimize image for display to reduce memory usage
+                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 800)
+                        await MainActor.run {
+                            selectedImages.append(optimizedImage)
+                        }
+                    }
+                }
+                // Clear selection after processing to allow selecting again
+                await MainActor.run {
+                    selectedPhotos = []
                 }
             }
         }
@@ -937,14 +981,35 @@ struct ExtractMenuFromImageView: View {
         .task {
             // Optimize initial image if provided (from camera capture)
             // This reduces memory usage while keeping the image visible
-            if let initialImage = initialImage {
+            if let initialImage = initialImage, selectedImages.isEmpty {
                 // Optimize image for display to reduce memory usage
                 let optimizedImage = await ImageOptimizer.resizeForDisplay(initialImage, maxDimension: 800)
-                // Only update if it's different (optimization might change the image)
-                if selectedImage !== optimizedImage {
-                    selectedImage = optimizedImage
+                await MainActor.run {
+                    selectedImages = [optimizedImage]
                 }
             }
+        }
+        .onAppear {
+            // Also check on appear in case initialImage was set after view initialization
+            if let initialImage = initialImage, selectedImages.isEmpty {
+                // Set image immediately (will be optimized in task if needed)
+                selectedImages = [initialImage]
+            }
+        }
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraCaptureView { image in
+                // Add the captured image to selectedImages
+                Task {
+                    // Optimize image for display to reduce memory usage
+                    let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 800)
+                    await MainActor.run {
+                        if selectedImages.count < 10 {
+                            selectedImages.append(optimizedImage)
+                        }
+                    }
+                }
+            }
+            .ignoresSafeArea(.all)
         }
     }
     
@@ -1071,6 +1136,8 @@ struct ExtractMenuFromImageView: View {
             cookTime: $viewModel.cookTime,
             servings: $viewModel.servings,
             difficulty: $viewModel.difficulty,
+            spicyLevel: $viewModel.spicyLevel,
+            tips: $viewModel.tips,
             dishIngredients: $viewModel.dishIngredients,
             marinadeIngredients: $viewModel.marinadeIngredients,
             seasoningIngredients: $viewModel.seasoningIngredients,
@@ -1247,15 +1314,6 @@ struct ExtractMenuFromImageView: View {
                     TextField(NSLocalizedString("Step", comment: "Step placeholder"), text: stepBinding, axis: .vertical)
                         .lineLimit(2...6)
                         .focused($focusedInstructionField, equals: index)
-                    
-                    if viewModel.instructions.count > 1 {
-                        Button(action: {
-                            viewModel.removeInstruction(at: index)
-                        }) {
-                            Image(systemName: "minus.circle.fill")
-                                .foregroundColor(.red)
-                        }
-                    }
                 }
                 
                 // Instruction Image/Video
@@ -1296,6 +1354,11 @@ struct ExtractMenuFromImageView: View {
             }
             .padding(.vertical, 4)
         }
+        .onDelete { indexSet in
+            for index in indexSet.sorted(by: >) {
+                viewModel.removeInstruction(at: index)
+            }
+        }
         .onMove { source, destination in
             viewModel.moveInstruction(from: source, to: destination)
         }
@@ -1323,31 +1386,38 @@ struct ExtractMenuFromImageView: View {
     
     @ViewBuilder
     private func makeOptionalContent() -> some View {
-        if let sourceImage = selectedImage ?? initialImage {
+        let sourceImages = !selectedImages.isEmpty ? selectedImages : (initialImage != nil ? [initialImage!] : [])
+        
+        if !sourceImages.isEmpty {
             Section {
                 DisclosureGroup(isExpanded: $isSourceExpanded) {
-                    HStack(spacing: 12) {
-                        Button(action: {
-                            fullScreenImage = sourceImage
-                            showFullScreenImage = true
-                        }) {
-                            Image(uiImage: sourceImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 80, height: 80)
-                                .clipped()
-                                .cornerRadius(8)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(Array(sourceImages.enumerated()), id: \.offset) { index, sourceImage in
+                                Button(action: {
+                                    fullScreenImage = sourceImage
+                                    showFullScreenImage = true
+                                }) {
+                                    Image(uiImage: sourceImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 80, height: 80)
+                                        .clipped()
+                                        .cornerRadius(8)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        
-                        Text(NSLocalizedString("Source image used for recipe extraction", comment: "Source image description"))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.leading)
-                        
-                        Spacer()
+                        .padding(.horizontal, 4)
                     }
-                    .padding(.vertical, 4)
+                    
+                    Text(sourceImages.count > 1 ? 
+                         NSLocalizedString("Source images used for recipe extraction", comment: "Source images description") :
+                         NSLocalizedString("Source image used for recipe extraction", comment: "Source image description"))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
+                        .padding(.top, 4)
                 } label: {
                     Text(NSLocalizedString("Source", comment: "Source section"))
                         .font(.headline)

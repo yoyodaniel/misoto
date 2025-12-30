@@ -25,18 +25,43 @@ class OpenAIService {
     
     /// Extract recipe information from an image using OpenAI Vision API
     static func extractRecipe(from image: UIImage) async throws -> OpenAIRecipeResponse {
+        return try await extractRecipe(from: [image])
+    }
+    
+    /// Extract recipe information from multiple images using OpenAI Vision API
+    static func extractRecipe(from images: [UIImage]) async throws -> OpenAIRecipeResponse {
         guard !apiKey.isEmpty else {
             throw OpenAIError.apiKeyNotConfigured
         }
         
-        // Optimize image before sending to API (resize and compress to reduce payload size)
-        let optimizedImage = await ImageOptimizer.resizeForProcessing(image)
-        
-        // Convert image to base64 with compression (reduced quality slightly to save on tokens)
-        guard let imageData = ImageOptimizer.compressImage(optimizedImage, quality: 0.75, maxFileSizeKB: 800) else {
+        guard !images.isEmpty else {
             throw OpenAIError.imageConversionFailed
         }
-        let base64Image = imageData.base64EncodedString()
+        
+        // Process all images: optimize and convert to base64
+        var imageContentItems: [[String: Any]] = []
+        
+        for image in images {
+            // Optimize image before sending to API (resize and compress to reduce payload size)
+            let optimizedImage = await ImageOptimizer.resizeForProcessing(image)
+            
+            // Convert image to base64 with compression (reduced quality slightly to save on tokens)
+            guard let imageData = ImageOptimizer.compressImage(optimizedImage, quality: 0.75, maxFileSizeKB: 800) else {
+                continue // Skip this image if conversion fails
+            }
+            let base64Image = imageData.base64EncodedString()
+            
+            imageContentItems.append([
+                "type": "image_url",
+                "image_url": [
+                    "url": "data:image/jpeg;base64,\(base64Image)"
+                ]
+            ])
+        }
+        
+        guard !imageContentItems.isEmpty else {
+            throw OpenAIError.imageConversionFailed
+        }
         
         // Create the request
         guard let url = URL(string: "\(baseURL)/chat/completions") else {
@@ -50,25 +75,142 @@ class OpenAIService {
         
         // Create the prompt for recipe extraction (optimized for cost)
         let systemPrompt = """
-        Extract recipe from image. Detect language, translate to English, return JSON only.
+        Extract recipe from image(s). If multiple images are provided, combine information from all images to create a complete recipe. 
+        IMPORTANT: Check ALL text in the images for references to other pages or recipes (e.g., "see page 245", "refer to page X"). 
+        If ingredients mention other pages, those pages likely contain marinade/sauce/preparation recipes that must be included FIRST in the instructions.
+        PRESERVE THE ORIGINAL LANGUAGE from the images - do NOT translate to English unless the language is not supported. Return JSON only.
         
-        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, instructions.
-        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/lb/piece/pinch), name (Capitalized Words).
-        IMPORTANT: Convert all fractions and mixed numbers to decimals:
+        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions.
+        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch), name (Capitalized Words).
+        Note: "Oz" unit usage - CRITICAL DISTINCTION:
+        - Use "fl_oz" (liquid ounces) ONLY for liquids: water, milk, oil, broth, juice, wine, vinegar, etc.
+        - Use "oz" (weight ounces) ONLY for weight/solids: meat, flour, cheese, vegetables, fruits, etc.
+        - NEVER use "oz" for liquids - always use "fl_oz" for liquids
+        - NEVER use "fl_oz" for weight/solids - always use "oz" for weight/solids
+        - If you see "oz" in the recipe text and it's a liquid, convert it to "fl_oz"
+        - If you see "oz" in the recipe text and it's a solid/weight, use "oz"
+        - If uncertain about a liquid vs solid, check the ingredient name (liquids: water, milk, oil, etc. → use "fl_oz"; solids: meat, flour, etc. → use "oz")
+        IMPORTANT: Read the ENTIRE amount including ALL fractions before converting. Convert all fractions and mixed numbers to decimals:
         - "1/2" → "0.5"
-        - "1 1/2" or "1½" → "1.5"
-        - "3 1/2" or "3½" → "3.5"
-        - "2 1/4" → "2.25"
         - "1/4" → "0.25"
+        - "1/8" → "0.125"
+        - "1/12" → "0.083" (approximately 0.083333...)
+        - "1/3" → "0.333" (approximately 0.333333...)
+        - "2/3" → "0.667" (approximately 0.666666...)
         - "3/4" → "0.75"
-        Mixed numbers (whole number + fraction) must be converted to a single decimal number.
-        All output in English.
+        - "1 1/2" or "1½" → "1.5" (read BOTH the whole number AND the fraction)
+        - "1 1/4" → "1.25"
+        - "2 1/4" → "2.25"
+        - "3 1/2" or "3½" → "3.5"
+        CRITICAL: When you see "1 1/2", you must read it as "one AND one-half" = 1.5, NOT just "1". The fraction part MUST be included.
+        CRITICAL: When you see "1/12", you must read it as "one-twelfth" = 0.083, NOT "0.5" or any other value.
+        Mixed numbers (whole number + fraction) must be converted to a single decimal number that includes BOTH parts.
+        LANGUAGE PRESERVATION: Keep the same language as the images. Only translate if absolutely necessary for JSON structure compatibility. Preserve original wording and phrasing.
+        
+        INGREDIENT AMOUNT AND UNIT VALIDATION (CRITICAL - ACCURACY CHECK):
+        - DOUBLE-CHECK: Before extracting an ingredient, carefully verify the exact amount and unit shown in the image. Do not guess or assume amounts.
+        - READ ENTIRE AMOUNT: Read the COMPLETE amount including any fractions. If you see "1 1/2", read it as "one and one-half" = 1.5, NOT just "1". If you see "1/12", read it as "one-twelfth" = 0.083, NOT "0.5".
+        - FRACTION CONVERSION VERIFICATION: After converting fractions, verify the conversion is correct:
+          * "1 1/2" must become "1.5" (NOT "1" or "2")
+          * "1/12" must become "0.083" (NOT "0.5" or any other value)
+          * "1/8" must become "0.125"
+          * "1/4" must become "0.25"
+          * "1/3" must become "0.333"
+          * "1/2" must become "0.5"
+          * "2/3" must become "0.667"
+          * "3/4" must become "0.75"
+        - MIXED NUMBER VERIFICATION: For mixed numbers like "1 1/2", verify you captured BOTH the whole number (1) AND the fraction (1/2 = 0.5), resulting in 1.5 total.
+        - Re-check all fraction conversions before finalizing.
+        - QUALITATIVE MEASUREMENTS: If the recipe says "to taste", "as needed", "optional", "a pinch", or similar qualitative terms, use these exact terms:
+          * For "to taste" or "as needed": amount = "0", unit = "", name = "Salt (to taste)" or "Salt (as needed)"
+          * For "a pinch": amount = "1", unit = "pinch", name = "Salt"
+          * DO NOT convert qualitative measurements to specific amounts (e.g., "salt to taste" should NOT become "1.5 tsp salt")
+        - MISSING INGREDIENTS CHECK: After extraction, review the image again to ensure ALL ingredients listed in the recipe are captured. Do not skip any ingredients.
+        - AMOUNT VERIFICATION: Cross-reference extracted amounts with what is actually visible in the image. If uncertain, extract exactly what is shown, do not estimate.
+        - UNIT ACCURACY: Verify the unit matches what is written (tbsp vs tsp, cup vs cups, etc.). Pay attention to abbreviations and full words.
+        - If an ingredient amount is unclear or not visible, use amount = "0" and include "(amount unclear)" in the name.
+        
+        INGREDIENT NAME ACCURACY (CRITICAL - EXACT WORD EXTRACTION):
+        - EXTRACT EXACT WORDS: Extract ingredient names EXACTLY as written in the image. Do NOT substitute, assume, or change words.
+        - NO WORD SUBSTITUTIONS: If the image says "sesame powder", extract "sesame powder" - NOT "sesame oil", "sesame seeds", or any other variation.
+        - VERIFY EACH WORD: Read each word of the ingredient name carefully. "Powder" is NOT the same as "oil". "Fresh" is NOT the same as "dried". Extract exactly what is written.
+        - DO NOT ASSUME: Do not assume similar ingredients. If you see "sesame powder", do not extract "sesame oil" thinking it's similar. They are different ingredients.
+        - IF UNCERTAIN: If a word is unclear or partially visible, extract what you can see and mark uncertainty, but DO NOT substitute with a different word.
+        - VERIFICATION STEP: After extracting each ingredient name, verify it matches exactly what is written in the image. If it doesn't match, correct it.
+        - COMMON ERRORS TO AVOID: Do not confuse "powder" with "oil", "fresh" with "dried", "ground" with "whole", "chopped" with "whole", etc. Extract the exact word as written.
+        
+        INGREDIENT SECTION ASSIGNMENT RULES (CRITICAL - NO DUPLICATION):
+        - marinadeIngredients: ONLY ingredients that are explicitly part of a marinade, sauce, or pre-soaking mixture. If an ingredient is mentioned as part of a marinade (e.g., "marinate with mirin, soy sauce, and sugar"), place it ONLY in marinadeIngredients, NOT in dishIngredients.
+        - dishIngredients: ONLY ingredients that are used directly in the main cooking/preparation process, NOT ingredients that are already included in marinades.
+        - seasoningIngredients: ONLY spices, herbs, salt, pepper, and other seasonings used for flavoring during cooking.
+        - CHECK FOR DUPLICATION: Before placing an ingredient, verify it does not already exist in another section. If an ingredient is part of a marinade, it should ONLY appear in marinadeIngredients, never in dishIngredients.
+        - If the recipe mentions "marinade" or "marinate", all ingredients listed in that marinade must go ONLY in marinadeIngredients.
+        - Example: If mirin is used in a marinade, it should ONLY be in marinadeIngredients, NOT duplicated in dishIngredients.
+        
+        INSTRUCTIONS EXTRACTION GUIDELINES:
+        - CHECK TEXT BEFORE WRITING: Carefully read and analyze ALL text in the images before extracting instructions. Look for references to other pages, recipes, or preparations (e.g., "see page 245", "refer to recipe on page X", "Nubo-style saikyo miso (see page 245)").
+        - DETECT CROSS-PAGE REFERENCES: If an ingredient mentions another page or recipe (e.g., "miso (see page 245)", "marinade recipe on page 123"), this indicates a separate preparation that needs to be included.
+        - SEQUENCE DETECTION AND ORDERING: Detect dependencies and order steps logically:
+          * If a marinade, sauce, or preparation is referenced from another page, the preparation steps for that marinade/sauce MUST be the FIRST steps
+          * After the marinade/sauce is prepared, then include steps to apply/use it
+          * Follow the natural sequence: prepare dependencies → apply dependencies → main cooking → finish
+        - USE ORIGINAL LANGUAGE: Keep the same language as the images. Preserve original terminology and key details.
+        - FLOW AND CLARITY: You are allowed to rewrite and rephrase instructions for better flow and clarity while preserving the original meaning and key information.
+        - STEP LIMIT: Keep instructions to a maximum of 10 steps (single digit preferred, ideally 5-8 steps). Combine related steps logically to achieve this.
+        - RECIPE STRUCTURE AWARENESS: Pay attention to the logical order of the recipe:
+          * Preparation steps (marinades, pre-soaking, pre-cooking preparations) should be in the FIRST steps
+          * If a marinade is mentioned (either in the current page or referenced from another page), include its preparation as one of the first steps
+          * Follow the natural cooking sequence: prep dependencies → apply dependencies → cook → finish
+        - PRESERVE KEY DETAILS: Always preserve important details like temperatures, cooking times, techniques, and methods. Include these in your rewritten steps.
+        - COMBINE LOGICALLY: Combine sequential actions that happen in the same phase (e.g., "Heat oil in pan, then add onions and cook until translucent").
+        - REWRITE FOR CLARITY: You may rewrite steps to make them clearer and more actionable, but maintain the original meaning and all critical information.
+        - GROUP RELATED STEPS: Group preparation steps together, cooking steps together, finishing steps together.
+        - MULTI-PAGE RECIPES: When multiple images are provided, they may contain:
+          * Main recipe on one page
+          * Marinade/sauce/preparation recipe on another page
+          * Combine information from all pages, placing preparation steps first, then application steps
+        
+        SERVINGS EXTRACTION:
+        - Look for text indicating number of servings: "serves 4", "4 servings", "serves 4-6", "makes 4 servings", etc.
+        - Extract the number as an integer. If a range is given (e.g., "4-6"), use the first number or average.
+        - If no servings information is found, use 0 (will be set to default later).
+        
+        TIME EXTRACTION:
+        - PREPARATION TIME: Look for "prep time", "preparation time", "prep", "marinate", "soak", "overnight", etc.
+        - COOKING TIME: Look for "cook time", "cooking time", "cook for", "bake for", "simmer for", etc.
+        - TIME UNITS: Extract time in minutes, but handle various formats:
+          * "30 minutes" or "30 mins" → 30 minutes
+          * "1 hour" or "1 hr" → 60 minutes
+          * "1.5 hours" or "1 1/2 hours" → 90 minutes
+          * "2 hours" → 120 minutes
+          * "overnight" or "marinate overnight" → 1440 minutes (24 hours)
+          * "1 day" → 1440 minutes
+          * "2 days" → 2880 minutes
+          * "30 seconds" → 0.5 minutes (round to 1 minute)
+        - If time mentions "overnight" or "days", convert to minutes (1 day = 1440 minutes).
+        - If no time information is found, use 0 for both prepTime and cookTime (will be extracted from instructions later if needed).
+        
+        TIPS EXTRACTION:
+        - Look for sections labeled "Tips", "Notes", "Note", "Tip", "Helpful Tips", "Cooking Tips", "Chef's Tips", or similar headings
+        - Extract any text that provides additional advice, variations, substitutions, storage tips, serving suggestions, or helpful information
+        - Look for text in boxes, callouts, or special formatting that indicates tips or notes
+        - Extract tips as an array of strings, with each tip as a separate item
+        - If no tips are found, use an empty array []
         
         JSON format:
-        {"title":"Recipe Title","description":"Description","dishIngredients":[{"amount":"12","unit":"","name":"Item"}],"marinadeIngredients":[],"seasoningIngredients":[],"instructions":["Step 1","Step 2"]}
+        {"title":"Recipe Title","description":"Description","servings":4,"prepTime":30,"cookTime":60,"dishIngredients":[{"amount":"12","unit":"","name":"Item"}],"marinadeIngredients":[],"seasoningIngredients":[],"batterIngredients":[],"sauceIngredients":[],"baseIngredients":[],"doughIngredients":[],"toppingIngredients":[],"instructions":["Step 1 with full details","Step 2 with full details"],"tips":["Tip 1","Tip 2"]}
         """
         
-        let userPrompt = "Extract recipe from image. Return JSON only."
+        let userPrompt = images.count > 1 ? "Extract recipe from all images. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. Combine information from all pages to create a complete recipe. PRESERVE the original language. Rewrite instructions for better flow and clarity, keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only." : "Extract recipe from image. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. PRESERVE the original language. Rewrite instructions for better flow and clarity, keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only."
+        
+        // Build content array: text prompt first, then all images
+        var contentArray: [[String: Any]] = [
+            [
+                "type": "text",
+                "text": userPrompt
+            ]
+        ]
+        contentArray.append(contentsOf: imageContentItems)
         
         let requestBody: [String: Any] = [
             "model": "gpt-4o",
@@ -79,22 +221,11 @@ class OpenAIService {
                 ],
                 [
                     "role": "user",
-                    "content": [
-                        [
-                            "type": "text",
-                            "text": userPrompt
-                        ],
-                        [
-                            "type": "image_url",
-                            "image_url": [
-                                "url": "data:image/jpeg;base64,\(base64Image)"
-                            ]
-                        ]
-                    ]
+                    "content": contentArray
                 ]
             ],
             "response_format": ["type": "json_object"],
-            "max_tokens": 1000,
+            "max_tokens": 2000,
             "temperature": 0.1
         ]
         
@@ -179,26 +310,134 @@ class OpenAIService {
         
         // Create the prompt for recipe extraction from text (optimized for cost)
         let systemPrompt = """
-        Extract recipe from text. Detect language, translate to English, return JSON only.
+        Extract recipe from text. PRESERVE THE ORIGINAL LANGUAGE from the text - do NOT translate to English unless the language is not supported. Return JSON only.
         
-        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, instructions.
-        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/lb/piece/pinch), name (Capitalized Words).
-        IMPORTANT: Convert all fractions and mixed numbers to decimals:
+        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions.
+        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch), name (Capitalized Words).
+        Note: "Oz" unit usage - CRITICAL DISTINCTION:
+        - Use "fl_oz" (liquid ounces) ONLY for liquids: water, milk, oil, broth, juice, wine, vinegar, etc.
+        - Use "oz" (weight ounces) ONLY for weight/solids: meat, flour, cheese, vegetables, fruits, etc.
+        - NEVER use "oz" for liquids - always use "fl_oz" for liquids
+        - NEVER use "fl_oz" for weight/solids - always use "oz" for weight/solids
+        - If you see "oz" in the recipe text and it's a liquid, convert it to "fl_oz"
+        - If you see "oz" in the recipe text and it's a solid/weight, use "oz"
+        - If uncertain about a liquid vs solid, check the ingredient name (liquids: water, milk, oil, etc. → use "fl_oz"; solids: meat, flour, etc. → use "oz")
+        IMPORTANT: Read the ENTIRE amount including ALL fractions before converting. Convert all fractions and mixed numbers to decimals:
         - "1/2" → "0.5"
-        - "1 1/2" or "1½" → "1.5"
-        - "3 1/2" or "3½" → "3.5"
-        - "2 1/4" → "2.25"
         - "1/4" → "0.25"
+        - "1/8" → "0.125"
+        - "1/12" → "0.083" (approximately 0.083333...)
+        - "1/3" → "0.333" (approximately 0.333333...)
+        - "2/3" → "0.667" (approximately 0.666666...)
         - "3/4" → "0.75"
-        Mixed numbers (whole number + fraction) must be converted to a single decimal number.
-        All output in English.
+        - "1 1/2" or "1½" → "1.5" (read BOTH the whole number AND the fraction)
+        - "1 1/4" → "1.25"
+        - "2 1/4" → "2.25"
+        - "3 1/2" or "3½" → "3.5"
+        CRITICAL: When you see "1 1/2", you must read it as "one AND one-half" = 1.5, NOT just "1". The fraction part MUST be included.
+        CRITICAL: When you see "1/12", you must read it as "one-twelfth" = 0.083, NOT "0.5" or any other value.
+        Mixed numbers (whole number + fraction) must be converted to a single decimal number that includes BOTH parts.
+        LANGUAGE PRESERVATION: Keep the same language as the text. Only translate if absolutely necessary for JSON structure compatibility. Preserve original wording and phrasing.
+        
+        INGREDIENT AMOUNT AND UNIT VALIDATION (CRITICAL - ACCURACY CHECK):
+        - DOUBLE-CHECK: Before extracting an ingredient, carefully verify the exact amount and unit shown in the text. Do not guess or assume amounts.
+        - READ ENTIRE AMOUNT: Read the COMPLETE amount including any fractions. If you see "1 1/2", read it as "one and one-half" = 1.5, NOT just "1". If you see "1/12", read it as "one-twelfth" = 0.083, NOT "0.5".
+        - FRACTION CONVERSION VERIFICATION: After converting fractions, verify the conversion is correct:
+          * "1 1/2" must become "1.5" (NOT "1" or "2")
+          * "1/12" must become "0.083" (NOT "0.5" or any other value)
+          * "1/8" must become "0.125"
+          * "1/4" must become "0.25"
+          * "1/3" must become "0.333"
+          * "1/2" must become "0.5"
+          * "2/3" must become "0.667"
+          * "3/4" must become "0.75"
+        - MIXED NUMBER VERIFICATION: For mixed numbers like "1 1/2", verify you captured BOTH the whole number (1) AND the fraction (1/2 = 0.5), resulting in 1.5 total.
+        - Re-check all fraction conversions before finalizing.
+        - QUALITATIVE MEASUREMENTS: If the recipe says "to taste", "as needed", "optional", "a pinch", or similar qualitative terms, use these exact terms:
+          * For "to taste" or "as needed": amount = "0", unit = "", name = "Salt (to taste)" or "Salt (as needed)"
+          * For "a pinch": amount = "1", unit = "pinch", name = "Salt"
+          * DO NOT convert qualitative measurements to specific amounts (e.g., "salt to taste" should NOT become "1.5 tsp salt")
+        - MISSING INGREDIENTS CHECK: After extraction, review the text again to ensure ALL ingredients listed in the recipe are captured. Do not skip any ingredients.
+        - AMOUNT VERIFICATION: Cross-reference extracted amounts with what is actually written in the text. If uncertain, extract exactly what is shown, do not estimate.
+        - UNIT ACCURACY: Verify the unit matches what is written (tbsp vs tsp, cup vs cups, etc.). Pay attention to abbreviations and full words.
+        - If an ingredient amount is unclear or not specified, use amount = "0" and include "(amount unclear)" in the name.
+        
+        INGREDIENT NAME ACCURACY (CRITICAL - EXACT WORD EXTRACTION):
+        - EXTRACT EXACT WORDS: Extract ingredient names EXACTLY as written in the text. Do NOT substitute, assume, or change words.
+        - NO WORD SUBSTITUTIONS: If the text says "sesame powder", extract "sesame powder" - NOT "sesame oil", "sesame seeds", or any other variation.
+        - VERIFY EACH WORD: Read each word of the ingredient name carefully. "Powder" is NOT the same as "oil". "Fresh" is NOT the same as "dried". Extract exactly what is written.
+        - DO NOT ASSUME: Do not assume similar ingredients. If you see "sesame powder", do not extract "sesame oil" thinking it's similar. They are different ingredients.
+        - IF UNCERTAIN: If a word is unclear or partially visible, extract what you can see and mark uncertainty, but DO NOT substitute with a different word.
+        - VERIFICATION STEP: After extracting each ingredient name, verify it matches exactly what is written in the text. If it doesn't match, correct it.
+        - COMMON ERRORS TO AVOID: Do not confuse "powder" with "oil", "fresh" with "dried", "ground" with "whole", "chopped" with "whole", etc. Extract the exact word as written.
+        
+        INGREDIENT SECTION ASSIGNMENT RULES (CRITICAL - NO DUPLICATION):
+        - READ TEXT CONTEXT CAREFULLY: Pay attention to how ingredients are described in the text. If the text explicitly mentions a section name (e.g., "sauce", "batter", "base", "dough", "topping", "marinade"), place those ingredients in the corresponding section.
+        - marinadeIngredients: ONLY ingredients that are explicitly part of a marinade or pre-soaking mixture. If text says "marinade", "marinate", or lists ingredients "for marinade", place them ONLY in marinadeIngredients.
+        - sauceIngredients: ONLY ingredients that are explicitly part of a sauce. If text says "sauce", "for sauce", "sauce ingredients", or lists ingredients under a "sauce" heading, place them ONLY in sauceIngredients.
+        - batterIngredients: ONLY ingredients that are explicitly part of a batter. If text says "batter", "for batter", "batter ingredients", or lists ingredients under a "batter" heading, place them ONLY in batterIngredients.
+        - baseIngredients: ONLY ingredients that are explicitly part of a base. If text says "base", "for base", "base ingredients", or lists ingredients under a "base" heading, place them ONLY in baseIngredients.
+        - doughIngredients: ONLY ingredients that are explicitly part of a dough. If text says "dough", "for dough", "dough ingredients", or lists ingredients under a "dough" heading, place them ONLY in doughIngredients.
+        - toppingIngredients: ONLY ingredients that are explicitly part of a topping. If text says "topping", "for topping", "topping ingredients", or lists ingredients under a "topping" heading, place them ONLY in toppingIngredients.
+        - dishIngredients: ONLY ingredients that are used directly in the main cooking/preparation process, NOT ingredients that are already included in other sections (marinade, sauce, batter, base, dough, topping).
+        - seasoningIngredients: ONLY spices, herbs, salt, pepper, and other seasonings used for flavoring during cooking, NOT ingredients that belong to other specific sections.
+        - CHECK FOR DUPLICATION: Before placing an ingredient, verify it does not already exist in another section. Each ingredient should appear in ONLY ONE section based on the text context.
+        - CONTEXT-BASED ASSIGNMENT: If the text clearly indicates a section (e.g., "Sauce: soy sauce, mirin, sugar" or "For the batter: flour, eggs, milk"), assign ingredients to that specific section.
+        - Example: If text says "Sauce: soy sauce, mirin, sugar", place ALL three in sauceIngredients, NOT in dishIngredients or marinadeIngredients.
+        - Example: If text says "Batter: flour, eggs, water", place ALL three in batterIngredients, NOT in dishIngredients.
+        
+        SERVINGS EXTRACTION:
+        - Look for text indicating number of servings: "serves 4", "4 servings", "serves 4-6", "makes 4 servings", etc.
+        - Extract the number as an integer. If a range is given (e.g., "4-6"), use the first number or average.
+        - If no servings information is found, use 0 (will be set to default later).
+        
+        TIME EXTRACTION:
+        - PREPARATION TIME: Look for "prep time", "preparation time", "prep", "marinate", "soak", "overnight", etc.
+        - COOKING TIME: Look for "cook time", "cooking time", "cook for", "bake for", "simmer for", etc.
+        - TIME UNITS: Extract time in minutes, but handle various formats:
+          * "30 minutes" or "30 mins" → 30 minutes
+          * "1 hour" or "1 hr" → 60 minutes
+          * "1.5 hours" or "1 1/2 hours" → 90 minutes
+          * "2 hours" → 120 minutes
+          * "overnight" or "marinate overnight" → 1440 minutes (24 hours)
+          * "1 day" → 1440 minutes
+          * "2 days" → 2880 minutes
+          * "30 seconds" → 0.5 minutes (round to 1 minute)
+        - If time mentions "overnight" or "days", convert to minutes (1 day = 1440 minutes).
+        - If no time information is found, use 0 for both prepTime and cookTime (will be extracted from instructions later if needed).
+        
+        INSTRUCTIONS EXTRACTION GUIDELINES:
+        - CHECK TEXT BEFORE WRITING: Carefully read and analyze ALL text before extracting instructions. Look for references to other pages, recipes, or preparations (e.g., "see page 245", "refer to recipe on page X", "Nubo-style saikyo miso (see page 245)").
+        - DETECT CROSS-PAGE REFERENCES: If an ingredient mentions another page or recipe (e.g., "miso (see page 245)", "marinade recipe on page 123"), this indicates a separate preparation that needs to be included.
+        - SEQUENCE DETECTION AND ORDERING: Detect dependencies and order steps logically:
+          * If a marinade, sauce, or preparation is referenced from another page, the preparation steps for that marinade/sauce MUST be the FIRST steps
+          * After the marinade/sauce is prepared, then include steps to apply/use it
+          * Follow the natural sequence: prepare dependencies → apply dependencies → main cooking → finish
+        - USE ORIGINAL LANGUAGE: Keep the same language as the text. Preserve original terminology and key details.
+        - FLOW AND CLARITY: You are allowed to rewrite and rephrase instructions for better flow and clarity while preserving the original meaning and key information.
+        - STEP LIMIT: Keep instructions to a maximum of 10 steps (single digit preferred, ideally 5-8 steps). Combine related steps logically to achieve this.
+        - RECIPE STRUCTURE AWARENESS: Pay attention to the logical order of the recipe:
+          * Preparation steps (marinades, pre-soaking, pre-cooking preparations) should be in the FIRST steps
+          * If a marinade is mentioned (either in the current text or referenced from another page), include its preparation as one of the first steps
+          * Follow the natural cooking sequence: prep dependencies → apply dependencies → cook → finish
+        - PRESERVE KEY DETAILS: Always preserve important details like temperatures, cooking times, techniques, and methods. Include these in your rewritten steps.
+        - COMBINE LOGICALLY: Combine sequential actions that happen in the same phase (e.g., "Heat oil in pan, then add onions and cook until translucent").
+        - REWRITE FOR CLARITY: You may rewrite steps to make them clearer and more actionable, but maintain the original meaning and all critical information.
+        - GROUP RELATED STEPS: Group preparation steps together, cooking steps together, finishing steps together.
+        
+        TIPS EXTRACTION:
+        - Look for sections labeled "Tips", "Notes", "Note", "Tip", "Helpful Tips", "Cooking Tips", "Chef's Tips", or similar headings
+        - Extract any text that provides additional advice, variations, substitutions, storage tips, serving suggestions, or helpful information
+        - Look for text in boxes, callouts, or special formatting that indicates tips or notes
+        - Extract tips as an array of strings, with each tip as a separate item
+        - If no tips are found, use an empty array []
         
         JSON format:
-        {"title":"Recipe Title","description":"Description","dishIngredients":[{"amount":"12","unit":"","name":"Item"}],"marinadeIngredients":[],"seasoningIngredients":[],"instructions":["Step 1","Step 2"]}
+        {"title":"Recipe Title","description":"Description","servings":4,"prepTime":30,"cookTime":60,"dishIngredients":[{"amount":"12","unit":"","name":"Item"}],"marinadeIngredients":[],"seasoningIngredients":[],"batterIngredients":[],"sauceIngredients":[],"baseIngredients":[],"doughIngredients":[],"toppingIngredients":[],"instructions":["Step 1","Step 2"],"tips":["Tip 1","Tip 2"]}
         """
         
         let userPrompt = """
-        Extract recipe from content. Return JSON only.
+        Extract recipe from content. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. PRESERVE the original language. Rewrite instructions for better flow and clarity, keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only.
         
         Content:
         \(extractedText)
@@ -217,7 +456,7 @@ class OpenAIService {
                 ]
             ],
             "response_format": ["type": "json_object"],
-            "max_tokens": 1000,
+            "max_tokens": 2000,
             "temperature": 0.1
         ]
         
@@ -327,16 +566,31 @@ class OpenAIService {
         let title = dict["title"] as? String ?? ""
         let description = dict["description"] as? String ?? ""
         
+        // Parse servings (default to 0 if not found)
+        let servings = (dict["servings"] as? Int) ?? (dict["servings"] as? String).flatMap { Int($0) } ?? 0
+        
+        // Parse prepTime and cookTime (in minutes, default to 0 if not found)
+        let prepTime = (dict["prepTime"] as? Int) ?? (dict["prepTime"] as? String).flatMap { Int($0) } ?? 0
+        let cookTime = (dict["cookTime"] as? Int) ?? (dict["cookTime"] as? String).flatMap { Int($0) } ?? 0
+        
         // Parse ingredients
         let dishIngredients = parseIngredients(from: dict["dishIngredients"] as? [[String: Any]] ?? [])
         let marinadeIngredients = parseIngredients(from: dict["marinadeIngredients"] as? [[String: Any]] ?? [])
         let seasoningIngredients = parseIngredients(from: dict["seasoningIngredients"] as? [[String: Any]] ?? [])
+        let batterIngredients = parseIngredients(from: dict["batterIngredients"] as? [[String: Any]] ?? [])
+        let sauceIngredients = parseIngredients(from: dict["sauceIngredients"] as? [[String: Any]] ?? [])
+        let baseIngredients = parseIngredients(from: dict["baseIngredients"] as? [[String: Any]] ?? [])
+        let doughIngredients = parseIngredients(from: dict["doughIngredients"] as? [[String: Any]] ?? [])
+        let toppingIngredients = parseIngredients(from: dict["toppingIngredients"] as? [[String: Any]] ?? [])
         
         // Parse instructions
         let instructions = (dict["instructions"] as? [String]) ?? []
         
+        // Parse tips
+        let tips = (dict["tips"] as? [String]) ?? []
+        
         // Check if no recipe was detected (empty title and no ingredients/instructions)
-        let allIngredients = dishIngredients + marinadeIngredients + seasoningIngredients
+        let allIngredients = dishIngredients + marinadeIngredients + seasoningIngredients + batterIngredients + sauceIngredients + baseIngredients + doughIngredients + toppingIngredients
         let hasValidInstructions = !instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }.isEmpty
         
         if title.trimmingCharacters(in: .whitespaces).isEmpty && allIngredients.isEmpty && !hasValidInstructions {
@@ -346,10 +600,19 @@ class OpenAIService {
         return OpenAIRecipeResponse(
             title: title,
             description: description,
+            servings: servings,
+            prepTime: prepTime,
+            cookTime: cookTime,
             dishIngredients: dishIngredients,
             marinadeIngredients: marinadeIngredients,
             seasoningIngredients: seasoningIngredients,
-            instructions: instructions
+            batterIngredients: batterIngredients,
+            sauceIngredients: sauceIngredients,
+            baseIngredients: baseIngredients,
+            doughIngredients: doughIngredients,
+            toppingIngredients: toppingIngredients,
+            instructions: instructions,
+            tips: tips
         )
     }
     
@@ -592,7 +855,20 @@ class OpenAIService {
         You are a culinary expert. Analyze the recipe instructions and extract preparation time and cooking time in minutes.
         Return ONLY a JSON object with "prepTime" and "cookTime" as integers (in minutes).
         If time cannot be determined, use reasonable defaults: prepTime: 15, cookTime: 30.
-        Look for time indicators like "minutes", "mins", "hours", "hrs", "marinate for X", "cook for X", etc.
+        
+        TIME UNIT CONVERSION:
+        - "30 minutes" or "30 mins" → 30 minutes
+        - "1 hour" or "1 hr" → 60 minutes
+        - "1.5 hours" or "1 1/2 hours" → 90 minutes
+        - "2 hours" → 120 minutes
+        - "overnight" or "marinate overnight" → 1440 minutes (24 hours)
+        - "1 day" → 1440 minutes
+        - "2 days" → 2880 minutes
+        - "30 seconds" → 1 minute (round up)
+        
+        Look for time indicators like:
+        - PREPARATION: "prep time", "preparation time", "prep", "marinate for X", "soak for X", "overnight", "refrigerate for X", etc.
+        - COOKING: "cook time", "cooking time", "cook for X", "bake for X", "simmer for X", "fry for X", etc.
         """
         
         let userPrompt = """
@@ -780,10 +1056,19 @@ class OpenAIService {
 struct OpenAIRecipeResponse {
     let title: String
     let description: String
+    let servings: Int
+    let prepTime: Int // in minutes
+    let cookTime: Int // in minutes
     let dishIngredients: [RecipeTextParser.IngredientItem]
     let marinadeIngredients: [RecipeTextParser.IngredientItem]
     let seasoningIngredients: [RecipeTextParser.IngredientItem]
+    let batterIngredients: [RecipeTextParser.IngredientItem]
+    let sauceIngredients: [RecipeTextParser.IngredientItem]
+    let baseIngredients: [RecipeTextParser.IngredientItem]
+    let doughIngredients: [RecipeTextParser.IngredientItem]
+    let toppingIngredients: [RecipeTextParser.IngredientItem]
     let instructions: [String]
+    let tips: [String]
 }
 
 // MARK: - Errors

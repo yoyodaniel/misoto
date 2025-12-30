@@ -140,9 +140,13 @@ struct CameraCaptureView: UIViewControllerRepresentable {
         
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let image = info[.originalImage] as? UIImage {
-                parent.onImageCaptured(image)
+                // Call the callback first to set the image (this happens synchronously)
+                self.parent.onImageCaptured(image)
+                // Dismiss immediately - the callback should have set the state
+                self.parent.dismiss()
+            } else {
+                self.parent.dismiss()
             }
-            parent.dismiss()
         }
         
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

@@ -90,6 +90,9 @@ struct UploadRecipeView: View {
     @State private var fullScreenImage: UIImage?
     @State private var selectedInstructionPhotos: [Int: PhotosPickerItem] = [:]
     @State private var showingImagePickerForIndex: Int? = nil
+    @State private var showDishImageOptions = false
+    @State private var showCameraForDishImage = false
+    @State private var showPhotoPickerForDishImage = false
     
     @FocusState private var focusedAmountField: Int?
     @FocusState private var isTitleFocused: Bool
@@ -278,22 +281,60 @@ struct UploadRecipeView: View {
                         
                         // Add image button (only show if less than 5 images)
                         if viewModel.mainRecipeImages.count < 5 {
-                            PhotosPicker(
-                                selection: $selectedRecipePhotos,
-                                maxSelectionCount: 5 - viewModel.mainRecipeImages.count,
-                                matching: .images
-                            ) {
-                                VStack(spacing: 6) {
-                                    Image(systemName: "photo.badge.plus")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.accentColor)
-                                    Text(NSLocalizedString("Add", comment: "Add image button"))
-                                        .font(.caption2)
-                                        .foregroundColor(.accentColor)
+                            ZStack {
+                                // PhotosPicker that appears when user selects "Select image" from dialog
+                                if showPhotoPickerForDishImage {
+                                    PhotosPicker(
+                                        selection: $selectedRecipePhotos,
+                                        maxSelectionCount: 5 - viewModel.mainRecipeImages.count,
+                                        matching: .images
+                                    ) {
+                                        VStack(spacing: 6) {
+                                            Image(systemName: "photo.badge.plus")
+                                                .font(.system(size: 20))
+                                                .foregroundColor(.accentColor)
+                                            Text(NSLocalizedString("Add", comment: "Add image button"))
+                                                .font(.caption2)
+                                                .foregroundColor(.accentColor)
+                                        }
+                                        .frame(width: 80, height: 80)
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(8)
+                                    }
+                                } else {
+                                    Button(action: {
+                                        showDishImageOptions = true
+                                    }) {
+                                        VStack(spacing: 6) {
+                                            Image(systemName: "photo.badge.plus")
+                                                .font(.system(size: 20))
+                                                .foregroundColor(.accentColor)
+                                            Text(NSLocalizedString("Add", comment: "Add image button"))
+                                                .font(.caption2)
+                                                .foregroundColor(.accentColor)
+                                        }
+                                        .frame(width: 80, height: 80)
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(8)
+                                    }
                                 }
-                                .frame(width: 80, height: 80)
-                                .background(Color(.systemGray6))
-                                .cornerRadius(8)
+                            }
+                            .confirmationDialog(
+                                NSLocalizedString("Add Dish Image", comment: "Add dish image dialog title"),
+                                isPresented: $showDishImageOptions,
+                                titleVisibility: .visible
+                            ) {
+                                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                                    Button(NSLocalizedString("Take picture", comment: "Take picture option")) {
+                                        showCameraForDishImage = true
+                                    }
+                                }
+                                
+                                Button(NSLocalizedString("Select image", comment: "Select image option")) {
+                                    showPhotoPickerForDishImage = true
+                                }
+                                
+                                Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
                             }
                         }
                     }
@@ -917,6 +958,7 @@ struct UploadRecipeView: View {
                     // Clear selection after processing to allow selecting again
                     await MainActor.run {
                         selectedRecipePhotos = []
+                        showPhotoPickerForDishImage = false
                     }
                 }
             }
@@ -961,6 +1003,20 @@ struct UploadRecipeView: View {
                     Text(errorMessage)
                 }
             }
+            .fullScreenCover(isPresented: $showCameraForDishImage) {
+                CameraCaptureView { image in
+                    // Add the captured image to recipe images
+                    Task {
+                        // Optimize image for display to reduce memory usage
+                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                        await MainActor.run {
+                            // addRecipeImage has a guard to prevent more than 5 images total
+                            viewModel.addRecipeImage(optimizedImage)
+                        }
+                    }
+                }
+                .ignoresSafeArea(.all)
+            }
         }
     }
     
@@ -997,6 +1053,8 @@ struct UploadRecipeView: View {
             cookTime: $viewModel.cookTime,
             servings: $viewModel.servings,
             difficulty: $viewModel.difficulty,
+            spicyLevel: $viewModel.spicyLevel,
+            tips: $viewModel.tips,
             dishIngredients: $viewModel.dishIngredients,
             marinadeIngredients: $viewModel.marinadeIngredients,
             seasoningIngredients: $viewModel.seasoningIngredients,
@@ -1173,15 +1231,6 @@ struct UploadRecipeView: View {
                     TextField(NSLocalizedString("Step", comment: "Step placeholder"), text: stepBinding, axis: .vertical)
                         .lineLimit(2...6)
                         .focused($focusedInstructionField, equals: index)
-                    
-                    if viewModel.instructions.count > 1 {
-                        Button(action: {
-                            viewModel.removeInstruction(at: index)
-                        }) {
-                            Image(systemName: "minus.circle.fill")
-                                .foregroundColor(.red)
-                        }
-                    }
                 }
                 
                 // Instruction Image/Video
@@ -1221,6 +1270,11 @@ struct UploadRecipeView: View {
                 }
             }
             .padding(.vertical, 4)
+        }
+        .onDelete { indexSet in
+            for index in indexSet.sorted(by: >) {
+                viewModel.removeInstruction(at: index)
+            }
         }
         .onMove { source, destination in
             viewModel.moveInstruction(from: source, to: destination)

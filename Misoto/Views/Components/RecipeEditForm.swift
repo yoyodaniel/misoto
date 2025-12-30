@@ -16,29 +16,33 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         "tsp": "Teaspoon (tsp)",
         "tbsp": "Tablespoon (tbsp)",
         "cup": "Cup",
-        "oz": "Ounce (oz)",
+        "oz": "oz",
+        "fl_oz": "Fluid ounces (fl oz)",
         "lb": "Pound (lb)",
         "g": "Gram (g)",
         "kg": "Kilogram (kg)",
         "ml": "Milliliter (ml)",
         "l": "Liter (l)",
         "pinch": "Pinch",
-        "piece": "Piece",
         "pcs": "Pieces (pcs)",
         "pc": "Piece (pc)",
         "slice": "Slice",
         "clove": "Clove",
         "bunch": "Bunch",
         "head": "Head",
-        "strand": "Strand",
-        "strands": "Strands"
+        "strand": "Strand"
+    ]
+    
+    // Unit abbreviation mapping: internal unit -> display abbreviation when in use
+    private let unitAbbreviations: [String: String] = [
+        "fl_oz": "Oz",
+        "oz": "oz"
     ]
     
     // Pluralization mapping for units that need to be pluralized
     private let pluralForms: [String: String] = [
         "cup": "cups",
         "pinch": "pinches",
-        "piece": "pieces",
         "pc": "pieces",
         "slice": "slices",
         "clove": "cloves",
@@ -63,6 +67,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     private func displayName(for unit: String, amount: String) -> String {
         if unit.isEmpty {
             return "-"
+        }
+        
+        // Check if this unit has a specific abbreviation for display (e.g., fl_oz -> Oz, wt_oz -> Oz)
+        if let abbreviation = unitAbbreviations[unit] {
+            return abbreviation
         }
         
         // Check if amount is greater than 1
@@ -90,6 +99,8 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     @Binding var cookTime: Int
     @Binding var servings: Int
     @Binding var difficulty: Recipe.Difficulty
+    @Binding var spicyLevel: Recipe.SpicyLevel
+    @Binding var tips: [String]
     @Binding var dishIngredients: [RecipeTextParser.IngredientItem]
     @Binding var marinadeIngredients: [RecipeTextParser.IngredientItem]
     @Binding var seasoningIngredients: [RecipeTextParser.IngredientItem]
@@ -178,6 +189,8 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         cookTime: Binding<Int>,
         servings: Binding<Int>,
         difficulty: Binding<Recipe.Difficulty>,
+        spicyLevel: Binding<Recipe.SpicyLevel>,
+        tips: Binding<[String]>,
         dishIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         marinadeIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         seasoningIngredients: Binding<[RecipeTextParser.IngredientItem]>,
@@ -247,6 +260,8 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         _cookTime = cookTime
         _servings = servings
         _difficulty = difficulty
+        _spicyLevel = spicyLevel
+        _tips = tips
         _dishIngredients = dishIngredients
         _marinadeIngredients = marinadeIngredients
         _seasoningIngredients = seasoningIngredients
@@ -314,6 +329,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     @FocusState private var isTitleFocused: Bool
     @FocusState private var isDescriptionFocused: Bool
     @FocusState private var focusedIngredientNameField: Int?
+    @FocusState private var focusedTipField: Int?
     
     // Collapse/expand state for sections
     @State private var isTitleExpanded = true
@@ -329,6 +345,8 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     @State private var isInstructionsExpanded = true
     @State private var isRecipeImagesExpanded = true
     @State private var isDifficultyExpanded = true
+    @State private var isSpicyLevelExpanded = true
+    @State private var isTipsExpanded = false
     
     // Dismiss all keyboards
     private func dismissKeyboard() {
@@ -336,6 +354,64 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         isTitleFocused = false
         isDescriptionFocused = false
         focusedIngredientNameField = nil
+        focusedTipField = nil
+    }
+    
+    // Tips management methods
+    private func addTip() {
+        tips.append("")
+        isTipsExpanded = true
+    }
+    
+    private func removeTip(at index: Int) {
+        guard index >= 0 && index < tips.count else { return }
+        tips.remove(at: index)
+    }
+    
+    private func updateTip(_ text: String, at index: Int) {
+        guard index >= 0 && index < tips.count else { return }
+        tips[index] = text
+    }
+    
+    private var tipsSection: some View {
+        Section {
+            DisclosureGroup(isExpanded: Binding(
+                get: { isTipsExpanded || !tips.isEmpty },
+                set: { isTipsExpanded = $0 }
+            )) {
+                ForEach(Array(tips.enumerated()), id: \.offset) { index, tip in
+                    HStack(alignment: .top, spacing: 16) {
+                        // Bullet point instead of number
+                        Text("•")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(.accentColor)
+                            .frame(width: 32, height: 32)
+                        
+                        let tipBinding = Binding<String>(
+                            get: { tips[index] },
+                            set: { updateTip($0, at: index) }
+                        )
+                        TextField(NSLocalizedString("Tip", comment: "Tip placeholder"), text: tipBinding, axis: .vertical)
+                            .lineLimit(2...6)
+                            .focused($focusedTipField, equals: index)
+                    }
+                }
+                .onDelete { indexSet in
+                    for index in indexSet.sorted(by: >) {
+                        removeTip(at: index)
+                    }
+                }
+                
+                Button(action: {
+                    addTip()
+                }) {
+                    Label(NSLocalizedString("Add Tip", comment: "Add tip button"), systemImage: "plus.circle")
+                }
+            } label: {
+                Text(NSLocalizedString("Additional Tips", comment: "Additional tips section"))
+                    .font(.headline)
+            }
+        }
     }
     
     private var titleSection: some View {
@@ -457,6 +533,21 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 .padding(.vertical, 4)
             } label: {
                 Text(NSLocalizedString("Difficulty", comment: "Difficulty section header"))
+                    .font(.headline)
+            }
+        }
+    }
+    
+    private var spicyLevelSection: some View {
+        Section {
+            DisclosureGroup(isExpanded: $isSpicyLevelExpanded) {
+                SpicyLevelView(
+                    spicyLevel: spicyLevel,
+                    selectedSpicyLevel: $spicyLevel
+                )
+                .padding(.vertical, 4)
+            } label: {
+                Text(NSLocalizedString("Spicy Level", comment: "Spicy level section header"))
                     .font(.headline)
             }
         }
@@ -955,6 +1046,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             timeSection
             servingsSection
             difficultySection
+            spicyLevelSection
             recipeImagesSection
             dishIngredientsSection
             marinadeIngredientsSection
@@ -975,7 +1067,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 }
             }
             
-            // Optional additional content (e.g., source section)
+            // Tips section
+            tipsSection
+            
+            // Optional additional content (e.g., source section) - after tips
             if let optionalContent = optionalContent {
                 optionalContent()
             }
@@ -1001,6 +1096,8 @@ extension RecipeEditForm where OptionalContent == EmptyView {
         cookTime: Binding<Int>,
         servings: Binding<Int>,
         difficulty: Binding<Recipe.Difficulty>,
+        spicyLevel: Binding<Recipe.SpicyLevel>,
+        tips: Binding<[String]>,
         dishIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         marinadeIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         seasoningIngredients: Binding<[RecipeTextParser.IngredientItem]>,
@@ -1070,6 +1167,8 @@ extension RecipeEditForm where OptionalContent == EmptyView {
             cookTime: cookTime,
             servings: servings,
             difficulty: difficulty,
+            spicyLevel: spicyLevel,
+            tips: tips,
             dishIngredients: dishIngredients,
             marinadeIngredients: marinadeIngredients,
             seasoningIngredients: seasoningIngredients,

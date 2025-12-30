@@ -28,6 +28,8 @@ class UploadRecipeViewModel: ObservableObject {
     @Published var cookTime = 30
     @Published var servings = 4
     @Published var difficulty: Recipe.Difficulty = .c
+    @Published var spicyLevel: Recipe.SpicyLevel = .none
+    @Published var tips: [String] = []
     @Published var cuisine: String? = nil
     @Published var mainRecipeImages: [UIImage] = [] // Up to 5 images for the recipe
     
@@ -426,6 +428,8 @@ class UploadRecipeViewModel: ObservableObject {
                 cookTime: cookTime,
                 servings: servings,
                 difficulty: difficulty,
+                spicyLevel: spicyLevel,
+                tips: tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
                 imageURL: mainImageURL,
                 authorID: userID,
@@ -458,6 +462,8 @@ class UploadRecipeViewModel: ObservableObject {
         cookTime = 30
         servings = 4
         difficulty = .c
+        spicyLevel = .none
+        tips = []
         cuisine = nil
         mainRecipeImages = []
     }

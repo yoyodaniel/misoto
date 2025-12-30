@@ -28,6 +28,8 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
     @Published var cookTime: Int = 30
     @Published var servings: Int = 4
     @Published var difficulty: Recipe.Difficulty = .c
+    @Published var spicyLevel: Recipe.SpicyLevel = .none
+    @Published var tips: [String] = []
     @Published var marinadeIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var seasoningIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var dishIngredients: [RecipeTextParser.IngredientItem] = []
@@ -55,15 +57,35 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             description = response.description
             marinadeIngredients = response.marinadeIngredients.isEmpty ? [] : response.marinadeIngredients
             seasoningIngredients = response.seasoningIngredients.isEmpty ? [] : response.seasoningIngredients
+            batterIngredients = response.batterIngredients.isEmpty ? [] : response.batterIngredients
+            sauceIngredients = response.sauceIngredients.isEmpty ? [] : response.sauceIngredients
+            baseIngredients = response.baseIngredients.isEmpty ? [] : response.baseIngredients
+            doughIngredients = response.doughIngredients.isEmpty ? [] : response.doughIngredients
+            toppingIngredients = response.toppingIngredients.isEmpty ? [] : response.toppingIngredients
             dishIngredients = response.dishIngredients.isEmpty ? [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")] : response.dishIngredients
             instructions = response.instructions.isEmpty ? [""] : response.instructions
+            tips = response.tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
             
-            // Auto-generate description, auto-detect cuisine, extract time, and detect difficulty after extraction
+            // Use extracted servings, prepTime, and cookTime if available (non-zero means found in image)
+            if response.servings > 0 {
+                servings = response.servings
+            }
+            if response.prepTime > 0 {
+                prepTime = response.prepTime
+            }
+            if response.cookTime > 0 {
+                cookTime = response.cookTime
+            }
+            
+            // Auto-generate description, auto-detect cuisine, extract time (if not already extracted), and detect difficulty after extraction
             // Small delay to ensure all fields are properly set
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second
             await generateDescription()
             await detectCuisine()
-            await extractTime()
+            // Only extract time if it wasn't already extracted from the image
+            if response.prepTime == 0 && response.cookTime == 0 {
+                await extractTime()
+            }
             await detectDifficulty()
             
             showEditRecipe = true
@@ -379,6 +401,8 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
                 cookTime: cookTime,
                 servings: servings,
                 difficulty: difficulty,
+                spicyLevel: spicyLevel,
+                tips: tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
                 imageURL: mainImageURL,
                 authorID: userID,

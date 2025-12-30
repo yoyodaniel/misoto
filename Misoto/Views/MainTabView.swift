@@ -82,6 +82,12 @@ struct MainTabView: View {
         }
         .fullScreenCover(isPresented: $showExtractFromImage) {
             ExtractMenuFromImageView(initialImage: imageForExtraction)
+                .onAppear {
+                    // Ensure image is set when view appears
+                    if let image = imageForExtraction {
+                        // Image should already be set, but this ensures it's available
+                    }
+                }
                 .onDisappear {
                     // Clear images when view is dismissed
                     capturedImage = nil
@@ -93,14 +99,18 @@ struct MainTabView: View {
         }
         .fullScreenCover(isPresented: $showCamera) {
             CameraCaptureView { image in
-                // Set the image for extraction
+                // Set the image for extraction first
                 imageForExtraction = image
                 capturedImage = image
-                // Dismiss camera and show extract view
+                // Dismiss camera first
                 showCamera = false
-                // Small delay to ensure camera dismisses before showing extract view
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    showExtractFromImage = true
+                // Use a longer delay to ensure state updates complete and camera fully dismisses
+                // This ensures imageForExtraction is set before ExtractMenuFromImageView is created
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    // Verify image is still set before showing extract view
+                    if imageForExtraction != nil {
+                        showExtractFromImage = true
+                    }
                 }
             }
             .ignoresSafeArea(.all)
