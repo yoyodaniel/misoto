@@ -139,8 +139,9 @@ struct CameraCaptureView: UIViewControllerRepresentable {
         }
         
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            // UIImagePickerController delegate methods are called on the main thread
             if let image = info[.originalImage] as? UIImage {
-                // Call the callback first to set the image (this happens synchronously)
+                // Call the callback first to set the image (this happens synchronously on main thread)
                 self.parent.onImageCaptured(image)
                 // Dismiss immediately - the callback should have set the state
                 self.parent.dismiss()

@@ -204,18 +204,30 @@ class AuthService: ObservableObject {
             let document = try await userRef.getDocument()
             
             if document.exists {
-                // Update existing user
-                try await userRef.updateData([
-                    "email": email as Any,
-                    "displayName": displayName,
-                    "updatedAt": Timestamp(date: Date())
-                ])
+                // User already exists - update lastLogin and email if missing, don't overwrite displayName
+                var updateData: [String: Any] = [
+                    "lastLogin": Timestamp(date: Date())
+                ]
+                
+                // Only update email if it's not already set in the document
+                if let existingUser = try? document.data(as: AppUser.self) {
+                    if existingUser.email == nil && email != nil {
+                        updateData["email"] = email as Any
+                    }
+                } else if email != nil {
+                    // If we can't decode the user, still try to update email if provided
+                    updateData["email"] = email as Any
+                }
+                
+                // Always update lastLogin
+                try await userRef.updateData(updateData)
             } else {
-                // Create new user
+                // Create new user with lastLogin set to now
                 let newUser = AppUser(
                     id: userID,
                     email: email,
-                    displayName: displayName
+                    displayName: displayName,
+                    lastLogin: Date()
                 )
                 try await userRef.setData(from: newUser)
             }

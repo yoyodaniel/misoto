@@ -12,6 +12,7 @@ import UIKit
 @MainActor
 class VisionTextExtractor {
     
+    /// Extract text from a single image
     func extractText(from image: UIImage) async throws -> String {
         // Optimize image before processing to reduce memory usage and improve performance
         let optimizedImage = ImageOptimizer.resizeForProcessing(image)
@@ -103,6 +104,35 @@ class VisionTextExtractor {
         
         // Must contain at least one letter
         return text.contains { $0.isLetter }
+    }
+    
+    /// Extract text from multiple images and combine them
+    func extractText(from images: [UIImage]) async throws -> String {
+        guard !images.isEmpty else {
+            throw TextExtractionError.invalidImage
+        }
+        
+        var allTexts: [String] = []
+        
+        // Process each image
+        for image in images {
+            do {
+                let text = try await extractText(from: image)
+                if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    allTexts.append(text)
+                }
+            } catch {
+                // Continue with other images if one fails
+                print("Failed to extract text from one image: \(error.localizedDescription)")
+            }
+        }
+        
+        guard !allTexts.isEmpty else {
+            throw TextExtractionError.noTextFound
+        }
+        
+        // Combine texts with double newline separator to distinguish pages
+        return allTexts.joined(separator: "\n\n")
     }
 }
 

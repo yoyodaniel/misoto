@@ -99,8 +99,11 @@ struct ExtractMenuFromImageView: View {
     init(initialImage: UIImage? = nil) {
         self.initialImage = initialImage
         // Initialize selectedImages with initialImage if provided
+        // This ensures the image is available immediately when the view is created
         if let image = initialImage {
             _selectedImages = State(initialValue: [image])
+        } else {
+            _selectedImages = State(initialValue: [])
         }
     }
     @FocusState private var focusedAmountField: Int?
@@ -988,22 +991,37 @@ struct ExtractMenuFromImageView: View {
                 }
             }
         }
-        .task {
-            // Optimize initial image if provided (from camera capture)
-            // This reduces memory usage while keeping the image visible
-            if let initialImage = initialImage, selectedImages.isEmpty {
-                // Optimize image for display to reduce memory usage
-                let optimizedImage = await ImageOptimizer.resizeForDisplay(initialImage, maxDimension: 800)
-                await MainActor.run {
-                    selectedImages = [optimizedImage]
+        .onAppear {
+            // Set initial image immediately if provided (from camera capture)
+            // This ensures the image is visible right away, even if State initialization didn't work
+            if let initialImage = initialImage {
+                // Always set the image if it's provided, even if selectedImages is not empty
+                // This handles cases where State initialization might have failed
+                if selectedImages.isEmpty {
+                    selectedImages = [initialImage]
+                } else if selectedImages.count == 1 {
+                    // If we have one image but it might not be the initialImage, replace it
+                    // This ensures we show the correct image from the camera
+                    selectedImages[0] = initialImage
                 }
             }
         }
-        .onAppear {
-            // Also check on appear in case initialImage was set after view initialization
-            if let initialImage = initialImage, selectedImages.isEmpty {
-                // Set image immediately (will be optimized in task if needed)
-                selectedImages = [initialImage]
+        .task {
+            // Optimize initial image if provided (from camera capture)
+            // This reduces memory usage while keeping the image visible
+            if let initialImage = initialImage {
+                // Optimize the initial image
+                let optimizedImage = await ImageOptimizer.resizeForDisplay(initialImage, maxDimension: 800)
+                await MainActor.run {
+                    // Always replace with optimized version if we have the initial image
+                    if selectedImages.isEmpty {
+                        selectedImages = [optimizedImage]
+                    } else if selectedImages.count == 1 {
+                        // Replace the first image with optimized version
+                        // This ensures we always show the optimized version
+                        selectedImages[0] = optimizedImage
+                    }
+                }
             }
         }
         .fullScreenCover(isPresented: $showCamera) {

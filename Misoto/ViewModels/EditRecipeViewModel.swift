@@ -158,8 +158,10 @@ class EditRecipeViewModel: ObservableObject {
             }
         }
         
-        // Store source image URLs if available
-        if let sourceImageURL = recipe.sourceImageURL {
+        // Store source image URLs if available (use array, fallback to single URL for backward compatibility)
+        if !recipe.sourceImageURLs.isEmpty {
+            sourceImageURLs = recipe.sourceImageURLs
+        } else if let sourceImageURL = recipe.sourceImageURL {
             sourceImageURLs = [sourceImageURL]
         }
     }
@@ -478,6 +480,8 @@ class EditRecipeViewModel: ObservableObject {
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
                 imageURL: mainImageURL, // For backward compatibility
                 imageURLs: finalImageURLs, // Array of all image URLs
+                sourceImageURL: recipe.sourceImageURLs.first ?? recipe.sourceImageURL, // For backward compatibility
+                sourceImageURLs: recipe.sourceImageURLs, // Preserve original source image URLs
                 authorID: recipe.authorID, // Keep original author
                 authorName: recipe.authorName, // Keep original author name
                 authorUsername: recipe.authorUsername, // Keep original author username

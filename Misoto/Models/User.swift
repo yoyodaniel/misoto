@@ -18,6 +18,7 @@ struct AppUser: Identifiable, Codable {
     var followingCount: Int
     var recipeCount: Int
     var createdAt: Date
+    var lastLogin: Date?
     
     init(
         id: String,
@@ -29,7 +30,8 @@ struct AppUser: Identifiable, Codable {
         followerCount: Int = 0,
         followingCount: Int = 0,
         recipeCount: Int = 0,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        lastLogin: Date? = nil
     ) {
         self.id = id
         self.email = email
@@ -41,6 +43,7 @@ struct AppUser: Identifiable, Codable {
         self.followingCount = followingCount
         self.recipeCount = recipeCount
         self.createdAt = createdAt
+        self.lastLogin = lastLogin
     }
 }
 

@@ -16,6 +16,7 @@ struct MainTabView: View {
     @State private var showCamera = false
     @State private var capturedImage: UIImage?
     @State private var imageForExtraction: UIImage?
+    @State private var pendingExtractionImage: UIImage? // Image waiting to be shown in extract view
     
     var body: some View {
         ZStack {
@@ -68,6 +69,8 @@ struct MainTabView: View {
             }
             
             Button(NSLocalizedString("Extract from Image", comment: "Extract from image option")) {
+                // Clear any pending image when manually selecting extract from image
+                pendingExtractionImage = nil
                 showExtractFromImage = true
             }
             
@@ -81,17 +84,13 @@ struct MainTabView: View {
             UploadRecipeView()
         }
         .fullScreenCover(isPresented: $showExtractFromImage) {
-            ExtractMenuFromImageView(initialImage: imageForExtraction)
-                .onAppear {
-                    // Ensure image is set when view appears
-                    if let image = imageForExtraction {
-                        // Image should already be set, but this ensures it's available
-                    }
-                }
+            // Use pendingExtractionImage if available (from camera), otherwise use imageForExtraction (from manual selection)
+            ExtractMenuFromImageView(initialImage: pendingExtractionImage ?? imageForExtraction)
                 .onDisappear {
                     // Clear images when view is dismissed
                     capturedImage = nil
                     imageForExtraction = nil
+                    pendingExtractionImage = nil
                 }
         }
         .sheet(isPresented: $showExtractFromLink) {
@@ -99,16 +98,22 @@ struct MainTabView: View {
         }
         .fullScreenCover(isPresented: $showCamera) {
             CameraCaptureView { image in
-                // Set the image for extraction first
+                // Store the image in both variables
+                // pendingExtractionImage is used specifically for the extract view
+                // This ensures the image is available when the view is created
                 imageForExtraction = image
                 capturedImage = image
+                pendingExtractionImage = image
+                
                 // Dismiss camera first
                 showCamera = false
-                // Use a longer delay to ensure state updates complete and camera fully dismisses
-                // This ensures imageForExtraction is set before ExtractMenuFromImageView is created
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                
+                // Use a small delay to ensure camera fully dismisses and state is updated
+                // before showing extract view
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 400_000_000) // 0.4 seconds
                     // Verify image is still set before showing extract view
-                    if imageForExtraction != nil {
+                    if pendingExtractionImage != nil {
                         showExtractFromImage = true
                     }
                 }

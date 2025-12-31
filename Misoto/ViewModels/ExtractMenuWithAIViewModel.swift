@@ -40,18 +40,48 @@ class ExtractMenuWithAIViewModel: ObservableObject {
     @Published var toppingIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var instructions: [String] = []
     @Published var mainRecipeImages: [UIImage] = [] // Up to 5 images for the recipe
+    private var sourceImage: UIImage? = nil // Source image used for extraction
     
     private let recipeService = RecipeService()
     private let storageService = StorageService()
     
-    /// Extract recipe from image using OpenAI
+    // Cost optimization settings
+    // Use cost-optimized extraction (iOS OCR + on-device parsing + optional OpenAI refinement)
+    // Set to false to use direct OpenAI Vision API (more expensive but potentially better quality)
+    private var useCostOptimizedExtraction: Bool {
+        // Default to true for cost savings, can be made configurable via UserDefaults
+        return UserDefaults.standard.bool(forKey: "useCostOptimizedExtraction") != false // Default to true
+    }
+    
+    private var useOpenAIRefinement: Bool {
+        // Default to true to refine on-device parsed results with OpenAI (still cheaper than sending images)
+        return UserDefaults.standard.bool(forKey: "useOpenAIRefinement") != false // Default to true
+    }
+    
+    private let costOptimizedExtractor = CostOptimizedRecipeExtractor()
+    
+    /// Extract recipe from image using cost-optimized approach
     func extractRecipe(from image: UIImage) async {
         isLoading = true
         errorMessage = nil
         
+        // Store source image for later saving
+        sourceImage = image
+        
         do {
-            // Note: OpenAIService already optimizes the image internally
-            let response = try await OpenAIService.extractRecipe(from: image)
+            let response: OpenAIRecipeResponse
+            
+            if useCostOptimizedExtraction {
+                // Cost-optimized approach: iOS OCR -> on-device parsing -> optional OpenAI refinement
+                // This is MUCH cheaper than sending images to OpenAI Vision API
+                response = try await costOptimizedExtractor.extractRecipe(
+                    from: [image],
+                    useOpenAIRefinement: useOpenAIRefinement
+                )
+            } else {
+                // Direct OpenAI Vision API approach (more expensive but potentially better quality)
+                response = try await OpenAIService.extractRecipe(from: image)
+            }
             
             // Populate fields
             title = response.title
@@ -407,12 +437,31 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             // Use first image URL for backward compatibility
             let mainImageURL = allImageURLs.first
             
+            // Upload source image if available
+            var sourceImageURLs: [String] = []
+            if let sourceImage = sourceImage {
+                print("📸 Starting source image upload")
+                let sourceImagePath = "source-images/\(UUID().uuidString).jpg"
+                do {
+                    let url = try await storageService.uploadImage(sourceImage, path: sourceImagePath)
+                    sourceImageURLs.append(url)
+                    print("✅ Uploaded source image: \(url)")
+                } catch {
+                    print("❌ Failed to upload source image: \(error.localizedDescription)")
+                    // Continue even if upload fails
+                }
+            } else {
+                print("⚠️ No source image available to upload")
+            }
+            print("📸 Source image URLs: \(sourceImageURLs)")
+            
             // Convert instructions to Instruction objects
             let instructionObjects = validInstructions.map { text in
                 Instruction(text: text.trimmingCharacters(in: .whitespaces))
             }
             
             // Create recipe
+            print("📝 Creating recipe with sourceImageURLs: \(sourceImageURLs)")
             let recipe = Recipe(
                 title: title.trimmingCharacters(in: .whitespaces),
                 description: description.trimmingCharacters(in: .whitespaces),
@@ -427,12 +476,16 @@ class ExtractMenuWithAIViewModel: ObservableObject {
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
                 imageURL: mainImageURL, // For backward compatibility
                 imageURLs: allImageURLs, // Array of all image URLs
+                sourceImageURL: sourceImageURLs.first, // For backward compatibility
+                sourceImageURLs: sourceImageURLs,
                 authorID: userID,
                 authorName: displayName,
                 authorUsername: username
             )
             
+            print("📝 Recipe created with sourceImageURLs count: \(recipe.sourceImageURLs.count)")
             try await recipeService.createRecipe(recipe)
+            print("✅ Recipe saved to Firestore with sourceImageURLs: \(recipe.sourceImageURLs)")
             isLoading = false
             
             // Post notification to refresh account view

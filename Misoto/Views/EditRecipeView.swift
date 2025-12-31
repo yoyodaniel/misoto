@@ -214,7 +214,10 @@ struct EditRecipeView: View {
                 makeInstructionsContent()
             },
             optionalContent: {
-                makeSourceSection()
+                Group {
+                    makeSourceSection()
+                    makeDatesSection()
+                }
             }
         )
         .sheet(isPresented: $showFullScreenImage) {
@@ -485,6 +488,38 @@ struct EditRecipeView: View {
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    private func makeDatesSection() -> some View {
+        Section {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text(NSLocalizedString("Created on:", comment: "Created on label"))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text(formatDate(viewModel.recipe.createdAt))
+                        .foregroundColor(.primary)
+                }
+                
+                HStack {
+                    Text(NSLocalizedString("Updated on:", comment: "Updated on label"))
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text(formatDate(viewModel.recipe.updatedAt))
+                        .foregroundColor(.primary)
+                }
+            }
+            .font(.caption)
+        }
+    }
+    
+    // Format date as dd-mmm-yyyy (e.g., 25-Dec-2025)
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MMM-yyyy"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter.string(from: date)
     }
 }
 

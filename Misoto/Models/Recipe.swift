@@ -23,7 +23,8 @@ struct Recipe: Identifiable, Codable {
     var cuisine: String?
     var imageURL: String? // Deprecated: use imageURLs instead, kept for backward compatibility
     var imageURLs: [String] // Array of image URLs (up to 5)
-    var sourceImageURL: String? // URL of the source image used for extraction
+    var sourceImageURL: String? // Deprecated: use sourceImageURLs instead, kept for backward compatibility
+    var sourceImageURLs: [String] // Array of source image URLs used for extraction
     var authorID: String
     var authorName: String
     var authorUsername: String?
@@ -47,6 +48,7 @@ struct Recipe: Identifiable, Codable {
         case imageURL
         case imageURLs
         case sourceImageURL
+        case sourceImageURLs = "sourceImages" // Firebase field name
         case authorID
         case authorName
         case authorUsername
@@ -131,7 +133,16 @@ struct Recipe: Identifiable, Codable {
             imageURLs = []
         }
         
-        sourceImageURL = try container.decodeIfPresent(String.self, forKey: .sourceImageURL)
+        // Handle source image URLs for backward compatibility
+        if let urls = try? container.decodeIfPresent([String].self, forKey: .sourceImageURLs) {
+            sourceImageURLs = urls
+        } else if let url = try? container.decodeIfPresent(String.self, forKey: .sourceImageURL) {
+            // Convert old single sourceImageURL to array for backward compatibility
+            sourceImageURLs = [url]
+        } else {
+            sourceImageURLs = []
+        }
+        sourceImageURL = try container.decodeIfPresent(String.self, forKey: .sourceImageURL) // Keep for backward compatibility
         tips = try container.decodeIfPresent([String].self, forKey: .tips) ?? []
         
         // Difficulty with fallback
@@ -237,6 +248,8 @@ struct Recipe: Identifiable, Codable {
         cuisine: String? = nil,
         imageURL: String? = nil, // Deprecated: use imageURLs instead
         imageURLs: [String] = [],
+        sourceImageURL: String? = nil, // Deprecated: use sourceImageURLs instead
+        sourceImageURLs: [String] = [],
         authorID: String,
         authorName: String,
         authorUsername: String? = nil,
@@ -268,6 +281,22 @@ struct Recipe: Identifiable, Codable {
             self.imageURLs = [imageURL]
         } else {
             self.imageURLs = []
+        }
+        // Handle source image URLs: if sourceImageURLs is provided, use it; otherwise convert sourceImageURL to array
+        if !sourceImageURLs.isEmpty {
+            self.sourceImageURLs = sourceImageURLs
+            // Set sourceImageURL to first item for backward compatibility if not already set
+            if sourceImageURL == nil {
+                self.sourceImageURL = sourceImageURLs.first
+            } else {
+                self.sourceImageURL = sourceImageURL
+            }
+        } else if let sourceImageURL = sourceImageURL {
+            self.sourceImageURLs = [sourceImageURL]
+            self.sourceImageURL = sourceImageURL
+        } else {
+            self.sourceImageURLs = []
+            self.sourceImageURL = nil
         }
         self.authorID = authorID
         self.authorName = authorName
