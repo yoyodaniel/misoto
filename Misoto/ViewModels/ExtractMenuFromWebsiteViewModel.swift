@@ -414,7 +414,6 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
         let validBaseItems = baseIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validDoughItems = doughIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validToppingItems = toppingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validIngredientItems = validMarinadeItems + validSeasoningItems + validDishItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
         
         guard !validDishItems.isEmpty else {
             errorMessage = LocalizedString("At least one dish ingredient is required", comment: "Dish ingredients required error")

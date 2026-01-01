@@ -1453,7 +1453,6 @@ class OpenAIService {
         }
         
         guard httpResponse.statusCode == 200 else {
-            let errorMessage = String(data: responseData, encoding: .utf8) ?? "Unknown error"
             throw OpenAIError.httpError(httpResponse.statusCode)
         }
         

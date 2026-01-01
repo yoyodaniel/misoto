@@ -202,18 +202,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
     
     // Helper to parse ingredient string (expose parser method)
     private func parseIngredient(_ ingredient: String) -> RecipeTextParser.IngredientItem {
-        // Use the parser's private method by creating a new ParsedRecipe
-        let dummy = RecipeTextParser.ParsedRecipe(
-            title: "",
-            description: "",
-            ingredients: [ingredient],
-            marinadeIngredients: [],
-            seasoningIngredients: [],
-            dishIngredients: [],
-            instructions: []
-        )
-        // This won't work, let me use a different approach
-        // Actually, we can just parse it manually here
+        // Parse it manually here
         return parseIngredientString(ingredient)
     }
     
@@ -394,7 +383,6 @@ class ExtractMenuFromImageViewModel: ObservableObject {
         let validBaseItems = baseIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validDoughItems = doughIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validToppingItems = toppingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validIngredientItems = validMarinadeItems + validSeasoningItems + validDishItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
         
         guard !validDishItems.isEmpty else {
             errorMessage = LocalizedString("At least one dish ingredient is required", comment: "Dish ingredients required error")

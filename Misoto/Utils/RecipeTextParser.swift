@@ -336,7 +336,7 @@ struct RecipeTextParser {
                 continue
             }
             
-            var item = parseIngredientItem(line)
+            let item = parseIngredientItem(line)
             // Additional validation: ensure ingredient name makes sense for food
             if !item.name.trimmingCharacters(in: .whitespaces).isEmpty {
                 // Validate that the ingredient name is food-related
@@ -491,7 +491,7 @@ struct RecipeTextParser {
     
     private static func parseIngredientLine(_ line: String) -> String {
         // Remove bullet points and numbering
-        var cleaned = line
+        let cleaned = line
             .replacingOccurrences(of: "^[•\\-\\*]\\s*", with: "", options: .regularExpression)
             .replacingOccurrences(of: "^\\d+[.)]\\s*", with: "", options: .regularExpression)
             .trimmingCharacters(in: .whitespaces)
@@ -500,7 +500,7 @@ struct RecipeTextParser {
     }
     
     private static func cleanIngredient(_ ingredient: String) -> String {
-        var cleaned = ingredient
+        let cleaned = ingredient
             // Remove leading/trailing symbols (including degree symbol)
             .replacingOccurrences(of: "^[#*°]+\\s*", with: "", options: .regularExpression)
             .replacingOccurrences(of: "\\s*[#*°]+$", with: "", options: .regularExpression)
@@ -702,7 +702,7 @@ struct RecipeTextParser {
     }
     
     private static func cleanInstruction(_ instruction: String) -> String {
-        var cleaned = instruction
+        let cleaned = instruction
             // Remove leading/trailing symbols (including degree symbol)
             .replacingOccurrences(of: "^[#*°]+\\s*", with: "", options: .regularExpression)
             .replacingOccurrences(of: "\\s*[#*°]+$", with: "", options: .regularExpression)
@@ -726,7 +726,7 @@ struct RecipeTextParser {
     
     private static func parseInstructionLine(_ line: String) -> String {
         // Remove step numbering
-        var cleaned = line
+        let cleaned = line
             .replacingOccurrences(of: "^\\d+[.)]\\s*", with: "", options: .regularExpression)
             .replacingOccurrences(of: "^step\\s+\\d+[.:]?\\s*", with: "", options: [.regularExpression, .caseInsensitive])
             .replacingOccurrences(of: "^[•\\-\\*]\\s*", with: "", options: .regularExpression)

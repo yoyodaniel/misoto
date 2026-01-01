@@ -344,8 +344,8 @@ class EditRecipeViewModel: ObservableObject {
     // MARK: - Save Recipe
     
     func updateRecipe() async -> Bool {
-        guard let userID = Auth.auth().currentUser?.uid,
-              let displayName = Auth.auth().currentUser?.displayName else {
+        guard Auth.auth().currentUser?.uid != nil,
+              Auth.auth().currentUser?.displayName != nil else {
             errorMessage = LocalizedString("You must be logged in to update a recipe", comment: "Not logged in error")
             return false
         }
@@ -440,7 +440,7 @@ class EditRecipeViewModel: ObservableObject {
             
             // Upload instruction images/videos and create Instruction objects
             var uploadedInstructions: [Instruction] = []
-            for (index, instructionItem) in validInstructions.enumerated() {
+            for instructionItem in validInstructions {
                 var imageURL: String? = instructionItem.existingImageURL
                 var videoURL: String? = instructionItem.existingVideoURL
                 

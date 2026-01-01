@@ -212,7 +212,7 @@ struct LocalizedView: ViewModifier {
             // Observe language changes to trigger view updates
             // Use onChange to refresh content without changing the view identity
             // This prevents sheets from dismissing when language changes
-            .onChange(of: localizationManager.currentLanguage) { _ in
+            .onChange(of: localizationManager.currentLanguage) {
                 // The @ObservedObject will automatically trigger view updates
                 // No need to change the view ID which would cause sheets to dismiss
             }

@@ -29,12 +29,7 @@ class RecipeTextProcessor {
         }
         
         // Step 2: Correct OCR errors using intelligent spell checking
-        do {
-            processedText = await correctTextWithSpellChecker(processedText)
-        } catch {
-            print("Spell checking error: \(error.localizedDescription), using text before spell check")
-            // Continue with text before spell check
-        }
+        processedText = await correctTextWithSpellChecker(processedText)
         
         // Step 3: Fix common recipe-specific OCR issues
         processedText = fixRecipeSpecificOCRIssues(processedText)
@@ -72,25 +67,23 @@ class RecipeTextProcessor {
     
     // Correct text using UITextChecker (uses on-device language models)
     private func correctTextWithSpellChecker(_ text: String) async -> String {
-        return await Task.detached { [text] in
-            let checker = UITextChecker()
-            let language = "en"
-            let lines = text.components(separatedBy: .newlines)
-            var correctedLines: [String] = []
-            
-            for line in lines {
-                // Skip measurement lines - they're usually correct
-                if Self.isMeasurementLine(line) {
-                    correctedLines.append(line)
-                    continue
-                }
-                
-                let correctedLine = Self.correctLine(line, checker: checker, language: language)
-                correctedLines.append(correctedLine)
+        let checker = UITextChecker()
+        let language = "en"
+        let lines = text.components(separatedBy: .newlines)
+        var correctedLines: [String] = []
+        
+        for line in lines {
+            // Skip measurement lines - they're usually correct
+            if Self.isMeasurementLine(line) {
+                correctedLines.append(line)
+                continue
             }
             
-            return correctedLines.joined(separator: "\n")
-        }.value
+            let correctedLine = await Self.correctLine(line, checker: checker, language: language)
+            correctedLines.append(correctedLine)
+        }
+        
+        return correctedLines.joined(separator: "\n")
     }
     
     // Check if line is a measurement line (shouldn't be spell-checked)
@@ -100,7 +93,8 @@ class RecipeTextProcessor {
     }
     
     // Correct a single line using spell checker
-    nonisolated private static func correctLine(_ line: String, checker: UITextChecker, language: String) -> String {
+    @MainActor
+    private static func correctLine(_ line: String, checker: UITextChecker, language: String) -> String {
         let words = line.components(separatedBy: .whitespaces)
         var correctedWords: [String] = []
         
@@ -229,7 +223,7 @@ class RecipeTextProcessor {
         let lines = text.components(separatedBy: .newlines)
         var structuredLines: [String] = []
         
-        for (index, line) in lines.enumerated() {
+        for (_, line) in lines.enumerated() {
             var processedLine = line.trimmingCharacters(in: .whitespaces)
             
             if processedLine.isEmpty {

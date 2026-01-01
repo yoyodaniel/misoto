@@ -1127,10 +1127,10 @@ struct ExtractMenuFromImageView: View {
             )
             VideoPickerView(selectedVideoURL: videoBinding)
         }
-        .onChange(of: selectedInstructionPhotos) { photos in
-            handleInstructionPhotosChange(photos)
+        .onChange(of: selectedInstructionPhotos) { oldValue, newValue in
+            handleInstructionPhotosChange(newValue)
         }
-        .onChange(of: viewModel.title) { _ in
+        .onChange(of: viewModel.title) {
             // Auto-detect cuisine when title changes (with debounce)
             cuisineDetectionTask?.cancel()
             cuisineDetectionTask = Task {
@@ -1141,7 +1141,7 @@ struct ExtractMenuFromImageView: View {
                 }
             }
         }
-        .onChange(of: viewModel.dishIngredients) { _ in
+        .onChange(of: viewModel.dishIngredients) {
             // Auto-detect cuisine when ingredients change (with debounce)
             cuisineDetectionTask?.cancel()
             cuisineDetectionTask = Task {

@@ -399,7 +399,7 @@ class UploadRecipeViewModel: ObservableObject {
             
             // Upload instruction images/videos and create Instruction objects
             var uploadedInstructions: [Instruction] = []
-            for (index, instructionItem) in validInstructions.enumerated() {
+            for instructionItem in validInstructions {
                 var imageURL: String? = nil
                 var videoURL: String? = nil
                 

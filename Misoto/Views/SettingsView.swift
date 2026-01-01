@@ -33,7 +33,7 @@ struct SettingsView: View {
                             Text(LocalizedString("Dark Mode", comment: "Dark mode setting"))
                         }
                     }
-                    .onChange(of: appSettings.isDarkModeEnabled) { _ in
+                    .onChange(of: appSettings.isDarkModeEnabled) {
                         HapticFeedback.buttonTap()
                     }
                     
@@ -45,7 +45,7 @@ struct SettingsView: View {
                             Text(LocalizedString("Haptic Feedback", comment: "Haptic feedback setting"))
                         }
                     }
-                    .onChange(of: appSettings.isHapticFeedbackEnabled) { _ in
+                    .onChange(of: appSettings.isHapticFeedbackEnabled) {
                         // Play haptic when toggling (if it was enabled)
                         if appSettings.isHapticFeedbackEnabled {
                             HapticFeedback.play(.medium)
