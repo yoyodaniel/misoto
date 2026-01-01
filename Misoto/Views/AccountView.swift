@@ -18,7 +18,7 @@ struct AccountView: View {
     @State private var selectedRecipe: Recipe?
     @State private var showDeleteConfirmation = false
     @State private var recipeToDelete: Recipe?
-    @State private var showSettingsMenu = false
+    @State private var showSettings = false
     @State private var showEditProfile = false
     @State private var recipeToEdit: Recipe?
     @State private var lastRefreshTime: Date?
@@ -120,9 +120,10 @@ struct AccountView: View {
                                 // Edit Profile and Settings Buttons
                                 HStack(spacing: 12) {
                                     Button(action: {
+                                        HapticFeedback.buttonTap()
                                         showEditProfile = true
                                     }) {
-                                        Text(NSLocalizedString("Edit Profile", comment: "Edit profile button"))
+                                        Text(LocalizedString("Edit Profile", comment: "Edit profile button"))
                                             .font(.subheadline)
                                             .fontWeight(.semibold)
                                             .foregroundColor(.white)
@@ -133,7 +134,8 @@ struct AccountView: View {
                                     }
                                     
                                     Button(action: {
-                                        showSettingsMenu = true
+                                        HapticFeedback.buttonTap()
+                                        showSettings = true
                                     }) {
                                         Image(systemName: "gearshape.fill")
                                             .font(.system(size: 16))
@@ -147,9 +149,9 @@ struct AccountView: View {
                                 
                                 // Stats
                                 HStack(spacing: 40) {
-                                    StatItem(value: "\(user.recipeCount)", label: NSLocalizedString("Recipes", comment: "Recipes count"))
-                                    StatItem(value: "\(user.followerCount)", label: NSLocalizedString("Followers", comment: "Followers count"))
-                                    StatItem(value: "\(user.followingCount)", label: NSLocalizedString("Following", comment: "Following count"))
+                                    StatItem(value: "\(user.recipeCount)", label: LocalizedString("Recipes", comment: "Recipes count"))
+                                    StatItem(value: "\(user.followerCount)", label: LocalizedString("Followers", comment: "Followers count"))
+                                    StatItem(value: "\(user.followingCount)", label: LocalizedString("Following", comment: "Following count"))
                                 }
                                 .padding(.top, 8)
                             }
@@ -169,12 +171,12 @@ struct AccountView: View {
                                     .foregroundColor(.secondary.opacity(0.6))
                                 
                                 VStack(spacing: 8) {
-                                    Text(NSLocalizedString("No recipes yet", comment: "No recipes message"))
+                                    Text(LocalizedString("No recipes yet", comment: "No recipes message"))
                                         .font(.title3)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.primary)
                                     
-                                    Text(NSLocalizedString("Start sharing your favorite recipes with the community!", comment: "Recipes hint"))
+                                    Text(LocalizedString("Start sharing your favorite recipes with the community!", comment: "Recipes hint"))
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                         .multilineTextAlignment(.center)
@@ -202,14 +204,14 @@ struct AccountView: View {
                                             Button(action: {
                                                 recipeToEdit = recipe
                                             }) {
-                                                Label(NSLocalizedString("Edit Recipe", comment: "Edit recipe button"), systemImage: "pencil")
+                                                Label(LocalizedString("Edit Recipe", comment: "Edit recipe button"), systemImage: "pencil")
                                             }
                                             
                                             Button(role: .destructive, action: {
                                                 recipeToDelete = recipe
                                                 showDeleteConfirmation = true
                                             }) {
-                                                Label(NSLocalizedString("Delete", comment: "Delete button"), systemImage: "trash")
+                                                Label(LocalizedString("Delete", comment: "Delete button"), systemImage: "trash")
                                             }
                                         }
                                 }
@@ -274,11 +276,12 @@ struct AccountView: View {
             ModernRecipeDetailView(recipe: recipe)
         }
         .confirmationDialog(
-            NSLocalizedString("Delete Recipe", comment: "Delete confirmation title"),
+            LocalizedString("Delete Recipe", comment: "Delete confirmation title"),
             isPresented: $showDeleteConfirmation,
             titleVisibility: .visible
         ) {
-            Button(NSLocalizedString("Delete", comment: "Delete button"), role: .destructive) {
+            Button(LocalizedString("Delete", comment: "Delete button"), role: .destructive) {
+                HapticFeedback.play(.error)
                 if let recipe = recipeToDelete {
                     // Delete immediately (optimistic update - removes from UI instantly)
                     viewModel.deleteRecipe(recipe)
@@ -286,21 +289,15 @@ struct AccountView: View {
                     recipeToDelete = nil
                 }
             }
-            Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
+            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
                 recipeToDelete = nil
             }
         } message: {
-            Text(NSLocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))
+            Text(LocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))
         }
-        .confirmationDialog(
-            NSLocalizedString("Settings", comment: "Settings menu title"),
-            isPresented: $showSettingsMenu,
-            titleVisibility: .visible
-        ) {
-            Button(NSLocalizedString("Sign Out", comment: "Sign out button"), role: .destructive) {
-                authViewModel.signOut()
-            }
-            Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+                .environmentObject(authViewModel)
         }
     }
 }

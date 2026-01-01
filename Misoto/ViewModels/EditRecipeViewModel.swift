@@ -346,12 +346,12 @@ class EditRecipeViewModel: ObservableObject {
     func updateRecipe() async -> Bool {
         guard let userID = Auth.auth().currentUser?.uid,
               let displayName = Auth.auth().currentUser?.displayName else {
-            errorMessage = NSLocalizedString("You must be logged in to update a recipe", comment: "Not logged in error")
+            errorMessage = LocalizedString("You must be logged in to update a recipe", comment: "Not logged in error")
             return false
         }
         
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
-            errorMessage = NSLocalizedString("Title is required", comment: "Title required error")
+            errorMessage = LocalizedString("Title is required", comment: "Title required error")
             return false
         }
         
@@ -368,7 +368,7 @@ class EditRecipeViewModel: ObservableObject {
         let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
         
         guard !allValidIngredients.isEmpty else {
-            errorMessage = NSLocalizedString("At least one ingredient is required", comment: "Ingredients required error")
+            errorMessage = LocalizedString("At least one ingredient is required", comment: "Ingredients required error")
             return false
         }
         
@@ -402,7 +402,7 @@ class EditRecipeViewModel: ObservableObject {
         
         let validInstructions = instructions.filter { !$0.text.trimmingCharacters(in: .whitespaces).isEmpty }
         guard !validInstructions.isEmpty else {
-            errorMessage = NSLocalizedString("At least one instruction is required", comment: "Instructions required error")
+            errorMessage = LocalizedString("At least one instruction is required", comment: "Instructions required error")
             return false
         }
         

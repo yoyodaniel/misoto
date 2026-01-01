@@ -1,0 +1,702 @@
+//
+//  ExtractMenuFromWebsiteViewModel.swift
+//  Misoto
+//
+//  ViewModel for extracting recipes from websites using web browser
+//
+
+import Foundation
+import Combine
+import FirebaseAuth
+import UIKit
+import WebKit
+
+@MainActor
+class ExtractMenuFromWebsiteViewModel: ObservableObject {
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    @Published var showEditRecipe = false
+    @Published var isGeneratingDescription = false
+    @Published var isDetectingCuisine = false
+    @Published var isExtractingTime = false
+    @Published var isDetectingDifficulty = false
+    @Published var isExtractingContent = false
+    
+    // Recipe fields for editing
+    @Published var title = ""
+    @Published var description = ""
+    @Published var cuisine: String? = nil
+    @Published var prepTime: Int = 15
+    @Published var cookTime: Int = 30
+    @Published var servings: Int = 4
+    @Published var difficulty: Recipe.Difficulty = .c
+    @Published var spicyLevel: Recipe.SpicyLevel = .none
+    @Published var tips: [String] = []
+    @Published var marinadeIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var seasoningIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var dishIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var batterIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var sauceIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var baseIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var doughIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var toppingIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var instructions: [String] = []
+    @Published var mainRecipeImages: [UIImage] = [] // Up to 5 images for the recipe
+    @Published var sourceURL: String? = nil // URL from which recipe was extracted
+    
+    private let recipeService = RecipeService()
+    private let storageService = StorageService()
+    private let textProcessor = RecipeTextProcessor()
+    
+    /// Extract recipe from web content
+    /// First uses on-device Foundation models to clean text, then sends to OpenAI for parsing
+    func extractRecipe(from webView: WKWebView) async {
+        isExtractingContent = true
+        isLoading = true
+        errorMessage = nil
+        
+        // Store the current URL as source
+        if let currentURL = webView.url?.absoluteString {
+            sourceURL = currentURL
+        }
+        
+        do {
+            // Step 1: Extract raw text from web page
+            var rawText = try await WebContentExtractor.extractText(from: webView)
+            
+            // Step 1.5: Detect language and translate to English if needed
+            print("🔍 Detecting language of extracted web content...")
+            rawText = await TextTranslationService.translateToEnglish(rawText)
+            print("✅ Web content ready for processing (translated to English if needed)")
+            
+            // Step 1.6: Extract recipe image from web page
+            do {
+                if let recipeImage = try await WebContentExtractor.extractRecipeImage(from: webView) {
+                    // Only add if we don't already have 5 images
+                    if mainRecipeImages.count < 5 {
+                        addRecipeImage(recipeImage)
+                        print("✅ Added recipe image to collection")
+                    } else {
+                        print("⚠️ Recipe image found but already have 5 images")
+                    }
+                } else {
+                    print("⚠️ No recipe image found on webpage")
+                }
+            } catch {
+                print("⚠️ Error extracting recipe image: \(error.localizedDescription)")
+                // Continue with recipe extraction even if image extraction fails
+            }
+            
+            // Step 2: Use on-device Foundation models to clean and process text
+            // Note: rawText is already translated to English at this point
+            let cleanedText = await textProcessor.processAndCorrectText(rawText)
+            
+            // Step 3: Send to OpenAI API for parsing into recipe structure
+            let response = try await OpenAIService.parseRecipeFromText(cleanedText)
+            
+            // Step 4: Translate recipe to user's selected language
+            print("🌍 Translating extracted recipe to user's selected language...")
+            let translated = await RecipeTranslationService.translateRecipe(
+                title: response.title,
+                description: response.description,
+                dishIngredients: response.dishIngredients,
+                marinadeIngredients: response.marinadeIngredients,
+                seasoningIngredients: response.seasoningIngredients,
+                batterIngredients: response.batterIngredients,
+                sauceIngredients: response.sauceIngredients,
+                baseIngredients: response.baseIngredients,
+                doughIngredients: response.doughIngredients,
+                toppingIngredients: response.toppingIngredients,
+                instructions: response.instructions,
+                tips: response.tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
+                cuisine: nil // Will be detected later
+            )
+            
+            // Populate fields with translated content
+            title = translated.title
+            description = translated.description
+            dishIngredients = translated.dishIngredients.isEmpty ? [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")] : translated.dishIngredients
+            marinadeIngredients = translated.marinadeIngredients
+            seasoningIngredients = translated.seasoningIngredients
+            batterIngredients = translated.batterIngredients
+            sauceIngredients = translated.sauceIngredients
+            baseIngredients = translated.baseIngredients
+            doughIngredients = translated.doughIngredients
+            toppingIngredients = translated.toppingIngredients
+            instructions = translated.instructions.isEmpty ? [""] : translated.instructions
+            tips = translated.tips
+            
+            // Use extracted servings, prepTime, and cookTime if available (non-zero means found)
+            if response.servings > 0 {
+                servings = response.servings
+            }
+            if response.prepTime > 0 {
+                prepTime = response.prepTime
+            }
+            if response.cookTime > 0 {
+                cookTime = response.cookTime
+            }
+            
+            // Auto-generate description, auto-detect cuisine, extract time (if not already extracted), and detect difficulty after extraction
+            // Small delay to ensure all fields are properly set
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second
+            await generateDescription()
+            await detectCuisine()
+            // Only extract time if it wasn't already extracted
+            if response.prepTime == 0 && response.cookTime == 0 {
+                await extractTime()
+            }
+            await detectDifficulty()
+            
+            showEditRecipe = true
+            isLoading = false
+            isExtractingContent = false
+        } catch {
+            isLoading = false
+            isExtractingContent = false
+            if let webError = error as? WebContentExtractorError {
+                errorMessage = webError.localizedDescription
+            } else if let openAIError = error as? OpenAIError {
+                errorMessage = openAIError.localizedDescription
+            } else {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+    
+    // MARK: - Ingredient Management
+    
+    func addDishIngredient() {
+        dishIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeDishIngredient(at index: Int) {
+        guard index >= 0 && index < dishIngredients.count else { return }
+        dishIngredients.remove(at: index)
+    }
+    
+    func updateDishIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < dishIngredients.count else { return }
+        dishIngredients[index].amount = amount
+    }
+    
+    func updateDishIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < dishIngredients.count else { return }
+        dishIngredients[index].unit = unit
+    }
+    
+    func updateDishIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < dishIngredients.count else { return }
+        dishIngredients[index].name = name
+    }
+    
+    func addMarinadeIngredient() {
+        marinadeIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeMarinadeIngredient(at index: Int) {
+        guard index >= 0 && index < marinadeIngredients.count else { return }
+        marinadeIngredients.remove(at: index)
+    }
+    
+    func updateMarinadeIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < marinadeIngredients.count else { return }
+        marinadeIngredients[index].amount = amount
+    }
+    
+    func updateMarinadeIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < marinadeIngredients.count else { return }
+        marinadeIngredients[index].unit = unit
+    }
+    
+    func updateMarinadeIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < marinadeIngredients.count else { return }
+        marinadeIngredients[index].name = name
+    }
+    
+    func addSeasoningIngredient() {
+        seasoningIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeSeasoningIngredient(at index: Int) {
+        guard index >= 0 && index < seasoningIngredients.count else { return }
+        seasoningIngredients.remove(at: index)
+    }
+    
+    func updateSeasoningIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < seasoningIngredients.count else { return }
+        seasoningIngredients[index].amount = amount
+    }
+    
+    func updateSeasoningIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < seasoningIngredients.count else { return }
+        seasoningIngredients[index].unit = unit
+    }
+    
+    func updateSeasoningIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < seasoningIngredients.count else { return }
+        seasoningIngredients[index].name = name
+    }
+    
+    func updateInstruction(_ instruction: String, at index: Int) {
+        guard index >= 0 && index < instructions.count else { return }
+        instructions[index] = instruction
+    }
+    
+    func addInstruction() {
+        instructions.append("")
+    }
+    
+    func removeInstruction(at index: Int) {
+        guard index >= 0 && index < instructions.count else { return }
+        instructions.remove(at: index)
+    }
+    
+    // MARK: - Additional Ingredient Management (Batter and Sauce)
+    
+    func addBatterIngredient() {
+        batterIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeBatterIngredient(at index: Int) {
+        guard index >= 0 && index < batterIngredients.count else { return }
+        batterIngredients.remove(at: index)
+    }
+    
+    func updateBatterIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < batterIngredients.count else { return }
+        batterIngredients[index].amount = amount
+    }
+    
+    func updateBatterIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < batterIngredients.count else { return }
+        batterIngredients[index].unit = unit
+    }
+    
+    func updateBatterIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < batterIngredients.count else { return }
+        batterIngredients[index].name = name
+    }
+    
+    func addSauceIngredient() {
+        sauceIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeSauceIngredient(at index: Int) {
+        guard index >= 0 && index < sauceIngredients.count else { return }
+        sauceIngredients.remove(at: index)
+    }
+    
+    func updateSauceIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < sauceIngredients.count else { return }
+        sauceIngredients[index].amount = amount
+    }
+    
+    func updateSauceIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < sauceIngredients.count else { return }
+        sauceIngredients[index].unit = unit
+    }
+    
+    func updateSauceIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < sauceIngredients.count else { return }
+        sauceIngredients[index].name = name
+    }
+    
+    func addBaseIngredient() {
+        baseIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeBaseIngredient(at index: Int) {
+        guard index >= 0 && index < baseIngredients.count else { return }
+        baseIngredients.remove(at: index)
+    }
+    
+    func updateBaseIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < baseIngredients.count else { return }
+        baseIngredients[index].amount = amount
+    }
+    
+    func updateBaseIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < baseIngredients.count else { return }
+        baseIngredients[index].unit = unit
+    }
+    
+    func updateBaseIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < baseIngredients.count else { return }
+        baseIngredients[index].name = name
+    }
+    
+    func addDoughIngredient() {
+        doughIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeDoughIngredient(at index: Int) {
+        guard index >= 0 && index < doughIngredients.count else { return }
+        doughIngredients.remove(at: index)
+    }
+    
+    func updateDoughIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < doughIngredients.count else { return }
+        doughIngredients[index].amount = amount
+    }
+    
+    func updateDoughIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < doughIngredients.count else { return }
+        doughIngredients[index].unit = unit
+    }
+    
+    func updateDoughIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < doughIngredients.count else { return }
+        doughIngredients[index].name = name
+    }
+    
+    func addToppingIngredient() {
+        toppingIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeToppingIngredient(at index: Int) {
+        guard index >= 0 && index < toppingIngredients.count else { return }
+        toppingIngredients.remove(at: index)
+    }
+    
+    func updateToppingIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < toppingIngredients.count else { return }
+        toppingIngredients[index].amount = amount
+    }
+    
+    func updateToppingIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < toppingIngredients.count else { return }
+        toppingIngredients[index].unit = unit
+    }
+    
+    func updateToppingIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < toppingIngredients.count else { return }
+        toppingIngredients[index].name = name
+    }
+    
+    // MARK: - Recipe Image Management
+    
+    func addRecipeImage(_ image: UIImage) {
+        guard mainRecipeImages.count < 5 else { return }
+        mainRecipeImages.append(image)
+    }
+    
+    func removeRecipeImage(at index: Int) {
+        guard index >= 0 && index < mainRecipeImages.count else { return }
+        mainRecipeImages.remove(at: index)
+    }
+    
+    // MARK: - Save Recipe
+    
+    func saveRecipe() async -> Bool {
+        guard let userID = Auth.auth().currentUser?.uid,
+              let displayName = Auth.auth().currentUser?.displayName else {
+            errorMessage = LocalizedString("You must be logged in to save a recipe", comment: "Not logged in error")
+            return false
+        }
+        
+        // Get username from AuthService (ensure user data is loaded)
+        let authService = AuthService()
+        await authService.reloadUserData()
+        let username = authService.currentUser?.username
+        
+        guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
+            errorMessage = LocalizedString("Title is required", comment: "Title required error")
+            return false
+        }
+        
+        // Combine all ingredient types, filter out empty ones
+        let validMarinadeItems = marinadeIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validSeasoningItems = seasoningIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validDishItems = dishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validBatterItems = batterIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validSauceItems = sauceIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validBaseItems = baseIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validDoughItems = doughIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validToppingItems = toppingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validIngredientItems = validMarinadeItems + validSeasoningItems + validDishItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
+        
+        guard !validDishItems.isEmpty else {
+            errorMessage = LocalizedString("At least one dish ingredient is required", comment: "Dish ingredients required error")
+            return false
+        }
+        
+        // Convert ingredient items to Ingredient objects with IDs and categories
+        var ingredientObjects: [Ingredient] = []
+        
+        // Add ingredients with their respective categories
+        ingredientObjects.append(contentsOf: validDishItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .dish) 
+        })
+        ingredientObjects.append(contentsOf: validMarinadeItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .marinade) 
+        })
+        ingredientObjects.append(contentsOf: validSeasoningItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .seasoning) 
+        })
+        ingredientObjects.append(contentsOf: validBatterItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .batter) 
+        })
+        ingredientObjects.append(contentsOf: validSauceItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .sauce) 
+        })
+        ingredientObjects.append(contentsOf: validBaseItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .base) 
+        })
+        ingredientObjects.append(contentsOf: validDoughItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .dough) 
+        })
+        ingredientObjects.append(contentsOf: validToppingItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .topping) 
+        })
+        
+        let validInstructions = instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        guard !validInstructions.isEmpty else {
+            errorMessage = LocalizedString("At least one instruction is required", comment: "Instructions required error")
+            return false
+        }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            // Upload all recipe images (up to 5)
+            var allImageURLs: [String] = []
+            for image in mainRecipeImages {
+                let imagePath = "recipes/\(UUID().uuidString).jpg"
+                if let url = try? await storageService.uploadImage(image, path: imagePath) {
+                    allImageURLs.append(url)
+                }
+            }
+            
+            // Use first image URL for backward compatibility
+            let mainImageURL = allImageURLs.first
+            
+            // Convert instructions to Instruction objects
+            let instructionObjects = validInstructions.map { text in
+                Instruction(text: text.trimmingCharacters(in: .whitespaces))
+            }
+            
+            // Create recipe
+            let recipe = Recipe(
+                title: title.trimmingCharacters(in: .whitespaces),
+                description: description.trimmingCharacters(in: .whitespaces),
+                ingredients: ingredientObjects,
+                instructions: instructionObjects,
+                prepTime: prepTime,
+                cookTime: cookTime,
+                servings: servings,
+                difficulty: difficulty,
+                spicyLevel: spicyLevel,
+                tips: tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
+                cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
+                imageURL: mainImageURL, // For backward compatibility
+                imageURLs: allImageURLs, // Array of all image URLs
+                authorID: userID,
+                authorName: displayName,
+                authorUsername: username
+            )
+            
+            try await recipeService.createRecipe(recipe)
+            isLoading = false
+            
+            // Post notification to refresh account view
+            NotificationCenter.default.post(name: NSNotification.Name("RecipeSaved"), object: nil)
+            
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            isLoading = false
+            return false
+        }
+    }
+    
+    // MARK: - AI Generation Methods
+    
+    /// Generate a description for the recipe using AI
+    func generateDescription() async {
+        guard !title.isEmpty else {
+            errorMessage = LocalizedString("Please enter a recipe title first", comment: "Title required for description")
+            return
+        }
+        
+        isGeneratingDescription = true
+        errorMessage = nil
+        
+        do {
+            let allIngredients = (marinadeIngredients + seasoningIngredients + dishIngredients)
+                .map { item in
+                    if item.unit.isEmpty {
+                        return item.amount.isEmpty ? item.name : "\(item.amount) \(item.name)"
+                    } else {
+                        return "\(item.amount) \(item.unit) \(item.name)"
+                    }
+                }
+                .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            
+            let generatedDescription = try await OpenAIService.generateRecipeDescription(
+                title: title,
+                ingredients: allIngredients,
+                instructions: instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            )
+            
+            if !generatedDescription.isEmpty {
+                description = generatedDescription
+            }
+        } catch {
+            errorMessage = LocalizedString("Failed to generate description: \(error.localizedDescription)", comment: "Description generation error")
+        }
+        
+        isGeneratingDescription = false
+    }
+    
+    /// Detect and set the most suitable cuisine for the recipe
+    func detectCuisine() async {
+        guard !title.isEmpty else {
+            return
+        }
+        
+        // Only detect if cuisine is not already set
+        guard cuisine == nil || cuisine?.isEmpty == true else {
+            return
+        }
+        
+        isDetectingCuisine = true
+        
+        do {
+            let allIngredients = (marinadeIngredients + seasoningIngredients + dishIngredients)
+                .map { item in
+                    if item.unit.isEmpty {
+                        return item.amount.isEmpty ? item.name : "\(item.amount) \(item.name)"
+                    } else {
+                        return "\(item.amount) \(item.unit) \(item.name)"
+                    }
+                }
+                .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            
+            if let detectedCuisine = try await OpenAIService.detectCuisine(
+                title: title,
+                ingredients: allIngredients,
+                instructions: instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            ) {
+                // Translate cuisine to user's selected language
+                let selectedLanguage = LocalizationManager.shared.currentLanguage
+                let targetLanguageCode: String
+                
+                switch selectedLanguage {
+                case .english:
+                    cuisine = detectedCuisine
+                    return
+                case .system:
+                    if let preferredLanguage = Locale.preferredLanguages.first {
+                        // Normalize Chinese regional variants to zh-Hans or zh-Hant
+                        targetLanguageCode = normalizeChineseLanguageCode(preferredLanguage)
+                    } else {
+                        cuisine = detectedCuisine
+                        return
+                    }
+                default:
+                    targetLanguageCode = selectedLanguage.rawValue
+                }
+                
+                if targetLanguageCode.lowercased() != "en" && !targetLanguageCode.lowercased().hasPrefix("en-") {
+                    do {
+                        cuisine = try await OpenAIService.translateFromEnglish(detectedCuisine, to: targetLanguageCode)
+                    } catch {
+                        print("⚠️ Failed to translate cuisine: \(error.localizedDescription)")
+                        cuisine = detectedCuisine // Fallback to original
+                    }
+                } else {
+                    cuisine = detectedCuisine
+                }
+            }
+        } catch {
+            // Silently fail for cuisine detection - it's not critical
+            print("Failed to detect cuisine: \(error.localizedDescription)")
+        }
+        
+        isDetectingCuisine = false
+    }
+    
+    /// Normalize Chinese language codes to zh-Hans or zh-Hant
+    /// - Parameter code: Language code from system (e.g., "zh-HK", "zh-TW", "zh-CN", "zh-Hans", "zh-Hant")
+    /// - Returns: Normalized code (zh-Hans or zh-Hant)
+    private func normalizeChineseLanguageCode(_ code: String) -> String {
+        let lowercased = code.lowercased()
+        
+        // Traditional Chinese regions: Hong Kong, Taiwan, Macau
+        if lowercased.hasPrefix("zh-hk") || lowercased.hasPrefix("zh-tw") || lowercased.hasPrefix("zh-mo") || lowercased == "zh-hant" {
+            return "zh-Hant"
+        }
+        
+        // Simplified Chinese regions: China, Singapore
+        if lowercased.hasPrefix("zh-cn") || lowercased.hasPrefix("zh-sg") || lowercased == "zh-hans" {
+            return "zh-Hans"
+        }
+        
+        // If it's just "zh" without variant, default to Simplified (most common)
+        if lowercased == "zh" {
+            return "zh-Hans"
+        }
+        
+        // For all other cases, return as-is
+        return code
+    }
+    
+    /// Extract preparation and cooking time from instructions
+    func extractTime() async {
+        guard !instructions.isEmpty else {
+            return
+        }
+        
+        isExtractingTime = true
+        
+        do {
+            let (extractedPrepTime, extractedCookTime) = try await OpenAIService.extractTimeFromInstructions(
+                title: title,
+                instructions: instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            )
+            prepTime = extractedPrepTime
+            cookTime = extractedCookTime
+        } catch {
+            // Silently fail for time extraction - use defaults
+            print("Failed to extract time: \(error.localizedDescription)")
+        }
+        
+        isExtractingTime = false
+    }
+    
+    /// Detect and set the difficulty level for the recipe
+    func detectDifficulty() async {
+        guard !title.isEmpty else {
+            return
+        }
+        
+        isDetectingDifficulty = true
+        
+        do {
+            let allIngredients = (marinadeIngredients + seasoningIngredients + dishIngredients)
+                .map { item in
+                    if item.unit.isEmpty {
+                        return item.amount.isEmpty ? item.name : "\(item.amount) \(item.name)"
+                    } else {
+                        return "\(item.amount) \(item.unit) \(item.name)"
+                    }
+                }
+                .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            
+            let detectedDifficulty = try await OpenAIService.detectDifficulty(
+                title: title,
+                ingredients: allIngredients,
+                instructions: instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            )
+            difficulty = detectedDifficulty
+        } catch {
+            // Silently fail for difficulty detection - use default
+            print("Failed to detect difficulty: \(error.localizedDescription)")
+        }
+        
+        isDetectingDifficulty = false
+    }
+}
+

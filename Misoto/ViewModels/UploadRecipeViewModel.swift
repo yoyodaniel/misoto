@@ -311,7 +311,7 @@ class UploadRecipeViewModel: ObservableObject {
     func uploadRecipe() async {
         guard let userID = Auth.auth().currentUser?.uid,
               let displayName = Auth.auth().currentUser?.displayName else {
-            errorMessage = NSLocalizedString("You must be logged in to upload a recipe", comment: "Not logged in error")
+            errorMessage = LocalizedString("You must be logged in to upload a recipe", comment: "Not logged in error")
             return
         }
         
@@ -321,7 +321,7 @@ class UploadRecipeViewModel: ObservableObject {
         
         // Validate
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
-            errorMessage = NSLocalizedString("Title is required", comment: "Title required error")
+            errorMessage = LocalizedString("Title is required", comment: "Title required error")
             return
         }
         
@@ -338,7 +338,7 @@ class UploadRecipeViewModel: ObservableObject {
         let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
         
         guard !allValidIngredients.isEmpty else {
-            errorMessage = NSLocalizedString("At least one ingredient is required", comment: "Ingredients required error")
+            errorMessage = LocalizedString("At least one ingredient is required", comment: "Ingredients required error")
             return
         }
         
@@ -376,7 +376,7 @@ class UploadRecipeViewModel: ObservableObject {
         
         let validInstructions = instructions.filter { !$0.text.trimmingCharacters(in: .whitespaces).isEmpty }
         guard !validInstructions.isEmpty else {
-            errorMessage = NSLocalizedString("At least one instruction is required", comment: "Instructions required error")
+            errorMessage = LocalizedString("At least one instruction is required", comment: "Instructions required error")
             return
         }
         
@@ -483,7 +483,7 @@ class UploadRecipeViewModel: ObservableObject {
     /// Generate a description for the recipe using AI
     func generateDescription() async {
         guard !title.isEmpty else {
-            errorMessage = NSLocalizedString("Please enter a recipe title first", comment: "Title required for description")
+            errorMessage = LocalizedString("Please enter a recipe title first", comment: "Title required for description")
             return
         }
         
@@ -530,7 +530,7 @@ class UploadRecipeViewModel: ObservableObject {
                 description = generatedDescription
             }
         } catch {
-            errorMessage = NSLocalizedString("Failed to generate description: \(error.localizedDescription)", comment: "Description generation error")
+            errorMessage = LocalizedString("Failed to generate description: \(error.localizedDescription)", comment: "Description generation error")
         }
         
         isGeneratingDescription = false

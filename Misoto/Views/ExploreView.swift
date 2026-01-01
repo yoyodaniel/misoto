@@ -14,10 +14,10 @@ struct ExploreView: View {
     @State private var searchText = ""
     
     let categories = [
-        NSLocalizedString("Today's Recommendations", comment: "Today's recommendations"),
-        NSLocalizedString("Weekly Menu", comment: "Weekly menu"),
-        NSLocalizedString("Trending", comment: "Trending"),
-        NSLocalizedString("Ranking", comment: "Ranking")
+        LocalizedString("Today's Recommendations", comment: "Today's recommendations"),
+        LocalizedString("Weekly Menu", comment: "Weekly menu"),
+        LocalizedString("Trending", comment: "Trending"),
+        LocalizedString("Ranking", comment: "Ranking")
     ]
     
     var body: some View {
@@ -30,7 +30,7 @@ struct ExploreView: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.secondary)
-                    TextField(NSLocalizedString("Search ingredients, recipes", comment: "Search placeholder"), text: $searchText)
+                    TextField(LocalizedString("Search ingredients, recipes", comment: "Search placeholder"), text: $searchText)
                         .textFieldStyle(.plain)
                 }
                 .padding(.horizontal, 16)
@@ -67,7 +67,7 @@ struct ExploreView: View {
                         Image(systemName: "fork.knife")
                             .font(.system(size: 60))
                             .foregroundColor(.secondary)
-                        Text(NSLocalizedString("No recipes found", comment: "No recipes message"))
+                        Text(LocalizedString("No recipes found", comment: "No recipes message"))
                             .foregroundColor(.secondary)
                     }
                     Spacer()

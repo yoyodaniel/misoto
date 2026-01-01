@@ -139,7 +139,7 @@ struct ModernRecipeDetailView: View {
                         VStack(alignment: .leading, spacing: 24) {
                             // Ingredients Section
                             VStack(alignment: .leading, spacing: 16) {
-                                Text(NSLocalizedString("Ingredients for \(recipe.servings) servings", comment: "Ingredients header"))
+                                Text(LocalizedString("Ingredients for \(recipe.servings) servings", comment: "Ingredients header"))
                                     .font(.system(size: 20, weight: .bold))
                                 
                                 ForEach(Array(recipe.ingredients.enumerated()), id: \.offset) { index, ingredient in
@@ -160,7 +160,7 @@ struct ModernRecipeDetailView: View {
                             
                             // Instructions Section
                             VStack(alignment: .leading, spacing: 20) {
-                                Text(NSLocalizedString("Steps", comment: "Steps header"))
+                                Text(LocalizedString("Steps", comment: "Steps header"))
                                     .font(.system(size: 20, weight: .bold))
                                 
                                 ForEach(Array(recipe.instructions.enumerated()), id: \.offset) { index, instruction in
@@ -198,7 +198,7 @@ struct ModernRecipeDetailView: View {
                                             Link(destination: url) {
                                                 HStack {
                                                     Image(systemName: "play.circle.fill")
-                                                    Text(NSLocalizedString("Watch Video", comment: "Watch video link"))
+                                                    Text(LocalizedString("Watch Video", comment: "Watch video link"))
                                                 }
                                                 .foregroundColor(.accentColor)
                                             }
@@ -234,18 +234,18 @@ struct ModernRecipeDetailView: View {
             await checkFavoriteStatus()
         }
         .confirmationDialog(
-            NSLocalizedString("Delete Recipe", comment: "Delete confirmation title"),
+            LocalizedString("Delete Recipe", comment: "Delete confirmation title"),
             isPresented: $showDeleteConfirmation,
             titleVisibility: .visible
         ) {
-            Button(NSLocalizedString("Delete", comment: "Delete button"), role: .destructive) {
+            Button(LocalizedString("Delete", comment: "Delete button"), role: .destructive) {
                 Task {
                     await deleteRecipe()
                 }
             }
-            Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
         } message: {
-            Text(NSLocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))
+            Text(LocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))
         }
         .alert("Error", isPresented: .constant(deleteError != nil)) {
             Button("OK", role: .cancel) {

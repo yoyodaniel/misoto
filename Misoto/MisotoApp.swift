@@ -16,6 +16,8 @@ struct MisotoApp: App {
     }
     
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var appSettings = AppSettings.shared
+    @StateObject private var localizationManager = LocalizationManager.shared
     
     var body: some Scene {
         WindowGroup {
@@ -31,6 +33,10 @@ struct MisotoApp: App {
                         .environmentObject(authViewModel)
                 }
             }
+            .preferredColorScheme(appSettings.isDarkModeEnabled ? .dark : .light)
+            .environmentObject(appSettings)
+            .environmentObject(localizationManager)
+            .localized() // Apply localization modifier to update views on language change
         }
     }
 }
@@ -47,7 +53,7 @@ struct LoadingView: View {
                 ProgressView()
                     .scaleEffect(1.5)
                 
-                Text("Loading...")
+                Text(LocalizedString("Loading...", comment: "Loading text"))
                     .font(.headline)
                     .foregroundColor(.secondary)
             }

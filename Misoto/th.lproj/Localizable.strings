@@ -1,0 +1,246 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Thai (ไทย)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "แบ่งปันและค้นพบสูตรอาหารที่ยอดเยี่ยม";
+"Loading..." = "กำลังโหลด...";
+"Version %@" = "เวอร์ชัน %@";
+"Unknown" = "ไม่ทราบ";
+
+/* Authentication */
+"Continue with Google" = "ดำเนินการต่อด้วย Google";
+"Invalid credential" = "ข้อมูลประจำตัวไม่ถูกต้อง";
+"Invalid nonce" = "Nonce ไม่ถูกต้อง";
+"Invalid token" = "โทเค็นไม่ถูกต้อง";
+"Missing client ID" = "ไม่มี Client ID";
+"Missing view controller" = "ไม่มี View Controller";
+"You are not authorized to perform this action" = "คุณไม่มีสิทธิ์ในการดำเนินการนี้";
+"Username must be at least 4 characters" = "ชื่อผู้ใช้ต้องมีอย่างน้อย 4 ตัวอักษร";
+"Username must be no more than 15 characters" = "ชื่อผู้ใช้ต้องไม่เกิน 15 ตัวอักษร";
+"This username is already taken" = "ชื่อผู้ใช้นี้ถูกใช้แล้ว";
+"Username contains invalid characters" = "ชื่อผู้ใช้มีอักขระที่ไม่ถูกต้อง";
+
+/* Settings */
+"Settings" = "การตั้งค่า";
+"Dark Mode" = "โหมดมืด";
+"Haptic Feedback" = "การตอบสนองแบบสัมผัส";
+"Appearance" = "รูปลักษณ์";
+"Language" = "ภาษา";
+"The language selected will be used as the default writing language for recipe extractions." = "ภาษาที่เลือกจะถูกใช้เป็นภาษาการเขียนเริ่มต้นสำหรับการดึงสูตรอาหาร";
+"The language selected will be used as the default writing language for recipe extractions." = "ภาษาที่เลือกจะถูกใช้เป็นภาษาการเขียนเริ่มต้นสำหรับการดึงสูตรอาหาร";
+"English" = "อังกฤษ";
+"Chinese, Simplified" = "จีนตัวย่อ";
+"Chinese, Traditional" = "จีนตัวเต็ม";
+"Spanish" = "สเปน";
+"French" = "ฝรั่งเศส";
+"German" = "เยอรมัน";
+"Italian" = "อิตาลี";
+"Portuguese" = "โปรตุเกส";
+"Dutch" = "ดัตช์";
+"Russian" = "รัสเซีย";
+"Japanese" = "ญี่ปุ่น";
+"Korean" = "เกาหลี";
+"Thai" = "ไทย";
+"Vietnamese" = "เวียดนาม";
+"Indonesian" = "อินโดนีเซีย";
+"Malay" = "มาเลย์";
+"Filipino" = "ฟิลิปปินส์";
+"Hindi" = "ฮินดี";
+"System Language (%@)" = "ภาษาของระบบ (%@)";
+"Share App" = "แชร์แอป";
+"Share" = "แชร์";
+"Check out %@! %@" = "ลองดู %@! %@";
+"Submit Feedback" = "ส่งข้อเสนอแนะ";
+"Feedback" = "ข้อเสนอแนะ";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "เราขอขอบคุณการทำงานร่วมกับผู้ใช้ของเราเพื่อปรับปรุงแอปต่อไปและปรับให้เหมาะกับความต้องการของคุณ";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "แบ่งปันความคิด คำแนะนำ คำขอฟีเจอร์ หรือข้อเสนอแนะทั่วไปของคุณ การมีส่วนร่วมของคุณช่วยให้เราสร้างประสบการณ์ที่ดีขึ้นสำหรับทุกคน";
+"Done" = "เสร็จสิ้น";
+
+/* Feedback */
+"Type" = "ประเภท";
+"Feedback Type" = "ประเภทข้อเสนอแนะ";
+"Feature Request" = "คำขอฟีเจอร์";
+"General Feedback" = "ข้อเสนอแนะทั่วไป";
+"Translation Suggestion" = "ข้อเสนอแนะการแปล";
+"Your name" = "ชื่อของคุณ";
+"Name" = "ชื่อ";
+"Describe your feature request" = "อธิบายคำขอฟีเจอร์ของคุณ";
+"Suggest a translation improvement" = "แนะนำการปรับปรุงการแปล";
+"Share your feedback" = "แบ่งปันข้อเสนอแนะของคุณ";
+"Please describe the feature you'd like to see in the app." = "กรุณาอธิบายฟีเจอร์ที่คุณต้องการเห็นในแอป";
+"Please suggest improvements to translations or report incorrect translations." = "กรุณาแนะนำการปรับปรุงการแปลหรือรายงานการแปลที่ผิด";
+"Please share your thoughts, suggestions, or report any issues." = "กรุณาแบ่งปันความคิด คำแนะนำ หรือรายงานปัญหาต่างๆ";
+"Email address (optional)" = "ที่อยู่อีเมล (ไม่บังคับ)";
+"Contact Email" = "อีเมลติดต่อ";
+"Optional: We'll use this to respond to your feature request if needed." = "ไม่บังคับ: เราจะใช้อีเมลนี้เพื่อตอบกลับคำขอฟีเจอร์ของคุณหากจำเป็น";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "ไม่บังคับ: เราจะใช้อีเมลนี้เพื่อตอบกลับข้อเสนอแนะการแปลของคุณหากจำเป็น";
+"Optional: We'll use this to respond to your feedback if needed." = "ไม่บังคับ: เราจะใช้อีเมลนี้เพื่อตอบกลับข้อเสนอแนะของคุณหากจำเป็น";
+"Submit" = "ส่ง";
+"Cancel" = "ยกเลิก";
+"Please enter a valid email address" = "กรุณากรอกที่อยู่อีเมลที่ถูกต้อง";
+"You must be signed in to submit feedback" = "คุณต้องเข้าสู่ระบบเพื่อส่งข้อเสนอแนะ";
+"Please provide your feedback or feature request" = "กรุณาให้ข้อเสนอแนะหรือคำขอฟีเจอร์";
+"Please provide a valid email address or leave it empty" = "กรุณาให้ที่อยู่อีเมลที่ถูกต้องหรือเว้นว่างไว้";
+"Failed to submit: %@" = "ส่งไม่สำเร็จ: %@";
+"Thank you for your feature request!" = "ขอบคุณสำหรับคำขอฟีเจอร์ของคุณ!";
+"Thank you for your translation suggestion!" = "ขอบคุณสำหรับข้อเสนอแนะการแปลของคุณ!";
+"Thank you for your feedback!" = "ขอบคุณสำหรับข้อเสนอแนะของคุณ!";
+
+/* Navigation */
+"Explore" = "สำรวจ";
+"Account" = "บัญชี";
+"Add Menu" = "เพิ่มเมนู";
+"Manual Entry" = "ป้อนด้วยตนเอง";
+"Take Picture" = "ถ่ายรูป";
+"Extract from Image" = "แยกจากรูปภาพ";
+"Extract from Link" = "แยกจากลิงก์";
+"Extract from Website" = "แยกจากเว็บไซต์";
+"Search or enter website name" = "ค้นหาหรือใส่ชื่อเว็บไซต์";
+"Find a Recipe" = "ค้นหาสูตรอาหาร";
+"Type a website URL or search for a recipe" = "พิมพ์ URL เว็บไซต์หรือค้นหาสูตรอาหาร";
+"Enter a website URL (e.g., example.com)" = "ใส่ URL เว็บไซต์ (เช่น example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "หรือค้นหาสูตรอาหาร (เช่น สูตรเค้กช็อกโกแลต)";
+"Extract Recipe" = "แยกสูตรอาหาร";
+"Extract Recipe with AI" = "แยกสูตรอาหารด้วย AI";
+"Extract with AI" = "แยกด้วย AI";
+"Detecting recipe..." = "กำลังตรวจจับสูตรอาหาร...";
+"No recipe detected on this page" = "ไม่พบสูตรอาหารในหน้านี้";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "วางลิงก์ไปยังหน้าเว็บสูตรอาหารเพื่อแยกข้อมูลสูตรอาหารโดยอัตโนมัติโดยใช้ AI";
+
+/* Profile */
+"Edit Profile" = "แก้ไขโปรไฟล์";
+"Change Profile Picture" = "เปลี่ยนรูปโปรไฟล์";
+"Profile Information" = "ข้อมูลโปรไฟล์";
+"Username" = "ชื่อผู้ใช้";
+"Suggested usernames:" = "ชื่อผู้ใช้ที่แนะนำ:";
+"Bio" = "ชีวประวัติ";
+"characters" = "ตัวอักษร";
+"%d/15 characters" = "%d/15 ตัวอักษร";
+"Recipes" = "สูตรอาหาร";
+"Followers" = "ผู้ติดตาม";
+"Following" = "กำลังติดตาม";
+"Sign Out" = "ออกจากระบบ";
+"No recipes yet" = "ยังไม่มีสูตรอาหาร";
+"Start sharing your favorite recipes with the community!" = "เริ่มแบ่งปันสูตรอาหารโปรดของคุณกับชุมชน!";
+"Delete Recipe" = "ลบสูตรอาหาร";
+"Delete" = "ลบ";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "คุณแน่ใจหรือไม่ว่าต้องการลบสูตรอาหารนี้? การกระทำนี้ไม่สามารถยกเลิกได้";
+"Edit Recipe" = "แก้ไขสูตรอาหาร";
+
+/* Explore */
+"Today's Recommendations" = "คำแนะนำวันนี้";
+"Weekly Menu" = "เมนูรายสัปดาห์";
+"Trending" = "กำลังเป็นที่นิยม";
+"Ranking" = "อันดับ";
+"Search ingredients, recipes" = "ค้นหาวัตถุดิบ สูตรอาหาร";
+"No recipes found" = "ไม่พบสูตรอาหาร";
+
+/* Favorites */
+"No favorites yet" = "ยังไม่มีรายการโปรด";
+"Start exploring and save your favorite recipes!" = "เริ่มสำรวจและบันทึกสูตรอาหารโปรดของคุณ!";
+
+/* Friends */
+"Friends" = "เพื่อน";
+"Search" = "ค้นหา";
+"No followers yet" = "ยังไม่มีผู้ติดตาม";
+"You're not following anyone yet" = "คุณยังไม่ได้ติดตามใคร";
+"Search users" = "ค้นหาผู้ใช้";
+"No users found" = "ไม่พบผู้ใช้";
+
+/* Recipe */
+"Title" = "หัวข้อ";
+"Recipe Title" = "หัวข้อสูตรอาหาร";
+"Description" = "คำอธิบาย";
+"Regenerate Description" = "สร้างคำอธิบายใหม่";
+"Cuisine" = "อาหาร";
+"Select Cuisine" = "เลือกอาหาร";
+"Preparation Time" = "เวลาเตรียม";
+"Cooking Time" = "เวลาทำอาหาร";
+"Time" = "เวลา";
+"Servings" = "จำนวนเสิร์ฟ";
+"servings" = "เสิร์ฟ";
+"Difficulty" = "ความยาก";
+"Spicy Level" = "ระดับความเผ็ด";
+"Add Dish Image" = "เพิ่มรูปภาพอาหาร";
+"Take picture" = "ถ่ายรูป";
+"Select image" = "เลือกรูปภาพ";
+"Select Dish images" = "เลือกรูปภาพอาหาร";
+"Take another picture" = "ถ่ายรูปอีก";
+"Dish Images" = "รูปภาพอาหาร";
+"Dish images can be added later as required" = "รูปภาพอาหารสามารถเพิ่มได้ในภายหลังตามต้องการ";
+"Add" = "เพิ่ม";
+"Save" = "บันทึก";
+"Upload" = "อัปโหลด";
+"Step" = "ขั้นตอน";
+"View Video" = "ดูวิดีโอ";
+"Remove Media" = "ลบสื่อ";
+"Add Step" = "เพิ่มขั้นตอน";
+"Instructions" = "วิธีทำ";
+"Dish Ingredients" = "ส่วนผสมอาหาร";
+"Add Dish Ingredient" = "เพิ่มส่วนผสมอาหาร";
+"Marinade Ingredients" = "ส่วนผสมหมัก";
+"Add Marinade Ingredient" = "เพิ่มส่วนผสมหมัก";
+"Seasoning Ingredients" = "เครื่องปรุง";
+"Add Seasoning Ingredient" = "เพิ่มเครื่องปรุง";
+"Batter Ingredients" = "ส่วนผสมแป้ง";
+"Add Batter Ingredient" = "เพิ่มส่วนผสมแป้ง";
+"Sauce Ingredients" = "ส่วนผสมซอส";
+"Add Sauce Ingredient" = "เพิ่มส่วนผสมซอส";
+"Base Ingredients" = "ส่วนผสมพื้นฐาน";
+"Add Base Ingredient" = "เพิ่มส่วนผสมพื้นฐาน";
+"Dough Ingredients" = "ส่วนผสมแป้ง";
+"Add Dough Ingredient" = "เพิ่มส่วนผสมแป้ง";
+"Topping Ingredients" = "ส่วนผสมท็อปปิ้ง";
+"Add Topping Ingredient" = "เพิ่มส่วนผสมท็อปปิ้ง";
+"Additional Tips" = "เคล็ดลับเพิ่มเติม";
+"Add Tip" = "เพิ่มเคล็ดลับ";
+"View Source Website" = "ดูเว็บไซต์ต้นฉบับ";
+"Source Website" = "เว็บไซต์ต้นฉบับ";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "ช้อนชา";
+"Tablespoon (tbsp)" = "ช้อนโต๊ะ";
+"Cup" = "ถ้วย";
+"Ounce (oz)" = "ออนซ์ (oz)";
+"Fluid Ounce (fl oz)" = "ออนซ์ของเหลว (fl oz)";
+"Pound (lb)" = "ปอนด์ (lb)";
+"Gram (g)" = "กรัม (g)";
+"Kilogram (kg)" = "กิโลกรัม (kg)";
+"Milliliter (ml)" = "มิลลิลิตร (ml)";
+"Liter (l)" = "ลิตร (l)";
+"Pinch" = "หยิบมือ";
+"Piece" = "ชิ้น";
+"Pieces (pcs)" = "ชิ้น (pcs)";
+"Piece (pc)" = "ชิ้น (pc)";
+"Slice" = "แผ่น";
+"Clove" = "กลีบ";
+"Bunch" = "กำ";
+"Head" = "หัว";
+"Strand" = "เส้น";
+"Strands" = "เส้น";
+"Source images used for recipe extraction" = "รูปภาพต้นฉบับที่ใช้สำหรับการแยกสูตรอาหาร";
+"Source image used for recipe extraction" = "รูปภาพต้นฉบับที่ใช้สำหรับการแยกสูตรอาหาร";
+"Source" = "แหล่งที่มา";
+"Created on:" = "สร้างเมื่อ:";
+"Updated on:" = "อัปเดตเมื่อ:";
+
+/* Spicy Level */
+"None" = "ไม่มี";
+"Mild" = "เผ็ดน้อย";
+"Hot" = "เผ็ด";
+"Very Hot" = "เผ็ดมาก";
+"Extreme" = "เผ็ดมากที่สุด";
+"Insane" = "เผ็ดสุดๆ";
+
+/* Time Units */
+"seconds" = "วินาที";
+"minutes" = "นาที";
+"hours" = "ชั่วโมง";
+"days" = "วัน";
+

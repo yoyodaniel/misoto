@@ -78,7 +78,7 @@ struct EditProfileView: View {
                             matching: .images,
                             photoLibrary: .shared()
                         ) {
-                            Text(NSLocalizedString("Change Profile Picture", comment: "Change profile picture button"))
+                            Text(LocalizedString("Change Profile Picture", comment: "Change profile picture button"))
                                 .font(.subheadline)
                                 .foregroundColor(.accentColor)
                         }
@@ -87,12 +87,12 @@ struct EditProfileView: View {
                     .padding(.vertical, 10)
                 }
                 
-                Section(header: Text(NSLocalizedString("Profile Information", comment: "Profile information section"))) {
-                    TextField(NSLocalizedString("Name", comment: "Name field"), text: $displayName)
+                Section(header: Text(LocalizedString("Profile Information", comment: "Profile information section"))) {
+                    TextField(LocalizedString("Name", comment: "Name field"), text: $displayName)
                         .textInputAutocapitalization(.words)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        TextField(NSLocalizedString("Username", comment: "Username field"), text: $username)
+                        TextField(LocalizedString("Username", comment: "Username field"), text: $username)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                         
@@ -100,16 +100,16 @@ struct EditProfileView: View {
                         if !username.isEmpty {
                             let cleanUsername = username.hasPrefix("@") ? String(username.dropFirst()) : username
                             if cleanUsername.count < 4 {
-                                Text(NSLocalizedString("Username must be at least 4 characters", comment: "Username length hint"))
+                                Text(LocalizedString("Username must be at least 4 characters", comment: "Username length hint"))
                                     .font(.caption)
                                     .foregroundColor(.orange)
                             } else if cleanUsername.count > 15 {
-                                Text(NSLocalizedString("Username must be no more than 15 characters", comment: "Username length hint"))
+                                Text(LocalizedString("Username must be no more than 15 characters", comment: "Username length hint"))
                                     .font(.caption)
                                     .foregroundColor(.orange)
                             } else {
                                 HStack {
-                                    Text(NSLocalizedString("\(cleanUsername.count)/15 characters", comment: "Username character count"))
+                                    Text(String(format: LocalizedString("%d/15 characters", comment: "Username character count"), cleanUsername.count))
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                     
@@ -129,7 +129,7 @@ struct EditProfileView: View {
                                     .foregroundColor(.red)
                                 
                                 if !usernameSuggestions.isEmpty {
-                                    Text(NSLocalizedString("Suggested usernames:", comment: "Suggested usernames label"))
+                                    Text(LocalizedString("Suggested usernames:", comment: "Suggested usernames label"))
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                         .padding(.top, 2)
@@ -161,7 +161,7 @@ struct EditProfileView: View {
                         }
                     }
                     
-                    TextField(NSLocalizedString("Bio", comment: "Bio field"), text: $bio, axis: .vertical)
+                    TextField(LocalizedString("Bio", comment: "Bio field"), text: $bio, axis: .vertical)
                         .lineLimit(3...6)
                 }
                 
@@ -174,11 +174,11 @@ struct EditProfileView: View {
                     }
                 }
             }
-            .navigationTitle(NSLocalizedString("Edit Profile", comment: "Edit profile title"))
+            .navigationTitle(LocalizedString("Edit Profile", comment: "Edit profile title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(NSLocalizedString("Cancel", comment: "Cancel button")) {
+                    Button(LocalizedString("Cancel", comment: "Cancel button")) {
                         dismiss()
                     }
                 }
@@ -197,7 +197,7 @@ struct EditProfileView: View {
                                 ProgressView()
                                     .scaleEffect(0.8)
                             }
-                            Text(NSLocalizedString("Save", comment: "Save button"))
+                            Text(LocalizedString("Save", comment: "Save button"))
                         }
                     }
                     .disabled(isUploading || displayName.isEmpty || username.isEmpty || !isUsernameValid)
@@ -273,7 +273,7 @@ struct EditProfileView: View {
             
             if !isAvailable {
                 // Username is taken
-                errorMessage = NSLocalizedString("This username is already taken", comment: "Username taken error")
+                errorMessage = LocalizedString("This username is already taken", comment: "Username taken error")
                 showUsernameSuggestions = true
                 usernameSuggestions = viewModel.generateUsernameAlternatives(usernameToCheck)
             } else {

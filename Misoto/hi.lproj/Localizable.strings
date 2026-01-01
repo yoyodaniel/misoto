@@ -1,0 +1,246 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Hindi (हिन्दी)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "अद्भुत व्यंजन साझा करें और खोजें";
+"Loading..." = "लोड हो रहा है...";
+"Version %@" = "संस्करण %@";
+"Unknown" = "अज्ञात";
+
+/* Authentication */
+"Continue with Google" = "Google के साथ जारी रखें";
+"Invalid credential" = "अमान्य क्रेडेंशियल";
+"Invalid nonce" = "अमान्य nonce";
+"Invalid token" = "अमान्य टोकन";
+"Missing client ID" = "क्लाइंट ID गायब है";
+"Missing view controller" = "व्यू कंट्रोलर गायब है";
+"You are not authorized to perform this action" = "आपको इस कार्रवाई को करने की अनुमति नहीं है";
+"Username must be at least 4 characters" = "उपयोगकर्ता नाम कम से कम 4 वर्ण का होना चाहिए";
+"Username must be no more than 15 characters" = "उपयोगकर्ता नाम 15 वर्ण से अधिक नहीं होना चाहिए";
+"This username is already taken" = "यह उपयोगकर्ता नाम पहले से लिया गया है";
+"Username contains invalid characters" = "उपयोगकर्ता नाम में अमान्य वर्ण हैं";
+
+/* Settings */
+"Settings" = "सेटिंग्स";
+"Dark Mode" = "डार्क मोड";
+"Haptic Feedback" = "हैप्टिक फीडबैक";
+"Appearance" = "दिखावट";
+"Language" = "भाषा";
+"The language selected will be used as the default writing language for recipe extractions." = "चयनित भाषा का उपयोग रेसिपी निष्कर्षण के लिए डिफ़ॉल्ट लेखन भाषा के रूप में किया जाएगा।";
+"The language selected will be used as the default writing language for recipe extractions." = "चयनित भाषा का उपयोग रेसिपी निष्कर्षण के लिए डिफ़ॉल्ट लेखन भाषा के रूप में किया जाएगा।";
+"English" = "अंग्रेजी";
+"Chinese, Simplified" = "सरलीकृत चीनी";
+"Chinese, Traditional" = "पारंपरिक चीनी";
+"Spanish" = "स्पेनिश";
+"French" = "फ्रेंच";
+"German" = "जर्मन";
+"Italian" = "इतालवी";
+"Portuguese" = "पुर्तगाली";
+"Dutch" = "डच";
+"Russian" = "रूसी";
+"Japanese" = "जापानी";
+"Korean" = "कोरियाई";
+"Thai" = "थाई";
+"Vietnamese" = "वियतनामी";
+"Indonesian" = "इंडोनेशियाई";
+"Malay" = "मलय";
+"Filipino" = "फिलिपिनो";
+"Hindi" = "हिंदी";
+"System Language (%@)" = "सिस्टम भाषा (%@)";
+"Share App" = "ऐप साझा करें";
+"Share" = "साझा करें";
+"Check out %@! %@" = "%@ देखें! %@";
+"Submit Feedback" = "फीडबैक सबमिट करें";
+"Feedback" = "फीडबैक";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "हम अपने उपयोगकर्ताओं के साथ सहयोग करके ऐप को और बेहतर बनाने और इसे आपकी आवश्यकताओं के अनुरूप बनाने की सराहना करते हैं।";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "अपने विचार, सुझाव, फीचर अनुरोध, या सामान्य फीडबैक साझा करें। आपका इनपुट हमें सभी के लिए बेहतर अनुभव बनाने में मदद करता है।";
+"Done" = "पूर्ण";
+
+/* Feedback */
+"Type" = "प्रकार";
+"Feedback Type" = "फीडबैक प्रकार";
+"Feature Request" = "फीचर अनुरोध";
+"General Feedback" = "सामान्य फीडबैक";
+"Translation Suggestion" = "अनुवाद सुझाव";
+"Your name" = "आपका नाम";
+"Name" = "नाम";
+"Describe your feature request" = "अपने फीचर अनुरोध का वर्णन करें";
+"Suggest a translation improvement" = "अनुवाद सुधार का सुझाव दें";
+"Share your feedback" = "अपना फीडबैक साझा करें";
+"Please describe the feature you'd like to see in the app." = "कृपया उस फीचर का वर्णन करें जिसे आप ऐप में देखना चाहते हैं।";
+"Please suggest improvements to translations or report incorrect translations." = "कृपया अनुवाद में सुधार का सुझाव दें या गलत अनुवाद की रिपोर्ट करें।";
+"Please share your thoughts, suggestions, or report any issues." = "कृपया अपने विचार, सुझाव साझा करें या कोई समस्या रिपोर्ट करें।";
+"Email address (optional)" = "ईमेल पता (वैकल्पिक)";
+"Contact Email" = "संपर्क ईमेल";
+"Optional: We'll use this to respond to your feature request if needed." = "वैकल्पिक: यदि आवश्यक हो तो हम आपके फीचर अनुरोध का जवाब देने के लिए इसका उपयोग करेंगे।";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "वैकल्पिक: यदि आवश्यक हो तो हम आपके अनुवाद सुझाव का जवाब देने के लिए इसका उपयोग करेंगे।";
+"Optional: We'll use this to respond to your feedback if needed." = "वैकल्पिक: यदि आवश्यक हो तो हम आपके फीडबैक का जवाब देने के लिए इसका उपयोग करेंगे।";
+"Submit" = "सबमिट करें";
+"Cancel" = "रद्द करें";
+"Please enter a valid email address" = "कृपया एक वैध ईमेल पता दर्ज करें";
+"You must be signed in to submit feedback" = "फीडबैक सबमिट करने के लिए आपको साइन इन करना होगा";
+"Please provide your feedback or feature request" = "कृपया अपना फीडबैक या फीचर अनुरोध प्रदान करें";
+"Please provide a valid email address or leave it empty" = "कृपया एक वैध ईमेल पता प्रदान करें या इसे खाली छोड़ दें";
+"Failed to submit: %@" = "सबमिट करने में विफल: %@";
+"Thank you for your feature request!" = "आपके फीचर अनुरोध के लिए धन्यवाद!";
+"Thank you for your translation suggestion!" = "आपके अनुवाद सुझाव के लिए धन्यवाद!";
+"Thank you for your feedback!" = "आपके फीडबैक के लिए धन्यवाद!";
+
+/* Navigation */
+"Explore" = "अन्वेषण करें";
+"Account" = "खाता";
+"Add Menu" = "मेनू जोड़ें";
+"Manual Entry" = "मैन्युअल प्रविष्टि";
+"Take Picture" = "तस्वीर लें";
+"Extract from Image" = "छवि से निकालें";
+"Extract from Link" = "लिंक से निकालें";
+"Extract from Website" = "वेबसाइट से निकालें";
+"Search or enter website name" = "खोजें या वेबसाइट नाम दर्ज करें";
+"Find a Recipe" = "व्यंजन खोजें";
+"Type a website URL or search for a recipe" = "वेबसाइट URL टाइप करें या व्यंजन खोजें";
+"Enter a website URL (e.g., example.com)" = "वेबसाइट URL दर्ज करें (उदा. example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "या व्यंजन खोजें (उदा. चॉकलेट केक व्यंजन)";
+"Extract Recipe" = "व्यंजन निकालें";
+"Extract Recipe with AI" = "AI के साथ व्यंजन निकालें";
+"Extract with AI" = "AI के साथ निकालें";
+"Detecting recipe..." = "व्यंजन का पता लगा रहे हैं...";
+"No recipe detected on this page" = "इस पृष्ठ पर कोई व्यंजन नहीं मिला";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "व्यंजन जानकारी को स्वचालित रूप से निकालने के लिए AI का उपयोग करके एक व्यंजन वेबपेज का लिंक पेस्ट करें।";
+
+/* Profile */
+"Edit Profile" = "प्रोफ़ाइल संपादित करें";
+"Change Profile Picture" = "प्रोफ़ाइल चित्र बदलें";
+"Profile Information" = "प्रोफ़ाइल जानकारी";
+"Username" = "उपयोगकर्ता नाम";
+"Suggested usernames:" = "सुझाए गए उपयोगकर्ता नाम:";
+"Bio" = "जीवनी";
+"characters" = "वर्ण";
+"%d/15 characters" = "%d/15 वर्ण";
+"Recipes" = "व्यंजन";
+"Followers" = "अनुयायी";
+"Following" = "अनुसरण कर रहे हैं";
+"Sign Out" = "साइन आउट";
+"No recipes yet" = "अभी तक कोई व्यंजन नहीं";
+"Start sharing your favorite recipes with the community!" = "समुदाय के साथ अपने पसंदीदा व्यंजन साझा करना शुरू करें!";
+"Delete Recipe" = "व्यंजन हटाएं";
+"Delete" = "हटाएं";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "क्या आप वाकई इस व्यंजन को हटाना चाहते हैं? इस कार्रवाई को पूर्ववत नहीं किया जा सकता।";
+"Edit Recipe" = "व्यंजन संपादित करें";
+
+/* Explore */
+"Today's Recommendations" = "आज की सिफारिशें";
+"Weekly Menu" = "साप्ताहिक मेनू";
+"Trending" = "ट्रेंडिंग";
+"Ranking" = "रैंकिंग";
+"Search ingredients, recipes" = "सामग्री, व्यंजन खोजें";
+"No recipes found" = "कोई व्यंजन नहीं मिला";
+
+/* Favorites */
+"No favorites yet" = "अभी तक कोई पसंदीदा नहीं";
+"Start exploring and save your favorite recipes!" = "अन्वेषण शुरू करें और अपने पसंदीदा व्यंजन सहेजें!";
+
+/* Friends */
+"Friends" = "दोस्त";
+"Search" = "खोजें";
+"No followers yet" = "अभी तक कोई अनुयायी नहीं";
+"You're not following anyone yet" = "आप अभी तक किसी का अनुसरण नहीं कर रहे";
+"Search users" = "उपयोगकर्ता खोजें";
+"No users found" = "कोई उपयोगकर्ता नहीं मिला";
+
+/* Recipe */
+"Title" = "शीर्षक";
+"Recipe Title" = "व्यंजन शीर्षक";
+"Description" = "विवरण";
+"Regenerate Description" = "विवरण पुनः उत्पन्न करें";
+"Cuisine" = "पाक शैली";
+"Select Cuisine" = "पाक शैली चुनें";
+"Preparation Time" = "तैयारी का समय";
+"Cooking Time" = "पकाने का समय";
+"Time" = "समय";
+"Servings" = "सर्विंग्स";
+"servings" = "सर्विंग्स";
+"Difficulty" = "कठिनाई";
+"Spicy Level" = "मसालेदार स्तर";
+"Add Dish Image" = "व्यंजन छवि जोड़ें";
+"Take picture" = "तस्वीर लें";
+"Select image" = "छवि चुनें";
+"Select Dish images" = "व्यंजन छवियां चुनें";
+"Take another picture" = "एक और तस्वीर लें";
+"Dish Images" = "व्यंजन छवियां";
+"Dish images can be added later as required" = "व्यंजन छवियां आवश्यकतानुसार बाद में जोड़ी जा सकती हैं";
+"Add" = "जोड़ें";
+"Save" = "सहेजें";
+"Upload" = "अपलोड करें";
+"Step" = "चरण";
+"View Video" = "वीडियो देखें";
+"Remove Media" = "मीडिया हटाएं";
+"Add Step" = "चरण जोड़ें";
+"Instructions" = "निर्देश";
+"Dish Ingredients" = "व्यंजन सामग्री";
+"Add Dish Ingredient" = "व्यंजन सामग्री जोड़ें";
+"Marinade Ingredients" = "मैरिनेड सामग्री";
+"Add Marinade Ingredient" = "मैरिनेड सामग्री जोड़ें";
+"Seasoning Ingredients" = "मसाला सामग्री";
+"Add Seasoning Ingredient" = "मसाला सामग्री जोड़ें";
+"Batter Ingredients" = "बैटर सामग्री";
+"Add Batter Ingredient" = "बैटर सामग्री जोड़ें";
+"Sauce Ingredients" = "सॉस सामग्री";
+"Add Sauce Ingredient" = "सॉस सामग्री जोड़ें";
+"Base Ingredients" = "आधार सामग्री";
+"Add Base Ingredient" = "आधार सामग्री जोड़ें";
+"Dough Ingredients" = "आटा सामग्री";
+"Add Dough Ingredient" = "आटा सामग्री जोड़ें";
+"Topping Ingredients" = "टॉपिंग सामग्री";
+"Add Topping Ingredient" = "टॉपिंग सामग्री जोड़ें";
+"Additional Tips" = "अतिरिक्त सुझाव";
+"Add Tip" = "सुझाव जोड़ें";
+"View Source Website" = "स्रोत वेबसाइट देखें";
+"Source Website" = "स्रोत वेबसाइट";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "चम्मच (tsp)";
+"Tablespoon (tbsp)" = "बड़ा चम्मच (tbsp)";
+"Cup" = "कप";
+"Ounce (oz)" = "औंस (oz)";
+"Fluid Ounce (fl oz)" = "तरल औंस (fl oz)";
+"Pound (lb)" = "पौंड (lb)";
+"Gram (g)" = "ग्राम (g)";
+"Kilogram (kg)" = "किलोग्राम (kg)";
+"Milliliter (ml)" = "मिलीलीटर (ml)";
+"Liter (l)" = "लीटर (l)";
+"Pinch" = "चुटकी";
+"Piece" = "टुकड़ा";
+"Pieces (pcs)" = "टुकड़े (pcs)";
+"Piece (pc)" = "टुकड़ा (pc)";
+"Slice" = "टुकड़ा";
+"Clove" = "कली";
+"Bunch" = "गुच्छा";
+"Head" = "सिर";
+"Strand" = "लड़ी";
+"Strands" = "लड़ियाँ";
+"Source images used for recipe extraction" = "व्यंजन निष्कर्षण के लिए उपयोग की गई स्रोत छवियां";
+"Source image used for recipe extraction" = "व्यंजन निष्कर्षण के लिए उपयोग की गई स्रोत छवि";
+"Source" = "स्रोत";
+"Created on:" = "बनाया गया:";
+"Updated on:" = "अपडेट किया गया:";
+
+/* Spicy Level */
+"None" = "कोई नहीं";
+"Mild" = "हल्का";
+"Hot" = "मसालेदार";
+"Very Hot" = "बहुत मसालेदार";
+"Extreme" = "अत्यधिक";
+"Insane" = "अत्यधिक मसालेदार";
+
+/* Time Units */
+"seconds" = "सेकंड";
+"minutes" = "मिनट";
+"hours" = "घंटे";
+"days" = "दिन";
+

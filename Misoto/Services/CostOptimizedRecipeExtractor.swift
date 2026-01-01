@@ -27,11 +27,16 @@ class CostOptimizedRecipeExtractor {
         }
         
         // Step 1: Extract text using iOS OCR (FREE)
-        let extractedText = try await visionExtractor.extractText(from: images)
+        var extractedText = try await visionExtractor.extractText(from: images)
         
         guard !extractedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw CostOptimizedExtractionError.noTextExtracted
         }
+        
+        // Step 1.5: Detect language and translate to English if needed
+        print("🔍 Detecting language of extracted text...")
+        extractedText = await TextTranslationService.translateToEnglish(extractedText)
+        print("✅ Text ready for processing (translated to English if needed)")
         
         // Step 2: Parse text using on-device parser (FREE)
         let parsedRecipe = textParser.parse(extractedText)
@@ -43,6 +48,7 @@ class CostOptimizedRecipeExtractor {
         if useOpenAIRefinement {
             do {
                 // Use OpenAI to refine the parsed recipe from text (much cheaper than sending images)
+                // Note: extractedText is already translated to English at this point
                 let refinedResponse = try await OpenAIService.parseRecipeFromText(extractedText)
                 
                 // Merge refined response with parsed response (prefer refined data but keep what we have)
@@ -182,11 +188,11 @@ enum CostOptimizedExtractionError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noImages:
-            return NSLocalizedString("No images provided", comment: "No images error")
+            return LocalizedString("No images provided", comment: "No images error")
         case .noTextExtracted:
-            return NSLocalizedString("No text could be extracted from images", comment: "No text extracted error")
+            return LocalizedString("No text could be extracted from images", comment: "No text extracted error")
         case .parsingFailed:
-            return NSLocalizedString("Failed to parse recipe from extracted text", comment: "Parsing failed error")
+            return LocalizedString("Failed to parse recipe from extracted text", comment: "Parsing failed error")
         }
     }
 }

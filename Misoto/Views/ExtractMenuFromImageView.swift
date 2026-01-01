@@ -9,30 +9,57 @@ import SwiftUI
 import PhotosUI
 
 struct ExtractMenuFromImageView: View {
-    // Unit mapping: singular form -> display name with abbreviation in brackets
-    private let unitDisplayNames: [String: String] = [
-        "": "-",
-        "x": "x",
-        "tsp": "Teaspoon (tsp)",
-        "tbsp": "Tablespoon (tbsp)",
-        "cup": "Cup",
-        "oz": "Ounce (oz)",
-        "lb": "Pound (lb)",
-        "g": "Gram (g)",
-        "kg": "Kilogram (kg)",
-        "ml": "Milliliter (ml)",
-        "l": "Liter (l)",
-        "pinch": "Pinch",
-        "piece": "Piece",
-        "pcs": "Pieces (pcs)",
-        "pc": "Piece (pc)",
-        "slice": "Slice",
-        "clove": "Clove",
-        "bunch": "Bunch",
-        "head": "Head",
-        "strand": "Strand",
-        "strands": "Strands"
-    ]
+    // Get localized unit display name for dropdown menu
+    private func menuDisplayName(for unit: String) -> String {
+        switch unit {
+        case "":
+            return LocalizedString("-", comment: "No unit")
+        case "x":
+            return "x"
+        case "tsp":
+            return LocalizedString("Teaspoon (tsp)", comment: "Teaspoon unit")
+        case "tbsp":
+            return LocalizedString("Tablespoon (tbsp)", comment: "Tablespoon unit")
+        case "cup":
+            return LocalizedString("Cup", comment: "Cup unit")
+        case "oz":
+            return LocalizedString("Ounce (oz)", comment: "Ounce unit")
+        case "fl_oz":
+            return LocalizedString("Fluid Ounce (fl oz)", comment: "Fluid ounce unit")
+        case "lb":
+            return LocalizedString("Pound (lb)", comment: "Pound unit")
+        case "g":
+            return LocalizedString("Gram (g)", comment: "Gram unit")
+        case "kg":
+            return LocalizedString("Kilogram (kg)", comment: "Kilogram unit")
+        case "ml":
+            return LocalizedString("Milliliter (ml)", comment: "Milliliter unit")
+        case "l":
+            return LocalizedString("Liter (l)", comment: "Liter unit")
+        case "pinch":
+            return LocalizedString("Pinch", comment: "Pinch unit")
+        case "piece":
+            return LocalizedString("Piece", comment: "Piece unit")
+        case "pcs":
+            return LocalizedString("Pieces (pcs)", comment: "Pieces unit")
+        case "pc":
+            return LocalizedString("Piece (pc)", comment: "Piece unit")
+        case "slice":
+            return LocalizedString("Slice", comment: "Slice unit")
+        case "clove":
+            return LocalizedString("Clove", comment: "Clove unit")
+        case "bunch":
+            return LocalizedString("Bunch", comment: "Bunch unit")
+        case "head":
+            return LocalizedString("Head", comment: "Head unit")
+        case "strand":
+            return LocalizedString("Strand", comment: "Strand unit")
+        case "strands":
+            return LocalizedString("Strands", comment: "Strands unit")
+        default:
+            return unit
+        }
+    }
     
     // Pluralization mapping for units that need to be pluralized
     private let pluralForms: [String: String] = [
@@ -49,7 +76,7 @@ struct ExtractMenuFromImageView: View {
     
     // Common units (singular forms only)
     private var commonUnits: [String] {
-        Array(unitDisplayNames.keys).sorted { unit1, unit2 in
+        ["", "x", "tsp", "tbsp", "cup", "oz", "fl_oz", "lb", "g", "kg", "ml", "l", "pinch", "piece", "pcs", "pc", "slice", "clove", "bunch", "head", "strand", "strands"].sorted { unit1, unit2 in
             // Sort: empty first, then "x", then alphabetically
             if unit1.isEmpty { return true }
             if unit2.isEmpty { return false }
@@ -76,10 +103,6 @@ struct ExtractMenuFromImageView: View {
         return unit
     }
     
-    // Get full display name with abbreviation (for dropdown menu)
-    private func menuDisplayName(for unit: String) -> String {
-        return unitDisplayNames[unit] ?? unit
-    }
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = ExtractMenuFromImageViewModel()
@@ -150,10 +173,10 @@ struct ExtractMenuFromImageView: View {
     private var titleSection: some View {
         Section {
             DisclosureGroup(isExpanded: $isTitleExpanded) {
-                TextField(NSLocalizedString("Title", comment: "Title placeholder"), text: $viewModel.title)
+                TextField(LocalizedString("Title", comment: "Title placeholder"), text: $viewModel.title)
                     .focused($isTitleFocused)
             } label: {
-                Text(NSLocalizedString("Recipe Title", comment: "Recipe title section"))
+                Text(LocalizedString("Recipe Title", comment: "Recipe title section"))
                     .font(.headline)
             }
         }
@@ -163,7 +186,7 @@ struct ExtractMenuFromImageView: View {
         Section {
             DisclosureGroup(isExpanded: $isDescriptionExpanded) {
                 VStack(alignment: .leading, spacing: 8) {
-                    TextField(NSLocalizedString("Description", comment: "Description placeholder"), text: $viewModel.description, axis: .vertical)
+                    TextField(LocalizedString("Description", comment: "Description placeholder"), text: $viewModel.description, axis: .vertical)
                         .lineLimit(1...)
                         .focused($isDescriptionFocused)
                     
@@ -179,7 +202,7 @@ struct ExtractMenuFromImageView: View {
                             } else {
                                 Image(systemName: "sparkles")
                             }
-                            Text(NSLocalizedString("Regenerate Description", comment: "Regenerate description button"))
+                            Text(LocalizedString("Regenerate Description", comment: "Regenerate description button"))
                         }
                         .font(.caption)
                     }
@@ -187,7 +210,7 @@ struct ExtractMenuFromImageView: View {
                     .foregroundColor(viewModel.isGeneratingDescription || viewModel.title.isEmpty ? .secondary : .accentColor)
                 }
             } label: {
-                Text(NSLocalizedString("Description", comment: "Description section"))
+                Text(LocalizedString("Description", comment: "Description section"))
                     .font(.headline)
             }
         }
@@ -199,7 +222,7 @@ struct ExtractMenuFromImageView: View {
                 showCuisineSelection = true
             }) {
                 HStack {
-                    Text(NSLocalizedString("Cuisine", comment: "Cuisine label"))
+                    Text(LocalizedString("Cuisine", comment: "Cuisine label"))
                         .foregroundColor(.primary)
                     Spacer()
                     if viewModel.isDetectingCuisine {
@@ -209,7 +232,7 @@ struct ExtractMenuFromImageView: View {
                         Text(cuisine)
                             .foregroundColor(.secondary)
                     } else {
-                        Text(NSLocalizedString("Select Cuisine", comment: "Select cuisine placeholder"))
+                        Text(LocalizedString("Select Cuisine", comment: "Select cuisine placeholder"))
                             .foregroundColor(.secondary)
                     }
                     Image(systemName: "chevron.right")
@@ -227,7 +250,7 @@ struct ExtractMenuFromImageView: View {
                     HStack {
                         ProgressView()
                             .scaleEffect(0.8)
-                        Text(NSLocalizedString("Extracting time from instructions...", comment: "Extracting time message"))
+                        Text(LocalizedString("Extracting time from instructions...", comment: "Extracting time message"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -235,14 +258,14 @@ struct ExtractMenuFromImageView: View {
                 
                 HStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(NSLocalizedString("Preparation Time", comment: "Preparation time label"))
+                        Text(LocalizedString("Preparation Time", comment: "Preparation time label"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                         TimePickerView(totalMinutes: $viewModel.prepTime)
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(NSLocalizedString("Cooking Time", comment: "Cooking time label"))
+                        Text(LocalizedString("Cooking Time", comment: "Cooking time label"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                         TimePickerView(totalMinutes: $viewModel.cookTime)
@@ -251,14 +274,14 @@ struct ExtractMenuFromImageView: View {
             }
             .padding(.vertical, 2)
         } header: {
-            Text(NSLocalizedString("Time", comment: "Time section header"))
+            Text(LocalizedString("Time", comment: "Time section header"))
         }
     }
     
     private var servingsSection: some View {
         Section {
             HStack {
-                Text(NSLocalizedString("Servings", comment: "Servings label"))
+                Text(LocalizedString("Servings", comment: "Servings label"))
                     .foregroundColor(.primary)
                 Spacer()
                 ServingsPickerView(servings: $viewModel.servings)
@@ -274,7 +297,7 @@ struct ExtractMenuFromImageView: View {
                         HStack {
                             ProgressView()
                                 .scaleEffect(0.8)
-                            Text(NSLocalizedString("Detecting difficulty level...", comment: "Detecting difficulty message"))
+                            Text(LocalizedString("Detecting difficulty level...", comment: "Detecting difficulty message"))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -287,7 +310,7 @@ struct ExtractMenuFromImageView: View {
                 }
                 .padding(.vertical, 4)
             } label: {
-                Text(NSLocalizedString("Difficulty", comment: "Difficulty section header"))
+                Text(LocalizedString("Difficulty", comment: "Difficulty section header"))
                     .font(.headline)
             }
         }
@@ -320,19 +343,19 @@ struct ExtractMenuFromImageView: View {
                     }
                     
                     Text(sourceImages.count > 1 ? 
-                         NSLocalizedString("Source images used for recipe extraction", comment: "Source images description") :
-                         NSLocalizedString("Source image used for recipe extraction", comment: "Source image description"))
+                         LocalizedString("Source images used for recipe extraction", comment: "Source images description") :
+                         LocalizedString("Source image used for recipe extraction", comment: "Source image description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 4)
                 } else {
-                    Text(NSLocalizedString("No source image available", comment: "No source image text"))
+                    Text(LocalizedString("No source image available", comment: "No source image text"))
                         .foregroundColor(.secondary)
                         .font(.caption)
                 }
             } label: {
-                Text(NSLocalizedString("Source", comment: "Source section"))
+                Text(LocalizedString("Source", comment: "Source section"))
                     .font(.headline)
             }
         }
@@ -384,7 +407,7 @@ struct ExtractMenuFromImageView: View {
                                     Image(systemName: "photo.badge.plus")
                                         .font(.system(size: 20))
                                         .foregroundColor(.accentColor)
-                                    Text(NSLocalizedString("Add", comment: "Add image button"))
+                                    Text(LocalizedString("Add", comment: "Add image button"))
                                         .font(.caption2)
                                         .foregroundColor(.accentColor)
                                 }
@@ -397,11 +420,11 @@ struct ExtractMenuFromImageView: View {
                     .padding(.vertical, 4)
                 }
             } label: {
-                Text(NSLocalizedString("Dish Images", comment: "Dish images section"))
+                Text(LocalizedString("Dish Images", comment: "Dish images section"))
                     .font(.headline)
             }
         } footer: {
-            Text(NSLocalizedString("Dish images can be added later as required", comment: "Dish images footer"))
+            Text(LocalizedString("Dish images can be added later as required", comment: "Dish images footer"))
         }
     }
     
@@ -424,10 +447,10 @@ struct ExtractMenuFromImageView: View {
                     viewModel.addMarinadeIngredient()
                     isMarinadeExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Marinade Ingredient", comment: "Add marinade ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Marinade Ingredient", comment: "Add marinade ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Marinade Ingredients", comment: "Marinade ingredients section"))
+                Text(LocalizedString("Marinade Ingredients", comment: "Marinade ingredients section"))
                     .font(.headline)
             }
         }
@@ -452,10 +475,10 @@ struct ExtractMenuFromImageView: View {
                     viewModel.addSeasoningIngredient()
                     isSeasoningExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Seasoning Ingredient", comment: "Add seasoning ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Seasoning Ingredient", comment: "Add seasoning ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Seasoning Ingredients", comment: "Seasoning ingredients section"))
+                Text(LocalizedString("Seasoning Ingredients", comment: "Seasoning ingredients section"))
                     .font(.headline)
             }
         }
@@ -480,10 +503,10 @@ struct ExtractMenuFromImageView: View {
                     viewModel.addBatterIngredient()
                     isBatterExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Batter Ingredient", comment: "Add batter ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Batter Ingredient", comment: "Add batter ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Batter Ingredients", comment: "Batter ingredients section"))
+                Text(LocalizedString("Batter Ingredients", comment: "Batter ingredients section"))
                     .font(.headline)
             }
         }
@@ -508,10 +531,10 @@ struct ExtractMenuFromImageView: View {
                     viewModel.addSauceIngredient()
                     isSauceExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Sauce Ingredient", comment: "Add sauce ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Sauce Ingredient", comment: "Add sauce ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Sauce Ingredients", comment: "Sauce ingredients section"))
+                Text(LocalizedString("Sauce Ingredients", comment: "Sauce ingredients section"))
                     .font(.headline)
             }
         }
@@ -536,10 +559,10 @@ struct ExtractMenuFromImageView: View {
                     viewModel.addBaseIngredient()
                     isBaseExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Base Ingredient", comment: "Add base ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Base Ingredient", comment: "Add base ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Base Ingredients", comment: "Base ingredients section"))
+                Text(LocalizedString("Base Ingredients", comment: "Base ingredients section"))
                     .font(.headline)
             }
         }
@@ -564,10 +587,10 @@ struct ExtractMenuFromImageView: View {
                     viewModel.addDoughIngredient()
                     isDoughExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Dough Ingredient", comment: "Add dough ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Dough Ingredient", comment: "Add dough ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Dough Ingredients", comment: "Dough ingredients section"))
+                Text(LocalizedString("Dough Ingredients", comment: "Dough ingredients section"))
                     .font(.headline)
             }
         }
@@ -592,10 +615,10 @@ struct ExtractMenuFromImageView: View {
                     viewModel.addToppingIngredient()
                     isToppingExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Topping Ingredient", comment: "Add topping ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Topping Ingredient", comment: "Add topping ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Topping Ingredients", comment: "Topping ingredients section"))
+                Text(LocalizedString("Topping Ingredients", comment: "Topping ingredients section"))
                     .font(.headline)
             }
         }
@@ -616,10 +639,10 @@ struct ExtractMenuFromImageView: View {
                 Button(action: {
                     viewModel.addDishIngredient()
                 }) {
-                    Label(NSLocalizedString("Add Dish Ingredient", comment: "Add dish ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Dish Ingredient", comment: "Add dish ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Dish Ingredients", comment: "Dish ingredients section"))
+                Text(LocalizedString("Dish Ingredients", comment: "Dish ingredients section"))
                     .font(.headline)
             }
         }
@@ -823,7 +846,7 @@ struct ExtractMenuFromImageView: View {
             .frame(width: 56)
             
             // Ingredient name field - wider, takes remaining space
-            TextField(NSLocalizedString("Ingredient", comment: "Ingredient placeholder"), text: name)
+            TextField(LocalizedString("Ingredient", comment: "Ingredient placeholder"), text: name)
                 .autocapitalization(.words)
                 .focused($focusedIngredientNameField, equals: nameIndex)
         }
@@ -841,7 +864,7 @@ struct ExtractMenuFromImageView: View {
     
     private var imageSelectionView: some View {
         Form {
-            Section(header: Text(NSLocalizedString("Select Dish images", comment: "Select dish images section"))) {
+            Section(header: Text(LocalizedString("Select Dish images", comment: "Select dish images section"))) {
                 if !selectedImages.isEmpty {
                     VStack(spacing: 12) {
                         // Display selected images in a scrollable horizontal view
@@ -879,7 +902,7 @@ struct ExtractMenuFromImageView: View {
                             }) {
                                 HStack {
                                     Image(systemName: "camera.fill")
-                                    Text(NSLocalizedString("Take another picture", comment: "Take another picture button"))
+                                    Text(LocalizedString("Take another picture", comment: "Take another picture button"))
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
@@ -896,7 +919,7 @@ struct ExtractMenuFromImageView: View {
                     ) {
                         HStack {
                             Image(systemName: "photo.badge.plus")
-                            Text(NSLocalizedString("Select Dish images", comment: "Select dish images button"))
+                            Text(LocalizedString("Select Dish images", comment: "Select dish images button"))
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -920,24 +943,24 @@ struct ExtractMenuFromImageView: View {
                         Spacer()
                         ProgressView()
                         Text(selectedImages.count > 1 ? 
-                             NSLocalizedString("Extracting recipe from images...", comment: "Extracting recipe from multiple images message") :
-                             NSLocalizedString("Extracting recipe from image...", comment: "Extracting recipe message"))
+                             LocalizedString("Extracting recipe from images...", comment: "Extracting recipe from multiple images message") :
+                             LocalizedString("Extracting recipe from image...", comment: "Extracting recipe message"))
                         Spacer()
                     }
                 }
             }
         }
-        .navigationTitle(NSLocalizedString("Extract from Image", comment: "Extract from image title"))
+        .navigationTitle(LocalizedString("Extract from Image", comment: "Extract from image title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(NSLocalizedString("Cancel", comment: "Cancel button")) {
+                Button(LocalizedString("Cancel", comment: "Cancel button")) {
                     dismiss()
                 }
             }
             
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(NSLocalizedString("Extract", comment: "Extract button")) {
+                Button(LocalizedString("Extract", comment: "Extract button")) {
                     if !selectedImages.isEmpty {
                         Task {
                             await viewModel.extractText(from: selectedImages)
@@ -1046,17 +1069,17 @@ struct ExtractMenuFromImageView: View {
         .sheet(isPresented: $showCuisineSelection) {
             CuisineSelectionView(selectedCuisine: $viewModel.cuisine)
         }
-        .navigationTitle(NSLocalizedString("Edit Recipe", comment: "Edit recipe title"))
+        .navigationTitle(LocalizedString("Edit Recipe", comment: "Edit recipe title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button(NSLocalizedString("Done", comment: "Done button")) {
+                Button(LocalizedString("Done", comment: "Done button")) {
                     dismissKeyboard()
                 }
             }
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(NSLocalizedString("Cancel", comment: "Cancel button")) {
+                Button(LocalizedString("Cancel", comment: "Cancel button")) {
                     dismiss()
                 }
             }
@@ -1078,7 +1101,7 @@ struct ExtractMenuFromImageView: View {
                             ProgressView()
                                 .scaleEffect(0.8)
                         }
-                        Text(NSLocalizedString("Save", comment: "Save button"))
+                        Text(LocalizedString("Save", comment: "Save button"))
                     }
                 }
                 .disabled(viewModel.isLoading || viewModel.title.isEmpty)
@@ -1348,7 +1371,7 @@ struct ExtractMenuFromImageView: View {
                         get: { viewModel.instructions[index].text },
                         set: { viewModel.instructions[index].text = $0 }
                     )
-                    TextField(NSLocalizedString("Step", comment: "Step placeholder"), text: stepBinding, axis: .vertical)
+                    TextField(LocalizedString("Step", comment: "Step placeholder"), text: stepBinding, axis: .vertical)
                         .lineLimit(2...6)
                         .focused($focusedInstructionField, equals: index)
                 }
@@ -1376,10 +1399,10 @@ struct ExtractMenuFromImageView: View {
                 } else if instruction.videoURL != nil {
                     HStack {
                         Image(systemName: "video.fill")
-                        Text(NSLocalizedString("Video attached", comment: "Video attached label"))
+                        Text(LocalizedString("Video attached", comment: "Video attached label"))
                             .font(.caption)
                         Spacer()
-                        Button(NSLocalizedString("Remove", comment: "Remove button")) {
+                        Button(LocalizedString("Remove", comment: "Remove button")) {
                             viewModel.removeInstructionMedia(at: index)
                         }
                         .font(.caption)
@@ -1403,7 +1426,7 @@ struct ExtractMenuFromImageView: View {
         Button(action: {
             viewModel.addInstruction()
         }) {
-            Label(NSLocalizedString("Add Step", comment: "Add step button"), systemImage: "plus.circle")
+            Label(LocalizedString("Add Step", comment: "Add step button"), systemImage: "plus.circle")
         }
     }
     
@@ -1449,14 +1472,14 @@ struct ExtractMenuFromImageView: View {
                     }
                     
                     Text(sourceImages.count > 1 ? 
-                         NSLocalizedString("Source images used for recipe extraction", comment: "Source images description") :
-                         NSLocalizedString("Source image used for recipe extraction", comment: "Source image description"))
+                         LocalizedString("Source images used for recipe extraction", comment: "Source images description") :
+                         LocalizedString("Source image used for recipe extraction", comment: "Source image description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 4)
                 } label: {
-                    Text(NSLocalizedString("Source", comment: "Source section"))
+                    Text(LocalizedString("Source", comment: "Source section"))
                         .font(.headline)
                 }
             }

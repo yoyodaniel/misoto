@@ -460,25 +460,25 @@ enum AuthError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .invalidCredential:
-            return NSLocalizedString("Invalid credential", comment: "Invalid credential error")
+            return LocalizedString("Invalid credential", comment: "Invalid credential error")
         case .invalidNonce:
-            return NSLocalizedString("Invalid nonce", comment: "Invalid nonce error")
+            return LocalizedString("Invalid nonce", comment: "Invalid nonce error")
         case .invalidToken:
-            return NSLocalizedString("Invalid token", comment: "Invalid token error")
+            return LocalizedString("Invalid token", comment: "Invalid token error")
         case .missingClientID:
-            return NSLocalizedString("Missing client ID", comment: "Missing client ID error")
+            return LocalizedString("Missing client ID", comment: "Missing client ID error")
         case .missingViewController:
-            return NSLocalizedString("Missing view controller", comment: "Missing view controller error")
+            return LocalizedString("Missing view controller", comment: "Missing view controller error")
         case .unauthorized:
-            return NSLocalizedString("You are not authorized to perform this action", comment: "Unauthorized error")
+            return LocalizedString("You are not authorized to perform this action", comment: "Unauthorized error")
         case .usernameTooShort:
-            return NSLocalizedString("Username must be at least 4 characters", comment: "Username too short error")
+            return LocalizedString("Username must be at least 4 characters", comment: "Username too short error")
         case .usernameTooLong:
-            return NSLocalizedString("Username must be no more than 15 characters", comment: "Username too long error")
+            return LocalizedString("Username must be no more than 15 characters", comment: "Username too long error")
         case .usernameTaken:
-            return NSLocalizedString("This username is already taken", comment: "Username taken error")
+            return LocalizedString("This username is already taken", comment: "Username taken error")
         case .invalidUsername:
-            return NSLocalizedString("Username contains invalid characters", comment: "Invalid username error")
+            return LocalizedString("Username contains invalid characters", comment: "Invalid username error")
         }
     }
 }

@@ -1,0 +1,155 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Chinese Traditional (繁體中文)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "分享和發現精彩食譜";
+"Loading..." = "載入中...";
+"Version %@" = "版本 %@";
+"Unknown" = "未知";
+
+/* Authentication */
+"Continue with Google" = "使用 Google 繼續";
+"Invalid credential" = "憑證無效";
+"Invalid nonce" = "隨機數無效";
+"Invalid token" = "令牌無效";
+"Missing client ID" = "缺少客戶端 ID";
+"Missing view controller" = "缺少視圖控制器";
+"You are not authorized to perform this action" = "您無權執行此操作";
+"Username must be at least 4 characters" = "用戶名必須至少 4 個字符";
+"Username must be no more than 15 characters" = "用戶名不能超過 15 個字符";
+"This username is already taken" = "此用戶名已被使用";
+"Username contains invalid characters" = "用戶名包含無效字符";
+
+/* Settings */
+"Settings" = "設定";
+"Dark Mode" = "深色模式";
+"Haptic Feedback" = "觸覺反饋";
+"Appearance" = "外觀";
+"Language" = "語言";
+"English" = "英語";
+"System Language (%@)" = "系統語言 (%@)";
+"Share App" = "分享應用";
+"Share" = "分享";
+"Check out %@! %@" = "來看看 %@！%@";
+"Submit Feedback" = "提交反饋";
+"Feedback" = "反饋";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "我們感謝與用戶合作，進一步改進應用並滿足您的需求。";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "分享您的想法、建議、功能請求或一般反饋。您的意見幫助我們為每個人打造更好的體驗。";
+"Done" = "完成";
+
+/* Feedback */
+"Type" = "類型";
+"Feedback Type" = "反饋類型";
+"Feature Request" = "功能請求";
+"General Feedback" = "一般反饋";
+"Your name" = "您的姓名";
+"Name" = "姓名";
+"Describe your feature request" = "描述您的功能請求";
+"Share your feedback" = "分享您的反饋";
+"Please describe the feature you'd like to see in the app." = "請描述您希望在應用中看到的功能。";
+"Please share your thoughts, suggestions, or report any issues." = "請分享您的想法、建議或報告任何問題。";
+"Email address (optional)" = "電子郵件地址（可選）";
+"Contact Email" = "聯繫郵箱";
+"Optional: We'll use this to respond to your feature request if needed." = "可選：如有需要，我們將使用此郵箱回覆您的功能請求。";
+"Optional: We'll use this to respond to your feedback if needed." = "可選：如有需要，我們將使用此郵箱回覆您的反饋。";
+"Submit" = "提交";
+"Cancel" = "取消";
+"Please enter a valid email address" = "請輸入有效的電子郵件地址";
+"You must be signed in to submit feedback" = "您必須登入才能提交反饋";
+"Please provide your feedback or feature request" = "請提供您的反饋或功能請求";
+"Please provide a valid email address or leave it empty" = "請提供有效的電子郵件地址或留空";
+"Failed to submit: %@" = "提交失敗：%@";
+"Thank you for your feature request!" = "感謝您的功能請求！";
+"Thank you for your feedback!" = "感謝您的反饋！";
+
+/* Navigation */
+"Explore" = "探索";
+"Account" = "帳戶";
+"Add Menu" = "添加菜單";
+"Manual Entry" = "手動輸入";
+"Take Picture" = "拍照";
+"Extract from Image" = "從圖片提取";
+"Extract from Link" = "從連結提取";
+"Extract from Website" = "從網站提取";
+
+/* Profile */
+"Edit Profile" = "編輯資料";
+"Recipes" = "食譜";
+"Followers" = "粉絲";
+"Following" = "關注";
+"Sign Out" = "登出";
+"No recipes yet" = "還沒有食譜";
+"Start sharing your favorite recipes with the community!" = "開始與社區分享您喜愛的食譜！";
+"Delete Recipe" = "刪除食譜";
+"Delete" = "刪除";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "您確定要刪除此食譜嗎？此操作無法撤銷。";
+"Edit Recipe" = "編輯食譜";
+
+/* Explore */
+"Today's Recommendations" = "今日推薦";
+"Weekly Menu" = "每週菜單";
+"Trending" = "熱門";
+"Ranking" = "排行榜";
+"Search ingredients, recipes" = "搜尋食材、食譜";
+"No recipes found" = "未找到食譜";
+
+/* Favorites */
+"No favorites yet" = "還沒有收藏";
+"Start exploring and save your favorite recipes!" = "開始探索並保存您喜愛的食譜！";
+
+/* Friends */
+"Friends" = "好友";
+"Search" = "搜尋";
+"No followers yet" = "還沒有粉絲";
+"You're not following anyone yet" = "您還沒有關注任何人";
+"Search users" = "搜尋用戶";
+"No users found" = "未找到用戶";
+
+/* Recipe */
+"Title" = "標題";
+"Recipe Title" = "食譜標題";
+"Description" = "描述";
+"Regenerate Description" = "重新生成描述";
+"Cuisine" = "菜系";
+"Select Cuisine" = "選擇菜系";
+"Preparation Time" = "準備時間";
+"Cooking Time" = "烹飪時間";
+"Time" = "時間";
+"Servings" = "份量";
+"Difficulty" = "難度";
+"Add Dish Image" = "添加菜品圖片";
+"Take picture" = "拍照";
+"Select image" = "選擇圖片";
+"Dish Images" = "菜品圖片";
+"Add" = "添加";
+"Save" = "保存";
+"Upload" = "上傳";
+"Step" = "步驟";
+"View Video" = "查看視頻";
+"Remove Media" = "移除媒體";
+"Add Step" = "添加步驟";
+"Source images used for recipe extraction" = "用於食譜提取的源圖片";
+"Source image used for recipe extraction" = "用於食譜提取的源圖片";
+"Source" = "來源";
+"Created on:" = "創建於：";
+"Updated on:" = "更新於：";
+
+/* Spicy Level */
+"None" = "無";
+"Mild" = "微辣";
+"Hot" = "中辣";
+"Very Hot" = "很辣";
+"Extreme" = "極辣";
+"Insane" = "變態辣";
+
+/* Time Units */
+"seconds" = "秒";
+"minutes" = "分鐘";
+"hours" = "小時";
+"days" = "天";
+

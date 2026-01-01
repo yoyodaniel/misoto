@@ -22,7 +22,7 @@ struct ServingsPickerView: View {
             .frame(width: 120, height: 80)
             .labelsHidden()
             
-            Text(NSLocalizedString("servings", comment: "Servings unit"))
+            Text(LocalizedString("servings", comment: "Servings unit"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .fixedSize()

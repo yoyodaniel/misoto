@@ -279,7 +279,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
         parsedRecipe = nil
         
         guard !images.isEmpty else {
-            errorMessage = NSLocalizedString("Please select at least one image", comment: "No image selected error")
+            errorMessage = LocalizedString("Please select at least one image", comment: "No image selected error")
             isLoading = false
             return
         }
@@ -302,19 +302,37 @@ class ExtractMenuFromImageViewModel: ObservableObject {
                 response = try await OpenAIService.extractRecipe(from: images)
             }
             
-            // Populate editable fields
-            title = response.title
-            description = response.description
-            marinadeIngredients = response.marinadeIngredients.isEmpty ? [] : response.marinadeIngredients
-            seasoningIngredients = response.seasoningIngredients.isEmpty ? [] : response.seasoningIngredients
-            batterIngredients = response.batterIngredients.isEmpty ? [] : response.batterIngredients
-            sauceIngredients = response.sauceIngredients.isEmpty ? [] : response.sauceIngredients
-            baseIngredients = response.baseIngredients.isEmpty ? [] : response.baseIngredients
-            doughIngredients = response.doughIngredients.isEmpty ? [] : response.doughIngredients
-            toppingIngredients = response.toppingIngredients.isEmpty ? [] : response.toppingIngredients
-            dishIngredients = response.dishIngredients.isEmpty ? [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")] : response.dishIngredients
-            instructions = response.instructions.isEmpty ? [InstructionItem()] : response.instructions.map { InstructionItem(text: $0) }
-            tips = response.tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            // Step 4: Translate recipe to user's selected language
+            print("🌍 Translating extracted recipe to user's selected language...")
+            let translated = await RecipeTranslationService.translateRecipe(
+                title: response.title,
+                description: response.description,
+                dishIngredients: response.dishIngredients,
+                marinadeIngredients: response.marinadeIngredients,
+                seasoningIngredients: response.seasoningIngredients,
+                batterIngredients: response.batterIngredients,
+                sauceIngredients: response.sauceIngredients,
+                baseIngredients: response.baseIngredients,
+                doughIngredients: response.doughIngredients,
+                toppingIngredients: response.toppingIngredients,
+                instructions: response.instructions,
+                tips: response.tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
+                cuisine: nil // Will be detected later
+            )
+            
+            // Populate editable fields with translated content
+            title = translated.title
+            description = translated.description
+            dishIngredients = translated.dishIngredients.isEmpty ? [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")] : translated.dishIngredients
+            marinadeIngredients = translated.marinadeIngredients
+            seasoningIngredients = translated.seasoningIngredients
+            batterIngredients = translated.batterIngredients
+            sauceIngredients = translated.sauceIngredients
+            baseIngredients = translated.baseIngredients
+            doughIngredients = translated.doughIngredients
+            toppingIngredients = translated.toppingIngredients
+            instructions = translated.instructions.isEmpty ? [InstructionItem()] : translated.instructions.map { InstructionItem(text: $0) }
+            tips = translated.tips
             
             // Use extracted servings, prepTime, and cookTime if available (non-zero means found in image)
             if response.servings > 0 {
@@ -353,7 +371,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
     func saveRecipe(image: UIImage? = nil) async -> Bool {
         guard let userID = Auth.auth().currentUser?.uid,
               let displayName = Auth.auth().currentUser?.displayName else {
-            errorMessage = NSLocalizedString("You must be logged in to save a recipe", comment: "Not logged in error")
+            errorMessage = LocalizedString("You must be logged in to save a recipe", comment: "Not logged in error")
             return false
         }
         
@@ -363,7 +381,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
         let username = authService.currentUser?.username
         
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
-            errorMessage = NSLocalizedString("Title is required", comment: "Title required error")
+            errorMessage = LocalizedString("Title is required", comment: "Title required error")
             return false
         }
         
@@ -379,7 +397,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
         let validIngredientItems = validMarinadeItems + validSeasoningItems + validDishItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
         
         guard !validDishItems.isEmpty else {
-            errorMessage = NSLocalizedString("At least one dish ingredient is required", comment: "Dish ingredients required error")
+            errorMessage = LocalizedString("At least one dish ingredient is required", comment: "Dish ingredients required error")
             return false
         }
         
@@ -414,7 +432,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
         
         let validInstructions = instructions.filter { !$0.text.trimmingCharacters(in: .whitespaces).isEmpty }
         guard !validInstructions.isEmpty else {
-            errorMessage = NSLocalizedString("At least one instruction is required", comment: "Instructions required error")
+            errorMessage = LocalizedString("At least one instruction is required", comment: "Instructions required error")
             return false
         }
         
@@ -665,7 +683,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
     /// Generate a description for the recipe using AI
     func generateDescription() async {
         guard !title.isEmpty else {
-            errorMessage = NSLocalizedString("Please enter a recipe title first", comment: "Title required for description")
+            errorMessage = LocalizedString("Please enter a recipe title first", comment: "Title required for description")
             return
         }
         
@@ -693,7 +711,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
                 description = generatedDescription
             }
         } catch {
-            errorMessage = NSLocalizedString("Failed to generate description: \(error.localizedDescription)", comment: "Description generation error")
+            errorMessage = LocalizedString("Failed to generate description: \(error.localizedDescription)", comment: "Description generation error")
         }
         
         isGeneratingDescription = false

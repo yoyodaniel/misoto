@@ -50,7 +50,7 @@ struct UserRow: View {
                 Button(action: {
                     action?()
                 }) {
-                    Text(NSLocalizedString("Follow", comment: "Follow button"))
+                    Text(LocalizedString("Follow", comment: "Follow button"))
                         .font(.caption)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -62,7 +62,7 @@ struct UserRow: View {
                 Button(action: {
                     action?()
                 }) {
-                    Text(NSLocalizedString("Unfollow", comment: "Unfollow button"))
+                    Text(LocalizedString("Unfollow", comment: "Unfollow button"))
                         .font(.caption)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)

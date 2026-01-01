@@ -144,11 +144,11 @@ enum TextExtractionError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidImage:
-            return NSLocalizedString("Invalid image", comment: "Invalid image error")
+            return LocalizedString("Invalid image", comment: "Invalid image error")
         case .noTextFound:
-            return NSLocalizedString("No text found in image", comment: "No text found error")
+            return LocalizedString("No text found in image", comment: "No text found error")
         case .processingFailed:
-            return NSLocalizedString("Failed to process image", comment: "Processing failed error")
+            return LocalizedString("Failed to process image", comment: "Processing failed error")
         }
     }
 }

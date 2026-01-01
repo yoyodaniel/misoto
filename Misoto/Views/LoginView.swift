@@ -22,11 +22,11 @@ struct LoginView: View {
                 .font(.system(size: 80))
                 .foregroundColor(.accentColor)
             
-            Text(NSLocalizedString("Misoto", comment: "App name"))
+            Text(LocalizedString("Misoto", comment: "App name"))
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text(NSLocalizedString("Share and discover amazing recipes", comment: "App tagline"))
+            Text(LocalizedString("Share and discover amazing recipes", comment: "App tagline"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -53,7 +53,7 @@ struct LoginView: View {
                     HStack {
                         Image(systemName: "globe")
                             .font(.system(size: 18))
-                        Text(NSLocalizedString("Continue with Google", comment: "Google sign in button"))
+                        Text(LocalizedString("Continue with Google", comment: "Google sign in button"))
                             .font(.system(size: 17, weight: .medium))
                     }
                     .foregroundColor(.primary)

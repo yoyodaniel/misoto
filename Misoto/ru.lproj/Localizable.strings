@@ -1,0 +1,246 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Russian (Русский)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "Делитесь и открывайте удивительные рецепты";
+"Loading..." = "Загрузка...";
+"Version %@" = "Версия %@";
+"Unknown" = "Неизвестно";
+
+/* Authentication */
+"Continue with Google" = "Продолжить с Google";
+"Invalid credential" = "Неверные учетные данные";
+"Invalid nonce" = "Неверный nonce";
+"Invalid token" = "Неверный токен";
+"Missing client ID" = "Отсутствует ID клиента";
+"Missing view controller" = "Отсутствует контроллер представления";
+"You are not authorized to perform this action" = "Вы не авторизованы для выполнения этого действия";
+"Username must be at least 4 characters" = "Имя пользователя должно содержать не менее 4 символов";
+"Username must be no more than 15 characters" = "Имя пользователя не должно превышать 15 символов";
+"This username is already taken" = "Это имя пользователя уже занято";
+"Username contains invalid characters" = "Имя пользователя содержит недопустимые символы";
+
+/* Settings */
+"Settings" = "Настройки";
+"Dark Mode" = "Темный режим";
+"Haptic Feedback" = "Тактильная обратная связь";
+"Appearance" = "Внешний вид";
+"Language" = "Язык";
+"The language selected will be used as the default writing language for recipe extractions." = "Выбранный язык будет использоваться как язык записи по умолчанию для извлечения рецептов.";
+"The language selected will be used as the default writing language for recipe extractions." = "Выбранный язык будет использоваться как язык записи по умолчанию для извлечения рецептов.";
+"English" = "Английский";
+"Chinese, Simplified" = "Упрощенный китайский";
+"Chinese, Traditional" = "Традиционный китайский";
+"Spanish" = "Испанский";
+"French" = "Французский";
+"German" = "Немецкий";
+"Italian" = "Итальянский";
+"Portuguese" = "Португальский";
+"Dutch" = "Голландский";
+"Russian" = "Русский";
+"Japanese" = "Японский";
+"Korean" = "Корейский";
+"Thai" = "Тайский";
+"Vietnamese" = "Вьетнамский";
+"Indonesian" = "Индонезийский";
+"Malay" = "Малайский";
+"Filipino" = "Филиппинский";
+"Hindi" = "Хинди";
+"System Language (%@)" = "Язык системы (%@)";
+"Share App" = "Поделиться приложением";
+"Share" = "Поделиться";
+"Check out %@! %@" = "Оцените %@! %@";
+"Submit Feedback" = "Отправить отзыв";
+"Feedback" = "Отзыв";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "Мы ценим сотрудничество с нашими пользователями для дальнейшего улучшения приложения и адаптации его под ваши потребности.";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "Поделитесь своими идеями, предложениями, запросами функций или общими отзывами. Ваш вклад помогает нам создать лучший опыт для всех.";
+"Done" = "Готово";
+
+/* Feedback */
+"Type" = "Тип";
+"Feedback Type" = "Тип отзыва";
+"Feature Request" = "Запрос функции";
+"General Feedback" = "Общий отзыв";
+"Translation Suggestion" = "Предложение по переводу";
+"Your name" = "Ваше имя";
+"Name" = "Имя";
+"Describe your feature request" = "Опишите ваш запрос функции";
+"Suggest a translation improvement" = "Предложите улучшение перевода";
+"Share your feedback" = "Поделитесь своим отзывом";
+"Please describe the feature you'd like to see in the app." = "Пожалуйста, опишите функцию, которую вы хотели бы видеть в приложении.";
+"Please suggest improvements to translations or report incorrect translations." = "Пожалуйста, предложите улучшения переводов или сообщите о неправильных переводах.";
+"Please share your thoughts, suggestions, or report any issues." = "Пожалуйста, поделитесь своими мыслями, предложениями или сообщите о любых проблемах.";
+"Email address (optional)" = "Адрес электронной почты (необязательно)";
+"Contact Email" = "Контактный Email";
+"Optional: We'll use this to respond to your feature request if needed." = "Необязательно: Мы будем использовать это для ответа на ваш запрос функции при необходимости.";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "Необязательно: Мы будем использовать это для ответа на ваше предложение по переводу при необходимости.";
+"Optional: We'll use this to respond to your feedback if needed." = "Необязательно: Мы будем использовать это для ответа на ваш отзыв при необходимости.";
+"Submit" = "Отправить";
+"Cancel" = "Отмена";
+"Please enter a valid email address" = "Пожалуйста, введите действительный адрес электронной почты";
+"You must be signed in to submit feedback" = "Вы должны войти в систему, чтобы отправить отзыв";
+"Please provide your feedback or feature request" = "Пожалуйста, предоставьте ваш отзыв или запрос функции";
+"Please provide a valid email address or leave it empty" = "Пожалуйста, предоставьте действительный адрес электронной почты или оставьте его пустым";
+"Failed to submit: %@" = "Не удалось отправить: %@";
+"Thank you for your feature request!" = "Спасибо за ваш запрос функции!";
+"Thank you for your translation suggestion!" = "Спасибо за ваше предложение по переводу!";
+"Thank you for your feedback!" = "Спасибо за ваш отзыв!";
+
+/* Navigation */
+"Explore" = "Исследовать";
+"Account" = "Аккаунт";
+"Add Menu" = "Добавить меню";
+"Manual Entry" = "Ручной ввод";
+"Take Picture" = "Сделать фото";
+"Extract from Image" = "Извлечь из изображения";
+"Extract from Link" = "Извлечь из ссылки";
+"Extract from Website" = "Извлечь с веб-сайта";
+"Search or enter website name" = "Поиск или введите название сайта";
+"Find a Recipe" = "Найти Рецепт";
+"Type a website URL or search for a recipe" = "Введите URL веб-сайта или найдите рецепт";
+"Enter a website URL (e.g., example.com)" = "Введите URL веб-сайта (например, example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "Или найдите рецепт (например, рецепт шоколадного торта)";
+"Extract Recipe" = "Извлечь Рецепт";
+"Extract Recipe with AI" = "Извлечь Рецепт с ИИ";
+"Extract with AI" = "Извлечь с ИИ";
+"Detecting recipe..." = "Обнаружение рецепта...";
+"No recipe detected on this page" = "На этой странице не обнаружено рецепта";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Вставьте ссылку на веб-страницу с рецептом, чтобы автоматически извлечь информацию о рецепте с помощью ИИ.";
+
+/* Profile */
+"Edit Profile" = "Редактировать профиль";
+"Change Profile Picture" = "Изменить Фото Профиля";
+"Profile Information" = "Информация о Профиле";
+"Username" = "Имя Пользователя";
+"Suggested usernames:" = "Предложенные имена пользователей:";
+"Bio" = "Биография";
+"characters" = "символов";
+"%d/15 characters" = "%d/15 символов";
+"Recipes" = "Рецепты";
+"Followers" = "Подписчики";
+"Following" = "Подписки";
+"Sign Out" = "Выйти";
+"No recipes yet" = "Пока нет рецептов";
+"Start sharing your favorite recipes with the community!" = "Начните делиться своими любимыми рецептами с сообществом!";
+"Delete Recipe" = "Удалить рецепт";
+"Delete" = "Удалить";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "Вы уверены, что хотите удалить этот рецепт? Это действие нельзя отменить.";
+"Edit Recipe" = "Редактировать рецепт";
+
+/* Explore */
+"Today's Recommendations" = "Рекомендации на сегодня";
+"Weekly Menu" = "Еженедельное меню";
+"Trending" = "В тренде";
+"Ranking" = "Рейтинг";
+"Search ingredients, recipes" = "Поиск ингредиентов, рецептов";
+"No recipes found" = "Рецепты не найдены";
+
+/* Favorites */
+"No favorites yet" = "Пока нет избранного";
+"Start exploring and save your favorite recipes!" = "Начните исследовать и сохраняйте свои любимые рецепты!";
+
+/* Friends */
+"Friends" = "Друзья";
+"Search" = "Поиск";
+"No followers yet" = "Пока нет подписчиков";
+"You're not following anyone yet" = "Вы пока никого не отслеживаете";
+"Search users" = "Поиск пользователей";
+"No users found" = "Пользователи не найдены";
+
+/* Recipe */
+"Title" = "Название";
+"Recipe Title" = "Название рецепта";
+"Description" = "Описание";
+"Regenerate Description" = "Перегенерировать описание";
+"Cuisine" = "Кухня";
+"Select Cuisine" = "Выбрать кухню";
+"Preparation Time" = "Время подготовки";
+"Cooking Time" = "Время приготовления";
+"Time" = "Время";
+"Servings" = "Порции";
+"servings" = "порции";
+"Difficulty" = "Сложность";
+"Spicy Level" = "Уровень Остроты";
+"Add Dish Image" = "Добавить изображение блюда";
+"Take picture" = "Сделать фото";
+"Select image" = "Выбрать изображение";
+"Select Dish images" = "Выбрать Изображения Блюда";
+"Take another picture" = "Сделать еще одно фото";
+"Dish Images" = "Изображения блюда";
+"Dish images can be added later as required" = "Изображения блюда можно добавить позже при необходимости";
+"Add" = "Добавить";
+"Save" = "Сохранить";
+"Upload" = "Загрузить";
+"Step" = "Шаг";
+"View Video" = "Просмотреть видео";
+"Remove Media" = "Удалить медиа";
+"Add Step" = "Добавить шаг";
+"Instructions" = "Инструкции";
+"Dish Ingredients" = "Ингредиенты Блюда";
+"Add Dish Ingredient" = "Добавить Ингредиент Блюда";
+"Marinade Ingredients" = "Ингредиенты Маринада";
+"Add Marinade Ingredient" = "Добавить Ингредиент Маринада";
+"Seasoning Ingredients" = "Ингредиенты Приправы";
+"Add Seasoning Ingredient" = "Добавить Ингредиент Приправы";
+"Batter Ingredients" = "Ингредиенты Теста";
+"Add Batter Ingredient" = "Добавить Ингредиент Теста";
+"Sauce Ingredients" = "Ингредиенты Соуса";
+"Add Sauce Ingredient" = "Добавить Ингредиент Соуса";
+"Base Ingredients" = "Базовые Ингредиенты";
+"Add Base Ingredient" = "Добавить Базовый Ингредиент";
+"Dough Ingredients" = "Ингредиенты Теста";
+"Add Dough Ingredient" = "Добавить Ингредиент Теста";
+"Topping Ingredients" = "Ингредиенты Начинки";
+"Add Topping Ingredient" = "Добавить Ингредиент Начинки";
+"Additional Tips" = "Дополнительные Советы";
+"Add Tip" = "Добавить Совет";
+"View Source Website" = "Просмотреть Исходный Веб-сайт";
+"Source Website" = "Исходный Веб-сайт";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "Чайная ложка (ч.л.)";
+"Tablespoon (tbsp)" = "Столовая ложка (ст.л.)";
+"Cup" = "Стакан";
+"Ounce (oz)" = "Унция (oz)";
+"Fluid Ounce (fl oz)" = "Жидкая унция (fl oz)";
+"Pound (lb)" = "Фунт (lb)";
+"Gram (g)" = "Грамм (г)";
+"Kilogram (kg)" = "Килограмм (кг)";
+"Milliliter (ml)" = "Миллилитр (мл)";
+"Liter (l)" = "Литр (л)";
+"Pinch" = "Щепотка";
+"Piece" = "Кусок";
+"Pieces (pcs)" = "Куски (pcs)";
+"Piece (pc)" = "Кусок (pc)";
+"Slice" = "Ломтик";
+"Clove" = "Зубчик";
+"Bunch" = "Пучок";
+"Head" = "Головка";
+"Strand" = "Прядь";
+"Strands" = "Пряди";
+"Source images used for recipe extraction" = "Исходные изображения, использованные для извлечения рецепта";
+"Source image used for recipe extraction" = "Исходное изображение, использованное для извлечения рецепта";
+"Source" = "Источник";
+"Created on:" = "Создано:";
+"Updated on:" = "Обновлено:";
+
+/* Spicy Level */
+"None" = "Нет";
+"Mild" = "Слабо";
+"Hot" = "Остро";
+"Very Hot" = "Очень остро";
+"Extreme" = "Экстремально";
+"Insane" = "Безумно остро";
+
+/* Time Units */
+"seconds" = "секунды";
+"minutes" = "минуты";
+"hours" = "часы";
+"days" = "дни";
+

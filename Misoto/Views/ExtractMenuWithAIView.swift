@@ -65,7 +65,7 @@ struct ExtractMenuWithAIView: View {
     
     private var imageSelectionView: some View {
         Form {
-            Section(header: Text(NSLocalizedString("Select Menu Image", comment: "Select menu image section"))) {
+            Section(header: Text(LocalizedString("Select Menu Image", comment: "Select menu image section"))) {
                 if let selectedImage = selectedImage {
                     Image(uiImage: selectedImage)
                         .resizable()
@@ -80,7 +80,7 @@ struct ExtractMenuWithAIView: View {
                     ) {
                         HStack {
                             Image(systemName: "photo.badge.plus")
-                            Text(NSLocalizedString("Change Image", comment: "Change image button"))
+                            Text(LocalizedString("Change Image", comment: "Change image button"))
                         }
                     }
                 } else {
@@ -90,7 +90,7 @@ struct ExtractMenuWithAIView: View {
                     ) {
                         HStack {
                             Image(systemName: "photo.badge.plus")
-                            Text(NSLocalizedString("Select Menu Image", comment: "Select image button"))
+                            Text(LocalizedString("Select Menu Image", comment: "Select image button"))
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -117,7 +117,7 @@ struct ExtractMenuWithAIView: View {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                         }
-                        Text(NSLocalizedString("Extract Recipe with AI", comment: "Extract recipe button"))
+                        Text(LocalizedString("Extract Recipe with AI", comment: "Extract recipe button"))
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
@@ -128,7 +128,7 @@ struct ExtractMenuWithAIView: View {
                 .disabled(viewModel.isLoading || selectedImage == nil)
             }
         }
-        .navigationTitle(NSLocalizedString("Extract with AI", comment: "Extract with AI title"))
+        .navigationTitle(LocalizedString("Extract with AI", comment: "Extract with AI title"))
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: selectedPhoto) { oldValue, newValue in
             Task {
@@ -151,17 +151,17 @@ struct ExtractMenuWithAIView: View {
         .sheet(isPresented: $showCuisineSelection) {
             CuisineSelectionView(selectedCuisine: $viewModel.cuisine)
         }
-        .navigationTitle(NSLocalizedString("Edit Recipe", comment: "Edit recipe title"))
+        .navigationTitle(LocalizedString("Edit Recipe", comment: "Edit recipe title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button(NSLocalizedString("Done", comment: "Done button")) {
+                Button(LocalizedString("Done", comment: "Done button")) {
                     dismissKeyboard()
                 }
             }
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(NSLocalizedString("Cancel", comment: "Cancel button")) {
+                Button(LocalizedString("Cancel", comment: "Cancel button")) {
                     dismiss()
                 }
             }
@@ -183,7 +183,7 @@ struct ExtractMenuWithAIView: View {
                             ProgressView()
                                 .scaleEffect(0.8)
                         }
-                        Text(NSLocalizedString("Save", comment: "Save button"))
+                        Text(LocalizedString("Save", comment: "Save button"))
                     }
                 }
                 .disabled(viewModel.isLoading || viewModel.title.isEmpty)
@@ -440,7 +440,7 @@ struct ExtractMenuWithAIView: View {
                     .background(Color.accentColor)
                     .clipShape(Circle())
                 
-                TextField(NSLocalizedString("Step", comment: "Step placeholder"), text: Binding(
+                TextField(LocalizedString("Step", comment: "Step placeholder"), text: Binding(
                     get: { viewModel.instructions[index] },
                     set: { viewModel.updateInstruction($0, at: index) }
                 ), axis: .vertical)
@@ -457,7 +457,7 @@ struct ExtractMenuWithAIView: View {
         Button(action: {
             viewModel.addInstruction()
         }) {
-            Label(NSLocalizedString("Add Step", comment: "Add step button"), systemImage: "plus.circle")
+            Label(LocalizedString("Add Step", comment: "Add step button"), systemImage: "plus.circle")
         }
     }
     
@@ -482,13 +482,13 @@ struct ExtractMenuWithAIView: View {
                     }
                     .padding(.horizontal, 4)
                     
-                    Text(NSLocalizedString("Source image used for recipe extraction", comment: "Source image description"))
+                    Text(LocalizedString("Source image used for recipe extraction", comment: "Source image description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 4)
                 } label: {
-                    Text(NSLocalizedString("Source", comment: "Source section"))
+                    Text(LocalizedString("Source", comment: "Source section"))
                         .font(.headline)
                 }
             }

@@ -17,28 +17,89 @@ class TranslationAPIService {
     
     private static let useSystemTranslation = true // Set to false to use API service
     
-    /// Translate text from source language to English using system or API translation
+    /// Translate text from source language to English using OpenAI API
     static func translate(_ text: String, from sourceLanguage: NLLanguage) async -> String {
-        // For automatic translation, we use a translation API service
-        // Apple's Translation framework requires user interaction for privacy, so it's not suitable for automatic translation
-        
-        // Get source language code
-        let sourceLangCode = sourceLanguage.rawValue
-        
-        // Try using LibreTranslate (free, open-source translation API)
-        // This is a free alternative that doesn't require API keys
-        if let translated = await translateWithLibreTranslate(text, from: sourceLangCode, to: "en") {
+        // Use OpenAI API for translation (better quality, consistent with existing OpenAI usage)
+        do {
+            let translated = try await OpenAIService.translateToEnglish(text, from: sourceLanguage)
+            print("✅ Successfully translated using OpenAI API")
             return translated
+        } catch {
+            print("⚠️ OpenAI translation failed: \(error.localizedDescription)")
+            print("⚠️ Falling back to dictionary translations")
+            
+            // Fallback: Use hard-coded dictionaries for common recipe terms
+            return translateCommonRecipeTerms(text, from: sourceLanguage)
+        }
+    }
+    
+    /// Fallback: Translate common recipe terms using hard-coded dictionaries
+    private static func translateCommonRecipeTerms(_ text: String, from sourceLanguage: NLLanguage) -> String {
+        var translated = text
+        let languageCode = sourceLanguage.rawValue
+        
+        // German to English common recipe terms
+        if languageCode.hasPrefix("de") {
+            let germanToEnglish: [String: String] = [
+                "ZUTATEN": "INGREDIENTS",
+                "Zutat": "INGREDIENT",
+                "Gewürze": "SEASONINGS",
+                "Gewürz": "SEASONING",
+                "Marinade": "MARINADE",
+                "Anleitung": "INSTRUCTIONS",
+                "Schritte": "PROCEDURES",
+                "Rezept": "RECIPE"
+            ]
+            
+            for (german, english) in germanToEnglish {
+                translated = translated.replacingOccurrences(
+                    of: german,
+                    with: english,
+                    options: [.caseInsensitive, .diacriticInsensitive]
+                )
+            }
         }
         
-        // If LibreTranslate fails, you can integrate other services:
-        // - Google Cloud Translation API (requires API key)
-        // - Microsoft Azure Translator (requires API key)
-        // - DeepL API (requires API key)
+        // Chinese to English common recipe terms
+        if languageCode.hasPrefix("zh") {
+            let chineseToEnglish: [String: String] = [
+                "材料": "INGREDIENTS",
+                "調味料": "SEASONINGS",
+                "步驟": "PROCEDURES",
+                "做法": "INSTRUCTIONS"
+            ]
+            
+            for (chinese, english) in chineseToEnglish {
+                translated = translated.replacingOccurrences(
+                    of: chinese,
+                    with: english,
+                    options: [.caseInsensitive, .diacriticInsensitive]
+                )
+            }
+        }
         
-        print("Translation API not available, returning original text")
-        return text
+        // Japanese to English common recipe terms
+        if languageCode.hasPrefix("ja") {
+            let japaneseToEnglish: [String: String] = [
+                "材料": "INGREDIENTS",
+                "調味料": "SEASONINGS",
+                "作り方": "INSTRUCTIONS",
+                "手順": "PROCEDURES"
+            ]
+            
+            for (japanese, english) in japaneseToEnglish {
+                translated = translated.replacingOccurrences(
+                    of: japanese,
+                    with: english,
+                    options: [.caseInsensitive, .diacriticInsensitive]
+                )
+            }
+        }
+        
+        return translated
     }
+    
+    // MARK: - Legacy LibreTranslate Methods (kept for reference, not used)
     
     /// Translate using LibreTranslate (free, open-source translation service)
     /// Note: This uses a public instance - for production, consider hosting your own or using a paid service

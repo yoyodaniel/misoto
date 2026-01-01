@@ -183,9 +183,9 @@ enum RecipeError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unauthorized:
-            return NSLocalizedString("You are not authorized to perform this action", comment: "Unauthorized error")
+            return LocalizedString("You are not authorized to perform this action", comment: "Unauthorized error")
         case .notFound:
-            return NSLocalizedString("Recipe not found", comment: "Recipe not found error")
+            return LocalizedString("Recipe not found", comment: "Recipe not found error")
         }
     }
 }

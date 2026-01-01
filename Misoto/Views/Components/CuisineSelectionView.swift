@@ -20,7 +20,7 @@ struct CuisineSelectionView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 // Search bar
-                SearchBar(text: $searchText, placeholder: NSLocalizedString("Search cuisines...", comment: "Search cuisines placeholder"))
+                SearchBar(text: $searchText, placeholder: LocalizedString("Search cuisines...", comment: "Search cuisines placeholder"))
                     .padding(.horizontal)
                     .padding(.top, 8)
                 
@@ -32,7 +32,7 @@ struct CuisineSelectionView: View {
                         dismiss()
                     }) {
                         HStack {
-                            Text(NSLocalizedString("None", comment: "None option"))
+                            Text(LocalizedString("None", comment: "None option"))
                                 .foregroundColor(.primary)
                             Spacer()
                             if selectedCuisine == nil {
@@ -61,11 +61,11 @@ struct CuisineSelectionView: View {
                 }
                 .listStyle(.plain)
             }
-            .navigationTitle(NSLocalizedString("Select Cuisine", comment: "Select cuisine title"))
+            .navigationTitle(LocalizedString("Select Cuisine", comment: "Select cuisine title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(NSLocalizedString("Done", comment: "Done button")) {
+                    Button(LocalizedString("Done", comment: "Done button")) {
                         dismiss()
                     }
                 }

@@ -12,6 +12,7 @@ struct MainTabView: View {
     @State private var showUploadRecipe = false
     @State private var showExtractFromImage = false
     @State private var showExtractFromLink = false
+    @State private var showExtractFromWebsite = false
     @State private var showAddMenuOptions = false
     @State private var showCamera = false
     @State private var capturedImage: UIImage?
@@ -23,12 +24,12 @@ struct MainTabView: View {
             TabView {
                 ExploreView()
                     .tabItem {
-                        Label(NSLocalizedString("Explore", comment: "Explore tab"), systemImage: "menucard.fill")
+                        Label(LocalizedString("Explore", comment: "Explore tab"), systemImage: "menucard.fill")
                     }
                 
                 AccountView()
                     .tabItem {
-                        Label(NSLocalizedString("Account", comment: "Account tab"), systemImage: "person.fill")
+                        Label(LocalizedString("Account", comment: "Account tab"), systemImage: "person.fill")
                     }
             }
             
@@ -38,6 +39,7 @@ struct MainTabView: View {
                 HStack {
                     Spacer()
                     Button(action: {
+                        HapticFeedback.buttonTap()
                         showAddMenuOptions = true
                     }) {
                         Image(systemName: "plus.circle.fill")
@@ -54,31 +56,35 @@ struct MainTabView: View {
             }
         }
         .confirmationDialog(
-            NSLocalizedString("Add Menu", comment: "Add menu dialog title"),
+            LocalizedString("Add Menu", comment: "Add menu dialog title"),
             isPresented: $showAddMenuOptions,
             titleVisibility: .visible
         ) {
-            Button(NSLocalizedString("Manual Entry", comment: "Manual entry option")) {
+            Button(LocalizedString("Manual Entry", comment: "Manual entry option")) {
                 showUploadRecipe = true
             }
             
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                Button(NSLocalizedString("Take Picture", comment: "Take picture option")) {
+                Button(LocalizedString("Take Picture", comment: "Take picture option")) {
                     showCamera = true
                 }
             }
             
-            Button(NSLocalizedString("Extract from Image", comment: "Extract from image option")) {
+            Button(LocalizedString("Extract from Image", comment: "Extract from image option")) {
                 // Clear any pending image when manually selecting extract from image
                 pendingExtractionImage = nil
                 showExtractFromImage = true
             }
             
-            Button(NSLocalizedString("Extract from Link", comment: "Extract from link option")) {
+            Button(LocalizedString("Extract from Link", comment: "Extract from link option")) {
                 showExtractFromLink = true
             }
             
-            Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+            Button(LocalizedString("Extract from Website", comment: "Extract from website option")) {
+                showExtractFromWebsite = true
+            }
+            
+            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
         }
         .sheet(isPresented: $showUploadRecipe) {
             UploadRecipeView()
@@ -95,6 +101,9 @@ struct MainTabView: View {
         }
         .sheet(isPresented: $showExtractFromLink) {
             ExtractMenuFromLinkView()
+        }
+        .sheet(isPresented: $showExtractFromWebsite) {
+            ExtractMenuFromWebsiteView()
         }
         .fullScreenCover(isPresented: $showCamera) {
             CameraCaptureView { image in

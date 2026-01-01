@@ -15,10 +15,10 @@ enum TimeUnit: String, CaseIterable {
     
     var displayName: String {
         switch self {
-        case .seconds: return NSLocalizedString("seconds", comment: "Seconds unit")
-        case .minutes: return NSLocalizedString("minutes", comment: "Minutes unit")
-        case .hours: return NSLocalizedString("hours", comment: "Hours unit")
-        case .days: return NSLocalizedString("days", comment: "Days unit")
+        case .seconds: return LocalizedString("seconds", comment: "Seconds unit")
+        case .minutes: return LocalizedString("minutes", comment: "Minutes unit")
+        case .hours: return LocalizedString("hours", comment: "Hours unit")
+        case .days: return LocalizedString("days", comment: "Days unit")
         }
     }
     

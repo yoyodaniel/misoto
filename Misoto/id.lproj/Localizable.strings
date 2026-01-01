@@ -1,0 +1,246 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Indonesian (Bahasa Indonesia)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "Bagikan dan temukan resep yang luar biasa";
+"Loading..." = "Memuat...";
+"Version %@" = "Versi %@";
+"Unknown" = "Tidak diketahui";
+
+/* Authentication */
+"Continue with Google" = "Lanjutkan dengan Google";
+"Invalid credential" = "Kredensial tidak valid";
+"Invalid nonce" = "Nonce tidak valid";
+"Invalid token" = "Token tidak valid";
+"Missing client ID" = "ID klien tidak ada";
+"Missing view controller" = "Pengontrol tampilan tidak ada";
+"You are not authorized to perform this action" = "Anda tidak berwenang untuk melakukan tindakan ini";
+"Username must be at least 4 characters" = "Nama pengguna harus minimal 4 karakter";
+"Username must be no more than 15 characters" = "Nama pengguna tidak boleh lebih dari 15 karakter";
+"This username is already taken" = "Nama pengguna ini sudah digunakan";
+"Username contains invalid characters" = "Nama pengguna berisi karakter yang tidak valid";
+
+/* Settings */
+"Settings" = "Pengaturan";
+"Dark Mode" = "Mode Gelap";
+"Haptic Feedback" = "Umpan Balik Haptik";
+"Appearance" = "Tampilan";
+"Language" = "Bahasa";
+"The language selected will be used as the default writing language for recipe extractions." = "Bahasa yang dipilih akan digunakan sebagai bahasa penulisan default untuk ekstraksi resep.";
+"The language selected will be used as the default writing language for recipe extractions." = "Bahasa yang dipilih akan digunakan sebagai bahasa penulisan default untuk ekstraksi resep.";
+"English" = "Bahasa Inggris";
+"Chinese, Simplified" = "Bahasa Cina Sederhana";
+"Chinese, Traditional" = "Bahasa Cina Tradisional";
+"Spanish" = "Bahasa Spanyol";
+"French" = "Bahasa Prancis";
+"German" = "Bahasa Jerman";
+"Italian" = "Bahasa Italia";
+"Portuguese" = "Bahasa Portugis";
+"Dutch" = "Bahasa Belanda";
+"Russian" = "Bahasa Rusia";
+"Japanese" = "Bahasa Jepang";
+"Korean" = "Bahasa Korea";
+"Thai" = "Bahasa Thailand";
+"Vietnamese" = "Bahasa Vietnam";
+"Indonesian" = "Bahasa Indonesia";
+"Malay" = "Bahasa Melayu";
+"Filipino" = "Bahasa Filipino";
+"Hindi" = "Bahasa Hindi";
+"System Language (%@)" = "Bahasa Sistem (%@)";
+"Share App" = "Bagikan Aplikasi";
+"Share" = "Bagikan";
+"Check out %@! %@" = "Lihat %@! %@";
+"Submit Feedback" = "Kirim Umpan Balik";
+"Feedback" = "Umpan Balik";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "Kami menghargai kolaborasi dengan pengguna kami untuk meningkatkan aplikasi lebih lanjut dan menyesuaikannya dengan kebutuhan Anda.";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "Bagikan ide, saran, permintaan fitur, atau umpan balik umum Anda. Masukan Anda membantu kami membangun pengalaman yang lebih baik untuk semua orang.";
+"Done" = "Selesai";
+
+/* Feedback */
+"Type" = "Jenis";
+"Feedback Type" = "Jenis Umpan Balik";
+"Feature Request" = "Permintaan Fitur";
+"General Feedback" = "Umpan Balik Umum";
+"Translation Suggestion" = "Saran Terjemahan";
+"Your name" = "Nama Anda";
+"Name" = "Nama";
+"Describe your feature request" = "Jelaskan permintaan fitur Anda";
+"Suggest a translation improvement" = "Sarankan perbaikan terjemahan";
+"Share your feedback" = "Bagikan umpan balik Anda";
+"Please describe the feature you'd like to see in the app." = "Silakan jelaskan fitur yang ingin Anda lihat di aplikasi.";
+"Please suggest improvements to translations or report incorrect translations." = "Silakan sarankan perbaikan terjemahan atau laporkan terjemahan yang salah.";
+"Please share your thoughts, suggestions, or report any issues." = "Silakan bagikan pemikiran, saran, atau laporkan masalah apa pun.";
+"Email address (optional)" = "Alamat email (opsional)";
+"Contact Email" = "Email Kontak";
+"Optional: We'll use this to respond to your feature request if needed." = "Opsional: Kami akan menggunakan ini untuk menanggapi permintaan fitur Anda jika diperlukan.";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "Opsional: Kami akan menggunakan ini untuk menanggapi saran terjemahan Anda jika diperlukan.";
+"Optional: We'll use this to respond to your feedback if needed." = "Opsional: Kami akan menggunakan ini untuk menanggapi umpan balik Anda jika diperlukan.";
+"Submit" = "Kirim";
+"Cancel" = "Batal";
+"Please enter a valid email address" = "Silakan masukkan alamat email yang valid";
+"You must be signed in to submit feedback" = "Anda harus masuk untuk mengirim umpan balik";
+"Please provide your feedback or feature request" = "Silakan berikan umpan balik atau permintaan fitur Anda";
+"Please provide a valid email address or leave it empty" = "Silakan berikan alamat email yang valid atau biarkan kosong";
+"Failed to submit: %@" = "Gagal mengirim: %@";
+"Thank you for your feature request!" = "Terima kasih atas permintaan fitur Anda!";
+"Thank you for your translation suggestion!" = "Terima kasih atas saran terjemahan Anda!";
+"Thank you for your feedback!" = "Terima kasih atas umpan balik Anda!";
+
+/* Navigation */
+"Explore" = "Jelajahi";
+"Account" = "Akun";
+"Add Menu" = "Tambah Menu";
+"Manual Entry" = "Entri Manual";
+"Take Picture" = "Ambil Foto";
+"Extract from Image" = "Ekstrak dari Gambar";
+"Extract from Link" = "Ekstrak dari Tautan";
+"Extract from Website" = "Ekstrak dari Situs Web";
+"Search or enter website name" = "Cari atau masukkan nama situs web";
+"Find a Recipe" = "Temukan Resep";
+"Type a website URL or search for a recipe" = "Ketik URL situs web atau cari resep";
+"Enter a website URL (e.g., example.com)" = "Masukkan URL situs web (mis. example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "Atau cari resep (mis. resep kue cokelat)";
+"Extract Recipe" = "Ekstrak Resep";
+"Extract Recipe with AI" = "Ekstrak Resep dengan AI";
+"Extract with AI" = "Ekstrak dengan AI";
+"Detecting recipe..." = "Mendeteksi resep...";
+"No recipe detected on this page" = "Tidak ada resep terdeteksi di halaman ini";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Tempel tautan ke halaman web resep untuk mengekstrak informasi resep secara otomatis menggunakan AI.";
+
+/* Profile */
+"Edit Profile" = "Edit Profil";
+"Change Profile Picture" = "Ubah Foto Profil";
+"Profile Information" = "Informasi Profil";
+"Username" = "Nama Pengguna";
+"Suggested usernames:" = "Nama pengguna yang disarankan:";
+"Bio" = "Biografi";
+"characters" = "karakter";
+"%d/15 characters" = "%d/15 karakter";
+"Recipes" = "Resep";
+"Followers" = "Pengikut";
+"Following" = "Mengikuti";
+"Sign Out" = "Keluar";
+"No recipes yet" = "Belum ada resep";
+"Start sharing your favorite recipes with the community!" = "Mulai bagikan resep favorit Anda dengan komunitas!";
+"Delete Recipe" = "Hapus Resep";
+"Delete" = "Hapus";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "Apakah Anda yakin ingin menghapus resep ini? Tindakan ini tidak dapat dibatalkan.";
+"Edit Recipe" = "Edit Resep";
+
+/* Explore */
+"Today's Recommendations" = "Rekomendasi Hari Ini";
+"Weekly Menu" = "Menu Mingguan";
+"Trending" = "Trending";
+"Ranking" = "Peringkat";
+"Search ingredients, recipes" = "Cari bahan, resep";
+"No recipes found" = "Tidak ada resep ditemukan";
+
+/* Favorites */
+"No favorites yet" = "Belum ada favorit";
+"Start exploring and save your favorite recipes!" = "Mulai jelajahi dan simpan resep favorit Anda!";
+
+/* Friends */
+"Friends" = "Teman";
+"Search" = "Cari";
+"No followers yet" = "Belum ada pengikut";
+"You're not following anyone yet" = "Anda belum mengikuti siapa pun";
+"Search users" = "Cari pengguna";
+"No users found" = "Tidak ada pengguna ditemukan";
+
+/* Recipe */
+"Title" = "Judul";
+"Recipe Title" = "Judul Resep";
+"Description" = "Deskripsi";
+"Regenerate Description" = "Regenerasi Deskripsi";
+"Cuisine" = "Masakan";
+"Select Cuisine" = "Pilih Masakan";
+"Preparation Time" = "Waktu Persiapan";
+"Cooking Time" = "Waktu Memasak";
+"Time" = "Waktu";
+"Servings" = "Porsi";
+"servings" = "porsi";
+"Difficulty" = "Tingkat Kesulitan";
+"Spicy Level" = "Tingkat Pedas";
+"Add Dish Image" = "Tambah Gambar Hidangan";
+"Take picture" = "Ambil foto";
+"Select image" = "Pilih gambar";
+"Select Dish images" = "Pilih Gambar Hidangan";
+"Take another picture" = "Ambil foto lagi";
+"Dish Images" = "Gambar Hidangan";
+"Dish images can be added later as required" = "Gambar hidangan dapat ditambahkan nanti sesuai kebutuhan";
+"Add" = "Tambah";
+"Save" = "Simpan";
+"Upload" = "Unggah";
+"Step" = "Langkah";
+"View Video" = "Lihat Video";
+"Remove Media" = "Hapus Media";
+"Add Step" = "Tambah Langkah";
+"Instructions" = "Instruksi";
+"Dish Ingredients" = "Bahan Hidangan";
+"Add Dish Ingredient" = "Tambah Bahan Hidangan";
+"Marinade Ingredients" = "Bahan Marinasi";
+"Add Marinade Ingredient" = "Tambah Bahan Marinasi";
+"Seasoning Ingredients" = "Bahan Bumbu";
+"Add Seasoning Ingredient" = "Tambah Bahan Bumbu";
+"Batter Ingredients" = "Bahan Adonan";
+"Add Batter Ingredient" = "Tambah Bahan Adonan";
+"Sauce Ingredients" = "Bahan Saus";
+"Add Sauce Ingredient" = "Tambah Bahan Saus";
+"Base Ingredients" = "Bahan Dasar";
+"Add Base Ingredient" = "Tambah Bahan Dasar";
+"Dough Ingredients" = "Bahan Adonan";
+"Add Dough Ingredient" = "Tambah Bahan Adonan";
+"Topping Ingredients" = "Bahan Topping";
+"Add Topping Ingredient" = "Tambah Bahan Topping";
+"Additional Tips" = "Tips Tambahan";
+"Add Tip" = "Tambah Tip";
+"View Source Website" = "Lihat Situs Web Sumber";
+"Source Website" = "Situs Web Sumber";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "Sendok Teh (sdt)";
+"Tablespoon (tbsp)" = "Sendok Makan (sdm)";
+"Cup" = "Cangkir";
+"Ounce (oz)" = "Ons (oz)";
+"Fluid Ounce (fl oz)" = "Ons Cair (fl oz)";
+"Pound (lb)" = "Pon (lb)";
+"Gram (g)" = "Gram (g)";
+"Kilogram (kg)" = "Kilogram (kg)";
+"Milliliter (ml)" = "Mililiter (ml)";
+"Liter (l)" = "Liter (l)";
+"Pinch" = "Sejumput";
+"Piece" = "Buah";
+"Pieces (pcs)" = "Buah (pcs)";
+"Piece (pc)" = "Buah (pc)";
+"Slice" = "Iris";
+"Clove" = "Siung";
+"Bunch" = "Ikat";
+"Head" = "Kepala";
+"Strand" = "Helai";
+"Strands" = "Helai";
+"Source images used for recipe extraction" = "Gambar sumber yang digunakan untuk ekstraksi resep";
+"Source image used for recipe extraction" = "Gambar sumber yang digunakan untuk ekstraksi resep";
+"Source" = "Sumber";
+"Created on:" = "Dibuat pada:";
+"Updated on:" = "Diperbarui pada:";
+
+/* Spicy Level */
+"None" = "Tidak ada";
+"Mild" = "Sedang";
+"Hot" = "Pedes";
+"Very Hot" = "Sangat Pedes";
+"Extreme" = "Ekstrem";
+"Insane" = "Sangat Pedes";
+
+/* Time Units */
+"seconds" = "detik";
+"minutes" = "menit";
+"hours" = "jam";
+"days" = "hari";
+

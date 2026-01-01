@@ -1,0 +1,246 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Tagalog/Filipino (Tagalog)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "Ibahagi at tuklasin ang mga kamangha-manghang recipe";
+"Loading..." = "Naglo-load...";
+"Version %@" = "Bersyon %@";
+"Unknown" = "Hindi kilala";
+
+/* Authentication */
+"Continue with Google" = "Magpatuloy sa Google";
+"Invalid credential" = "Hindi wasto na kredensyal";
+"Invalid nonce" = "Hindi wasto na nonce";
+"Invalid token" = "Hindi wasto na token";
+"Missing client ID" = "Nawawalang client ID";
+"Missing view controller" = "Nawawalang view controller";
+"You are not authorized to perform this action" = "Wala kang pahintulot na gawin ang aksyon na ito";
+"Username must be at least 4 characters" = "Ang username ay dapat na hindi bababa sa 4 na karakter";
+"Username must be no more than 15 characters" = "Ang username ay hindi dapat lumampas sa 15 na karakter";
+"This username is already taken" = "Ang username na ito ay ginagamit na";
+"Username contains invalid characters" = "Ang username ay naglalaman ng hindi wasto na karakter";
+
+/* Settings */
+"Settings" = "Mga Setting";
+"Dark Mode" = "Madilim na Mode";
+"Haptic Feedback" = "Haptic Feedback";
+"Appearance" = "Itsura";
+"Language" = "Wika";
+"The language selected will be used as the default writing language for recipe extractions." = "Ang napiling wika ay gagamitin bilang default na wika ng pagsulat para sa mga pagkuha ng recipe.";
+"The language selected will be used as the default writing language for recipe extractions." = "Ang napiling wika ay gagamitin bilang default na wika ng pagsulat para sa mga pagkuha ng recipe.";
+"English" = "Ingles";
+"Chinese, Simplified" = "Pinapayak na Tsino";
+"Chinese, Traditional" = "Tradisyonal na Tsino";
+"Spanish" = "Espanyol";
+"French" = "Pranses";
+"German" = "Aleman";
+"Italian" = "Italyano";
+"Portuguese" = "Portuges";
+"Dutch" = "Olandes";
+"Russian" = "Ruso";
+"Japanese" = "Hapones";
+"Korean" = "Koreano";
+"Thai" = "Thai";
+"Vietnamese" = "Biyetnames";
+"Indonesian" = "Indones";
+"Malay" = "Malay";
+"Filipino" = "Filipino";
+"Hindi" = "Hindi";
+"System Language (%@)" = "Wika ng Sistema (%@)";
+"Share App" = "Ibahagi ang App";
+"Share" = "Ibahagi";
+"Check out %@! %@" = "Tingnan ang %@! %@";
+"Submit Feedback" = "Ipasa ang Feedback";
+"Feedback" = "Feedback";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "Pinahahalagahan namin ang pakikipagtulungan sa aming mga user upang mapabuti pa ang app at iakma ito sa iyong pangangailangan.";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "Ibahagi ang iyong mga ideya, mungkahi, kahilingan sa feature, o pangkalahatang feedback. Ang iyong input ay tumutulong sa amin na bumuo ng mas mahusay na karanasan para sa lahat.";
+"Done" = "Tapos na";
+
+/* Feedback */
+"Type" = "Uri";
+"Feedback Type" = "Uri ng Feedback";
+"Feature Request" = "Kahilingan sa Feature";
+"General Feedback" = "Pangkalahatang Feedback";
+"Translation Suggestion" = "Mungkahi sa Pagsasalin";
+"Your name" = "Ang iyong pangalan";
+"Name" = "Pangalan";
+"Describe your feature request" = "Ilarawan ang iyong kahilingan sa feature";
+"Suggest a translation improvement" = "Magmungkahi ng pagpapabuti sa pagsasalin";
+"Share your feedback" = "Ibahagi ang iyong feedback";
+"Please describe the feature you'd like to see in the app." = "Mangyaring ilarawan ang feature na nais mong makita sa app.";
+"Please suggest improvements to translations or report incorrect translations." = "Mangyaring magmungkahi ng pagpapabuti sa pagsasalin o iulat ang maling pagsasalin.";
+"Please share your thoughts, suggestions, or report any issues." = "Mangyaring ibahagi ang iyong mga saloobin, mungkahi, o iulat ang anumang isyu.";
+"Email address (optional)" = "Email address (opsyonal)";
+"Contact Email" = "Email ng Kontak";
+"Optional: We'll use this to respond to your feature request if needed." = "Opsyonal: Gagamitin namin ito upang tumugon sa iyong kahilingan sa feature kung kinakailangan.";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "Opsyonal: Gagamitin namin ito upang tumugon sa iyong mungkahi sa pagsasalin kung kinakailangan.";
+"Optional: We'll use this to respond to your feedback if needed." = "Opsyonal: Gagamitin namin ito upang tumugon sa iyong feedback kung kinakailangan.";
+"Submit" = "Ipasa";
+"Cancel" = "Kanselahin";
+"Please enter a valid email address" = "Mangyaring maglagay ng wasto na email address";
+"You must be signed in to submit feedback" = "Dapat kang naka-sign in upang magpasa ng feedback";
+"Please provide your feedback or feature request" = "Mangyaring magbigay ng iyong feedback o kahilingan sa feature";
+"Please provide a valid email address or leave it empty" = "Mangyaring magbigay ng wasto na email address o iwanan itong walang laman";
+"Failed to submit: %@" = "Nabigo na ipasa: %@";
+"Thank you for your feature request!" = "Salamat sa iyong kahilingan sa feature!";
+"Thank you for your translation suggestion!" = "Salamat sa iyong mungkahi sa pagsasalin!";
+"Thank you for your feedback!" = "Salamat sa iyong feedback!";
+
+/* Navigation */
+"Explore" = "Tuklasin";
+"Account" = "Account";
+"Add Menu" = "Magdagdag ng Menu";
+"Manual Entry" = "Manwal na Entry";
+"Take Picture" = "Kumuha ng Larawan";
+"Extract from Image" = "Kunin mula sa Larawan";
+"Extract from Link" = "Kunin mula sa Link";
+"Extract from Website" = "Kunin mula sa Website";
+"Search or enter website name" = "Maghanap o maglagay ng pangalan ng website";
+"Find a Recipe" = "Maghanap ng Recipe";
+"Type a website URL or search for a recipe" = "Mag-type ng URL ng website o maghanap ng recipe";
+"Enter a website URL (e.g., example.com)" = "Maglagay ng URL ng website (hal. example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "O maghanap ng recipe (hal. recipe ng chocolate cake)";
+"Extract Recipe" = "Kunin ang Recipe";
+"Extract Recipe with AI" = "Kunin ang Recipe gamit ang AI";
+"Extract with AI" = "Kunin gamit ang AI";
+"Detecting recipe..." = "Nakikita ang recipe...";
+"No recipe detected on this page" = "Walang recipe na nakita sa pahinang ito";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "I-paste ang link sa isang recipe webpage upang awtomatikong kunin ang impormasyon ng recipe gamit ang AI.";
+
+/* Profile */
+"Edit Profile" = "I-edit ang Profile";
+"Change Profile Picture" = "Palitan ang Larawan ng Profile";
+"Profile Information" = "Impormasyon ng Profile";
+"Username" = "Username";
+"Suggested usernames:" = "Mga iminungkahing username:";
+"Bio" = "Bio";
+"characters" = "mga karakter";
+"%d/15 characters" = "%d/15 mga karakter";
+"Recipes" = "Mga Recipe";
+"Followers" = "Mga Follower";
+"Following" = "Sinusundan";
+"Sign Out" = "Mag-sign Out";
+"No recipes yet" = "Wala pang mga recipe";
+"Start sharing your favorite recipes with the community!" = "Magsimulang magbahagi ng iyong mga paboritong recipe sa komunidad!";
+"Delete Recipe" = "Tanggalin ang Recipe";
+"Delete" = "Tanggalin";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "Sigurado ka bang gusto mong tanggalin ang recipe na ito? Ang aksyon na ito ay hindi na mababalik.";
+"Edit Recipe" = "I-edit ang Recipe";
+
+/* Explore */
+"Today's Recommendations" = "Mga Rekomendasyon Ngayon";
+"Weekly Menu" = "Menu ng Linggo";
+"Trending" = "Trending";
+"Ranking" = "Ranggo";
+"Search ingredients, recipes" = "Maghanap ng mga sangkap, recipe";
+"No recipes found" = "Walang nahanap na recipe";
+
+/* Favorites */
+"No favorites yet" = "Wala pang mga paborito";
+"Start exploring and save your favorite recipes!" = "Magsimulang tuklasin at i-save ang iyong mga paboritong recipe!";
+
+/* Friends */
+"Friends" = "Mga Kaibigan";
+"Search" = "Maghanap";
+"No followers yet" = "Wala pang mga follower";
+"You're not following anyone yet" = "Wala ka pang sinusundan";
+"Search users" = "Maghanap ng mga user";
+"No users found" = "Walang nahanap na user";
+
+/* Recipe */
+"Title" = "Pamagat";
+"Recipe Title" = "Pamagat ng Recipe";
+"Description" = "Paglalarawan";
+"Regenerate Description" = "I-regenerate ang Paglalarawan";
+"Cuisine" = "Cuisine";
+"Select Cuisine" = "Pumili ng Cuisine";
+"Preparation Time" = "Oras ng Paghahanda";
+"Cooking Time" = "Oras ng Pagluluto";
+"Time" = "Oras";
+"Servings" = "Mga Servings";
+"servings" = "servings";
+"Difficulty" = "Kahirapan";
+"Spicy Level" = "Antas ng Maanghang";
+"Add Dish Image" = "Magdagdag ng Larawan ng Ulam";
+"Take picture" = "Kumuha ng larawan";
+"Select image" = "Pumili ng larawan";
+"Select Dish images" = "Pumili ng Mga Larawan ng Ulam";
+"Take another picture" = "Kumuha ng ibang larawan";
+"Dish Images" = "Mga Larawan ng Ulam";
+"Dish images can be added later as required" = "Ang mga larawan ng ulam ay maaaring idagdag mamaya kung kinakailangan";
+"Add" = "Magdagdag";
+"Save" = "I-save";
+"Upload" = "I-upload";
+"Step" = "Hakbang";
+"View Video" = "Tingnan ang Video";
+"Remove Media" = "Tanggalin ang Media";
+"Add Step" = "Magdagdag ng Hakbang";
+"Instructions" = "Mga Tagubilin";
+"Dish Ingredients" = "Mga Sangkap ng Ulam";
+"Add Dish Ingredient" = "Magdagdag ng Sangkap ng Ulam";
+"Marinade Ingredients" = "Mga Sangkap ng Marinade";
+"Add Marinade Ingredient" = "Magdagdag ng Sangkap ng Marinade";
+"Seasoning Ingredients" = "Mga Sangkap ng Pampalasa";
+"Add Seasoning Ingredient" = "Magdagdag ng Sangkap ng Pampalasa";
+"Batter Ingredients" = "Mga Sangkap ng Batter";
+"Add Batter Ingredient" = "Magdagdag ng Sangkap ng Batter";
+"Sauce Ingredients" = "Mga Sangkap ng Sarsa";
+"Add Sauce Ingredient" = "Magdagdag ng Sangkap ng Sarsa";
+"Base Ingredients" = "Mga Sangkap ng Base";
+"Add Base Ingredient" = "Magdagdag ng Sangkap ng Base";
+"Dough Ingredients" = "Mga Sangkap ng Dough";
+"Add Dough Ingredient" = "Magdagdag ng Sangkap ng Dough";
+"Topping Ingredients" = "Mga Sangkap ng Topping";
+"Add Topping Ingredient" = "Magdagdag ng Sangkap ng Topping";
+"Additional Tips" = "Mga Karagdagang Tip";
+"Add Tip" = "Magdagdag ng Tip";
+"View Source Website" = "Tingnan ang Source Website";
+"Source Website" = "Source Website";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "Kutsarita";
+"Tablespoon (tbsp)" = "Kutsara";
+"Cup" = "Tasa";
+"Ounce (oz)" = "Onsa (oz)";
+"Fluid Ounce (fl oz)" = "Likidong Onsa (fl oz)";
+"Pound (lb)" = "Libra (lb)";
+"Gram (g)" = "Gramo (g)";
+"Kilogram (kg)" = "Kilogramo (kg)";
+"Milliliter (ml)" = "Mililitro (ml)";
+"Liter (l)" = "Litro (l)";
+"Pinch" = "Kurot";
+"Piece" = "Piraso";
+"Pieces (pcs)" = "Piraso (pcs)";
+"Piece (pc)" = "Piraso (pc)";
+"Slice" = "Hiwa";
+"Clove" = "Butil";
+"Bunch" = "Bigkis";
+"Head" = "Ulo";
+"Strand" = "Hibla";
+"Strands" = "Hibla";
+"Source images used for recipe extraction" = "Mga source image na ginamit para sa recipe extraction";
+"Source image used for recipe extraction" = "Source image na ginamit para sa recipe extraction";
+"Source" = "Pinagmulan";
+"Created on:" = "Ginawa noong:";
+"Updated on:" = "Na-update noong:";
+
+/* Spicy Level */
+"None" = "Wala";
+"Mild" = "Katamtaman";
+"Hot" = "Maanghang";
+"Very Hot" = "Napakaanghang";
+"Extreme" = "Sobra";
+"Insane" = "Napakaanghang";
+
+/* Time Units */
+"seconds" = "segundo";
+"minutes" = "minuto";
+"hours" = "oras";
+"days" = "araw";
+

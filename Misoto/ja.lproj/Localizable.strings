@@ -1,0 +1,246 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Japanese (日本語)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "素晴らしいレシピを共有して発見する";
+"Loading..." = "読み込み中...";
+"Version %@" = "バージョン %@";
+"Unknown" = "不明";
+
+/* Authentication */
+"Continue with Google" = "Googleで続行";
+"Invalid credential" = "無効な認証情報";
+"Invalid nonce" = "無効なnonce";
+"Invalid token" = "無効なトークン";
+"Missing client ID" = "クライアントIDがありません";
+"Missing view controller" = "ビューコントローラーがありません";
+"You are not authorized to perform this action" = "この操作を実行する権限がありません";
+"Username must be at least 4 characters" = "ユーザー名は4文字以上である必要があります";
+"Username must be no more than 15 characters" = "ユーザー名は15文字以下である必要があります";
+"This username is already taken" = "このユーザー名は既に使用されています";
+"Username contains invalid characters" = "ユーザー名に無効な文字が含まれています";
+
+/* Settings */
+"Settings" = "設定";
+"Dark Mode" = "ダークモード";
+"Haptic Feedback" = "触覚フィードバック";
+"Appearance" = "外観";
+"Language" = "言語";
+"The language selected will be used as the default writing language for recipe extractions." = "選択された言語は、レシピ抽出のデフォルトの記述言語として使用されます。";
+"The language selected will be used as the default writing language for recipe extractions." = "選択された言語は、レシピ抽出のデフォルトの記述言語として使用されます。";
+"English" = "英語";
+"Chinese, Simplified" = "簡体字中国語";
+"Chinese, Traditional" = "繁体字中国語";
+"Spanish" = "スペイン語";
+"French" = "フランス語";
+"German" = "ドイツ語";
+"Italian" = "イタリア語";
+"Portuguese" = "ポルトガル語";
+"Dutch" = "オランダ語";
+"Russian" = "ロシア語";
+"Japanese" = "日本語";
+"Korean" = "韓国語";
+"Thai" = "タイ語";
+"Vietnamese" = "ベトナム語";
+"Indonesian" = "インドネシア語";
+"Malay" = "マレー語";
+"Filipino" = "フィリピン語";
+"Hindi" = "ヒンディー語";
+"System Language (%@)" = "システム言語 (%@)";
+"Share App" = "アプリを共有";
+"Share" = "共有";
+"Check out %@! %@" = "%@をチェック！%@";
+"Submit Feedback" = "フィードバックを送信";
+"Feedback" = "フィードバック";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "アプリをさらに改善し、お客様のニーズに合わせて調整するために、ユーザーとの協力を大切にしています。";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "アイデア、提案、機能リクエスト、または一般的なフィードバックを共有してください。あなたの意見は、すべての人にとってより良い体験を構築するのに役立ちます。";
+"Done" = "完了";
+
+/* Feedback */
+"Type" = "タイプ";
+"Feedback Type" = "フィードバックタイプ";
+"Feature Request" = "機能リクエスト";
+"General Feedback" = "一般的なフィードバック";
+"Translation Suggestion" = "翻訳の提案";
+"Your name" = "お名前";
+"Name" = "名前";
+"Describe your feature request" = "機能リクエストを説明してください";
+"Suggest a translation improvement" = "翻訳の改善を提案してください";
+"Share your feedback" = "フィードバックを共有してください";
+"Please describe the feature you'd like to see in the app." = "アプリに追加してほしい機能を説明してください。";
+"Please suggest improvements to translations or report incorrect translations." = "翻訳の改善を提案するか、誤った翻訳を報告してください。";
+"Please share your thoughts, suggestions, or report any issues." = "ご意見、ご提案、または問題の報告をお願いします。";
+"Email address (optional)" = "メールアドレス（任意）";
+"Contact Email" = "連絡先メール";
+"Optional: We'll use this to respond to your feature request if needed." = "任意：必要に応じて、機能リクエストへの返信に使用します。";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "任意：必要に応じて、翻訳の提案への返信に使用します。";
+"Optional: We'll use this to respond to your feedback if needed." = "任意：必要に応じて、フィードバックへの返信に使用します。";
+"Submit" = "送信";
+"Cancel" = "キャンセル";
+"Please enter a valid email address" = "有効なメールアドレスを入力してください";
+"You must be signed in to submit feedback" = "フィードバックを送信するにはログインする必要があります";
+"Please provide your feedback or feature request" = "フィードバックまたは機能リクエストを提供してください";
+"Please provide a valid email address or leave it empty" = "有効なメールアドレスを提供するか、空のままにしてください";
+"Failed to submit: %@" = "送信に失敗しました：%@";
+"Thank you for your feature request!" = "機能リクエストありがとうございます！";
+"Thank you for your translation suggestion!" = "翻訳の提案ありがとうございます！";
+"Thank you for your feedback!" = "フィードバックありがとうございます！";
+
+/* Navigation */
+"Explore" = "探索";
+"Account" = "アカウント";
+"Add Menu" = "メニューを追加";
+"Manual Entry" = "手動入力";
+"Take Picture" = "写真を撮る";
+"Extract from Image" = "画像から抽出";
+"Extract from Link" = "リンクから抽出";
+"Extract from Website" = "ウェブサイトから抽出";
+"Search or enter website name" = "検索またはウェブサイト名を入力";
+"Find a Recipe" = "レシピを見つける";
+"Type a website URL or search for a recipe" = "ウェブサイトのURLを入力するか、レシピを検索してください";
+"Enter a website URL (e.g., example.com)" = "ウェブサイトのURLを入力してください（例：example.com）";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "またはレシピを検索してください（例：チョコレートケーキのレシピ）";
+"Extract Recipe" = "レシピを抽出";
+"Extract Recipe with AI" = "AIでレシピを抽出";
+"Extract with AI" = "AIで抽出";
+"Detecting recipe..." = "レシピを検出中...";
+"No recipe detected on this page" = "このページでレシピが検出されませんでした";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "レシピのウェブページへのリンクを貼り付けて、AIを使用してレシピ情報を自動的に抽出します。";
+
+/* Profile */
+"Edit Profile" = "プロフィールを編集";
+"Change Profile Picture" = "プロフィール写真を変更";
+"Profile Information" = "プロフィール情報";
+"Username" = "ユーザー名";
+"Suggested usernames:" = "推奨ユーザー名:";
+"Bio" = "自己紹介";
+"characters" = "文字";
+"%d/15 characters" = "%d/15文字";
+"Recipes" = "レシピ";
+"Followers" = "フォロワー";
+"Following" = "フォロー中";
+"Sign Out" = "サインアウト";
+"No recipes yet" = "まだレシピがありません";
+"Start sharing your favorite recipes with the community!" = "お気に入りのレシピをコミュニティと共有しましょう！";
+"Delete Recipe" = "レシピを削除";
+"Delete" = "削除";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "このレシピを削除してもよろしいですか？この操作は元に戻せません。";
+"Edit Recipe" = "レシピを編集";
+
+/* Explore */
+"Today's Recommendations" = "今日のおすすめ";
+"Weekly Menu" = "週間メニュー";
+"Trending" = "トレンド";
+"Ranking" = "ランキング";
+"Search ingredients, recipes" = "食材、レシピを検索";
+"No recipes found" = "レシピが見つかりませんでした";
+
+/* Favorites */
+"No favorites yet" = "まだお気に入りがありません";
+"Start exploring and save your favorite recipes!" = "探索を始めて、お気に入りのレシピを保存しましょう！";
+
+/* Friends */
+"Friends" = "友達";
+"Search" = "検索";
+"No followers yet" = "まだフォロワーがいません";
+"You're not following anyone yet" = "まだ誰もフォローしていません";
+"Search users" = "ユーザーを検索";
+"No users found" = "ユーザーが見つかりませんでした";
+
+/* Recipe */
+"Title" = "タイトル";
+"Recipe Title" = "レシピタイトル";
+"Description" = "説明";
+"Regenerate Description" = "説明を再生成";
+"Cuisine" = "料理";
+"Select Cuisine" = "料理を選択";
+"Preparation Time" = "準備時間";
+"Cooking Time" = "調理時間";
+"Time" = "時間";
+"Servings" = "人数";
+"servings" = "人前";
+"Difficulty" = "難易度";
+"Spicy Level" = "辛さレベル";
+"Add Dish Image" = "料理の画像を追加";
+"Take picture" = "写真を撮る";
+"Select image" = "画像を選択";
+"Select Dish images" = "料理の画像を選択";
+"Take another picture" = "別の写真を撮る";
+"Dish Images" = "料理の画像";
+"Dish images can be added later as required" = "料理の画像は必要に応じて後で追加できます";
+"Add" = "追加";
+"Save" = "保存";
+"Upload" = "アップロード";
+"Step" = "ステップ";
+"View Video" = "動画を表示";
+"Remove Media" = "メディアを削除";
+"Add Step" = "ステップを追加";
+"Instructions" = "作り方";
+"Dish Ingredients" = "料理の材料";
+"Add Dish Ingredient" = "料理の材料を追加";
+"Marinade Ingredients" = "マリネの材料";
+"Add Marinade Ingredient" = "マリネの材料を追加";
+"Seasoning Ingredients" = "調味料";
+"Add Seasoning Ingredient" = "調味料を追加";
+"Batter Ingredients" = "衣の材料";
+"Add Batter Ingredient" = "衣の材料を追加";
+"Sauce Ingredients" = "ソースの材料";
+"Add Sauce Ingredient" = "ソースの材料を追加";
+"Base Ingredients" = "ベースの材料";
+"Add Base Ingredient" = "ベースの材料を追加";
+"Dough Ingredients" = "生地の材料";
+"Add Dough Ingredient" = "生地の材料を追加";
+"Topping Ingredients" = "トッピングの材料";
+"Add Topping Ingredient" = "トッピングの材料を追加";
+"Additional Tips" = "追加のヒント";
+"Add Tip" = "ヒントを追加";
+"View Source Website" = "ソースウェブサイトを表示";
+"Source Website" = "ソースウェブサイト";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "小さじ";
+"Tablespoon (tbsp)" = "大さじ";
+"Cup" = "カップ";
+"Ounce (oz)" = "オンス (oz)";
+"Fluid Ounce (fl oz)" = "液量オンス (fl oz)";
+"Pound (lb)" = "ポンド (lb)";
+"Gram (g)" = "グラム (g)";
+"Kilogram (kg)" = "キログラム (kg)";
+"Milliliter (ml)" = "ミリリットル (ml)";
+"Liter (l)" = "リットル (l)";
+"Pinch" = "ひとつまみ";
+"Piece" = "個";
+"Pieces (pcs)" = "個 (pcs)";
+"Piece (pc)" = "個 (pc)";
+"Slice" = "枚";
+"Clove" = "片";
+"Bunch" = "束";
+"Head" = "個";
+"Strand" = "本";
+"Strands" = "本";
+"Source images used for recipe extraction" = "レシピ抽出に使用されたソース画像";
+"Source image used for recipe extraction" = "レシピ抽出に使用されたソース画像";
+"Source" = "ソース";
+"Created on:" = "作成日：";
+"Updated on:" = "更新日：";
+
+/* Spicy Level */
+"None" = "なし";
+"Mild" = "マイルド";
+"Hot" = "辛い";
+"Very Hot" = "とても辛い";
+"Extreme" = "極端";
+"Insane" = "非常に辛い";
+
+/* Time Units */
+"seconds" = "秒";
+"minutes" = "分";
+"hours" = "時間";
+"days" = "日";
+

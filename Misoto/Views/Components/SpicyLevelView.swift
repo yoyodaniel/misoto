@@ -15,17 +15,17 @@ struct SpicyLevelView: View {
     private func description(for level: Recipe.SpicyLevel) -> String {
         switch level {
         case .none:
-            return NSLocalizedString("None", comment: "No spice level")
+            return LocalizedString("None", comment: "No spice level")
         case .one:
-            return NSLocalizedString("Mild", comment: "Mild spice level")
+            return LocalizedString("Mild", comment: "Mild spice level")
         case .two:
-            return NSLocalizedString("Hot", comment: "Hot spice level")
+            return LocalizedString("Hot", comment: "Hot spice level")
         case .three:
-            return NSLocalizedString("Very Hot", comment: "Very hot spice level")
+            return LocalizedString("Very Hot", comment: "Very hot spice level")
         case .four:
-            return NSLocalizedString("Extreme", comment: "Extreme spice level")
+            return LocalizedString("Extreme", comment: "Extreme spice level")
         case .five:
-            return NSLocalizedString("Insane", comment: "Insane spice level")
+            return LocalizedString("Insane", comment: "Insane spice level")
         }
     }
     

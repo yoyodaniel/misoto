@@ -57,29 +57,34 @@ struct EditRecipeView: View {
                 .sheet(isPresented: $showCuisineSelection) {
                     CuisineSelectionView(selectedCuisine: $viewModel.cuisine)
                 }
-                .navigationTitle(NSLocalizedString("Edit Recipe", comment: "Edit recipe title"))
+                .navigationTitle(LocalizedString("Edit Recipe", comment: "Edit recipe title"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItemGroup(placement: .keyboard) {
                         Spacer()
-                        Button(NSLocalizedString("Done", comment: "Done button")) {
+                        Button(LocalizedString("Done", comment: "Done button")) {
                             dismissKeyboard()
                         }
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button(NSLocalizedString("Cancel", comment: "Cancel button")) {
+                        Button(LocalizedString("Cancel", comment: "Cancel button")) {
+                            HapticFeedback.buttonTap()
                             dismiss()
                         }
                     }
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
+                            HapticFeedback.importantAction()
                             dismissKeyboard()
                             Task {
                                 let success = await viewModel.updateRecipe()
                                 if success {
+                                    HapticFeedback.play(.success)
                                     await authViewModel.reloadUserData()
                                     dismiss()
+                                } else {
+                                    HapticFeedback.play(.error)
                                 }
                             }
                         }) {
@@ -88,7 +93,7 @@ struct EditRecipeView: View {
                                     ProgressView()
                                         .scaleEffect(0.8)
                                 }
-                                Text(NSLocalizedString("Save", comment: "Save button"))
+                                Text(LocalizedString("Save", comment: "Save button"))
                             }
                         }
                         .disabled(viewModel.isLoading || viewModel.title.isEmpty)
@@ -333,7 +338,7 @@ struct EditRecipeView: View {
                         .clipShape(Circle())
                     
                     TextField(
-                        NSLocalizedString("Step", comment: "Step placeholder"),
+                        LocalizedString("Step", comment: "Step placeholder"),
                         text: Binding(
                             get: { instruction.text },
                             set: { viewModel.setInstructionText($0, at: index) }
@@ -383,7 +388,7 @@ struct EditRecipeView: View {
                     Link(destination: url) {
                         HStack {
                             Image(systemName: "play.circle.fill")
-                            Text(NSLocalizedString("View Video", comment: "View video link"))
+                            Text(LocalizedString("View Video", comment: "View video link"))
                         }
                         .font(.caption)
                         .foregroundColor(.accentColor)
@@ -392,7 +397,7 @@ struct EditRecipeView: View {
                     Link(destination: videoURL) {
                         HStack {
                             Image(systemName: "play.circle.fill")
-                            Text(NSLocalizedString("View Video", comment: "View video link"))
+                            Text(LocalizedString("View Video", comment: "View video link"))
                         }
                         .font(.caption)
                         .foregroundColor(.accentColor)
@@ -404,7 +409,7 @@ struct EditRecipeView: View {
                     Button(action: {
                         viewModel.removeInstructionMedia(at: index)
                     }) {
-                        Label(NSLocalizedString("Remove Media", comment: "Remove media button"), systemImage: "xmark.circle.fill")
+                        Label(LocalizedString("Remove Media", comment: "Remove media button"), systemImage: "xmark.circle.fill")
                             .font(.caption)
                             .foregroundColor(.red)
                     }
@@ -421,7 +426,7 @@ struct EditRecipeView: View {
         Button(action: {
             viewModel.addInstruction()
         }) {
-            Label(NSLocalizedString("Add Step", comment: "Add step button"), systemImage: "plus.circle")
+            Label(LocalizedString("Add Step", comment: "Add step button"), systemImage: "plus.circle")
         }
     }
     
@@ -476,14 +481,14 @@ struct EditRecipeView: View {
                     }
                     
                     Text(viewModel.sourceImageURLs.count > 1 ? 
-                         NSLocalizedString("Source images used for recipe extraction", comment: "Source images description") :
-                         NSLocalizedString("Source image used for recipe extraction", comment: "Source image description"))
+                         LocalizedString("Source images used for recipe extraction", comment: "Source images description") :
+                         LocalizedString("Source image used for recipe extraction", comment: "Source image description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 4)
                 } label: {
-                    Text(NSLocalizedString("Source", comment: "Source section"))
+                    Text(LocalizedString("Source", comment: "Source section"))
                         .font(.headline)
                 }
             }
@@ -495,7 +500,7 @@ struct EditRecipeView: View {
         Section {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(NSLocalizedString("Created on:", comment: "Created on label"))
+                    Text(LocalizedString("Created on:", comment: "Created on label"))
                         .foregroundColor(.secondary)
                     Spacer()
                     Text(formatDate(viewModel.recipe.createdAt))
@@ -503,7 +508,7 @@ struct EditRecipeView: View {
                 }
                 
                 HStack {
-                    Text(NSLocalizedString("Updated on:", comment: "Updated on label"))
+                    Text(LocalizedString("Updated on:", comment: "Updated on label"))
                         .foregroundColor(.secondary)
                     Spacer()
                     Text(formatDate(viewModel.recipe.updatedAt))

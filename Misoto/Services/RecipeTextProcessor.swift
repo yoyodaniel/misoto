@@ -239,17 +239,24 @@ class RecipeTextProcessor {
             // Fix: Remove periods after numbers in ingredient lines (e.g., "12. chicken" -> "12 chicken")
             // Also fix "30. ml" -> "30 ml" patterns
             if Self.isLikelyIngredientLine(processedLine) {
-                // Remove period after number if followed by space and text
+                // Preserve bullet points/dashes at the start (e.g., "– 500gr" or "- 2 uien")
+                // Remove period after number if followed by space and text (but keep dashes)
                 processedLine = processedLine.replacingOccurrences(
-                    of: "^(\\d+)\\.\\s+",
-                    with: "$1 ",
+                    of: "^([–-•]?\\s*)(\\d+)\\.\\s+",
+                    with: "$1$2 ",
                     options: .regularExpression
                 )
                 // Fix "30. ml" -> "30 ml" (period before unit)
                 processedLine = processedLine.replacingOccurrences(
-                    of: "(\\d+)\\.\\s+(ml|kg|g|l|tsp|tbsp|oz|lb|cup|cups|tablespoon|teaspoon)",
+                    of: "(\\d+)\\.\\s+(ml|kg|g|l|tsp|tbsp|oz|lb|cup|cups|tablespoon|teaspoon|gr|gram|grams)",
                     with: "$1 $2",
                     options: [.regularExpression, .caseInsensitive]
+                )
+                // Normalize different dash types to standard dash for consistency
+                processedLine = processedLine.replacingOccurrences(
+                    of: "^[–—]\\s*",
+                    with: "- ",
+                    options: .regularExpression
                 )
             } else if let firstChar = processedLine.first, firstChar.isNumber {
                 // For instructions, normalize to "1. " format

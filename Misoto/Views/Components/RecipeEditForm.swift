@@ -53,13 +53,65 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     
     // Common units (singular forms only)
     private var commonUnits: [String] {
-        Array(unitDisplayNames.keys).sorted { unit1, unit2 in
+        ["", "x", "tsp", "tbsp", "cup", "oz", "fl_oz", "lb", "g", "kg", "ml", "l", "pinch", "piece", "pcs", "pc", "slice", "clove", "bunch", "head", "strand", "strands"].sorted { unit1, unit2 in
             // Sort: empty first, then "x", then alphabetically
             if unit1.isEmpty { return true }
             if unit2.isEmpty { return false }
             if unit1 == "x" { return true }
             if unit2 == "x" { return false }
             return unit1 < unit2
+        }
+    }
+    
+    // Get localized unit display name for dropdown menu
+    private func menuDisplayName(for unit: String) -> String {
+        switch unit {
+        case "":
+            return LocalizedString("-", comment: "No unit")
+        case "x":
+            return "x"
+        case "tsp":
+            return LocalizedString("Teaspoon (tsp)", comment: "Teaspoon unit")
+        case "tbsp":
+            return LocalizedString("Tablespoon (tbsp)", comment: "Tablespoon unit")
+        case "cup":
+            return LocalizedString("Cup", comment: "Cup unit")
+        case "oz":
+            return LocalizedString("Ounce (oz)", comment: "Ounce unit")
+        case "fl_oz":
+            return LocalizedString("Fluid Ounce (fl oz)", comment: "Fluid ounce unit")
+        case "lb":
+            return LocalizedString("Pound (lb)", comment: "Pound unit")
+        case "g":
+            return LocalizedString("Gram (g)", comment: "Gram unit")
+        case "kg":
+            return LocalizedString("Kilogram (kg)", comment: "Kilogram unit")
+        case "ml":
+            return LocalizedString("Milliliter (ml)", comment: "Milliliter unit")
+        case "l":
+            return LocalizedString("Liter (l)", comment: "Liter unit")
+        case "pinch":
+            return LocalizedString("Pinch", comment: "Pinch unit")
+        case "piece":
+            return LocalizedString("Piece", comment: "Piece unit")
+        case "pcs":
+            return LocalizedString("Pieces (pcs)", comment: "Pieces unit")
+        case "pc":
+            return LocalizedString("Piece (pc)", comment: "Piece unit")
+        case "slice":
+            return LocalizedString("Slice", comment: "Slice unit")
+        case "clove":
+            return LocalizedString("Clove", comment: "Clove unit")
+        case "bunch":
+            return LocalizedString("Bunch", comment: "Bunch unit")
+        case "head":
+            return LocalizedString("Head", comment: "Head unit")
+        case "strand":
+            return LocalizedString("Strand", comment: "Strand unit")
+        case "strands":
+            return LocalizedString("Strands", comment: "Strands unit")
+        default:
+            return unit
         }
     }
     
@@ -85,10 +137,6 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         return unit
     }
     
-    // Get full display name with abbreviation (for dropdown menu)
-    private func menuDisplayName(for unit: String) -> String {
-        return unitDisplayNames[unit] ?? unit
-    }
     
     // MARK: - Bindings and Closures
     
@@ -391,7 +439,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                             get: { tips[index] },
                             set: { updateTip($0, at: index) }
                         )
-                        TextField(NSLocalizedString("Tip", comment: "Tip placeholder"), text: tipBinding, axis: .vertical)
+                        TextField(LocalizedString("Tip", comment: "Tip placeholder"), text: tipBinding, axis: .vertical)
                             .lineLimit(2...6)
                             .focused($focusedTipField, equals: index)
                     }
@@ -405,10 +453,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 Button(action: {
                     addTip()
                 }) {
-                    Label(NSLocalizedString("Add Tip", comment: "Add tip button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Tip", comment: "Add tip button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Additional Tips", comment: "Additional tips section"))
+                Text(LocalizedString("Additional Tips", comment: "Additional tips section"))
                     .font(.headline)
             }
         }
@@ -417,10 +465,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     private var titleSection: some View {
         Section {
             DisclosureGroup(isExpanded: $isTitleExpanded) {
-                TextField(NSLocalizedString("Title", comment: "Title placeholder"), text: $title)
+                TextField(LocalizedString("Title", comment: "Title placeholder"), text: $title)
                     .focused($isTitleFocused)
             } label: {
-                Text(NSLocalizedString("Recipe Title", comment: "Recipe title section"))
+                Text(LocalizedString("Recipe Title", comment: "Recipe title section"))
                     .font(.headline)
             }
         }
@@ -430,7 +478,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         Section {
             DisclosureGroup(isExpanded: $isDescriptionExpanded) {
                 VStack(alignment: .leading, spacing: 8) {
-                    TextField(NSLocalizedString("Description", comment: "Description placeholder"), text: $description, axis: .vertical)
+                    TextField(LocalizedString("Description", comment: "Description placeholder"), text: $description, axis: .vertical)
                         .lineLimit(1...)
                         .focused($isDescriptionFocused)
                     
@@ -446,7 +494,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                             } else {
                                 Image(systemName: "sparkles")
                             }
-                            Text(NSLocalizedString("Regenerate Description", comment: "Regenerate description button"))
+                            Text(LocalizedString("Regenerate Description", comment: "Regenerate description button"))
                         }
                         .font(.caption)
                     }
@@ -454,7 +502,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     .foregroundColor(isGeneratingDescription || title.isEmpty ? .secondary : .accentColor)
                 }
             } label: {
-                Text(NSLocalizedString("Description", comment: "Description section"))
+                Text(LocalizedString("Description", comment: "Description section"))
                     .font(.headline)
             }
         }
@@ -466,7 +514,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 showCuisineSelection = true
             }) {
                 HStack {
-                    Text(NSLocalizedString("Cuisine", comment: "Cuisine label"))
+                    Text(LocalizedString("Cuisine", comment: "Cuisine label"))
                         .foregroundColor(.primary)
                     Spacer()
                     if isDetectingCuisine {
@@ -476,7 +524,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                         Text(cuisine)
                             .foregroundColor(.secondary)
                     } else {
-                        Text(NSLocalizedString("Select Cuisine", comment: "Select cuisine placeholder"))
+                        Text(LocalizedString("Select Cuisine", comment: "Select cuisine placeholder"))
                             .foregroundColor(.secondary)
                     }
                     Image(systemName: "chevron.right")
@@ -492,14 +540,14 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(NSLocalizedString("Preparation Time", comment: "Preparation time label"))
+                        Text(LocalizedString("Preparation Time", comment: "Preparation time label"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                         TimePickerView(totalMinutes: $prepTime)
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(NSLocalizedString("Cooking Time", comment: "Cooking time label"))
+                        Text(LocalizedString("Cooking Time", comment: "Cooking time label"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                         TimePickerView(totalMinutes: $cookTime)
@@ -508,14 +556,14 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             }
             .padding(.vertical, 2)
         } header: {
-            Text(NSLocalizedString("Time", comment: "Time section header"))
+            Text(LocalizedString("Time", comment: "Time section header"))
         }
     }
     
     private var servingsSection: some View {
         Section {
             HStack {
-                Text(NSLocalizedString("Servings", comment: "Servings label"))
+                Text(LocalizedString("Servings", comment: "Servings label"))
                     .foregroundColor(.primary)
                 Spacer()
                 ServingsPickerView(servings: $servings)
@@ -532,7 +580,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 )
                 .padding(.vertical, 4)
             } label: {
-                Text(NSLocalizedString("Difficulty", comment: "Difficulty section header"))
+                Text(LocalizedString("Difficulty", comment: "Difficulty section header"))
                     .font(.headline)
             }
         }
@@ -547,7 +595,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 )
                 .padding(.vertical, 4)
             } label: {
-                Text(NSLocalizedString("Spicy Level", comment: "Spicy level section header"))
+                Text(LocalizedString("Spicy Level", comment: "Spicy level section header"))
                     .font(.headline)
             }
         }
@@ -599,7 +647,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                                     Image(systemName: "photo.badge.plus")
                                         .font(.system(size: 20))
                                         .foregroundColor(.accentColor)
-                                    Text(NSLocalizedString("Add", comment: "Add image button"))
+                                    Text(LocalizedString("Add", comment: "Add image button"))
                                         .font(.caption2)
                                         .foregroundColor(.accentColor)
                                 }
@@ -612,11 +660,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     .padding(.vertical, 4)
                 }
             } label: {
-                Text(NSLocalizedString("Dish Images", comment: "Dish images section"))
+                Text(LocalizedString("Dish Images", comment: "Dish images section"))
                     .font(.headline)
             }
         } footer: {
-            Text(NSLocalizedString("Dish images can be added later as required", comment: "Dish images footer"))
+            Text(LocalizedString("Dish images can be added later as required", comment: "Dish images footer"))
         }
     }
     
@@ -635,10 +683,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 Button(action: {
                     addDishIngredient()
                 }) {
-                    Label(NSLocalizedString("Add Dish Ingredient", comment: "Add dish ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Dish Ingredient", comment: "Add dish ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Dish Ingredients", comment: "Dish ingredients section"))
+                Text(LocalizedString("Dish Ingredients", comment: "Dish ingredients section"))
                     .font(.headline)
             }
         }
@@ -663,10 +711,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addMarinadeIngredient()
                     isMarinadeExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Marinade Ingredient", comment: "Add marinade ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Marinade Ingredient", comment: "Add marinade ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Marinade Ingredients", comment: "Marinade ingredients section"))
+                Text(LocalizedString("Marinade Ingredients", comment: "Marinade ingredients section"))
                     .font(.headline)
             }
         }
@@ -691,10 +739,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addSeasoningIngredient()
                     isSeasoningExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Seasoning Ingredient", comment: "Add seasoning ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Seasoning Ingredient", comment: "Add seasoning ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Seasoning Ingredients", comment: "Seasoning ingredients section"))
+                Text(LocalizedString("Seasoning Ingredients", comment: "Seasoning ingredients section"))
                     .font(.headline)
             }
         }
@@ -719,10 +767,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addBatterIngredient()
                     isBatterExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Batter Ingredient", comment: "Add batter ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Batter Ingredient", comment: "Add batter ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Batter Ingredients", comment: "Batter ingredients section"))
+                Text(LocalizedString("Batter Ingredients", comment: "Batter ingredients section"))
                     .font(.headline)
             }
         }
@@ -747,10 +795,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addSauceIngredient()
                     isSauceExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Sauce Ingredient", comment: "Add sauce ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Sauce Ingredient", comment: "Add sauce ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Sauce Ingredients", comment: "Sauce ingredients section"))
+                Text(LocalizedString("Sauce Ingredients", comment: "Sauce ingredients section"))
                     .font(.headline)
             }
         }
@@ -775,10 +823,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addBaseIngredient()
                     isBaseExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Base Ingredient", comment: "Add base ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Base Ingredient", comment: "Add base ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Base Ingredients", comment: "Base ingredients section"))
+                Text(LocalizedString("Base Ingredients", comment: "Base ingredients section"))
                     .font(.headline)
             }
         }
@@ -803,10 +851,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addDoughIngredient()
                     isDoughExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Dough Ingredient", comment: "Add dough ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Dough Ingredient", comment: "Add dough ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Dough Ingredients", comment: "Dough ingredients section"))
+                Text(LocalizedString("Dough Ingredients", comment: "Dough ingredients section"))
                     .font(.headline)
             }
         }
@@ -831,10 +879,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addToppingIngredient()
                     isToppingExpanded = true
                 }) {
-                    Label(NSLocalizedString("Add Topping Ingredient", comment: "Add topping ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add Topping Ingredient", comment: "Add topping ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(NSLocalizedString("Topping Ingredients", comment: "Topping ingredients section"))
+                Text(LocalizedString("Topping Ingredients", comment: "Topping ingredients section"))
                     .font(.headline)
             }
         }
@@ -1032,7 +1080,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             .frame(width: 56)
             
             // Ingredient name field - wider, takes remaining space
-            TextField(NSLocalizedString("Ingredient", comment: "Ingredient placeholder"), text: name)
+            TextField(LocalizedString("Ingredient", comment: "Ingredient placeholder"), text: name)
                 .autocapitalization(.words)
                 .focused($focusedIngredientNameField, equals: nameIndex)
         }
@@ -1063,7 +1111,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 DisclosureGroup(isExpanded: $isInstructionsExpanded) {
                     instructionsContent()
                 } label: {
-                    Text(NSLocalizedString("Instructions", comment: "Instructions section"))
+                    Text(LocalizedString("Instructions", comment: "Instructions section"))
                         .font(.headline)
                 }
             }

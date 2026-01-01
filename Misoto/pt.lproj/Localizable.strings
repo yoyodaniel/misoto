@@ -1,0 +1,243 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Portuguese (Português)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "Compartilhe e descubra receitas incríveis";
+"Loading..." = "Carregando...";
+"Version %@" = "Versão %@";
+"Unknown" = "Desconhecido";
+
+/* Authentication */
+"Continue with Google" = "Continuar com Google";
+"Invalid credential" = "Credencial inválida";
+"Invalid nonce" = "Nonce inválido";
+"Invalid token" = "Token inválido";
+"Missing client ID" = "ID do cliente ausente";
+"Missing view controller" = "Controlador de visualização ausente";
+"You are not authorized to perform this action" = "Você não está autorizado a realizar esta ação";
+"Username must be at least 4 characters" = "O nome de usuário deve ter pelo menos 4 caracteres";
+"Username must be no more than 15 characters" = "O nome de usuário não deve ter mais de 15 caracteres";
+"This username is already taken" = "Este nome de usuário já está em uso";
+"Username contains invalid characters" = "O nome de usuário contém caracteres inválidos";
+
+/* Settings */
+"Settings" = "Configurações";
+"Dark Mode" = "Modo Escuro";
+"Haptic Feedback" = "Feedback Háptico";
+"Appearance" = "Aparência";
+"Language" = "Idioma";
+"The language selected will be used as the default writing language for recipe extractions." = "O idioma selecionado será usado como idioma de escrita padrão para extrações de receitas.";
+"The language selected will be used as the default writing language for recipe extractions." = "O idioma selecionado será usado como idioma de escrita padrão para extrações de receitas.";
+"English" = "Inglês";
+"Chinese, Simplified" = "Chinês Simplificado";
+"Chinese, Traditional" = "Chinês Tradicional";
+"Spanish" = "Espanhol";
+"French" = "Francês";
+"German" = "Alemão";
+"Italian" = "Italiano";
+"Portuguese" = "Português";
+"Dutch" = "Holandês";
+"Russian" = "Russo";
+"Japanese" = "Japonês";
+"Korean" = "Coreano";
+"Thai" = "Tailandês";
+"Vietnamese" = "Vietnamita";
+"Indonesian" = "Indonésio";
+"Malay" = "Malaio";
+"Filipino" = "Filipino";
+"Hindi" = "Hindi";
+"System Language (%@)" = "Idioma do Sistema (%@)";
+"Share App" = "Compartilhar App";
+"Share" = "Compartilhar";
+"Check out %@! %@" = "Confira %@! %@";
+"Submit Feedback" = "Enviar Feedback";
+"Feedback" = "Feedback";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "Apreciamos colaborar com nossos usuários para melhorar ainda mais o aplicativo e adaptá-lo às suas necessidades.";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "Compartilhe suas ideias, sugestões, solicitações de recursos ou feedback geral. Sua contribuição nos ajuda a criar uma experiência melhor para todos.";
+"Done" = "Concluído";
+
+/* Feedback */
+"Type" = "Tipo";
+"Feedback Type" = "Tipo de Feedback";
+"Feature Request" = "Solicitação de Recurso";
+"General Feedback" = "Feedback Geral";
+"Translation Suggestion" = "Sugestão de Tradução";
+"Your name" = "Seu nome";
+"Name" = "Nome";
+"Describe your feature request" = "Descreva sua solicitação de recurso";
+"Share your feedback" = "Compartilhe seu feedback";
+"Please describe the feature you'd like to see in the app." = "Por favor, descreva o recurso que você gostaria de ver no aplicativo.";
+"Please share your thoughts, suggestions, or report any issues." = "Por favor, compartilhe seus pensamentos, sugestões ou relate quaisquer problemas.";
+"Email address (optional)" = "Endereço de e-mail (opcional)";
+"Contact Email" = "E-mail de Contato";
+"Optional: We'll use this to respond to your feature request if needed." = "Opcional: Usaremos isso para responder à sua solicitação de recurso, se necessário.";
+"Optional: We'll use this to respond to your feedback if needed." = "Opcional: Usaremos isso para responder ao seu feedback, se necessário.";
+"Submit" = "Enviar";
+"Cancel" = "Cancelar";
+"Please enter a valid email address" = "Por favor, insira um endereço de e-mail válido";
+"You must be signed in to submit feedback" = "Você deve estar conectado para enviar feedback";
+"Please provide your feedback or feature request" = "Por favor, forneça seu feedback ou solicitação de recurso";
+"Please provide a valid email address or leave it empty" = "Por favor, forneça um endereço de e-mail válido ou deixe em branco";
+"Failed to submit: %@" = "Falha ao enviar: %@";
+"Thank you for your feature request!" = "Obrigado pela sua solicitação de recurso!";
+"Thank you for your translation suggestion!" = "Obrigado pela sua sugestão de tradução!";
+"Thank you for your feedback!" = "Obrigado pelo seu feedback!";
+
+/* Navigation */
+"Explore" = "Explorar";
+"Account" = "Conta";
+"Add Menu" = "Adicionar Menu";
+"Manual Entry" = "Entrada Manual";
+"Take Picture" = "Tirar Foto";
+"Extract from Image" = "Extrair de Imagem";
+"Extract from Link" = "Extrair de Link";
+"Extract from Website" = "Extrair de Site";
+"Search or enter website name" = "Pesquisar ou inserir nome do site";
+"Find a Recipe" = "Encontrar uma Receita";
+"Type a website URL or search for a recipe" = "Digite uma URL do site ou pesquise por uma receita";
+"Enter a website URL (e.g., example.com)" = "Digite uma URL do site (ex.: example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "Ou pesquise por uma receita (ex.: receita de bolo de chocolate)";
+"Extract Recipe" = "Extrair Receita";
+"Extract Recipe with AI" = "Extrair Receita com IA";
+"Extract with AI" = "Extrair com IA";
+"Detecting recipe..." = "Detectando receita...";
+"No recipe detected on this page" = "Nenhuma receita detectada nesta página";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Cole um link para uma página web de receitas para extrair informações da receita automaticamente usando IA.";
+
+/* Profile */
+"Edit Profile" = "Editar Perfil";
+"Change Profile Picture" = "Alterar Foto do Perfil";
+"Profile Information" = "Informações do Perfil";
+"Username" = "Nome de Usuário";
+"Suggested usernames:" = "Nomes de usuário sugeridos:";
+"Bio" = "Biografia";
+"characters" = "caracteres";
+"%d/15 characters" = "%d/15 caracteres";
+"Recipes" = "Receitas";
+"Followers" = "Seguidores";
+"Following" = "Seguindo";
+"Sign Out" = "Sair";
+"No recipes yet" = "Ainda não há receitas";
+"Start sharing your favorite recipes with the community!" = "Comece a compartilhar suas receitas favoritas com a comunidade!";
+"Delete Recipe" = "Excluir Receita";
+"Delete" = "Excluir";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "Tem certeza de que deseja excluir esta receita? Esta ação não pode ser desfeita.";
+"Edit Recipe" = "Editar Receita";
+
+/* Explore */
+"Today's Recommendations" = "Recomendações de Hoje";
+"Weekly Menu" = "Cardápio Semanal";
+"Trending" = "Em Alta";
+"Ranking" = "Classificação";
+"Search ingredients, recipes" = "Buscar ingredientes, receitas";
+"No recipes found" = "Nenhuma receita encontrada";
+
+/* Favorites */
+"No favorites yet" = "Ainda não há favoritos";
+"Start exploring and save your favorite recipes!" = "Comece a explorar e salve suas receitas favoritas!";
+
+/* Friends */
+"Friends" = "Amigos";
+"Search" = "Buscar";
+"No followers yet" = "Ainda não há seguidores";
+"You're not following anyone yet" = "Você ainda não está seguindo ninguém";
+"Search users" = "Buscar usuários";
+"No users found" = "Nenhum usuário encontrado";
+
+/* Recipe */
+"Title" = "Título";
+"Recipe Title" = "Título da Receita";
+"Description" = "Descrição";
+"Regenerate Description" = "Regenerar Descrição";
+"Cuisine" = "Culinária";
+"Select Cuisine" = "Selecionar Culinária";
+"Preparation Time" = "Tempo de Preparo";
+"Cooking Time" = "Tempo de Cozimento";
+"Time" = "Tempo";
+"Servings" = "Porções";
+"servings" = "porções";
+"Difficulty" = "Dificuldade";
+"Spicy Level" = "Nível de Picante";
+"Add Dish Image" = "Adicionar Imagem do Prato";
+"Take picture" = "Tirar foto";
+"Select image" = "Selecionar imagem";
+"Select Dish images" = "Selecionar Imagens do Prato";
+"Take another picture" = "Tirar outra foto";
+"Dish Images" = "Imagens do Prato";
+"Dish images can be added later as required" = "As imagens do prato podem ser adicionadas posteriormente, conforme necessário";
+"Add" = "Adicionar";
+"Save" = "Salvar";
+"Upload" = "Enviar";
+"Step" = "Passo";
+"View Video" = "Ver Vídeo";
+"Remove Media" = "Remover Mídia";
+"Add Step" = "Adicionar Passo";
+"Instructions" = "Instruções";
+"Dish Ingredients" = "Ingredientes do Prato";
+"Add Dish Ingredient" = "Adicionar Ingrediente do Prato";
+"Marinade Ingredients" = "Ingredientes da Marinada";
+"Add Marinade Ingredient" = "Adicionar Ingrediente da Marinada";
+"Seasoning Ingredients" = "Ingredientes do Tempero";
+"Add Seasoning Ingredient" = "Adicionar Ingrediente do Tempero";
+"Batter Ingredients" = "Ingredientes da Massa";
+"Add Batter Ingredient" = "Adicionar Ingrediente da Massa";
+"Sauce Ingredients" = "Ingredientes do Molho";
+"Add Sauce Ingredient" = "Adicionar Ingrediente do Molho";
+"Base Ingredients" = "Ingredientes Base";
+"Add Base Ingredient" = "Adicionar Ingrediente Base";
+"Dough Ingredients" = "Ingredientes da Massa";
+"Add Dough Ingredient" = "Adicionar Ingrediente da Massa";
+"Topping Ingredients" = "Ingredientes da Cobertura";
+"Add Topping Ingredient" = "Adicionar Ingrediente da Cobertura";
+"Additional Tips" = "Dicas Adicionais";
+"Add Tip" = "Adicionar Dica";
+"View Source Website" = "Ver Site de Origem";
+"Source Website" = "Site de Origem";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "Colher de Chá (chá)";
+"Tablespoon (tbsp)" = "Colher de Sopa (sopa)";
+"Cup" = "Xícara";
+"Ounce (oz)" = "Onça (oz)";
+"Fluid Ounce (fl oz)" = "Onça Líquida (fl oz)";
+"Pound (lb)" = "Libra (lb)";
+"Gram (g)" = "Grama (g)";
+"Kilogram (kg)" = "Quilograma (kg)";
+"Milliliter (ml)" = "Mililitro (ml)";
+"Liter (l)" = "Litro (l)";
+"Pinch" = "Pitada";
+"Piece" = "Pedaço";
+"Pieces (pcs)" = "Pedaços (pcs)";
+"Piece (pc)" = "Pedaço (pc)";
+"Slice" = "Fatia";
+"Clove" = "Dente";
+"Bunch" = "Ramo";
+"Head" = "Cabeça";
+"Strand" = "Fio";
+"Strands" = "Fios";
+"Source images used for recipe extraction" = "Imagens fonte usadas para extração de receita";
+"Source image used for recipe extraction" = "Imagem fonte usada para extração de receita";
+"Source" = "Fonte";
+"Created on:" = "Criado em:";
+"Updated on:" = "Atualizado em:";
+
+/* Spicy Level */
+"None" = "Nenhum";
+"Mild" = "Suave";
+"Hot" = "Picante";
+"Very Hot" = "Muito Picante";
+"Extreme" = "Extremo";
+"Insane" = "Extremamente Picante";
+
+/* Time Units */
+"seconds" = "segundos";
+"minutes" = "minutos";
+"hours" = "horas";
+"days" = "dias";
+

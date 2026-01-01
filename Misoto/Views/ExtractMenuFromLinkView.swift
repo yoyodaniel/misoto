@@ -56,14 +56,14 @@ struct ExtractMenuFromLinkView: View {
     
     private var urlInputView: some View {
         Form {
-            Section(header: Text(NSLocalizedString("Enter Menu URL", comment: "Enter menu URL section"))) {
-                TextField(NSLocalizedString("Menu URL", comment: "Menu URL placeholder"), text: $menuURL)
+            Section(header: Text(LocalizedString("Enter Menu URL", comment: "Enter menu URL section"))) {
+                TextField(LocalizedString("Menu URL", comment: "Menu URL placeholder"), text: $menuURL)
                     .autocapitalization(.none)
                     .keyboardType(.URL)
                     .autocorrectionDisabled()
             }
             
-            Section(footer: Text(NSLocalizedString("Paste a link to a recipe webpage to extract recipe information automatically using AI.", comment: "Menu URL help text"))) {
+            Section(footer: Text(LocalizedString("Paste a link to a recipe webpage to extract recipe information automatically using AI.", comment: "Menu URL help text"))) {
                 EmptyView()
             }
             
@@ -82,7 +82,7 @@ struct ExtractMenuFromLinkView: View {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                         }
-                        Text(NSLocalizedString("Extract Recipe", comment: "Extract recipe button"))
+                        Text(LocalizedString("Extract Recipe", comment: "Extract recipe button"))
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
@@ -93,17 +93,17 @@ struct ExtractMenuFromLinkView: View {
                 .disabled(menuURL.isEmpty || viewModel.isLoading)
             }
         }
-        .navigationTitle(NSLocalizedString("Extract from Link", comment: "Extract from link title"))
+        .navigationTitle(LocalizedString("Extract from Link", comment: "Extract from link title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button(NSLocalizedString("Done", comment: "Done button")) {
+                Button(LocalizedString("Done", comment: "Done button")) {
                     dismissKeyboard()
                 }
             }
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(NSLocalizedString("Cancel", comment: "Cancel button")) {
+                Button(LocalizedString("Cancel", comment: "Cancel button")) {
                     dismiss()
                 }
             }
@@ -123,17 +123,17 @@ struct ExtractMenuFromLinkView: View {
                     .ignoresSafeArea(.all)
             }
         }
-        .navigationTitle(NSLocalizedString("Edit Recipe", comment: "Edit recipe title"))
+        .navigationTitle(LocalizedString("Edit Recipe", comment: "Edit recipe title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button(NSLocalizedString("Done", comment: "Done button")) {
+                Button(LocalizedString("Done", comment: "Done button")) {
                     dismissKeyboard()
                 }
             }
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(NSLocalizedString("Cancel", comment: "Cancel button")) {
+                Button(LocalizedString("Cancel", comment: "Cancel button")) {
                     dismiss()
                 }
             }
@@ -154,7 +154,7 @@ struct ExtractMenuFromLinkView: View {
                             ProgressView()
                                 .scaleEffect(0.8)
                         }
-                        Text(NSLocalizedString("Save", comment: "Save button"))
+                        Text(LocalizedString("Save", comment: "Save button"))
                     }
                 }
                 .disabled(viewModel.isLoading || viewModel.title.isEmpty)
@@ -403,7 +403,7 @@ struct ExtractMenuFromLinkView: View {
                     .background(Color.accentColor)
                     .clipShape(Circle())
                 
-                TextField(NSLocalizedString("Step", comment: "Step placeholder"), text: Binding(
+                TextField(LocalizedString("Step", comment: "Step placeholder"), text: Binding(
                     get: { viewModel.instructions[index] },
                     set: { viewModel.updateInstruction($0, at: index) }
                 ), axis: .vertical)
@@ -420,7 +420,7 @@ struct ExtractMenuFromLinkView: View {
         Button(action: {
             viewModel.addInstruction()
         }) {
-            Label(NSLocalizedString("Add Step", comment: "Add step button"), systemImage: "plus.circle")
+            Label(LocalizedString("Add Step", comment: "Add step button"), systemImage: "plus.circle")
         }
     }
 }

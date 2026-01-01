@@ -1,0 +1,246 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Dutch (Nederlands)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "Deel en ontdek geweldige recepten";
+"Loading..." = "Laden...";
+"Version %@" = "Versie %@";
+"Unknown" = "Onbekend";
+
+/* Authentication */
+"Continue with Google" = "Doorgaan met Google";
+"Invalid credential" = "Ongeldige inloggegevens";
+"Invalid nonce" = "Ongeldige nonce";
+"Invalid token" = "Ongeldig token";
+"Missing client ID" = "Client-ID ontbreekt";
+"Missing view controller" = "Weergavecontroller ontbreekt";
+"You are not authorized to perform this action" = "U bent niet gemachtigd om deze actie uit te voeren";
+"Username must be at least 4 characters" = "Gebruikersnaam moet minimaal 4 tekens bevatten";
+"Username must be no more than 15 characters" = "Gebruikersnaam mag niet meer dan 15 tekens bevatten";
+"This username is already taken" = "Deze gebruikersnaam is al in gebruik";
+"Username contains invalid characters" = "Gebruikersnaam bevat ongeldige tekens";
+
+/* Settings */
+"Settings" = "Instellingen";
+"Dark Mode" = "Donkere Modus";
+"Haptic Feedback" = "Haptische Feedback";
+"Appearance" = "Weergave";
+"Language" = "Taal";
+"The language selected will be used as the default writing language for recipe extractions." = "De geselecteerde taal wordt gebruikt als standaard schrijftaal voor receptextracties.";
+"The language selected will be used as the default writing language for recipe extractions." = "De geselecteerde taal wordt gebruikt als standaard schrijftaal voor receptextracties.";
+"English" = "Engels";
+"Chinese, Simplified" = "Vereenvoudigd Chinees";
+"Chinese, Traditional" = "Traditioneel Chinees";
+"Spanish" = "Spaans";
+"French" = "Frans";
+"German" = "Duits";
+"Italian" = "Italiaans";
+"Portuguese" = "Portugees";
+"Dutch" = "Nederlands";
+"Russian" = "Russisch";
+"Japanese" = "Japans";
+"Korean" = "Koreaans";
+"Thai" = "Thai";
+"Vietnamese" = "Vietnamees";
+"Indonesian" = "Indonesisch";
+"Malay" = "Maleis";
+"Filipino" = "Filipino";
+"Hindi" = "Hindi";
+"System Language (%@)" = "Systeemtaal (%@)";
+"Share App" = "App Delen";
+"Share" = "Delen";
+"Check out %@! %@" = "Bekijk %@! %@";
+"Submit Feedback" = "Feedback Verzenden";
+"Feedback" = "Feedback";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "We waarderen de samenwerking met onze gebruikers om de app verder te verbeteren en aan te passen aan uw behoeften.";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "Deel uw ideeën, suggesties, functieverzoeken of algemene feedback. Uw input helpt ons een betere ervaring voor iedereen te creëren.";
+"Done" = "Klaar";
+
+/* Feedback */
+"Type" = "Type";
+"Feedback Type" = "Feedbacktype";
+"Feature Request" = "Functieverzoek";
+"General Feedback" = "Algemene Feedback";
+"Translation Suggestion" = "Vertalingssuggestie";
+"Your name" = "Uw naam";
+"Name" = "Naam";
+"Describe your feature request" = "Beschrijf uw functieverzoek";
+"Suggest a translation improvement" = "Stel een vertalingsverbetering voor";
+"Share your feedback" = "Deel uw feedback";
+"Please describe the feature you'd like to see in the app." = "Beschrijf de functie die u graag in de app zou willen zien.";
+"Please suggest improvements to translations or report incorrect translations." = "Stel verbeteringen aan vertalingen voor of meld onjuiste vertalingen.";
+"Please share your thoughts, suggestions, or report any issues." = "Deel uw gedachten, suggesties of meld eventuele problemen.";
+"Email address (optional)" = "E-mailadres (optioneel)";
+"Contact Email" = "Contact E-mail";
+"Optional: We'll use this to respond to your feature request if needed." = "Optioneel: We gebruiken dit om te reageren op uw functieverzoek indien nodig.";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "Optioneel: We gebruiken dit om te reageren op uw vertalingssuggestie indien nodig.";
+"Optional: We'll use this to respond to your feedback if needed." = "Optioneel: We gebruiken dit om te reageren op uw feedback indien nodig.";
+"Submit" = "Verzenden";
+"Cancel" = "Annuleren";
+"Please enter a valid email address" = "Voer een geldig e-mailadres in";
+"You must be signed in to submit feedback" = "U moet ingelogd zijn om feedback te verzenden";
+"Please provide your feedback or feature request" = "Geef uw feedback of functieverzoek op";
+"Please provide a valid email address or leave it empty" = "Geef een geldig e-mailadres op of laat het leeg";
+"Failed to submit: %@" = "Verzenden mislukt: %@";
+"Thank you for your feature request!" = "Bedankt voor uw functieverzoek!";
+"Thank you for your translation suggestion!" = "Bedankt voor uw vertalingssuggestie!";
+"Thank you for your feedback!" = "Bedankt voor uw feedback!";
+
+/* Navigation */
+"Explore" = "Ontdekken";
+"Account" = "Account";
+"Add Menu" = "Menu Toevoegen";
+"Manual Entry" = "Handmatige Invoer";
+"Take Picture" = "Foto Maken";
+"Extract from Image" = "Extraheren uit Afbeelding";
+"Extract from Link" = "Extraheren uit Link";
+"Extract from Website" = "Extraheren uit Website";
+"Search or enter website name" = "Zoeken of website naam invoeren";
+"Find a Recipe" = "Recept Zoeken";
+"Type a website URL or search for a recipe" = "Typ een website-URL of zoek naar een recept";
+"Enter a website URL (e.g., example.com)" = "Voer een website-URL in (bijv. example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "Of zoek naar een recept (bijv. chocoladetaart recept)";
+"Extract Recipe" = "Recept Extraheren";
+"Extract Recipe with AI" = "Recept Extraheren met AI";
+"Extract with AI" = "Extraheren met AI";
+"Detecting recipe..." = "Recept detecteren...";
+"No recipe detected on this page" = "Geen recept gedetecteerd op deze pagina";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Plak een link naar een receptwebpagina om receptinformatie automatisch te extraheren met behulp van AI.";
+
+/* Profile */
+"Edit Profile" = "Profiel Bewerken";
+"Change Profile Picture" = "Profielfoto Wijzigen";
+"Profile Information" = "Profielinformatie";
+"Username" = "Gebruikersnaam";
+"Suggested usernames:" = "Voorgestelde gebruikersnamen:";
+"Bio" = "Biografie";
+"characters" = "tekens";
+"%d/15 characters" = "%d/15 tekens";
+"Recipes" = "Recepten";
+"Followers" = "Volgers";
+"Following" = "Volgend";
+"Sign Out" = "Uitloggen";
+"No recipes yet" = "Nog geen recepten";
+"Start sharing your favorite recipes with the community!" = "Begin met het delen van uw favoriete recepten met de community!";
+"Delete Recipe" = "Recept Verwijderen";
+"Delete" = "Verwijderen";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "Weet u zeker dat u dit recept wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.";
+"Edit Recipe" = "Recept Bewerken";
+
+/* Explore */
+"Today's Recommendations" = "Aanbevelingen van Vandaag";
+"Weekly Menu" = "Wekelijks Menu";
+"Trending" = "Trending";
+"Ranking" = "Ranglijst";
+"Search ingredients, recipes" = "Zoek ingrediënten, recepten";
+"No recipes found" = "Geen recepten gevonden";
+
+/* Favorites */
+"No favorites yet" = "Nog geen favorieten";
+"Start exploring and save your favorite recipes!" = "Begin met ontdekken en bewaar uw favoriete recepten!";
+
+/* Friends */
+"Friends" = "Vrienden";
+"Search" = "Zoeken";
+"No followers yet" = "Nog geen volgers";
+"You're not following anyone yet" = "U volgt nog niemand";
+"Search users" = "Zoek gebruikers";
+"No users found" = "Geen gebruikers gevonden";
+
+/* Recipe */
+"Title" = "Titel";
+"Recipe Title" = "Recepttitel";
+"Description" = "Beschrijving";
+"Regenerate Description" = "Beschrijving Opnieuw Genereren";
+"Cuisine" = "Keuken";
+"Select Cuisine" = "Selecteer Keuken";
+"Preparation Time" = "Voorbereidingstijd";
+"Cooking Time" = "Bereidingstijd";
+"Time" = "Tijd";
+"Servings" = "Porties";
+"servings" = "porties";
+"Difficulty" = "Moeilijkheidsgraad";
+"Spicy Level" = "Pittigheidsniveau";
+"Add Dish Image" = "Gerechtfoto Toevoegen";
+"Take picture" = "Foto maken";
+"Select image" = "Selecteer afbeelding";
+"Select Dish images" = "Gerechtfoto's Selecteren";
+"Take another picture" = "Nog een foto maken";
+"Dish Images" = "Gerechtfoto's";
+"Dish images can be added later as required" = "Gerechtfoto's kunnen later naar behoefte worden toegevoegd";
+"Add" = "Toevoegen";
+"Save" = "Opslaan";
+"Upload" = "Uploaden";
+"Step" = "Stap";
+"View Video" = "Video Bekijken";
+"Remove Media" = "Media Verwijderen";
+"Add Step" = "Stap Toevoegen";
+"Instructions" = "Instructies";
+"Dish Ingredients" = "Gerecht Ingrediënten";
+"Add Dish Ingredient" = "Gerecht Ingrediënt Toevoegen";
+"Marinade Ingredients" = "Marinade Ingrediënten";
+"Add Marinade Ingredient" = "Marinade Ingrediënt Toevoegen";
+"Seasoning Ingredients" = "Kruiden Ingrediënten";
+"Add Seasoning Ingredient" = "Kruiden Ingrediënt Toevoegen";
+"Batter Ingredients" = "Beslag Ingrediënten";
+"Add Batter Ingredient" = "Beslag Ingrediënt Toevoegen";
+"Sauce Ingredients" = "Saus Ingrediënten";
+"Add Sauce Ingredient" = "Saus Ingrediënt Toevoegen";
+"Base Ingredients" = "Basis Ingrediënten";
+"Add Base Ingredient" = "Basis Ingrediënt Toevoegen";
+"Dough Ingredients" = "Deeg Ingrediënten";
+"Add Dough Ingredient" = "Deeg Ingrediënt Toevoegen";
+"Topping Ingredients" = "Beleg Ingrediënten";
+"Add Topping Ingredient" = "Beleg Ingrediënt Toevoegen";
+"Additional Tips" = "Extra Tips";
+"Add Tip" = "Tip Toevoegen";
+"View Source Website" = "Bronwebsite Bekijken";
+"Source Website" = "Bronwebsite";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "Theelepel (tl)";
+"Tablespoon (tbsp)" = "Eetlepel (el)";
+"Cup" = "Kopje";
+"Ounce (oz)" = "Ons (oz)";
+"Fluid Ounce (fl oz)" = "Vloeistof Ons (fl oz)";
+"Pound (lb)" = "Pond (lb)";
+"Gram (g)" = "Gram (g)";
+"Kilogram (kg)" = "Kilogram (kg)";
+"Milliliter (ml)" = "Milliliter (ml)";
+"Liter (l)" = "Liter (l)";
+"Pinch" = "Mespuntje";
+"Piece" = "Stuk";
+"Pieces (pcs)" = "Stukken (pcs)";
+"Piece (pc)" = "Stuk (pc)";
+"Slice" = "Plak";
+"Clove" = "Teen";
+"Bunch" = "Bos";
+"Head" = "Kop";
+"Strand" = "Streng";
+"Strands" = "Strengen";
+"Source images used for recipe extraction" = "Bronafbeeldingen gebruikt voor receptextractie";
+"Source image used for recipe extraction" = "Bronafbeelding gebruikt voor receptextractie";
+"Source" = "Bron";
+"Created on:" = "Gemaakt op:";
+"Updated on:" = "Bijgewerkt op:";
+
+/* Spicy Level */
+"None" = "Geen";
+"Mild" = "Mild";
+"Hot" = "Pittig";
+"Very Hot" = "Zeer Pittig";
+"Extreme" = "Extreem";
+"Insane" = "Extreem Pittig";
+
+/* Time Units */
+"seconds" = "seconden";
+"minutes" = "minuten";
+"hours" = "uren";
+"days" = "dagen";
+

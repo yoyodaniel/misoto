@@ -53,7 +53,7 @@ struct RecipeDetailView: View {
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                             
-                            Text(NSLocalizedString("By \(recipe.authorName)", comment: "Recipe author"))
+                            Text(LocalizedString("By \(recipe.authorName)", comment: "Recipe author"))
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
@@ -80,7 +80,7 @@ struct RecipeDetailView: View {
                         
                         // Ingredients
                         VStack(alignment: .leading, spacing: 12) {
-                            Text(NSLocalizedString("Ingredients", comment: "Ingredients section"))
+                            Text(LocalizedString("Ingredients", comment: "Ingredients section"))
                                 .font(.headline)
                             
                             ForEach(Array(recipe.ingredients.enumerated()), id: \.offset) { index, ingredient in
@@ -99,7 +99,7 @@ struct RecipeDetailView: View {
                         
                         // Instructions
                         VStack(alignment: .leading, spacing: 12) {
-                            Text(NSLocalizedString("Instructions", comment: "Instructions section"))
+                            Text(LocalizedString("Instructions", comment: "Instructions section"))
                                 .font(.headline)
                             
                             ForEach(Array(recipe.instructions.enumerated()), id: \.offset) { index, instruction in
@@ -132,7 +132,7 @@ struct RecipeDetailView: View {
                                         Link(destination: url) {
                                             HStack {
                                                 Image(systemName: "play.circle.fill")
-                                                Text(NSLocalizedString("Watch Video", comment: "Watch video link"))
+                                                Text(LocalizedString("Watch Video", comment: "Watch video link"))
                                             }
                                             .foregroundColor(.accentColor)
                                         }
@@ -157,7 +157,7 @@ struct RecipeDetailView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(NSLocalizedString("Close", comment: "Close button")) {
+                    Button(LocalizedString("Close", comment: "Close button")) {
                         dismiss()
                     }
                 }

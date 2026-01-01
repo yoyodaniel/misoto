@@ -168,9 +168,9 @@ enum FriendsError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unauthorized:
-            return NSLocalizedString("You are not authorized to perform this action", comment: "Unauthorized error")
+            return LocalizedString("You are not authorized to perform this action", comment: "Unauthorized error")
         case .cannotFollowSelf:
-            return NSLocalizedString("You cannot follow yourself", comment: "Cannot follow self error")
+            return LocalizedString("You cannot follow yourself", comment: "Cannot follow self error")
         }
     }
 }

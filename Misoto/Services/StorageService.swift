@@ -109,11 +109,11 @@ enum StorageError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidImage:
-            return NSLocalizedString("Invalid image data", comment: "Invalid image error")
+            return LocalizedString("Invalid image data", comment: "Invalid image error")
         case .uploadFailed:
-            return NSLocalizedString("Failed to upload file", comment: "Upload failed error")
+            return LocalizedString("Failed to upload file", comment: "Upload failed error")
         case .invalidPath:
-            return NSLocalizedString("Invalid storage path", comment: "Invalid path error")
+            return LocalizedString("Invalid storage path", comment: "Invalid path error")
         }
     }
 }

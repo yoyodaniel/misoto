@@ -19,7 +19,7 @@ class FavoritesViewModel: ObservableObject {
     
     func loadFavorites() async {
         guard let userID = Auth.auth().currentUser?.uid else {
-            errorMessage = NSLocalizedString("You must be logged in to view favorites", comment: "Not logged in error")
+            errorMessage = LocalizedString("You must be logged in to view favorites", comment: "Not logged in error")
             return
         }
         

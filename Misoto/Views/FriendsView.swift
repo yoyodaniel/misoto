@@ -17,10 +17,10 @@ struct FriendsView: View {
             
             VStack(spacing: 0) {
                 // Segmented Control
-                Picker(NSLocalizedString("Friends", comment: "Friends picker"), selection: $viewModel.selectedTab) {
-                    Text(NSLocalizedString("Followers", comment: "Followers")).tag(FriendsViewModel.FriendsTab.followers)
-                    Text(NSLocalizedString("Following", comment: "Following")).tag(FriendsViewModel.FriendsTab.following)
-                    Text(NSLocalizedString("Search", comment: "Search")).tag(FriendsViewModel.FriendsTab.search)
+                Picker(LocalizedString("Friends", comment: "Friends picker"), selection: $viewModel.selectedTab) {
+                    Text(LocalizedString("Followers", comment: "Followers")).tag(FriendsViewModel.FriendsTab.followers)
+                    Text(LocalizedString("Following", comment: "Following")).tag(FriendsViewModel.FriendsTab.following)
+                    Text(LocalizedString("Search", comment: "Search")).tag(FriendsViewModel.FriendsTab.search)
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal, 16)
@@ -50,7 +50,7 @@ struct FriendsView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if viewModel.followers.isEmpty {
-                emptyStateView(message: NSLocalizedString("No followers yet", comment: "No followers message"))
+                emptyStateView(message: LocalizedString("No followers yet", comment: "No followers message"))
             } else {
                 List(viewModel.followers) { user in
                     UserRow(user: user)
@@ -65,7 +65,7 @@ struct FriendsView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if viewModel.following.isEmpty {
-                emptyStateView(message: NSLocalizedString("You're not following anyone yet", comment: "No following message"))
+                emptyStateView(message: LocalizedString("You're not following anyone yet", comment: "No following message"))
             } else {
                 List(viewModel.following) { user in
                     UserRow(user: user, showUnfollow: true) {
@@ -81,7 +81,7 @@ struct FriendsView: View {
     private var searchView: some View {
         VStack {
             HStack {
-                TextField(NSLocalizedString("Search users", comment: "Search users placeholder"), text: $viewModel.searchQuery)
+                TextField(LocalizedString("Search users", comment: "Search users placeholder"), text: $viewModel.searchQuery)
                     .textFieldStyle(.roundedBorder)
                     .onSubmit {
                         Task {
@@ -103,7 +103,7 @@ struct FriendsView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if viewModel.searchResults.isEmpty && !viewModel.searchQuery.isEmpty {
-                emptyStateView(message: NSLocalizedString("No users found", comment: "No users found message"))
+                emptyStateView(message: LocalizedString("No users found", comment: "No users found message"))
             } else {
                 List(viewModel.searchResults) { user in
                     UserRow(user: user, showFollow: true) {

@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import NaturalLanguage
 
 @MainActor
 class OpenAIService {
@@ -78,7 +79,8 @@ class OpenAIService {
         Extract recipe from image(s). If multiple images are provided, combine information from all images to create a complete recipe. 
         IMPORTANT: Check ALL text in the images for references to other pages or recipes (e.g., "see page 245", "refer to page X"). 
         If ingredients mention other pages, those pages likely contain marinade/sauce/preparation recipes that must be included FIRST in the instructions.
-        PRESERVE THE ORIGINAL LANGUAGE from the images - do NOT translate to English unless the language is not supported. Return JSON only.
+        TRANSLATE ALL TEXT TO ENGLISH: If the recipe text is in any language other than English, translate it to English before extracting. 
+        All extracted content (title, description, ingredients, instructions) must be in English. Return JSON only.
         
         Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions.
         Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch), name (Capitalized Words).
@@ -296,8 +298,11 @@ class OpenAIService {
         let systemPrompt = """
         Extract recipe from text. PRESERVE THE ORIGINAL LANGUAGE from the text - do NOT translate to English unless the language is not supported. Return JSON only.
         
+        IMPORTANT: Ingredients may be formatted with bullet points, dashes, or hyphens (e.g., "- 500gr bakkeljauw", "– 2 uien", "• 4 teentjes knoflook"). 
+        Always extract the amount and unit correctly even when prefixed with these characters. Ignore leading dashes, bullets, or hyphens when parsing amounts.
+        
         Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions.
-        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch), name (Capitalized Words).
+        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch/gr/gram/grams), name (Capitalized Words).
         Note: "Oz" unit usage - CRITICAL DISTINCTION:
         - Use "fl_oz" (liquid ounces) ONLY for liquids: water, milk, oil, broth, juice, wine, vinegar, etc.
         - Use "oz" (weight ounces) ONLY for weight/solids: meat, flour, cheese, vegetables, fruits, etc.
@@ -527,8 +532,11 @@ class OpenAIService {
         let systemPrompt = """
         Extract recipe from text. PRESERVE THE ORIGINAL LANGUAGE from the text - do NOT translate to English unless the language is not supported. Return JSON only.
         
+        IMPORTANT: Ingredients may be formatted with bullet points, dashes, or hyphens (e.g., "- 500gr bakkeljauw", "– 2 uien", "• 4 teentjes knoflook"). 
+        Always extract the amount and unit correctly even when prefixed with these characters. Ignore leading dashes, bullets, or hyphens when parsing amounts.
+        
         Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions.
-        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch), name (Capitalized Words).
+        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch/gr/gram/grams), name (Capitalized Words).
         Note: "Oz" unit usage - CRITICAL DISTINCTION:
         - Use "fl_oz" (liquid ounces) ONLY for liquids: water, milk, oil, broth, juice, wine, vinegar, etc.
         - Use "oz" (weight ounces) ONLY for weight/solids: meat, flour, cheese, vegetables, fruits, etc.
@@ -873,13 +881,35 @@ class OpenAIService {
         let instructionsText = instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
             .joined(separator: " ")
         
+        // Get user's selected language
+        let selectedLanguage = LocalizationManager.shared.currentLanguage
+        let targetLanguageCode: String
+        let languageName: String
+        
+        switch selectedLanguage {
+        case .english:
+            targetLanguageCode = "en"
+            languageName = "English"
+        case .system:
+            if let preferredLanguage = Locale.preferredLanguages.first {
+                // Normalize Chinese regional variants to zh-Hans or zh-Hant
+                targetLanguageCode = normalizeChineseLanguageCode(preferredLanguage)
+            } else {
+                targetLanguageCode = "en"
+            }
+            languageName = getLanguageName(for: targetLanguageCode)
+        default:
+            targetLanguageCode = selectedLanguage.rawValue
+            languageName = getLanguageName(for: targetLanguageCode)
+        }
+        
         let systemPrompt = """
-        You are a culinary expert. Generate a brief, appetizing description (2-3 sentences) for a recipe.
+        You are a culinary expert. Generate a brief, appetizing description (2-3 sentences) for a recipe in \(languageName).
         The description should be engaging, highlight key ingredients or cooking methods, and make the dish sound appealing.
-        Keep it concise and professional.
+        Keep it concise and professional. Write the description entirely in \(languageName).
         """
         
-        var userPrompt = "Generate a description for this recipe:\nTitle: \(title)"
+        var userPrompt = "Generate a description for this recipe in \(languageName):\nTitle: \(title)"
         if !ingredientsText.isEmpty {
             userPrompt += "\nIngredients: \(ingredientsText)"
         }
@@ -1264,6 +1294,245 @@ class OpenAIService {
             return .c // Default to C if unrecognized
         }
     }
+    
+    /// Translate text to English using OpenAI API
+    /// - Parameters:
+    ///   - text: Text to translate
+    ///   - sourceLanguage: Source language (optional, for better translation quality)
+    /// - Returns: Translated text in English
+    static func translateToEnglish(_ text: String, from sourceLanguage: NLLanguage? = nil) async throws -> String {
+        guard !apiKey.isEmpty else {
+            throw OpenAIError.apiKeyNotConfigured
+        }
+        
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return text
+        }
+        
+        // Create the request
+        guard let url = URL(string: "\(baseURL)/chat/completions") else {
+            throw OpenAIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Build the prompt with language context if available
+        let languageContext = sourceLanguage != nil ? " The text is in \(sourceLanguage!.rawValue)." : ""
+        let systemPrompt = """
+        You are a professional translator. Translate the following text to English. 
+        Preserve the original meaning, tone, and formatting. For recipe content, maintain technical cooking terms accurately.
+        \(languageContext)
+        Return only the translated text, nothing else.
+        """
+        
+        let userPrompt = """
+        Translate this text to English:
+        
+        \(text)
+        """
+        
+        let requestBody: [String: Any] = [
+            "model": "gpt-3.5-turbo", // Use cheaper model for translation
+            "messages": [
+                [
+                    "role": "system",
+                    "content": systemPrompt
+                ],
+                [
+                    "role": "user",
+                    "content": userPrompt
+                ]
+            ],
+            "max_tokens": 2000,
+            "temperature": 0.3 // Lower temperature for more consistent translation
+        ]
+        
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
+            throw OpenAIError.requestSerializationFailed
+        }
+        request.httpBody = httpBody
+        
+        // Make the request
+        let (responseData, apiResponse) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = apiResponse as? HTTPURLResponse else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            let errorMessage = String(data: responseData, encoding: .utf8) ?? "Unknown error"
+            throw OpenAIError.httpError(httpResponse.statusCode)
+        }
+        
+        // Parse the response
+        guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let message = firstChoice["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw OpenAIError.jsonParsingFailed
+        }
+        
+        let translatedText = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        return translatedText.isEmpty ? text : translatedText
+    }
+    
+    /// Translate text from English to target language using OpenAI API
+    /// - Parameters:
+    ///   - text: Text to translate (should be in English)
+    ///   - targetLanguage: Target language code (e.g., "nl" for Dutch, "es" for Spanish)
+    /// - Returns: Translated text in target language
+    static func translateFromEnglish(_ text: String, to targetLanguage: String) async throws -> String {
+        guard !apiKey.isEmpty else {
+            throw OpenAIError.apiKeyNotConfigured
+        }
+        
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return text
+        }
+        
+        // Don't translate if target is English
+        if targetLanguage.lowercased() == "en" || targetLanguage.lowercased().hasPrefix("en-") {
+            return text
+        }
+        
+        // Create the request
+        guard let url = URL(string: "\(baseURL)/chat/completions") else {
+            throw OpenAIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Get language name for better translation
+        let languageName = getLanguageName(for: targetLanguage)
+        
+        let systemPrompt = """
+        You are a professional translator. Translate the following text from English to \(languageName).
+        Preserve the original meaning, tone, and formatting. For recipe content, maintain technical cooking terms accurately and use appropriate culinary terminology in \(languageName).
+        Return only the translated text, nothing else.
+        """
+        
+        let userPrompt = """
+        Translate this text from English to \(languageName):
+        
+        \(text)
+        """
+        
+        let requestBody: [String: Any] = [
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                [
+                    "role": "system",
+                    "content": systemPrompt
+                ],
+                [
+                    "role": "user",
+                    "content": userPrompt
+                ]
+            ],
+            "max_tokens": 2000,
+            "temperature": 0.3
+        ]
+        
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
+            throw OpenAIError.requestSerializationFailed
+        }
+        request.httpBody = httpBody
+        
+        // Make the request
+        let (responseData, apiResponse) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = apiResponse as? HTTPURLResponse else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            let errorMessage = String(data: responseData, encoding: .utf8) ?? "Unknown error"
+            throw OpenAIError.httpError(httpResponse.statusCode)
+        }
+        
+        // Parse the response
+        guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let message = firstChoice["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw OpenAIError.jsonParsingFailed
+        }
+        
+        let translatedText = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        return translatedText.isEmpty ? text : translatedText
+    }
+    
+    /// Get language name from language code
+    private static func getLanguageName(for code: String) -> String {
+        let languageMap: [String: String] = [
+            "nl": "Dutch",
+            "es": "Spanish",
+            "fr": "French",
+            "de": "German",
+            "it": "Italian",
+            "pt": "Portuguese",
+            "ru": "Russian",
+            "ja": "Japanese",
+            "ko": "Korean",
+            "zh": "Chinese",
+            "zh-Hans": "Simplified Chinese",
+            "zh-Hant": "Traditional Chinese",
+            "th": "Thai",
+            "vi": "Vietnamese",
+            "id": "Indonesian",
+            "ms": "Malay",
+            "fil": "Filipino",
+            "hi": "Hindi"
+        ]
+        
+        // Check for exact match first
+        if let name = languageMap[code] {
+            return name
+        }
+        
+        // Check for prefix match (e.g., "zh-Hans" -> "Simplified Chinese")
+        for (key, value) in languageMap {
+            if code.hasPrefix(key) {
+                return value
+            }
+        }
+        
+        // Fallback: return the code itself
+        return code
+    }
+    
+    /// Normalize Chinese language codes to zh-Hans or zh-Hant
+    /// - Parameter code: Language code from system (e.g., "zh-HK", "zh-TW", "zh-CN", "zh-Hans", "zh-Hant")
+    /// - Returns: Normalized code (zh-Hans or zh-Hant)
+    private static func normalizeChineseLanguageCode(_ code: String) -> String {
+        let lowercased = code.lowercased()
+        
+        // Traditional Chinese regions: Hong Kong, Taiwan, Macau
+        if lowercased.hasPrefix("zh-hk") || lowercased.hasPrefix("zh-tw") || lowercased.hasPrefix("zh-mo") || lowercased == "zh-hant" {
+            return "zh-Hant"
+        }
+        
+        // Simplified Chinese regions: China, Singapore
+        if lowercased.hasPrefix("zh-cn") || lowercased.hasPrefix("zh-sg") || lowercased == "zh-hans" {
+            return "zh-Hans"
+        }
+        
+        // If it's just "zh" without variant, default to Simplified (most common)
+        if lowercased == "zh" {
+            return "zh-Hans"
+        }
+        
+        // For all other cases, return as-is
+        return code
+    }
 }
 
 // MARK: - Response Models
@@ -1318,7 +1587,7 @@ enum OpenAIError: LocalizedError {
         case .jsonParsingFailed:
             return "Failed to parse JSON response from OpenAI"
         case .noRecipeDetected:
-            return NSLocalizedString("No recipe is detected, please try again.", comment: "No recipe detected error message")
+            return LocalizedString("No recipe is detected, please try again.", comment: "No recipe detected error message")
         }
     }
 }

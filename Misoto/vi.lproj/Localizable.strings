@@ -1,0 +1,246 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Vietnamese (Tiếng Việt)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "Chia sẻ và khám phá những công thức nấu ăn tuyệt vời";
+"Loading..." = "Đang tải...";
+"Version %@" = "Phiên bản %@";
+"Unknown" = "Không xác định";
+
+/* Authentication */
+"Continue with Google" = "Tiếp tục với Google";
+"Invalid credential" = "Thông tin đăng nhập không hợp lệ";
+"Invalid nonce" = "Nonce không hợp lệ";
+"Invalid token" = "Token không hợp lệ";
+"Missing client ID" = "Thiếu Client ID";
+"Missing view controller" = "Thiếu View Controller";
+"You are not authorized to perform this action" = "Bạn không có quyền thực hiện hành động này";
+"Username must be at least 4 characters" = "Tên người dùng phải có ít nhất 4 ký tự";
+"Username must be no more than 15 characters" = "Tên người dùng không được quá 15 ký tự";
+"This username is already taken" = "Tên người dùng này đã được sử dụng";
+"Username contains invalid characters" = "Tên người dùng chứa ký tự không hợp lệ";
+
+/* Settings */
+"Settings" = "Cài đặt";
+"Dark Mode" = "Chế độ tối";
+"Haptic Feedback" = "Phản hồi xúc giác";
+"Appearance" = "Giao diện";
+"Language" = "Ngôn ngữ";
+"The language selected will be used as the default writing language for recipe extractions." = "Ngôn ngữ được chọn sẽ được sử dụng làm ngôn ngữ viết mặc định cho việc trích xuất công thức nấu ăn.";
+"The language selected will be used as the default writing language for recipe extractions." = "Ngôn ngữ được chọn sẽ được sử dụng làm ngôn ngữ viết mặc định cho việc trích xuất công thức nấu ăn.";
+"English" = "Tiếng Anh";
+"Chinese, Simplified" = "Tiếng Trung Giản thể";
+"Chinese, Traditional" = "Tiếng Trung Phồn thể";
+"Spanish" = "Tiếng Tây Ban Nha";
+"French" = "Tiếng Pháp";
+"German" = "Tiếng Đức";
+"Italian" = "Tiếng Ý";
+"Portuguese" = "Tiếng Bồ Đào Nha";
+"Dutch" = "Tiếng Hà Lan";
+"Russian" = "Tiếng Nga";
+"Japanese" = "Tiếng Nhật";
+"Korean" = "Tiếng Hàn";
+"Thai" = "Tiếng Thái";
+"Vietnamese" = "Tiếng Việt";
+"Indonesian" = "Tiếng Indonesia";
+"Malay" = "Tiếng Mã Lai";
+"Filipino" = "Tiếng Filipino";
+"Hindi" = "Tiếng Hindi";
+"System Language (%@)" = "Ngôn ngữ hệ thống (%@)";
+"Share App" = "Chia sẻ ứng dụng";
+"Share" = "Chia sẻ";
+"Check out %@! %@" = "Hãy xem %@! %@";
+"Submit Feedback" = "Gửi phản hồi";
+"Feedback" = "Phản hồi";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "Chúng tôi đánh giá cao việc hợp tác với người dùng để cải thiện ứng dụng hơn nữa và điều chỉnh theo nhu cầu của bạn.";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "Chia sẻ ý tưởng, gợi ý, yêu cầu tính năng hoặc phản hồi chung của bạn. Đóng góp của bạn giúp chúng tôi xây dựng trải nghiệm tốt hơn cho mọi người.";
+"Done" = "Hoàn thành";
+
+/* Feedback */
+"Type" = "Loại";
+"Feedback Type" = "Loại phản hồi";
+"Feature Request" = "Yêu cầu tính năng";
+"General Feedback" = "Phản hồi chung";
+"Translation Suggestion" = "Đề xuất dịch thuật";
+"Your name" = "Tên của bạn";
+"Name" = "Tên";
+"Describe your feature request" = "Mô tả yêu cầu tính năng của bạn";
+"Suggest a translation improvement" = "Đề xuất cải thiện dịch thuật";
+"Share your feedback" = "Chia sẻ phản hồi của bạn";
+"Please describe the feature you'd like to see in the app." = "Vui lòng mô tả tính năng bạn muốn thấy trong ứng dụng.";
+"Please suggest improvements to translations or report incorrect translations." = "Vui lòng đề xuất cải thiện dịch thuật hoặc báo cáo bản dịch không chính xác.";
+"Please share your thoughts, suggestions, or report any issues." = "Vui lòng chia sẻ suy nghĩ, gợi ý hoặc báo cáo bất kỳ vấn đề nào.";
+"Email address (optional)" = "Địa chỉ email (tùy chọn)";
+"Contact Email" = "Email liên hệ";
+"Optional: We'll use this to respond to your feature request if needed." = "Tùy chọn: Chúng tôi sẽ sử dụng email này để trả lời yêu cầu tính năng của bạn nếu cần.";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "Tùy chọn: Chúng tôi sẽ sử dụng email này để trả lời đề xuất dịch thuật của bạn nếu cần.";
+"Optional: We'll use this to respond to your feedback if needed." = "Tùy chọn: Chúng tôi sẽ sử dụng email này để trả lời phản hồi của bạn nếu cần.";
+"Submit" = "Gửi";
+"Cancel" = "Hủy";
+"Please enter a valid email address" = "Vui lòng nhập địa chỉ email hợp lệ";
+"You must be signed in to submit feedback" = "Bạn phải đăng nhập để gửi phản hồi";
+"Please provide your feedback or feature request" = "Vui lòng cung cấp phản hồi hoặc yêu cầu tính năng của bạn";
+"Please provide a valid email address or leave it empty" = "Vui lòng cung cấp địa chỉ email hợp lệ hoặc để trống";
+"Failed to submit: %@" = "Gửi thất bại: %@";
+"Thank you for your feature request!" = "Cảm ơn bạn đã yêu cầu tính năng!";
+"Thank you for your translation suggestion!" = "Cảm ơn bạn đã đề xuất dịch thuật!";
+"Thank you for your feedback!" = "Cảm ơn bạn đã phản hồi!";
+
+/* Navigation */
+"Explore" = "Khám phá";
+"Account" = "Tài khoản";
+"Add Menu" = "Thêm thực đơn";
+"Manual Entry" = "Nhập thủ công";
+"Take Picture" = "Chụp ảnh";
+"Extract from Image" = "Trích xuất từ hình ảnh";
+"Extract from Link" = "Trích xuất từ liên kết";
+"Extract from Website" = "Trích xuất từ trang web";
+"Search or enter website name" = "Tìm kiếm hoặc nhập tên trang web";
+"Find a Recipe" = "Tìm Công thức";
+"Type a website URL or search for a recipe" = "Nhập URL trang web hoặc tìm kiếm công thức";
+"Enter a website URL (e.g., example.com)" = "Nhập URL trang web (ví dụ: example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "Hoặc tìm kiếm công thức (ví dụ: công thức bánh sô cô la)";
+"Extract Recipe" = "Trích xuất Công thức";
+"Extract Recipe with AI" = "Trích xuất Công thức bằng AI";
+"Extract with AI" = "Trích xuất bằng AI";
+"Detecting recipe..." = "Đang phát hiện công thức...";
+"No recipe detected on this page" = "Không phát hiện công thức trên trang này";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Dán liên kết đến trang web công thức để tự động trích xuất thông tin công thức bằng AI.";
+
+/* Profile */
+"Edit Profile" = "Chỉnh sửa hồ sơ";
+"Change Profile Picture" = "Thay Đổi Ảnh Đại Diện";
+"Profile Information" = "Thông Tin Hồ Sơ";
+"Username" = "Tên Người Dùng";
+"Suggested usernames:" = "Tên người dùng đề xuất:";
+"Bio" = "Tiểu Sử";
+"characters" = "ký tự";
+"%d/15 characters" = "%d/15 ký tự";
+"Recipes" = "Công thức";
+"Followers" = "Người theo dõi";
+"Following" = "Đang theo dõi";
+"Sign Out" = "Đăng xuất";
+"No recipes yet" = "Chưa có công thức";
+"Start sharing your favorite recipes with the community!" = "Bắt đầu chia sẻ công thức yêu thích của bạn với cộng đồng!";
+"Delete Recipe" = "Xóa công thức";
+"Delete" = "Xóa";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "Bạn có chắc chắn muốn xóa công thức này không? Hành động này không thể hoàn tác.";
+"Edit Recipe" = "Chỉnh sửa công thức";
+
+/* Explore */
+"Today's Recommendations" = "Đề xuất hôm nay";
+"Weekly Menu" = "Thực đơn tuần";
+"Trending" = "Đang thịnh hành";
+"Ranking" = "Bảng xếp hạng";
+"Search ingredients, recipes" = "Tìm kiếm nguyên liệu, công thức";
+"No recipes found" = "Không tìm thấy công thức";
+
+/* Favorites */
+"No favorites yet" = "Chưa có yêu thích";
+"Start exploring and save your favorite recipes!" = "Bắt đầu khám phá và lưu công thức yêu thích của bạn!";
+
+/* Friends */
+"Friends" = "Bạn bè";
+"Search" = "Tìm kiếm";
+"No followers yet" = "Chưa có người theo dõi";
+"You're not following anyone yet" = "Bạn chưa theo dõi ai";
+"Search users" = "Tìm kiếm người dùng";
+"No users found" = "Không tìm thấy người dùng";
+
+/* Recipe */
+"Title" = "Tiêu đề";
+"Recipe Title" = "Tiêu đề công thức";
+"Description" = "Mô tả";
+"Regenerate Description" = "Tạo lại mô tả";
+"Cuisine" = "Ẩm thực";
+"Select Cuisine" = "Chọn ẩm thực";
+"Preparation Time" = "Thời gian chuẩn bị";
+"Cooking Time" = "Thời gian nấu";
+"Time" = "Thời gian";
+"Servings" = "Khẩu phần";
+"servings" = "khẩu phần";
+"Difficulty" = "Độ khó";
+"Spicy Level" = "Mức Độ Cay";
+"Add Dish Image" = "Thêm hình ảnh món ăn";
+"Take picture" = "Chụp ảnh";
+"Select image" = "Chọn hình ảnh";
+"Select Dish images" = "Chọn Hình ảnh Món ăn";
+"Take another picture" = "Chụp ảnh khác";
+"Dish Images" = "Hình ảnh món ăn";
+"Dish images can be added later as required" = "Hình ảnh món ăn có thể được thêm sau khi cần";
+"Add" = "Thêm";
+"Save" = "Lưu";
+"Upload" = "Tải lên";
+"Step" = "Bước";
+"View Video" = "Xem video";
+"Remove Media" = "Xóa phương tiện";
+"Add Step" = "Thêm bước";
+"Instructions" = "Hướng Dẫn";
+"Dish Ingredients" = "Nguyên Liệu Món Ăn";
+"Add Dish Ingredient" = "Thêm Nguyên Liệu Món Ăn";
+"Marinade Ingredients" = "Nguyên Liệu Ướp";
+"Add Marinade Ingredient" = "Thêm Nguyên Liệu Ướp";
+"Seasoning Ingredients" = "Nguyên Liệu Gia Vị";
+"Add Seasoning Ingredient" = "Thêm Nguyên Liệu Gia Vị";
+"Batter Ingredients" = "Nguyên Liệu Bột";
+"Add Batter Ingredient" = "Thêm Nguyên Liệu Bột";
+"Sauce Ingredients" = "Nguyên Liệu Nước Sốt";
+"Add Sauce Ingredient" = "Thêm Nguyên Liệu Nước Sốt";
+"Base Ingredients" = "Nguyên Liệu Cơ Bản";
+"Add Base Ingredient" = "Thêm Nguyên Liệu Cơ Bản";
+"Dough Ingredients" = "Nguyên Liệu Bột Nhào";
+"Add Dough Ingredient" = "Thêm Nguyên Liệu Bột Nhào";
+"Topping Ingredients" = "Nguyên Liệu Topping";
+"Add Topping Ingredient" = "Thêm Nguyên Liệu Topping";
+"Additional Tips" = "Mẹo Bổ Sung";
+"Add Tip" = "Thêm Mẹo";
+"View Source Website" = "Xem Trang Web Nguồn";
+"Source Website" = "Trang Web Nguồn";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "Muỗng cà phê";
+"Tablespoon (tbsp)" = "Muỗng canh";
+"Cup" = "Cốc";
+"Ounce (oz)" = "Ounce (oz)";
+"Fluid Ounce (fl oz)" = "Ounce lỏng (fl oz)";
+"Pound (lb)" = "Pound (lb)";
+"Gram (g)" = "Gam (g)";
+"Kilogram (kg)" = "Kilogram (kg)";
+"Milliliter (ml)" = "Mililit (ml)";
+"Liter (l)" = "Lít (l)";
+"Pinch" = "Nhúm";
+"Piece" = "Miếng";
+"Pieces (pcs)" = "Miếng (pcs)";
+"Piece (pc)" = "Miếng (pc)";
+"Slice" = "Lát";
+"Clove" = "Tép";
+"Bunch" = "Bó";
+"Head" = "Củ";
+"Strand" = "Sợi";
+"Strands" = "Sợi";
+"Source images used for recipe extraction" = "Hình ảnh nguồn được sử dụng để trích xuất công thức";
+"Source image used for recipe extraction" = "Hình ảnh nguồn được sử dụng để trích xuất công thức";
+"Source" = "Nguồn";
+"Created on:" = "Tạo vào:";
+"Updated on:" = "Cập nhật vào:";
+
+/* Spicy Level */
+"None" = "Không";
+"Mild" = "Nhẹ";
+"Hot" = "Cay";
+"Very Hot" = "Rất cay";
+"Extreme" = "Cực cay";
+"Insane" = "Cực kỳ cay";
+
+/* Time Units */
+"seconds" = "giây";
+"minutes" = "phút";
+"hours" = "giờ";
+"days" = "ngày";
+
