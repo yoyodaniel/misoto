@@ -243,3 +243,10 @@
 "hours" = "horas";
 "days" = "días";
 
+/* Common Actions */
+"Ingredient" = "Ingrediente";
+"Extract" = "Extraer";
+"Upload Recipe" = "Subir Receta";
+"Extracting recipe from image..." = "Extrayendo receta de la imagen...";
+"Extracting recipe from images..." = "Extrayendo receta de las imágenes...";
+

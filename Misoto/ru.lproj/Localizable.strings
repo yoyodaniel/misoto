@@ -244,3 +244,10 @@
 "hours" = "часы";
 "days" = "дни";
 
+/* Common Actions */
+"Ingredient" = "Ингредиент";
+"Extract" = "Извлечь";
+"Upload Recipe" = "Загрузить Рецепт";
+"Extracting recipe from image..." = "Извлечение рецепта из изображения...";
+"Extracting recipe from images..." = "Извлечение рецепта из изображений...";
+

@@ -244,3 +244,10 @@
 "hours" = "時間";
 "days" = "日";
 
+/* Common Actions */
+"Ingredient" = "材料";
+"Extract" = "抽出";
+"Upload Recipe" = "レシピをアップロード";
+"Extracting recipe from image..." = "画像からレシピを抽出中...";
+"Extracting recipe from images..." = "画像からレシピを抽出中...";
+

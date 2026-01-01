@@ -244,3 +244,10 @@
 "hours" = "uren";
 "days" = "dagen";
 
+/* Common Actions */
+"Ingredient" = "Ingrediënt";
+"Extract" = "Extraheren";
+"Upload Recipe" = "Recept Uploaden";
+"Extracting recipe from image..." = "Recept uit afbeelding extraheren...";
+"Extracting recipe from images..." = "Recept uit afbeeldingen extraheren...";
+

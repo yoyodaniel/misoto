@@ -244,3 +244,10 @@
 "hours" = "小時";
 "days" = "天";
 
+/* Common Actions */
+"Ingredient" = "食材";
+"Extract" = "提取";
+"Upload Recipe" = "上傳食譜";
+"Extracting recipe from image..." = "正在從圖片提取食譜...";
+"Extracting recipe from images..." = "正在從圖片提取食譜...";
+

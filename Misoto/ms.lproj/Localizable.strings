@@ -244,3 +244,10 @@
 "hours" = "jam";
 "days" = "hari";
 
+/* Common Actions */
+"Ingredient" = "Bahan";
+"Extract" = "Ekstrak";
+"Upload Recipe" = "Muat Naik Resipi";
+"Extracting recipe from image..." = "Mengekstrak resipi dari gambar...";
+"Extracting recipe from images..." = "Mengekstrak resipi dari gambar...";
+

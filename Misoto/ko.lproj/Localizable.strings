@@ -244,3 +244,10 @@
 "hours" = "시간";
 "days" = "일";
 
+/* Common Actions */
+"Ingredient" = "재료";
+"Extract" = "추출";
+"Upload Recipe" = "레시피 업로드";
+"Extracting recipe from image..." = "이미지에서 레시피 추출 중...";
+"Extracting recipe from images..." = "이미지에서 레시피 추출 중...";
+

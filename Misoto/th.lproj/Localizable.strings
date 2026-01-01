@@ -244,3 +244,10 @@
 "hours" = "ชั่วโมง";
 "days" = "วัน";
 
+/* Common Actions */
+"Ingredient" = "ส่วนผสม";
+"Extract" = "แยก";
+"Upload Recipe" = "อัปโหลดสูตรอาหาร";
+"Extracting recipe from image..." = "กำลังแยกสูตรอาหารจากรูปภาพ...";
+"Extracting recipe from images..." = "กำลังแยกสูตรอาหารจากรูปภาพ...";
+

@@ -244,3 +244,10 @@
 "hours" = "oras";
 "days" = "araw";
 
+/* Common Actions */
+"Ingredient" = "Sangkap";
+"Extract" = "Kunin";
+"Upload Recipe" = "I-upload ang Recipe";
+"Extracting recipe from image..." = "Kinukuha ang recipe mula sa larawan...";
+"Extracting recipe from images..." = "Kinukuha ang recipe mula sa mga larawan...";
+

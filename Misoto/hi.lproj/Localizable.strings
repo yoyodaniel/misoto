@@ -244,3 +244,10 @@
 "hours" = "घंटे";
 "days" = "दिन";
 
+/* Common Actions */
+"Ingredient" = "सामग्री";
+"Extract" = "निकालें";
+"Upload Recipe" = "व्यंजन अपलोड करें";
+"Extracting recipe from image..." = "छवि से व्यंजन निकाला जा रहा है...";
+"Extracting recipe from images..." = "छवियों से व्यंजन निकाला जा रहा है...";
+

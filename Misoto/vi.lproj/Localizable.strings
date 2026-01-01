@@ -244,3 +244,10 @@
 "hours" = "giờ";
 "days" = "ngày";
 
+/* Common Actions */
+"Ingredient" = "Nguyên liệu";
+"Extract" = "Trích xuất";
+"Upload Recipe" = "Tải lên Công thức";
+"Extracting recipe from image..." = "Đang trích xuất công thức từ hình ảnh...";
+"Extracting recipe from images..." = "Đang trích xuất công thức từ hình ảnh...";
+
