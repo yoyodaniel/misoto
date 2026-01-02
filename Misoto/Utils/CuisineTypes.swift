@@ -11,6 +11,10 @@ class CuisineTypes {
     static let allCuisines: [String] = [
         // Asian
         "Chinese",
+        "Sichuan",
+        "Cantonese",
+        "Hunan",
+        "Shanghainese",
         "Japanese",
         "Korean",
         "Thai",

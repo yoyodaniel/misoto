@@ -254,6 +254,10 @@
 
 /* Cuisines */
 "Chinese" = "Trung Quốc";
+"Sichuan" = "Tứ Xuyên";
+"Cantonese" = "Quảng Đông";
+"Hunan" = "Hồ Nam";
+"Shanghainese" = "Thượng Hải";
 "Japanese" = "Nhật Bản";
 "Korean" = "Hàn Quốc";
 "Thai" = "Thái Lan";

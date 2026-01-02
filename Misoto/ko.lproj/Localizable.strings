@@ -254,6 +254,10 @@
 
 /* Cuisines */
 "Chinese" = "중국";
+"Sichuan" = "사천";
+"Cantonese" = "광동";
+"Hunan" = "후난";
+"Shanghainese" = "상하이";
 "Japanese" = "일본";
 "Korean" = "한국";
 "Thai" = "태국";

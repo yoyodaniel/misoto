@@ -254,6 +254,10 @@
 
 /* Cuisines */
 "Chinese" = "Китайская";
+"Sichuan" = "Сычуаньская";
+"Cantonese" = "Кантонская";
+"Hunan" = "Хунаньская";
+"Shanghainese" = "Шанхайская";
 "Japanese" = "Японская";
 "Korean" = "Корейская";
 "Thai" = "Тайская";

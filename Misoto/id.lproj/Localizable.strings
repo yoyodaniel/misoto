@@ -254,6 +254,10 @@
 
 /* Cuisines */
 "Chinese" = "Tionghoa";
+"Sichuan" = "Sichuan";
+"Cantonese" = "Kanton";
+"Hunan" = "Hunan";
+"Shanghainese" = "Shanghai";
 "Japanese" = "Jepang";
 "Korean" = "Korea";
 "Thai" = "Thailand";

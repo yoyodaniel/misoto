@@ -254,6 +254,10 @@
 
 /* Cuisines */
 "Chinese" = "中式";
+"Sichuan" = "川菜";
+"Cantonese" = "粵菜";
+"Hunan" = "湘菜";
+"Shanghainese" = "本幫菜";
 "Japanese" = "日式";
 "Korean" = "韓式";
 "Thai" = "泰式";
