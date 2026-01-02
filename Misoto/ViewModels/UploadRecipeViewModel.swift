@@ -423,9 +423,22 @@ class UploadRecipeViewModel: ObservableObject {
                 uploadedInstructions.append(instruction)
             }
             
+            // Translate title to English, local language, and preserve original
+            let titleTrimmed = title.trimmingCharacters(in: .whitespaces)
+            let (titleEnglish, titleLocal, titleOriginal) = await RecipeTranslationService.translateTitle(titleTrimmed)
+            
+            // Use original language as primary title
+            let primaryTitle = titleOriginal ?? titleLocal ?? titleEnglish ?? ""
+            
+            // Save cuisine in English (translations are handled by CuisineTranslations)
+            let cuisineEnglish: String? = cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil
+            
             // Create recipe with uploaded media URLs
             let recipe = Recipe(
-                title: title.trimmingCharacters(in: .whitespaces),
+                title: primaryTitle, // Use original language as primary
+                titleEnglish: titleEnglish,
+                titleLocal: titleLocal,
+                titleOriginal: titleOriginal,
                 description: description.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredientObjects,
                 instructions: uploadedInstructions,
@@ -436,6 +449,7 @@ class UploadRecipeViewModel: ObservableObject {
                 spicyLevel: spicyLevel,
                 tips: tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
+                cuisineEnglish: cuisineEnglish,
                 imageURL: mainImageURL, // For backward compatibility
                 imageURLs: allImageURLs, // Array of all image URLs
                 authorID: userID,

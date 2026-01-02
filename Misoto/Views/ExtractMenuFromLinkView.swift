@@ -18,6 +18,8 @@ struct ExtractMenuFromLinkView: View {
     @State private var cuisineDetectionTask: Task<Void, Never>?
     @State private var showFullScreenImage = false
     @State private var fullScreenImage: UIImage?
+    @State private var showCameraForDishImage = false
+    @State private var showPhotoPickerForDishImage = false
     
     @FocusState private var focusedInstructionField: Int?
     
@@ -173,6 +175,39 @@ struct ExtractMenuFromLinkView: View {
             }
         }
         .scrollDismissesKeyboard(.interactively)
+        .background {
+            PhotoLibraryPickerView(
+                isPresented: $showPhotoPickerForDishImage,
+                maxSelectionCount: 5 - viewModel.mainRecipeImages.count
+            ) { images in
+                // Process selected images
+                Task {
+                    for image in images {
+                        // Optimize image for display to reduce memory usage
+                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                        await MainActor.run {
+                            // addRecipeImage has a guard to prevent more than 5 images total
+                            viewModel.addRecipeImage(optimizedImage)
+                        }
+                    }
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showCameraForDishImage) {
+            CameraCaptureView { image in
+                // Add the captured image to recipe images
+                Task {
+                    // Optimize image for display to reduce memory usage
+                    let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                    await MainActor.run {
+                        // addRecipeImage has a guard to prevent more than 5 images total
+                        viewModel.addRecipeImage(optimizedImage)
+                        showCameraForDishImage = false
+                    }
+                }
+            }
+            .ignoresSafeArea(.all)
+        }
         .onChange(of: viewModel.title) {
             // Auto-detect cuisine when title changes (with debounce)
             cuisineDetectionTask?.cancel()
@@ -233,6 +268,9 @@ struct ExtractMenuFromLinkView: View {
         
         RecipeEditForm(
             title: $viewModel.title,
+            titleEnglish: $viewModel.titleEnglish,
+            titleLocal: $viewModel.titleLocal,
+            titleOriginal: $viewModel.titleOriginal,
             description: $viewModel.description,
             cuisine: $viewModel.cuisine,
             prepTime: $viewModel.prepTime,
@@ -306,6 +344,14 @@ struct ExtractMenuFromLinkView: View {
             showFullScreenImage: $showFullScreenImage,
             fullScreenImage: $fullScreenImage,
             selectedRecipePhotos: $selectedRecipePhotos,
+            onTakePicture: {
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    showCameraForDishImage = true
+                }
+            },
+            onSelectFromLibrary: {
+                showPhotoPickerForDishImage = true
+            },
             instructionsContent: {
                 makeInstructionsContent()
             },

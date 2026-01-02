@@ -22,6 +22,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
     
     // Recipe fields for editing
     @Published var title = ""
+    @Published var originalExtractedTitle: String? = nil // Preserve original title before translation
     @Published var description = ""
     @Published var cuisine: String? = nil
     @Published var prepTime: Int = 15
@@ -83,6 +84,9 @@ class ExtractMenuWithAIViewModel: ObservableObject {
                 response = try await OpenAIService.extractRecipe(from: image)
             }
             
+            // Preserve original title before translation
+            originalExtractedTitle = response.title
+            
             // Step 4: Translate recipe to user's selected language
             print("🌍 Translating extracted recipe to user's selected language...")
             let translated = await RecipeTranslationService.translateRecipe(
@@ -101,7 +105,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
                 cuisine: nil // Will be detected later
             )
             
-            // Populate fields with translated content
+            // Populate fields with translated content (already capitalized by RecipeTranslationService)
             title = translated.title
             description = translated.description
             dishIngredients = translated.dishIngredients.isEmpty ? [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")] : translated.dishIngredients
@@ -478,9 +482,19 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             }
             
             // Create recipe
+            // Translate title to English, local language, and preserve original
+            // Use original extracted title if available, otherwise use current title
+            let titleToTranslate = originalExtractedTitle ?? title.trimmingCharacters(in: .whitespaces)
+            let (titleEnglish, titleLocal, titleOriginal) = await RecipeTranslationService.translateTitle(titleToTranslate)
+            
             print("📝 Creating recipe with sourceImageURLs: \(sourceImageURLs)")
+            // Use original language as primary title
+            let primaryTitle = titleOriginal ?? titleLocal ?? titleEnglish ?? ""
             let recipe = Recipe(
-                title: title.trimmingCharacters(in: .whitespaces),
+                title: primaryTitle, // Use original language as primary
+                titleEnglish: titleEnglish,
+                titleLocal: titleLocal,
+                titleOriginal: titleOriginal,
                 description: description.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredientObjects,
                 instructions: instructionObjects,

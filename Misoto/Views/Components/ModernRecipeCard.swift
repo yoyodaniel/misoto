@@ -15,98 +15,144 @@ struct ModernRecipeCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Large Image
-            ZStack(alignment: .bottomLeading) {
-                if let imageURL = recipe.imageURL, let url = URL(string: imageURL) {
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
+            // Large Image with Overlays - Rounded Square
+            GeometryReader { geometry in
+                let squareSize = geometry.size.width
+                
+                ZStack(alignment: .bottomLeading) {
+                    if let imageURL = recipe.imageURL, let url = URL(string: imageURL) {
+                        AsyncImage(url: url) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .font(.system(size: 50))
+                                        .foregroundColor(.secondary)
+                                }
+                        }
+                        .frame(width: squareSize, height: squareSize)
+                        .clipped()
+                    } else {
                         Rectangle()
-                            .fill(Color.gray.opacity(0.3))
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.gray.opacity(0.4), Color.gray.opacity(0.2)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .frame(width: squareSize, height: squareSize)
                             .overlay {
                                 Image(systemName: "photo")
                                     .font(.system(size: 50))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(.white.opacity(0.6))
                             }
                     }
-                    .frame(height: 280)
-                    .clipped()
-                } else {
-                    Rectangle()
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.gray.opacity(0.4), Color.gray.opacity(0.2)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .frame(height: 280)
-                        .overlay {
-                            Image(systemName: "photo")
-                                .font(.system(size: 50))
-                                .foregroundColor(.white.opacity(0.6))
+                    
+                    // Gradient overlay for better text readability
+                    LinearGradient(
+                        colors: [Color.clear, Color.black.opacity(0.4)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(width: squareSize, height: squareSize)
+                    
+                    // Favorite Button in Top Right
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                toggleFavorite()
+                            }) {
+                                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                                    .font(.system(size: 22))
+                                    .foregroundColor(.white)
+                                    .padding(10)
+                                    .background(Color.black.opacity(0.3))
+                                    .clipShape(Circle())
+                            }
+                            .padding(.trailing, 16)
+                            .padding(.top, 16)
                         }
-                }
-                
-                // Favorite Button Overlay
-                VStack {
-                    HStack {
                         Spacer()
-                        Button(action: {
-                            toggleFavorite()
-                        }) {
-                            Image(systemName: isFavorite ? "heart.fill" : "heart")
-                                .font(.system(size: 24))
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background(Color.black.opacity(0.3))
-                                .clipShape(Circle())
-                        }
-                        .padding(16)
                     }
-                    Spacer()
+                    
+                    // Text Overlay - Primary and Secondary Titles
+                    VStack(alignment: .leading, spacing: 4) {
+                        Spacer()
+                        
+                        // Primary Title (larger, white with shadow)
+                        Text(primaryTitle)
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.leading, 20)
+                            .padding(.trailing, 20)
+                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 0, y: 2)
+                        
+                        // Secondary Title (smaller, white with shadow)
+                        if let secondaryTitle = secondaryTitle, !secondaryTitle.isEmpty {
+                            Text(secondaryTitle)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(.white.opacity(0.9))
+                                .padding(.leading, 20)
+                                .padding(.trailing, 20)
+                                .shadow(color: Color.black.opacity(0.5), radius: 3, x: 0, y: 2)
+                        }
+                        
+                        // Bottom padding
+                        Spacer()
+                            .frame(height: 16)
+                    }
                 }
-                
-                // Title Overlay
-                VStack(alignment: .leading) {
-                    Spacer()
-                    Text(recipe.title)
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 16)
-                        .shadow(color: Color.black.opacity(0.5), radius: 4, x: 0, y: 2)
-                }
+                .cornerRadius(16)
             }
-            
-            // Recipe Info
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Label("\(recipe.prepTime + recipe.cookTime) min", systemImage: "clock")
-                    Spacer()
-                    Label("\(recipe.servings)", systemImage: "person.2")
-                    Spacer()
-                    Label(recipe.difficulty.rawValue, systemImage: "chart.bar")
-                }
-                .font(.system(size: 13))
-                .foregroundColor(.secondary)
-                
-                if !recipe.description.isEmpty {
-                    Text(recipe.description)
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                }
-            }
-            .padding(16)
-            .background(Color(.systemBackground))
+            .aspectRatio(1, contentMode: .fit)
         }
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 4)
         .task {
             await checkFavoriteStatus()
+        }
+    }
+    
+    // MARK: - Computed Properties
+    
+    /// Primary title to display (large text) - Show local system language or English based on settings
+    private var primaryTitle: String {
+        let currentLanguage = LocalizationManager.shared.currentLanguage
+        
+        // If user is using English, show English title as primary
+        if currentLanguage == .english {
+            return recipe.titleEnglish ?? recipe.title
+        } else {
+            // If user is using system language, show local title as primary
+            return recipe.titleLocal ?? recipe.titleEnglish ?? recipe.title
+        }
+    }
+    
+    /// Secondary title to display (small text) - Show original language name
+    private var secondaryTitle: String? {
+        // Show original language as secondary if it exists and is different from primary
+        if let titleOriginal = recipe.titleOriginal,
+           !titleOriginal.isEmpty,
+           titleOriginal != primaryTitle {
+            return titleOriginal
+        }
+        return nil
+    }
+    
+    private var titleColor: Color {
+        // Use different colors based on recipe characteristics
+        // You can customize this based on cuisine, spicy level, etc.
+        if recipe.spicyLevel.rawValue >= 3 {
+            return Color.red
+        } else if recipe.cuisine?.lowercased().contains("curry") == true {
+            return Color.orange
+        } else {
+            return Color.yellow
         }
     }
     

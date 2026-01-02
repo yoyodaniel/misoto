@@ -143,6 +143,7 @@
 "Ranking" = "Classifica";
 "Search ingredients, recipes" = "Cerca ingredienti, ricette";
 "No recipes found" = "Nessuna ricetta trovata";
+"Collections" = "Collezioni";
 
 /* Favorites */
 "No favorites yet" = "Ancora nessun preferito";
@@ -159,6 +160,10 @@
 /* Recipe */
 "Title" = "Titolo";
 "Recipe Title" = "Titolo della Ricetta";
+"Main Title" = "Titolo Principale";
+"System Language" = "Lingua di Sistema";
+"Original Language" = "Lingua Originale";
+"Enter title" = "Inserisci titolo";
 "Description" = "Descrizione";
 "Regenerate Description" = "Rigenera Descrizione";
 "Cuisine" = "Cucina";
@@ -330,6 +335,7 @@
 "Venezuelan" = "Venezuelano";
 "Jamaican" = "Giamaicano";
 "Caribbean" = "Caraibico";
+"Surinam" = "Surinamese";
 "Australian" = "Australiano";
 "New Zealand" = "Neozelandese";
 "Fusion" = "Fusion";

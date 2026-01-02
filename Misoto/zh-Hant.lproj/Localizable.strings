@@ -138,11 +138,15 @@
 
 /* Explore */
 "Today's Recommendations" = "今日推薦";
+"Today's Special" = "今日特選";
+"Follow" = "關注";
+"Chef's Choice" = "主廚推薦";
 "Weekly Menu" = "每週菜單";
 "Trending" = "熱門";
 "Ranking" = "排行榜";
 "Search ingredients, recipes" = "搜尋食材、食譜";
 "No recipes found" = "未找到食譜";
+"Collections" = "合集";
 
 /* Favorites */
 "No favorites yet" = "還沒有收藏";
@@ -159,6 +163,10 @@
 /* Recipe */
 "Title" = "標題";
 "Recipe Title" = "食譜標題";
+"Main Title" = "主要標題";
+"System Language" = "系統語言";
+"Original Language" = "原始語言";
+"Enter title" = "輸入標題";
 "Description" = "描述";
 "Regenerate Description" = "重新生成描述";
 "Cuisine" = "菜系";
@@ -330,6 +338,7 @@
 "Venezuelan" = "委內瑞拉菜";
 "Jamaican" = "牙買加菜";
 "Caribbean" = "加勒比菜";
+"Surinam" = "蘇里南菜";
 "Australian" = "澳洲菜";
 "New Zealand" = "紐西蘭菜";
 "Fusion" = "融合菜";

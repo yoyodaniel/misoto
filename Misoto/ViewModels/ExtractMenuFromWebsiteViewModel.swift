@@ -10,6 +10,7 @@ import Combine
 import FirebaseAuth
 import UIKit
 import WebKit
+import NaturalLanguage
 
 @MainActor
 class ExtractMenuFromWebsiteViewModel: ObservableObject {
@@ -24,6 +25,10 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
     
     // Recipe fields for editing
     @Published var title = ""
+    @Published var originalExtractedTitle: String? = nil // Preserve original title before translation
+    @Published var titleEnglish: String? = nil
+    @Published var titleLocal: String? = nil
+    @Published var titleOriginal: String? = nil
     @Published var description = ""
     @Published var cuisine: String? = nil
     @Published var prepTime: Int = 15
@@ -48,6 +53,139 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
     private let storageService = StorageService()
     private let textProcessor = RecipeTextProcessor()
     
+    /// Extract original title from web page - tries multiple strategies
+    /// 1. Extract from HTML title/h1 tags via JavaScript
+    /// 2. Extract from raw text (first meaningful line)
+    private func extractOriginalTitle(from webView: WKWebView, rawText: String) async -> String? {
+        // Strategy 1: Try to extract from HTML title/h1 tags (most reliable)
+        if let htmlTitle = await extractTitleFromHTML(webView: webView) {
+            print("✅ Found title from HTML: \(htmlTitle)")
+            return htmlTitle
+        }
+        
+        // Strategy 2: Extract from raw text
+        if let textTitle = extractPotentialTitle(from: rawText) {
+            print("✅ Found title from raw text: \(textTitle)")
+            return textTitle
+        }
+        
+        return nil
+    }
+    
+    /// Extract title from HTML using JavaScript (tries title tag, h1, and recipe-specific selectors)
+    private func extractTitleFromHTML(webView: WKWebView) async -> String? {
+        let titleScript = """
+        (function() {
+            // Try multiple selectors in order of preference
+            const selectors = [
+                'h1.recipe-title',
+                'h1[class*="recipe"]',
+                '.recipe-title',
+                '[class*="recipe-title"]',
+                'h1',
+                'title'
+            ];
+            
+            for (const selector of selectors) {
+                const element = document.querySelector(selector);
+                if (element) {
+                    const text = element.innerText || element.textContent || '';
+                    const cleaned = text.trim();
+                    if (cleaned.length > 0 && cleaned.length < 200) {
+                        return cleaned;
+                    }
+                }
+            }
+            
+            return null;
+        })();
+        """
+        
+        do {
+            if let result = try await webView.evaluateJavaScript(titleScript) as? String,
+               !result.isEmpty {
+                return result
+            }
+        } catch {
+            print("⚠️ Error extracting title from HTML: \(error.localizedDescription)")
+        }
+        
+        return nil
+    }
+    
+    /// Extract potential title from raw text (before translation)
+    /// Looks for the first meaningful line that could be a recipe title
+    private func extractPotentialTitle(from text: String) -> String? {
+        let lines = text.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        
+        print("🔍 Extracting title from \(lines.count) lines of text")
+        
+        // Look for the first line that could be a title
+        // Titles are usually:
+        // - Short (less than 150 characters)
+        // - Not starting with common recipe section keywords (in multiple languages)
+        // - Not containing ingredient/instruction patterns
+        let sectionKeywords = [
+            // English
+            "ingredients", "instructions", "method", "steps", "preparation", "cooking", "serves", "prep", "cook",
+            // Dutch
+            "ingrediënten", "bereiding", "kooktijd", "bereidingstijd", "porties", "stappen",
+            // Chinese
+            "材料", "步驟", "做法", "準備", "烹飪"
+        ]
+        let ingredientPatterns = ["\\d+\\s*(tbsp|tsp|cup|g|kg|ml|l|oz|lb|el|tl)", "\\d+/\\d+", "^\\d+\\s"]
+        
+        for (index, line) in lines.prefix(15).enumerated() { // Check first 15 lines
+            let lowercased = line.lowercased()
+            
+            // Skip if it's clearly a section header
+            if sectionKeywords.contains(where: { lowercased.contains($0) }) {
+                print("  Line \(index): Skipped (section header): \(line.prefix(50))")
+                continue
+            }
+            
+            // Skip if it looks like an ingredient line
+            var looksLikeIngredient = false
+            for pattern in ingredientPatterns {
+                if line.range(of: pattern, options: .regularExpression) != nil {
+                    looksLikeIngredient = true
+                    break
+                }
+            }
+            if looksLikeIngredient {
+                print("  Line \(index): Skipped (ingredient pattern): \(line.prefix(50))")
+                continue
+            }
+            
+            // Skip if it's too long (likely description)
+            if line.count > 150 {
+                print("  Line \(index): Skipped (too long): \(line.prefix(50))")
+                continue
+            }
+            
+            // Skip if it's too short (likely not a title)
+            if line.count < 3 {
+                print("  Line \(index): Skipped (too short): \(line)")
+                continue
+            }
+            
+            // This looks like a potential title
+            print("✅ Found potential title at line \(index): \(line)")
+            return line
+        }
+        
+        // Fallback: return first non-empty line if it's reasonable
+        if let firstLine = lines.first, firstLine.count >= 3 && firstLine.count <= 150 {
+            print("✅ Using first line as fallback title: \(firstLine)")
+            return firstLine
+        }
+        
+        print("❌ No suitable title found")
+        return nil
+    }
+    
     /// Extract recipe from web content
     /// First uses on-device Foundation models to clean text, then sends to OpenAI for parsing
     func extractRecipe(from webView: WKWebView) async {
@@ -61,8 +199,25 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
         }
         
         do {
-            // Step 1: Extract raw text from web page
+            // Step 1: Extract raw text from web page (OCR/JavaScript extraction)
             var rawText = try await WebContentExtractor.extractText(from: webView)
+            
+            // Step 1.1: IMMEDIATELY extract original title from raw text (BEFORE any translation)
+            // This is critical to preserve the original language (e.g., Dutch)
+            print("🔍 Extracting original title from raw text (before translation)...")
+            if let extracted = await extractOriginalTitle(from: webView, rawText: rawText) {
+                originalExtractedTitle = RecipeTranslationService.capitalizeTitle(extracted)
+            }
+            
+            if let originalTitle = originalExtractedTitle, !originalTitle.isEmpty {
+                print("✅ Original title extracted: \(originalTitle)")
+                // Detect language of original title for debugging
+                if let detectedLang = TextTranslationService.detectLanguage(originalTitle) {
+                    print("📝 Detected original title language: \(detectedLang.rawValue)")
+                }
+            } else {
+                print("⚠️ WARNING: Could not extract original title from raw text")
+            }
             
             // Step 1.5: Detect language and translate to English if needed
             print("🔍 Detecting language of extracted web content...")
@@ -94,6 +249,16 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
             // Step 3: Send to OpenAI API for parsing into recipe structure
             let response = try await OpenAIService.parseRecipeFromText(cleanedText)
             
+            // If we didn't extract the original title earlier, try to use the response title
+            // But only if we don't already have an original title (which should be in the original language)
+            if originalExtractedTitle == nil || originalExtractedTitle?.isEmpty == true {
+                // Response title is already in English, so we can't use it as original
+                // But we'll use it as a fallback
+                print("⚠️ No original title extracted, response title is: \(response.title)")
+            } else {
+                print("✅ Original title preserved: \(originalExtractedTitle ?? "")")
+            }
+            
             // Step 4: Translate recipe to user's selected language
             print("🌍 Translating extracted recipe to user's selected language...")
             let translated = await RecipeTranslationService.translateRecipe(
@@ -113,7 +278,7 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
             )
             
             // Populate fields with translated content
-            title = translated.title
+            title = RecipeTranslationService.capitalizeTitle(translated.title)
             description = translated.description
             dishIngredients = translated.dishIngredients.isEmpty ? [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")] : translated.dishIngredients
             marinadeIngredients = translated.marinadeIngredients
@@ -476,9 +641,38 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
                 Instruction(text: text.trimmingCharacters(in: .whitespaces))
             }
             
-            // Create recipe
+            // Translate title to English, local language, and preserve original
+            // ALWAYS use original extracted title if available (before any translation)
+            // This ensures we preserve the original language (e.g., Dutch)
+            let titleToTranslate: String
+            if let originalTitle = originalExtractedTitle, !originalTitle.trimmingCharacters(in: .whitespaces).isEmpty {
+                titleToTranslate = originalTitle.trimmingCharacters(in: .whitespaces)
+                print("📝 Using original extracted title for translation: \(titleToTranslate)")
+            } else {
+                titleToTranslate = title.trimmingCharacters(in: .whitespaces)
+                print("⚠️ No original title found, using current title: \(titleToTranslate)")
+            }
+            let (titleEnglish, titleLocal, titleOriginal) = await RecipeTranslationService.translateTitle(titleToTranslate)
+            print("📝 Translation result - English: \(titleEnglish), Local: \(titleLocal), Original: \(titleOriginal ?? "nil")")
+            
+            // Update UI fields so they show in the edit form (already capitalized by RecipeTranslationService)
+            self.titleEnglish = titleEnglish
+            self.titleLocal = titleLocal
+            self.titleOriginal = titleOriginal
+            // Set main title to local language (or English if local is not available)
+            self.title = titleLocal.isEmpty ? titleEnglish : titleLocal
+            
+            // Create recipe - Use original language as primary title (already capitalized)
+            let primaryTitle = titleOriginal ?? titleLocal ?? titleEnglish ?? ""
+            
+            // Save cuisine in English (translations are handled by CuisineTranslations)
+            let cuisineEnglish: String? = cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil
+            
             let recipe = Recipe(
-                title: title.trimmingCharacters(in: .whitespaces),
+                title: primaryTitle, // Use original language as primary
+                titleEnglish: titleEnglish,
+                titleLocal: titleLocal,
+                titleOriginal: titleOriginal,
                 description: description.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredientObjects,
                 instructions: instructionObjects,
@@ -489,6 +683,7 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
                 spicyLevel: spicyLevel,
                 tips: tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
+                cuisineEnglish: cuisineEnglish,
                 imageURL: mainImageURL, // For backward compatibility
                 imageURLs: allImageURLs, // Array of all image URLs
                 authorID: userID,

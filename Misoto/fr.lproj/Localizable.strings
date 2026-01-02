@@ -138,11 +138,15 @@
 
 /* Explore */
 "Today's Recommendations" = "Recommandations d'Aujourd'hui";
+"Today's Special" = "Spécial du Jour";
+"Follow" = "Suivre";
+"Chef's Choice" = "Choix du Chef";
 "Weekly Menu" = "Menu Hebdomadaire";
 "Trending" = "Tendances";
 "Ranking" = "Classement";
 "Search ingredients, recipes" = "Rechercher des ingrédients, des recettes";
 "No recipes found" = "Aucune recette trouvée";
+"Collections" = "Collections";
 
 /* Favorites */
 "No favorites yet" = "Aucun favori pour le moment";
@@ -159,6 +163,10 @@
 /* Recipe */
 "Title" = "Titre";
 "Recipe Title" = "Titre de la Recette";
+"Main Title" = "Titre Principal";
+"System Language" = "Langue du Système";
+"Original Language" = "Langue Originale";
+"Enter title" = "Entrer le titre";
 "Description" = "Description";
 "Regenerate Description" = "Régénérer la Description";
 "Cuisine" = "Cuisine";
@@ -330,6 +338,7 @@
 "Venezuelan" = "Vénézuélien";
 "Jamaican" = "Jamaïcain";
 "Caribbean" = "Caraïbes";
+"Surinam" = "Surinamais";
 "Australian" = "Australien";
 "New Zealand" = "Nouvelle-Zélande";
 "Fusion" = "Fusion";

@@ -11,6 +11,129 @@ import NaturalLanguage
 @MainActor
 class RecipeTranslationService {
     
+    /// Capitalize title in title case (capitalize each word)
+    static func capitalizeTitle(_ title: String) -> String {
+        guard !title.isEmpty else { return title }
+        
+        // Split by spaces and capitalize each word
+        let words = title.components(separatedBy: .whitespaces)
+        let capitalizedWords = words.map { word -> String in
+            guard !word.isEmpty else { return word }
+            // Capitalize first letter, keep rest lowercase
+            return word.prefix(1).uppercased() + word.dropFirst().lowercased()
+        }
+        return capitalizedWords.joined(separator: " ")
+    }
+    
+    /// Translate title to English, user's system language, and preserve original
+    /// - Parameter title: The original title (can be in any language)
+    /// - Returns: A tuple with (titleEnglish, titleLocal, titleOriginal)
+    static func translateTitle(_ title: String) async -> (titleEnglish: String, titleLocal: String, titleOriginal: String?) {
+        // Detect original language
+        let originalLanguage = TextTranslationService.detectLanguage(title)
+        let originalLanguageCode = originalLanguage?.rawValue ?? ""
+        let isOriginalEnglish = TextTranslationService.isEnglish(title)
+        
+        // First, ensure we have English title
+        let englishTitle: String
+        if isOriginalEnglish {
+            englishTitle = Self.capitalizeTitle(title)
+        } else {
+            // Translate to English
+            let translated = await TextTranslationService.translateToEnglish(title)
+            englishTitle = Self.capitalizeTitle(translated)
+        }
+        
+        // Get user's system language
+        let selectedLanguage = LocalizationManager.shared.currentLanguage
+        let systemLanguageCode: String
+        
+        switch selectedLanguage {
+        case .english:
+            systemLanguageCode = "en"
+        case .system:
+            // Get system language code
+            if let preferredLanguage = Locale.preferredLanguages.first {
+                systemLanguageCode = normalizeChineseLanguageCode(preferredLanguage)
+            } else {
+                systemLanguageCode = "en"
+            }
+        default:
+            systemLanguageCode = selectedLanguage.rawValue
+        }
+        
+        // Translate to system language (if not English)
+        var localTitle = englishTitle
+        if systemLanguageCode.lowercased() != "en" && !systemLanguageCode.lowercased().hasPrefix("en-") {
+            do {
+                let translated = try await OpenAIService.translateFromEnglish(englishTitle, to: systemLanguageCode)
+                localTitle = Self.capitalizeTitle(translated)
+            } catch {
+                print("⚠️ Failed to translate title to \(systemLanguageCode): \(error.localizedDescription)")
+                // Fallback to English if translation fails
+                localTitle = englishTitle
+            }
+        }
+        
+        // Determine original title
+        // Only save original if it's different from both English and system language
+        var titleOriginal: String? = nil
+        if !isOriginalEnglish {
+            // Original is not English
+            let normalizedOriginal = normalizeChineseLanguageCode(originalLanguageCode)
+            let normalizedSystem = normalizeChineseLanguageCode(systemLanguageCode)
+            
+            // Save original if it's different from both English and system language
+            if normalizedOriginal.lowercased() != "en" && 
+               !normalizedOriginal.lowercased().hasPrefix("en-") &&
+               normalizedOriginal.lowercased() != normalizedSystem.lowercased() &&
+               !normalizedOriginal.lowercased().hasPrefix(normalizedSystem.lowercased()) {
+                titleOriginal = Self.capitalizeTitle(title)
+            }
+        }
+        
+        return (titleEnglish: englishTitle, titleLocal: localTitle, titleOriginal: titleOriginal)
+    }
+    
+    /// Normalize Chinese language codes to zh-Hans or zh-Hant
+    private static func normalizeChineseLanguageCode(_ code: String) -> String {
+        let lowercased = code.lowercased()
+        
+        // Traditional Chinese regions
+        if lowercased.hasPrefix("zh-hk") || 
+           lowercased.contains("-hk") || 
+           lowercased.contains("_hk") ||
+           lowercased.hasPrefix("zh-tw") || 
+           lowercased.contains("-tw") || 
+           lowercased.contains("_tw") ||
+           lowercased.hasPrefix("zh-mo") || 
+           lowercased.contains("-mo") || 
+           lowercased.contains("_mo") ||
+           lowercased == "zh-hant" ||
+           lowercased.hasPrefix("zh-hant") {
+            return "zh-Hant"
+        }
+        
+        // Simplified Chinese regions
+        if lowercased.hasPrefix("zh-cn") || 
+           lowercased.contains("-cn") || 
+           lowercased.contains("_cn") ||
+           lowercased.hasPrefix("zh-sg") || 
+           lowercased.contains("-sg") || 
+           lowercased.contains("_sg") ||
+           lowercased == "zh-hans" ||
+           lowercased.hasPrefix("zh-hans") {
+            return "zh-Hans"
+        }
+        
+        // If it's just "zh" without variant, default to Simplified
+        if lowercased == "zh" {
+            return "zh-Hans"
+        }
+        
+        return code
+    }
+    
     /// Translate recipe content to user's selected language
     /// - Parameters:
     ///   - title: Recipe title
@@ -119,11 +242,16 @@ class RecipeTranslationService {
         // Translate title
         if !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             do {
-                translatedTitle = try await OpenAIService.translateFromEnglish(title, to: targetLanguageCode)
+                let translated = try await OpenAIService.translateFromEnglish(title, to: targetLanguageCode)
+                translatedTitle = Self.capitalizeTitle(translated)
                 print("✅ Translated title")
             } catch {
                 print("⚠️ Failed to translate title: \(error.localizedDescription)")
+                // Fallback to capitalized original title
+                translatedTitle = Self.capitalizeTitle(title)
             }
+        } else {
+            translatedTitle = Self.capitalizeTitle(title)
         }
         
         // Translate description
@@ -192,50 +320,6 @@ class RecipeTranslationService {
         print("✅ Recipe translation complete")
         
         return (translatedTitle, translatedDescription, translatedDishIngredients, translatedMarinadeIngredients, translatedSeasoningIngredients, translatedBatterIngredients, translatedSauceIngredients, translatedBaseIngredients, translatedDoughIngredients, translatedToppingIngredients, translatedInstructions, translatedTips, translatedCuisine)
-    }
-    
-    /// Normalize Chinese language codes to zh-Hans or zh-Hant
-    /// - Parameter code: Language code from system (e.g., "zh-HK", "zh-TW", "zh-CN", "zh-Hans", "zh-Hant", "zh-Hant-HK")
-    /// - Returns: Normalized code (zh-Hans or zh-Hant)
-    private static func normalizeChineseLanguageCode(_ code: String) -> String {
-        let lowercased = code.lowercased()
-        
-        // Traditional Chinese regions: Hong Kong, Taiwan, Macau
-        // Check for zh-HK, zh-Hant-HK, zh-Hant_HK, or any variant containing hk/tw/mo
-        if lowercased.hasPrefix("zh-hk") || 
-           lowercased.contains("-hk") || 
-           lowercased.contains("_hk") ||
-           lowercased.hasPrefix("zh-tw") || 
-           lowercased.contains("-tw") || 
-           lowercased.contains("_tw") ||
-           lowercased.hasPrefix("zh-mo") || 
-           lowercased.contains("-mo") || 
-           lowercased.contains("_mo") ||
-           lowercased == "zh-hant" ||
-           lowercased.hasPrefix("zh-hant") {
-            return "zh-Hant"
-        }
-        
-        // Simplified Chinese regions: China, Singapore
-        // Check for zh-CN, zh-Hans-CN, zh-Hans_CN, or any variant containing cn/sg
-        if lowercased.hasPrefix("zh-cn") || 
-           lowercased.contains("-cn") || 
-           lowercased.contains("_cn") ||
-           lowercased.hasPrefix("zh-sg") || 
-           lowercased.contains("-sg") || 
-           lowercased.contains("_sg") ||
-           lowercased == "zh-hans" ||
-           lowercased.hasPrefix("zh-hans") {
-            return "zh-Hans"
-        }
-        
-        // If it's just "zh" without variant, default to Simplified (most common)
-        if lowercased == "zh" {
-            return "zh-Hans"
-        }
-        
-        // For all other cases, return as-is
-        return code
     }
 }
 

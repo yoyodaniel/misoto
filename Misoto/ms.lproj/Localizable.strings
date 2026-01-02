@@ -159,6 +159,10 @@
 /* Recipe */
 "Title" = "Tajuk";
 "Recipe Title" = "Tajuk Resipi";
+"Main Title" = "Tajuk Utama";
+"System Language" = "Bahasa Sistem";
+"Original Language" = "Bahasa Asal";
+"Enter title" = "Masukkan tajuk";
 "Description" = "Penerangan";
 "Regenerate Description" = "Jana Semula Penerangan";
 "Cuisine" = "Masakan";
@@ -330,6 +334,7 @@
 "Venezuelan" = "Venezuela";
 "Jamaican" = "Jamaica";
 "Caribbean" = "Caribbean";
+"Surinam" = "Surinam";
 "Australian" = "Australia";
 "New Zealand" = "New Zealand";
 "Fusion" = "Fusion";

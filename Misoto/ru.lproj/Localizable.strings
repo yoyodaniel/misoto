@@ -143,6 +143,7 @@
 "Ranking" = "Рейтинг";
 "Search ingredients, recipes" = "Поиск ингредиентов, рецептов";
 "No recipes found" = "Рецепты не найдены";
+"Collections" = "Коллекции";
 
 /* Favorites */
 "No favorites yet" = "Пока нет избранного";
@@ -159,6 +160,10 @@
 /* Recipe */
 "Title" = "Название";
 "Recipe Title" = "Название рецепта";
+"Main Title" = "Основное Название";
+"System Language" = "Язык Системы";
+"Original Language" = "Оригинальный Язык";
+"Enter title" = "Введите название";
 "Description" = "Описание";
 "Regenerate Description" = "Перегенерировать описание";
 "Cuisine" = "Кухня";
@@ -330,6 +335,7 @@
 "Venezuelan" = "Венесуэльская";
 "Jamaican" = "Ямайская";
 "Caribbean" = "Карибская";
+"Surinam" = "Суринамская";
 "Australian" = "Австралийская";
 "New Zealand" = "Новозеландская";
 "Fusion" = "Фьюжн";

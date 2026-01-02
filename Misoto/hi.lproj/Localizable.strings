@@ -143,6 +143,7 @@
 "Ranking" = "रैंकिंग";
 "Search ingredients, recipes" = "सामग्री, व्यंजन खोजें";
 "No recipes found" = "कोई व्यंजन नहीं मिला";
+"Collections" = "संग्रह";
 
 /* Favorites */
 "No favorites yet" = "अभी तक कोई पसंदीदा नहीं";
@@ -159,6 +160,10 @@
 /* Recipe */
 "Title" = "शीर्षक";
 "Recipe Title" = "व्यंजन शीर्षक";
+"Main Title" = "मुख्य शीर्षक";
+"System Language" = "सिस्टम भाषा";
+"Original Language" = "मूल भाषा";
+"Enter title" = "शीर्षक दर्ज करें";
 "Description" = "विवरण";
 "Regenerate Description" = "विवरण पुनः उत्पन्न करें";
 "Cuisine" = "पाक शैली";
@@ -330,6 +335,7 @@
 "Venezuelan" = "वेनेजुएला";
 "Jamaican" = "जमैकन";
 "Caribbean" = "कैरिबियन";
+"Surinam" = "सूरीनामी";
 "Australian" = "ऑस्ट्रेलियाई";
 "New Zealand" = "न्यूजीलैंड";
 "Fusion" = "फ्यूजन";

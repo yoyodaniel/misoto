@@ -159,6 +159,10 @@
 /* Recipe */
 "Title" = "Pamagat";
 "Recipe Title" = "Pamagat ng Recipe";
+"Main Title" = "Pangunahing Pamagat";
+"System Language" = "Wika ng Sistema";
+"Original Language" = "Orihinal na Wika";
+"Enter title" = "Ilagay ang pamagat";
 "Description" = "Paglalarawan";
 "Regenerate Description" = "I-regenerate ang Paglalarawan";
 "Cuisine" = "Cuisine";
@@ -330,6 +334,7 @@
 "Venezuelan" = "Venezuelan";
 "Jamaican" = "Jamaican";
 "Caribbean" = "Caribbean";
+"Surinam" = "Surinamese";
 "Australian" = "Australian";
 "New Zealand" = "New Zealand";
 "Fusion" = "Fusion";

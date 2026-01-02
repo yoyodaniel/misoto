@@ -314,7 +314,7 @@ struct FeedbackSheet: View {
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
                     .focused($focusedField, equals: .email)
-                    .onChange(of: email) { _ in
+                    .onChange(of: email) {
                         validateEmail()
                     }
                 } header: {

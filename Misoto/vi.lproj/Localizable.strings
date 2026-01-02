@@ -159,6 +159,10 @@
 /* Recipe */
 "Title" = "Tiêu đề";
 "Recipe Title" = "Tiêu đề công thức";
+"Main Title" = "Tiêu đề Chính";
+"System Language" = "Ngôn ngữ Hệ thống";
+"Original Language" = "Ngôn ngữ Gốc";
+"Enter title" = "Nhập tiêu đề";
 "Description" = "Mô tả";
 "Regenerate Description" = "Tạo lại mô tả";
 "Cuisine" = "Ẩm thực";
@@ -330,6 +334,7 @@
 "Venezuelan" = "Venezuela";
 "Jamaican" = "Jamaica";
 "Caribbean" = "Caribbean";
+"Surinam" = "Surinam";
 "Australian" = "Úc";
 "New Zealand" = "New Zealand";
 "Fusion" = "Fusion";

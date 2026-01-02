@@ -10,7 +10,10 @@ import FirebaseFirestore
 
 struct Recipe: Identifiable, Codable {
     var id: String
-    var title: String
+    var title: String // Kept for backward compatibility, uses titleLocal or titleEnglish based on user's language
+    var titleEnglish: String? // English title
+    var titleLocal: String? // Local language title (user's system language, if not English)
+    var titleOriginal: String? // Original recipe name in original language (if not English or system language)
     var description: String
     var ingredients: [Ingredient]
     var instructions: [Instruction]
@@ -20,7 +23,8 @@ struct Recipe: Identifiable, Codable {
     var difficulty: Difficulty
     var spicyLevel: SpicyLevel
     var tips: [String]
-    var cuisine: String?
+    var cuisine: String? // Kept for backward compatibility, uses cuisineEnglish
+    var cuisineEnglish: String? // English cuisine name (always saved, used for translations)
     var imageURL: String? // Deprecated: use imageURLs instead, kept for backward compatibility
     var imageURLs: [String] // Array of image URLs (up to 5)
     var sourceImageURL: String? // Deprecated: use sourceImageURLs instead, kept for backward compatibility
@@ -35,6 +39,9 @@ struct Recipe: Identifiable, Codable {
     enum CodingKeys: String, CodingKey {
         case id
         case title
+        case titleEnglish
+        case titleLocal
+        case titleOriginal
         case description
         case ingredients
         case instructions
@@ -45,6 +52,7 @@ struct Recipe: Identifiable, Codable {
         case spicyLevel
         case tips
         case cuisine
+        case cuisineEnglish
         case imageURL
         case imageURLs
         case sourceImageURL
@@ -62,7 +70,30 @@ struct Recipe: Identifiable, Codable {
         
         // Required fields
         id = try container.decode(String.self, forKey: .id)
-        title = try container.decode(String.self, forKey: .title)
+        
+        // Handle title with backward compatibility
+        titleEnglish = try container.decodeIfPresent(String.self, forKey: .titleEnglish)
+        titleLocal = try container.decodeIfPresent(String.self, forKey: .titleLocal)
+        titleOriginal = try container.decodeIfPresent(String.self, forKey: .titleOriginal)
+        
+        // Decode title (for backward compatibility)
+        let decodedTitle = try container.decodeIfPresent(String.self, forKey: .title)
+        
+        // Set title based on available data
+        // Prefer titleLocal (user's language when recipe was created), then titleEnglish, then decoded title
+        if let titleLocal = titleLocal {
+            title = titleLocal
+        } else if let titleEnglish = titleEnglish {
+            title = titleEnglish
+        } else if let decodedTitle = decodedTitle {
+            title = decodedTitle
+            // If we only have the old title field, set it as both English and Local for backward compatibility
+            titleEnglish = decodedTitle
+            titleLocal = decodedTitle
+        } else {
+            title = "" // Fallback
+        }
+        
         description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
         authorID = try container.decode(String.self, forKey: .authorID)
         authorName = try container.decodeIfPresent(String.self, forKey: .authorName) ?? ""
@@ -116,7 +147,24 @@ struct Recipe: Identifiable, Codable {
         favoriteCount = try container.decodeIfPresent(Int.self, forKey: .favoriteCount) ?? 0
         
         // Optional fields
-        cuisine = try container.decodeIfPresent(String.self, forKey: .cuisine)
+        // Handle cuisine with backward compatibility
+        cuisineEnglish = try container.decodeIfPresent(String.self, forKey: .cuisineEnglish)
+        
+        // Decode cuisine (for backward compatibility)
+        let decodedCuisine = try container.decodeIfPresent(String.self, forKey: .cuisine)
+        
+        // Set cuisine based on available data
+        // Prefer cuisineEnglish, then decoded cuisine
+        if let cuisineEnglish = cuisineEnglish {
+            cuisine = cuisineEnglish
+        } else if let decodedCuisine = decodedCuisine {
+            cuisine = decodedCuisine
+            // If we only have the old cuisine field, set it as English for backward compatibility
+            cuisineEnglish = decodedCuisine
+        } else {
+            cuisine = nil
+        }
+        
         imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL)
         
         // Handle imageURLs: decode array if present, otherwise fall back to single imageURL for backward compatibility
@@ -236,6 +284,9 @@ struct Recipe: Identifiable, Codable {
     init(
         id: String = UUID().uuidString,
         title: String,
+        titleEnglish: String? = nil,
+        titleLocal: String? = nil,
+        titleOriginal: String? = nil,
         description: String,
         ingredients: [Ingredient],
         instructions: [Instruction],
@@ -245,7 +296,8 @@ struct Recipe: Identifiable, Codable {
         difficulty: Difficulty,
         spicyLevel: SpicyLevel = .none,
         tips: [String] = [],
-        cuisine: String? = nil,
+        cuisine: String? = nil, // Kept for backward compatibility
+        cuisineEnglish: String? = nil,
         imageURL: String? = nil, // Deprecated: use imageURLs instead
         imageURLs: [String] = [],
         sourceImageURL: String? = nil, // Deprecated: use sourceImageURLs instead
@@ -258,7 +310,24 @@ struct Recipe: Identifiable, Codable {
         favoriteCount: Int = 0
     ) {
         self.id = id
-        self.title = title
+        
+        // Set title fields
+        self.titleEnglish = titleEnglish
+        self.titleLocal = titleLocal
+        self.titleOriginal = titleOriginal
+        
+        // Set title based on available data: prefer titleLocal, then titleEnglish, then provided title
+        if let titleLocal = titleLocal {
+            self.title = titleLocal
+        } else if let titleEnglish = titleEnglish {
+            self.title = titleEnglish
+        } else {
+            self.title = title
+            // If neither titleEnglish nor titleLocal provided, use title for both
+            self.titleEnglish = title
+            self.titleLocal = title
+        }
+        
         self.description = description
         self.ingredients = ingredients
         self.instructions = instructions
@@ -268,7 +337,21 @@ struct Recipe: Identifiable, Codable {
         self.difficulty = difficulty
         self.spicyLevel = spicyLevel
         self.tips = tips
-        self.cuisine = cuisine
+        
+        // Set cuisine fields
+        self.cuisineEnglish = cuisineEnglish
+        
+        // Set cuisine based on available data: prefer cuisineEnglish, then provided cuisine
+        if let cuisineEnglish = cuisineEnglish {
+            self.cuisine = cuisineEnglish
+        } else if let cuisine = cuisine {
+            self.cuisine = cuisine
+            // If cuisineEnglish not provided, use cuisine as English
+            self.cuisineEnglish = cuisine
+        } else {
+            self.cuisine = nil
+        }
+        
         self.imageURL = imageURL
         // If imageURLs is provided, use it; otherwise convert imageURL to array for backward compatibility
         if !imageURLs.isEmpty {
@@ -304,6 +387,15 @@ struct Recipe: Identifiable, Codable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.favoriteCount = favoriteCount
+    }
+    
+    /// Get the appropriate cuisine name based on the current language setting
+    /// Uses hardcoded translations from CuisineTranslations
+    var displayCuisine: String? {
+        guard let englishCuisine = cuisineEnglish ?? cuisine, !englishCuisine.isEmpty else {
+            return nil
+        }
+        return CuisineTranslations.translatedName(for: englishCuisine)
     }
 }
 

@@ -79,7 +79,7 @@ class RecipeTextProcessor {
                 continue
             }
             
-            let correctedLine = await Self.correctLine(line, checker: checker, language: language)
+            let correctedLine = Self.correctLine(line, checker: checker, language: language)
             correctedLines.append(correctedLine)
         }
         

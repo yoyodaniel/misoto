@@ -91,6 +91,7 @@ class CuisineTypes {
         "Venezuelan",
         "Jamaican",
         "Caribbean",
+        "Surinam",
         
         // Other
         "Australian",

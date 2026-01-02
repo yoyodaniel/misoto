@@ -17,6 +17,9 @@ class EditRecipeViewModel: ObservableObject {
     let recipe: Recipe
     
     @Published var title = ""
+    @Published var titleEnglish: String? = nil
+    @Published var titleLocal: String? = nil
+    @Published var titleOriginal: String? = nil
     @Published var description = ""
     @Published var dishIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var marinadeIngredients: [RecipeTextParser.IngredientItem] = []
@@ -73,7 +76,20 @@ class EditRecipeViewModel: ObservableObject {
     }
     
     private func loadRecipeData() {
-        title = recipe.title
+        titleEnglish = recipe.titleEnglish
+        titleLocal = recipe.titleLocal
+        titleOriginal = recipe.titleOriginal
+        
+        // Set the editable title based on user's current language preference
+        let currentLanguage = LocalizationManager.shared.currentLanguage
+        if currentLanguage == .english {
+            // If user is using English, show English title
+            title = recipe.titleEnglish ?? recipe.title
+        } else {
+            // If user is NOT using English, show local language title (system language)
+            title = recipe.titleLocal ?? recipe.titleEnglish ?? recipe.title
+        }
+        
         description = recipe.description
         prepTime = recipe.prepTime
         cookTime = recipe.cookTime
@@ -174,10 +190,12 @@ class EditRecipeViewModel: ObservableObject {
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             if let image = UIImage(data: data) {
+                // Resize image for display to reduce memory usage
+                let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                 await MainActor.run {
                     // Replace placeholder at the correct index
                     if index < mainRecipeImages.count {
-                        mainRecipeImages[index] = image
+                        mainRecipeImages[index] = optimizedImage
                     }
                 }
             }
@@ -464,10 +482,24 @@ class EditRecipeViewModel: ObservableObject {
                 uploadedInstructions.append(instruction)
             }
             
+            // Use the three title fields directly (all are now editable) - capitalize them
+            let finalTitleEnglish = titleEnglish?.trimmingCharacters(in: .whitespaces).isEmpty == false ? RecipeTranslationService.capitalizeTitle(titleEnglish!.trimmingCharacters(in: .whitespaces)) : nil
+            let finalTitleLocal = titleLocal?.trimmingCharacters(in: .whitespaces).isEmpty == false ? RecipeTranslationService.capitalizeTitle(titleLocal!.trimmingCharacters(in: .whitespaces)) : nil
+            let finalTitleOriginal = titleOriginal?.trimmingCharacters(in: .whitespaces).isEmpty == false ? RecipeTranslationService.capitalizeTitle(titleOriginal!.trimmingCharacters(in: .whitespaces)) : nil
+            
+            // Use original language as primary title, fallback to local or English - capitalize it
+            let primaryTitle = RecipeTranslationService.capitalizeTitle(finalTitleOriginal ?? finalTitleLocal ?? finalTitleEnglish ?? title.trimmingCharacters(in: .whitespaces))
+            
+            // Save cuisine in English (translations are handled by CuisineTranslations)
+            let cuisineEnglish: String? = cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil
+            
             // Create updated recipe
             let updatedRecipe = Recipe(
                 id: recipe.id, // Keep original ID
-                title: title.trimmingCharacters(in: .whitespaces),
+                title: primaryTitle, // Use original language as primary
+                titleEnglish: finalTitleEnglish,
+                titleLocal: finalTitleLocal,
+                titleOriginal: finalTitleOriginal,
                 description: description.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredientObjects,
                 instructions: uploadedInstructions,
@@ -478,6 +510,7 @@ class EditRecipeViewModel: ObservableObject {
                 spicyLevel: spicyLevel,
                 tips: tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
+                cuisineEnglish: cuisineEnglish,
                 imageURL: mainImageURL, // For backward compatibility
                 imageURLs: finalImageURLs, // Array of all image URLs
                 sourceImageURL: recipe.sourceImageURLs.first ?? recipe.sourceImageURL, // For backward compatibility

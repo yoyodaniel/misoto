@@ -115,49 +115,51 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         }
     }
     
-    // Get display name for a unit (pluralizes if amount > 1, shows abbreviation)
+    // Extract abbreviation from unit display name (the part in parentheses)
+    private func extractAbbreviation(from displayName: String) -> String? {
+        if let openParen = displayName.firstIndex(of: "("),
+           let closeParen = displayName.firstIndex(of: ")") {
+            let abbreviation = String(displayName[displayName.index(after: openParen)..<closeParen])
+            return abbreviation.trimmingCharacters(in: .whitespaces)
+        }
+        return nil
+    }
+    
+    // Get abbreviation for a unit (for display when selected)
+    private func unitAbbreviation(for unit: String) -> String {
+        // Check if this unit has a specific abbreviation mapping
+        if let abbreviation = unitAbbreviations[unit] {
+            return abbreviation
+        }
+        
+        // Try to extract abbreviation from menu display name
+        let menuName = menuDisplayName(for: unit)
+        if let abbreviation = extractAbbreviation(from: menuName) {
+            return abbreviation
+        }
+        
+        // If no abbreviation found, return the unit code itself (for units like "cup", "pinch", etc.)
+        // These units don't have abbreviations, so display them as-is
+        return unit
+    }
+    
+    // Get display name for a unit (shows abbreviation when selected)
     private func displayName(for unit: String, amount: String) -> String {
         if unit.isEmpty {
             return LocalizedString("-", comment: "No unit")
         }
         
-        // Check if this unit has a specific abbreviation for display (e.g., fl_oz -> Oz, wt_oz -> Oz)
-        if let abbreviation = unitAbbreviations[unit] {
-            return abbreviation
-        }
-        
-        // Check if amount is greater than 1 for pluralization
-        let shouldPluralize = (Double(amount.trimmingCharacters(in: .whitespaces)) ?? 0) > 1
-        
-        // Handle plural forms that have separate localization keys
-        if shouldPluralize {
-            switch unit {
-            case "strand":
-                return LocalizedString("Strands", comment: "Strands unit")
-            case "pc", "piece":
-                return LocalizedString("Pieces (pcs)", comment: "Pieces unit")
-            default:
-                // For other units, use the localized singular form
-                // (most units don't change in plural form in many languages)
-                break
-            }
-        }
-        
-        // Get the localized name and extract the main word (before parentheses if any)
-        let localizedName = menuDisplayName(for: unit)
-        
-        // Extract main word before parentheses for compact display
-        if let parenIndex = localizedName.firstIndex(of: "(") {
-            return String(localizedName[..<parenIndex]).trimmingCharacters(in: .whitespaces)
-        }
-        
-        return localizedName
+        // Return the abbreviation for the selected unit
+        return unitAbbreviation(for: unit)
     }
     
     
     // MARK: - Bindings and Closures
     
     @Binding var title: String
+    @Binding var titleEnglish: String?
+    @Binding var titleLocal: String?
+    @Binding var titleOriginal: String?
     @Binding var description: String
     @Binding var cuisine: String?
     @Binding var prepTime: Int
@@ -239,6 +241,12 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     @Binding var fullScreenImage: UIImage?
     @Binding var selectedRecipePhotos: [PhotosPickerItem]
     
+    // Optional callbacks for when add image button is tapped
+    let onTakePicture: (() -> Void)?
+    let onSelectFromLibrary: (() -> Void)?
+    
+    @State private var showImageSourceOptions = false
+    
     // Instructions content builder
     let instructionsContent: () -> InstructionsContent
     
@@ -248,6 +256,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     // Initializer
     init(
         title: Binding<String>,
+        titleEnglish: Binding<String?>,
+        titleLocal: Binding<String?>,
+        titleOriginal: Binding<String?>,
         description: Binding<String>,
         cuisine: Binding<String?>,
         prepTime: Binding<Int>,
@@ -315,10 +326,15 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         showFullScreenImage: Binding<Bool>,
         fullScreenImage: Binding<UIImage?>,
         selectedRecipePhotos: Binding<[PhotosPickerItem]>,
+        onTakePicture: (() -> Void)? = nil,
+        onSelectFromLibrary: (() -> Void)? = nil,
         @ViewBuilder instructionsContent: @escaping () -> InstructionsContent,
         optionalContent: (() -> OptionalContent)? = nil
     ) {
         _title = title
+        _titleEnglish = titleEnglish
+        _titleLocal = titleLocal
+        _titleOriginal = titleOriginal
         _description = description
         _cuisine = cuisine
         _prepTime = prepTime
@@ -386,6 +402,8 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         _showFullScreenImage = showFullScreenImage
         _fullScreenImage = fullScreenImage
         _selectedRecipePhotos = selectedRecipePhotos
+        self.onTakePicture = onTakePicture
+        self.onSelectFromLibrary = onSelectFromLibrary
         self.instructionsContent = instructionsContent
         self.optionalContent = optionalContent
     }
@@ -482,8 +500,53 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     private var titleSection: some View {
         Section {
             DisclosureGroup(isExpanded: $isTitleExpanded) {
-                TextField(LocalizedString("Title", comment: "Title placeholder"), text: $title)
-                    .focused($isTitleFocused)
+                VStack(alignment: .leading, spacing: 12) {
+                    // Main editable title field (system language or English)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(LocalizedString("Main Title", comment: "Main title label"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        TextField(LocalizedString("Title", comment: "Title placeholder"), text: $title)
+                            .focused($isTitleFocused)
+                    }
+                    
+                    // All three titles (editable)
+                    VStack(alignment: .leading, spacing: 12) {
+                        // English title (always show if exists, or allow creation)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(LocalizedString("English", comment: "English language label"))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField(LocalizedString("Enter title", comment: "Enter title placeholder"), text: Binding(
+                                get: { titleEnglish ?? "" },
+                                set: { titleEnglish = $0.isEmpty ? nil : $0 }
+                            ))
+                        }
+                        
+                        // System language title (always show if exists, or allow creation)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(LocalizedString("System Language", comment: "System language label"))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField(LocalizedString("Enter title", comment: "Enter title placeholder"), text: Binding(
+                                get: { titleLocal ?? "" },
+                                set: { titleLocal = $0.isEmpty ? nil : $0 }
+                            ))
+                        }
+                        
+                        // Original language title (always show if exists, or allow creation)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(LocalizedString("Original Language", comment: "Original language label"))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            TextField(LocalizedString("Enter title", comment: "Enter title placeholder"), text: Binding(
+                                get: { titleOriginal ?? "" },
+                                set: { titleOriginal = $0.isEmpty ? nil : $0 }
+                            ))
+                        }
+                    }
+                    .padding(.top, 4)
+                }
             } label: {
                 Text(LocalizedString("Recipe Title", comment: "Recipe title section"))
                     .font(.headline)
@@ -655,22 +718,61 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                         
                         // Add image button (only show if less than 5 images)
                         if mainRecipeImages.count < 5 {
-                            PhotosPicker(
-                                selection: $selectedRecipePhotos,
-                                maxSelectionCount: 5 - mainRecipeImages.count,
-                                matching: .images
-                            ) {
-                                VStack(spacing: 6) {
-                                    Image(systemName: "photo.badge.plus")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(.accentColor)
-                                    Text(LocalizedString("Add", comment: "Add image button"))
-                                        .font(.caption2)
-                                        .foregroundColor(.accentColor)
+                            if onTakePicture != nil || onSelectFromLibrary != nil {
+                                // Use callbacks if provided (show dropdown menu)
+                                Button(action: {
+                                    showImageSourceOptions = true
+                                }) {
+                                    VStack(spacing: 6) {
+                                        Image(systemName: "photo.badge.plus")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(.accentColor)
+                                        Text(LocalizedString("Add", comment: "Add image button"))
+                                            .font(.caption2)
+                                            .foregroundColor(.accentColor)
+                                    }
+                                    .frame(width: 80, height: 80)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
                                 }
-                                .frame(width: 80, height: 80)
-                                .background(Color(.systemGray6))
-                                .cornerRadius(8)
+                                .confirmationDialog(
+                                    LocalizedString("Add Dish Image", comment: "Add dish image dialog title"),
+                                    isPresented: $showImageSourceOptions,
+                                    titleVisibility: .visible
+                                ) {
+                                    if UIImagePickerController.isSourceTypeAvailable(.camera), let onTakePicture = onTakePicture {
+                                        Button(LocalizedString("Take picture", comment: "Take picture option")) {
+                                            onTakePicture()
+                                        }
+                                    }
+                                    
+                                    if let onSelectFromLibrary = onSelectFromLibrary {
+                                        Button(LocalizedString("Select from Photo Library", comment: "Select from photo library option")) {
+                                            onSelectFromLibrary()
+                                        }
+                                    }
+                                    
+                                    Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+                                }
+                            } else {
+                                // Fallback to PhotosPicker if no callbacks provided
+                                PhotosPicker(
+                                    selection: $selectedRecipePhotos,
+                                    maxSelectionCount: 5 - mainRecipeImages.count,
+                                    matching: .images
+                                ) {
+                                    VStack(spacing: 6) {
+                                        Image(systemName: "photo.badge.plus")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(.accentColor)
+                                        Text(LocalizedString("Add", comment: "Add image button"))
+                                            .font(.caption2)
+                                            .foregroundColor(.accentColor)
+                                    }
+                                    .frame(width: 80, height: 80)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(8)
+                                }
                             }
                         }
                     }
@@ -1156,6 +1258,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
 extension RecipeEditForm where OptionalContent == EmptyView {
     init(
         title: Binding<String>,
+        titleEnglish: Binding<String?>,
+        titleLocal: Binding<String?>,
+        titleOriginal: Binding<String?>,
         description: Binding<String>,
         cuisine: Binding<String?>,
         prepTime: Binding<Int>,
@@ -1227,6 +1332,9 @@ extension RecipeEditForm where OptionalContent == EmptyView {
     ) {
         self.init(
             title: title,
+            titleEnglish: titleEnglish,
+            titleLocal: titleLocal,
+            titleOriginal: titleOriginal,
             description: description,
             cuisine: cuisine,
             prepTime: prepTime,

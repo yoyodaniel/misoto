@@ -138,11 +138,15 @@
 
 /* Explore */
 "Today's Recommendations" = "今日のおすすめ";
+"Today's Special" = "今日の特選";
+"Follow" = "フォロー";
+"Chef's Choice" = "シェフのおすすめ";
 "Weekly Menu" = "週間メニュー";
 "Trending" = "トレンド";
 "Ranking" = "ランキング";
 "Search ingredients, recipes" = "食材、レシピを検索";
 "No recipes found" = "レシピが見つかりませんでした";
+"Collections" = "コレクション";
 
 /* Favorites */
 "No favorites yet" = "まだお気に入りがありません";
@@ -159,6 +163,10 @@
 /* Recipe */
 "Title" = "タイトル";
 "Recipe Title" = "レシピタイトル";
+"Main Title" = "メインタイトル";
+"System Language" = "システム言語";
+"Original Language" = "元の言語";
+"Enter title" = "タイトルを入力";
 "Description" = "説明";
 "Regenerate Description" = "説明を再生成";
 "Cuisine" = "料理";
@@ -330,6 +338,7 @@
 "Venezuelan" = "ベネズエラ";
 "Jamaican" = "ジャマイカ";
 "Caribbean" = "カリブ";
+"Surinam" = "スリナム";
 "Australian" = "オーストラリア";
 "New Zealand" = "ニュージーランド";
 "Fusion" = "フュージョン";

@@ -335,60 +335,22 @@ struct UploadRecipeView: View {
                         
                         // Add image button (only show if less than 5 images)
                         if viewModel.mainRecipeImages.count < 5 {
-                            ZStack {
-                                // PhotosPicker that appears when user selects "Select image" from dialog
-                                if showPhotoPickerForDishImage {
-                                    PhotosPicker(
-                                        selection: $selectedRecipePhotos,
-                                        maxSelectionCount: 5 - viewModel.mainRecipeImages.count,
-                                        matching: .images
-                                    ) {
-                                        VStack(spacing: 6) {
-                                            Image(systemName: "photo.badge.plus")
-                                                .font(.system(size: 20))
-                                                .foregroundColor(.accentColor)
-                                            Text(LocalizedString("Add", comment: "Add image button"))
-                                                .font(.caption2)
-                                                .foregroundColor(.accentColor)
-                                        }
-                                        .frame(width: 80, height: 80)
-                                        .background(Color(.systemGray6))
-                                        .cornerRadius(8)
-                                    }
-                                } else {
-                                    Button(action: {
-                                        showDishImageOptions = true
-                                    }) {
-                                        VStack(spacing: 6) {
-                                            Image(systemName: "photo.badge.plus")
-                                                .font(.system(size: 20))
-                                                .foregroundColor(.accentColor)
-                                            Text(LocalizedString("Add", comment: "Add image button"))
-                                                .font(.caption2)
-                                                .foregroundColor(.accentColor)
-                                        }
-                                        .frame(width: 80, height: 80)
-                                        .background(Color(.systemGray6))
-                                        .cornerRadius(8)
-                                    }
-                                }
-                            }
-                            .confirmationDialog(
-                                LocalizedString("Add Dish Image", comment: "Add dish image dialog title"),
-                                isPresented: $showDishImageOptions,
-                                titleVisibility: .visible
-                            ) {
+                            Button(action: {
                                 if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                                    Button(LocalizedString("Take picture", comment: "Take picture option")) {
-                                        showCameraForDishImage = true
-                                    }
+                                    showCameraForDishImage = true
                                 }
-                                
-                                Button(LocalizedString("Select image", comment: "Select image option")) {
-                                    showPhotoPickerForDishImage = true
+                            }) {
+                                VStack(spacing: 6) {
+                                    Image(systemName: "photo.badge.plus")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.accentColor)
+                                    Text(LocalizedString("Add", comment: "Add image button"))
+                                        .font(.caption2)
+                                        .foregroundColor(.accentColor)
                                 }
-                                
-                                Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+                                .frame(width: 80, height: 80)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(8)
                             }
                         }
                     }
@@ -1016,7 +978,7 @@ struct UploadRecipeView: View {
                         if let data = try? await item.loadTransferable(type: Data.self),
                            let image = UIImage(data: data) {
                             // Optimize image for display and add to recipe images
-                            let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                            let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                             await MainActor.run {
                                 // addRecipeImage has a guard to prevent more than 5 images total
                                 viewModel.addRecipeImage(optimizedImage)
@@ -1071,6 +1033,24 @@ struct UploadRecipeView: View {
                     Text(errorMessage)
                 }
             }
+            .background {
+                PhotoLibraryPickerView(
+                    isPresented: $showPhotoPickerForDishImage,
+                    maxSelectionCount: 5 - viewModel.mainRecipeImages.count
+                ) { images in
+                    // Process selected images
+                    Task {
+                        for image in images {
+                            // Optimize image for display to reduce memory usage
+                            let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                            await MainActor.run {
+                                // addRecipeImage has a guard to prevent more than 5 images total
+                                viewModel.addRecipeImage(optimizedImage)
+                            }
+                        }
+                    }
+                }
+            }
             .fullScreenCover(isPresented: $showCameraForDishImage) {
                 CameraCaptureView { image in
                     // Add the captured image to recipe images
@@ -1080,10 +1060,40 @@ struct UploadRecipeView: View {
                         await MainActor.run {
                             // addRecipeImage has a guard to prevent more than 5 images total
                             viewModel.addRecipeImage(optimizedImage)
+                            showCameraForDishImage = false
                         }
                     }
                 }
                 .ignoresSafeArea(.all)
+            }
+            .onChange(of: selectedRecipePhotos) { oldValue, newItems in
+                // Process when user finishes selecting images
+                guard !newItems.isEmpty else {
+                    // If selection is cleared, reset the picker flag
+                    if newItems.isEmpty && showPhotoPickerForDishImage {
+                        showPhotoPickerForDishImage = false
+                    }
+                    return
+                }
+                
+                Task {
+                    for item in newItems {
+                        if let data = try? await item.loadTransferable(type: Data.self),
+                           let image = UIImage(data: data) {
+                            // Optimize image for display to reduce memory usage
+                            let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                            await MainActor.run {
+                                // addRecipeImage has a guard to prevent more than 5 images total
+                                viewModel.addRecipeImage(optimizedImage)
+                            }
+                        }
+                    }
+                    // Clear the selection and reset the picker flag after processing
+                    await MainActor.run {
+                        selectedRecipePhotos = []
+                        showPhotoPickerForDishImage = false
+                    }
+                }
             }
         }
     }
@@ -1115,6 +1125,9 @@ struct UploadRecipeView: View {
         
         RecipeEditForm(
             title: $viewModel.title,
+            titleEnglish: .constant(nil),
+            titleLocal: .constant(nil),
+            titleOriginal: .constant(nil),
             description: $viewModel.description,
             cuisine: $viewModel.cuisine,
             prepTime: $viewModel.prepTime,
@@ -1182,6 +1195,14 @@ struct UploadRecipeView: View {
             showFullScreenImage: $showFullScreenImage,
             fullScreenImage: $fullScreenImage,
             selectedRecipePhotos: $selectedRecipePhotos,
+            onTakePicture: {
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    showCameraForDishImage = true
+                }
+            },
+            onSelectFromLibrary: {
+                showPhotoPickerForDishImage = true
+            },
             instructionsContent: {
                 makeInstructionsContent()
             },

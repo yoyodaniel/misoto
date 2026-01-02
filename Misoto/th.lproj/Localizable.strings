@@ -159,6 +159,10 @@
 /* Recipe */
 "Title" = "หัวข้อ";
 "Recipe Title" = "หัวข้อสูตรอาหาร";
+"Main Title" = "หัวข้อหลัก";
+"System Language" = "ภาษาของระบบ";
+"Original Language" = "ภาษาต้นฉบับ";
+"Enter title" = "ใส่หัวข้อ";
 "Description" = "คำอธิบาย";
 "Regenerate Description" = "สร้างคำอธิบายใหม่";
 "Cuisine" = "อาหาร";
@@ -330,6 +334,7 @@
 "Venezuelan" = "เวเนซุเอลา";
 "Jamaican" = "จาเมกา";
 "Caribbean" = "แคริบเบียน";
+"Surinam" = "ซูรินาเม";
 "Australian" = "ออสเตรเลีย";
 "New Zealand" = "นิวซีแลนด์";
 "Fusion" = "ฟิวชั่น";

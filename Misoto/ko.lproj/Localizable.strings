@@ -138,11 +138,15 @@
 
 /* Explore */
 "Today's Recommendations" = "오늘의 추천";
+"Today's Special" = "오늘의 특선";
+"Follow" = "팔로우";
+"Chef's Choice" = "셰프 추천";
 "Weekly Menu" = "주간 메뉴";
 "Trending" = "인기";
 "Ranking" = "순위";
 "Search ingredients, recipes" = "재료, 레시피 검색";
 "No recipes found" = "레시피를 찾을 수 없습니다";
+"Collections" = "컬렉션";
 
 /* Favorites */
 "No favorites yet" = "아직 즐겨찾기가 없습니다";
@@ -159,6 +163,10 @@
 /* Recipe */
 "Title" = "제목";
 "Recipe Title" = "레시피 제목";
+"Main Title" = "메인 제목";
+"System Language" = "시스템 언어";
+"Original Language" = "원본 언어";
+"Enter title" = "제목 입력";
 "Description" = "설명";
 "Regenerate Description" = "설명 재생성";
 "Cuisine" = "요리";
@@ -330,6 +338,7 @@
 "Venezuelan" = "베네수엘라";
 "Jamaican" = "자메이카";
 "Caribbean" = "카리브";
+"Surinam" = "수리남";
 "Australian" = "호주";
 "New Zealand" = "뉴질랜드";
 "Fusion" = "퓨전";

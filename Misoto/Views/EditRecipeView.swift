@@ -142,6 +142,9 @@ struct EditRecipeView: View {
         
         RecipeEditForm(
             title: $viewModel.title,
+            titleEnglish: $viewModel.titleEnglish,
+            titleLocal: $viewModel.titleLocal,
+            titleOriginal: $viewModel.titleOriginal,
             description: $viewModel.description,
             cuisine: $viewModel.cuisine,
             prepTime: $viewModel.prepTime,

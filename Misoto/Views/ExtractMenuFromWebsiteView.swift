@@ -27,6 +27,8 @@ struct ExtractMenuFromWebsiteView: View {
     @State private var showFullScreenImage = false
     @State private var fullScreenImage: UIImage?
     @State private var showSourceWebsite = false
+    @State private var showCameraForDishImage = false
+    @State private var showPhotoPickerForDishImage = false
     @StateObject private var webViewStore = WebViewStore()
     
     @FocusState private var focusedInstructionField: Int?
@@ -298,6 +300,39 @@ struct ExtractMenuFromWebsiteView: View {
                 SourceWebsiteView(url: url)
             }
         }
+        .background {
+            PhotoLibraryPickerView(
+                isPresented: $showPhotoPickerForDishImage,
+                maxSelectionCount: 5 - viewModel.mainRecipeImages.count
+            ) { images in
+                // Process selected images
+                Task {
+                    for image in images {
+                        // Optimize image for display to reduce memory usage
+                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                        await MainActor.run {
+                            // addRecipeImage has a guard to prevent more than 5 images total
+                            viewModel.addRecipeImage(optimizedImage)
+                        }
+                    }
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showCameraForDishImage) {
+            CameraCaptureView { image in
+                // Add the captured image to recipe images
+                Task {
+                    // Optimize image for display to reduce memory usage
+                    let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                    await MainActor.run {
+                        // addRecipeImage has a guard to prevent more than 5 images total
+                        viewModel.addRecipeImage(optimizedImage)
+                        showCameraForDishImage = false
+                    }
+                }
+            }
+            .ignoresSafeArea(.all)
+        }
         .navigationTitle(LocalizedString("Edit Recipe", comment: "Edit recipe title"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -396,6 +431,9 @@ struct ExtractMenuFromWebsiteView: View {
         
         RecipeEditForm(
             title: $viewModel.title,
+            titleEnglish: $viewModel.titleEnglish,
+            titleLocal: $viewModel.titleLocal,
+            titleOriginal: $viewModel.titleOriginal,
             description: $viewModel.description,
             cuisine: $viewModel.cuisine,
             prepTime: $viewModel.prepTime,
@@ -469,6 +507,14 @@ struct ExtractMenuFromWebsiteView: View {
             showFullScreenImage: $showFullScreenImage,
             fullScreenImage: $fullScreenImage,
             selectedRecipePhotos: $selectedRecipePhotos,
+            onTakePicture: {
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    showCameraForDishImage = true
+                }
+            },
+            onSelectFromLibrary: {
+                showPhotoPickerForDishImage = true
+            },
             instructionsContent: {
                 makeInstructionsContent()
             },

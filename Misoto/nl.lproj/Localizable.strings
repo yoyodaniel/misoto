@@ -143,6 +143,7 @@
 "Ranking" = "Ranglijst";
 "Search ingredients, recipes" = "Zoek ingrediënten, recepten";
 "No recipes found" = "Geen recepten gevonden";
+"Collections" = "Collecties";
 
 /* Favorites */
 "No favorites yet" = "Nog geen favorieten";
@@ -159,6 +160,10 @@
 /* Recipe */
 "Title" = "Titel";
 "Recipe Title" = "Recepttitel";
+"Main Title" = "Hoofdtitel";
+"System Language" = "Systeemtaal";
+"Original Language" = "Originele Taal";
+"Enter title" = "Voer titel in";
 "Description" = "Beschrijving";
 "Regenerate Description" = "Beschrijving Opnieuw Genereren";
 "Cuisine" = "Keuken";
@@ -330,6 +335,7 @@
 "Venezuelan" = "Venezolaans";
 "Jamaican" = "Jamaicaans";
 "Caribbean" = "Caribisch";
+"Surinam" = "Surinaams";
 "Australian" = "Australisch";
 "New Zealand" = "Nieuw-Zeelands";
 "Fusion" = "Fusion";

@@ -10,6 +10,9 @@ import FirebaseCore
 
 @main
 struct MisotoApp: App {
+    // AppDelegate for Firebase compatibility
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     // Configure Firebase first, before creating view models
     init() {
         FirebaseApp.configure()

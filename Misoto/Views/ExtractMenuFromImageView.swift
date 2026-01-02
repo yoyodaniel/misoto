@@ -133,6 +133,8 @@ struct ExtractMenuFromImageView: View {
     @State private var selectedInstructionPhotos: [Int: PhotosPickerItem] = [:]
     @State private var showingImagePickerForIndex: Int? = nil
     @State private var showCamera = false
+    @State private var showCameraForDishImage = false
+    @State private var showPhotoPickerForDishImage = false
     
     let initialImage: UIImage?
     
@@ -996,7 +998,7 @@ struct ExtractMenuFromImageView: View {
                     if let data = try? await item.loadTransferable(type: Data.self),
                        let image = UIImage(data: data) {
                         // Optimize image for display to reduce memory usage
-                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 800)
+                        let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 800)
                         await MainActor.run {
                             selectedImages.append(optimizedImage)
                         }
@@ -1018,7 +1020,7 @@ struct ExtractMenuFromImageView: View {
                     if let data = try? await item.loadTransferable(type: Data.self),
                        let image = UIImage(data: data) {
                         // Optimize image for display and add to recipe images
-                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                        let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                         await MainActor.run {
                             // addRecipeImage has a guard to prevent more than 5 images total
                             viewModel.addRecipeImage(optimizedImage)
@@ -1051,7 +1053,7 @@ struct ExtractMenuFromImageView: View {
             // This reduces memory usage while keeping the image visible
             if let initialImage = initialImage {
                 // Optimize the initial image
-                let optimizedImage = await ImageOptimizer.resizeForDisplay(initialImage, maxDimension: 800)
+                let optimizedImage = ImageOptimizer.resizeForDisplay(initialImage, maxDimension: 800)
                 await MainActor.run {
                     // Always replace with optimized version if we have the initial image
                     if selectedImages.isEmpty {
@@ -1069,7 +1071,7 @@ struct ExtractMenuFromImageView: View {
                 // Add the captured image to selectedImages
                 Task {
                     // Optimize image for display to reduce memory usage
-                    let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 800)
+                    let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 800)
                     await MainActor.run {
                         if selectedImages.count < 10 {
                             selectedImages.append(optimizedImage)
@@ -1144,6 +1146,39 @@ struct ExtractMenuFromImageView: View {
             )
             VideoPickerView(selectedVideoURL: videoBinding)
         }
+        .background {
+            PhotoLibraryPickerView(
+                isPresented: $showPhotoPickerForDishImage,
+                maxSelectionCount: 5 - viewModel.mainRecipeImages.count
+            ) { images in
+                // Process selected images
+                Task {
+                    for image in images {
+                        // Optimize image for display to reduce memory usage
+                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                        await MainActor.run {
+                            // addRecipeImage has a guard to prevent more than 5 images total
+                            viewModel.addRecipeImage(optimizedImage)
+                        }
+                    }
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showCameraForDishImage) {
+            CameraCaptureView { image in
+                // Add the captured image to recipe images
+                Task {
+                    // Optimize image for display to reduce memory usage
+                    let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                    await MainActor.run {
+                        // addRecipeImage has a guard to prevent more than 5 images total
+                        viewModel.addRecipeImage(optimizedImage)
+                        showCameraForDishImage = false
+                    }
+                }
+            }
+            .ignoresSafeArea(.all)
+        }
         .onChange(of: selectedInstructionPhotos) { oldValue, newValue in
             handleInstructionPhotosChange(newValue)
         }
@@ -1179,7 +1214,7 @@ struct ExtractMenuFromImageView: View {
                     if let data = try? await item.loadTransferable(type: Data.self),
                        let image = UIImage(data: data) {
                         // Optimize image for display and add to recipe images
-                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                        let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                         await MainActor.run {
                             // addRecipeImage has a guard to prevent more than 5 images total
                             viewModel.addRecipeImage(optimizedImage)
@@ -1207,6 +1242,9 @@ struct ExtractMenuFromImageView: View {
         
         RecipeEditForm(
             title: $viewModel.title,
+            titleEnglish: $viewModel.titleEnglish,
+            titleLocal: $viewModel.titleLocal,
+            titleOriginal: $viewModel.titleOriginal,
             description: $viewModel.description,
             cuisine: $viewModel.cuisine,
             prepTime: $viewModel.prepTime,
@@ -1274,6 +1312,14 @@ struct ExtractMenuFromImageView: View {
             showFullScreenImage: $showFullScreenImage,
             fullScreenImage: $fullScreenImage,
             selectedRecipePhotos: $selectedRecipePhotos,
+            onTakePicture: {
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    showCameraForDishImage = true
+                }
+            },
+            onSelectFromLibrary: {
+                showPhotoPickerForDishImage = true
+            },
             instructionsContent: {
                 makeInstructionsContent()
             },
@@ -1453,7 +1499,7 @@ struct ExtractMenuFromImageView: View {
                 if let data = try? await item.loadTransferable(type: Data.self),
                    let image = UIImage(data: data) {
                     // Optimize image for display to reduce memory usage
-                    let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 600)
+                    let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 600)
                     viewModel.setInstructionImage(optimizedImage, at: index)
                     selectedInstructionPhotos.removeValue(forKey: index)
                 }

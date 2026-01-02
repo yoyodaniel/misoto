@@ -39,6 +39,10 @@ class ExtractMenuFromImageViewModel: ObservableObject {
     
     // Recipe fields for editing
     @Published var title = ""
+    @Published var originalExtractedTitle: String? = nil // Preserve original title before translation
+    @Published var titleEnglish: String? = nil
+    @Published var titleLocal: String? = nil
+    @Published var titleOriginal: String? = nil
     @Published var description = ""
     @Published var cuisine: String? = nil
     @Published var prepTime: Int = 15
@@ -291,6 +295,9 @@ class ExtractMenuFromImageViewModel: ObservableObject {
                 response = try await OpenAIService.extractRecipe(from: images)
             }
             
+            // Preserve original title before translation
+            originalExtractedTitle = response.title
+            
             // Step 4: Translate recipe to user's selected language
             print("🌍 Translating extracted recipe to user's selected language...")
             let translated = await RecipeTranslationService.translateRecipe(
@@ -309,7 +316,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
                 cuisine: nil // Will be detected later
             )
             
-            // Populate editable fields with translated content
+            // Populate editable fields with translated content (already capitalized by RecipeTranslationService)
             title = translated.title
             description = translated.description
             dishIngredients = translated.dishIngredients.isEmpty ? [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")] : translated.dishIngredients
@@ -486,9 +493,30 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             }
             
             // Create recipe
+            // Translate title to English, local language, and preserve original
+            // Use original extracted title if available, otherwise use current title
+            let titleToTranslate = originalExtractedTitle ?? title.trimmingCharacters(in: .whitespaces)
+            let (titleEnglish, titleLocal, titleOriginal) = await RecipeTranslationService.translateTitle(titleToTranslate)
+            
+            // Update UI fields so they show in the edit form
+            self.titleEnglish = titleEnglish
+            self.titleLocal = titleLocal
+            self.titleOriginal = titleOriginal
+            // Set main title to local language (or English if local is not available)
+            self.title = titleLocal.isEmpty ? titleEnglish : titleLocal
+            
             print("📝 Creating recipe with sourceImageURLs: \(sourceImageURLs)")
+            // Use original language as primary title
+            let primaryTitle = titleOriginal ?? titleLocal ?? titleEnglish ?? ""
+            
+            // Save cuisine in English (translations are handled by CuisineTranslations)
+            let cuisineEnglish: String? = cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil
+            
             let recipe = Recipe(
-                title: title.trimmingCharacters(in: .whitespaces),
+                title: primaryTitle, // Use original language as primary
+                titleEnglish: titleEnglish,
+                titleLocal: titleLocal,
+                titleOriginal: titleOriginal,
                 description: description.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredientObjects,
                 instructions: instructionObjects,
@@ -499,6 +527,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
                 spicyLevel: spicyLevel,
                 tips: tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil,
+                cuisineEnglish: cuisineEnglish,
                 imageURL: mainImageURL, // For backward compatibility
                 imageURLs: allImageURLs, // Array of all image URLs
                 sourceImageURL: sourceImageURLs.first, // For backward compatibility
