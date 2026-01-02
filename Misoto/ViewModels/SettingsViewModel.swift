@@ -15,6 +15,8 @@ class SettingsViewModel: ObservableObject {
     @Published var isSubmittingFeedback = false
     @Published var feedbackErrorMessage: String?
     @Published var feedbackSuccessMessage: String?
+    @Published var isChangingLanguage = false
+    @Published var pendingLanguage: AppLanguage?
     
     private let feedbackService = FeedbackService()
     private let userDefaults = UserDefaults.standard
@@ -65,11 +67,24 @@ class SettingsViewModel: ObservableObject {
     
     // MARK: - Language Selection
     
-    func selectLanguage(_ language: AppLanguage) {
+    func selectLanguage(_ language: AppLanguage) async {
+        // Don't do anything if already changing or selecting the same language
+        guard !isChangingLanguage, language != selectedLanguage else { return }
+        
+        isChangingLanguage = true
+        pendingLanguage = language
+        
+        // Wait 1 second to create loading illusion
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        // Update the language
         selectedLanguage = language
         userDefaults.set(language.rawValue, forKey: UserDefaultsKeys.selectedLanguage)
         // Update the localization manager
         LocalizationManager.shared.setLanguage(language)
+        
+        isChangingLanguage = false
+        pendingLanguage = nil
     }
     
     // MARK: - Feedback Submission

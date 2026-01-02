@@ -62,7 +62,9 @@ struct SettingsView: View {
                     ForEach(AppLanguage.availableLanguages, id: \.self) { language in
                         Button(action: {
                             HapticFeedback.play(.selection)
-                            viewModel.selectLanguage(language)
+                            Task {
+                                await viewModel.selectLanguage(language)
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "globe")
@@ -78,13 +80,17 @@ struct SettingsView: View {
                                     }
                                 }
                                 Spacer()
-                                if viewModel.selectedLanguage == language {
+                                if viewModel.isChangingLanguage && viewModel.pendingLanguage == language {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                } else if !viewModel.isChangingLanguage && viewModel.selectedLanguage == language {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(.accentColor)
                                 }
                             }
                         }
                         .foregroundColor(.primary)
+                        .disabled(viewModel.isChangingLanguage)
                     }
                 } header: {
                     Text(LocalizedString("Language", comment: "Language section header"))
