@@ -70,12 +70,15 @@
 "Your name" = "Seu nome";
 "Name" = "Nome";
 "Describe your feature request" = "Descreva sua solicitação de recurso";
+"Suggest a translation improvement" = "Sugira uma melhoria de tradução";
 "Share your feedback" = "Compartilhe seu feedback";
 "Please describe the feature you'd like to see in the app." = "Por favor, descreva o recurso que você gostaria de ver no aplicativo.";
+"Please suggest improvements to translations or report incorrect translations." = "Por favor, sugira melhorias nas traduções ou relate traduções incorretas.";
 "Please share your thoughts, suggestions, or report any issues." = "Por favor, compartilhe seus pensamentos, sugestões ou relate quaisquer problemas.";
 "Email address (optional)" = "Endereço de e-mail (opcional)";
 "Contact Email" = "E-mail de Contato";
 "Optional: We'll use this to respond to your feature request if needed." = "Opcional: Usaremos isso para responder à sua solicitação de recurso, se necessário.";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "Opcional: Usaremos isso para responder à sua sugestão de tradução, se necessário.";
 "Optional: We'll use this to respond to your feedback if needed." = "Opcional: Usaremos isso para responder ao seu feedback, se necessário.";
 "Submit" = "Enviar";
 "Cancel" = "Cancelar";
