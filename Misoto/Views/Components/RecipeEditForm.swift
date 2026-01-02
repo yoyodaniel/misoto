@@ -118,7 +118,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     // Get display name for a unit (pluralizes if amount > 1, shows abbreviation)
     private func displayName(for unit: String, amount: String) -> String {
         if unit.isEmpty {
-            return "-"
+            return LocalizedString("-", comment: "No unit")
         }
         
         // Check if this unit has a specific abbreviation for display (e.g., fl_oz -> Oz, wt_oz -> Oz)
@@ -126,15 +126,32 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             return abbreviation
         }
         
-        // Check if amount is greater than 1
-        if let amountValue = Double(amount.trimmingCharacters(in: .whitespaces)), amountValue > 1 {
-            // Pluralize if needed
-            if let plural = pluralForms[unit] {
-                return plural
+        // Check if amount is greater than 1 for pluralization
+        let shouldPluralize = (Double(amount.trimmingCharacters(in: .whitespaces)) ?? 0) > 1
+        
+        // Handle plural forms that have separate localization keys
+        if shouldPluralize {
+            switch unit {
+            case "strand":
+                return LocalizedString("Strands", comment: "Strands unit")
+            case "pc", "piece":
+                return LocalizedString("Pieces (pcs)", comment: "Pieces unit")
+            default:
+                // For other units, use the localized singular form
+                // (most units don't change in plural form in many languages)
+                break
             }
         }
         
-        return unit
+        // Get the localized name and extract the main word (before parentheses if any)
+        let localizedName = menuDisplayName(for: unit)
+        
+        // Extract main word before parentheses for compact display
+        if let parenIndex = localizedName.firstIndex(of: "(") {
+            return String(localizedName[..<parenIndex]).trimmingCharacters(in: .whitespaces)
+        }
+        
+        return localizedName
     }
     
     
