@@ -159,6 +159,7 @@
 "Regenerate Description" = "説明を再生成";
 "Cuisine" = "料理";
 "Select Cuisine" = "料理を選択";
+"Search cuisines..." = "料理を検索...";
 "Preparation Time" = "準備時間";
 "Cooking Time" = "調理時間";
 "Time" = "時間";
