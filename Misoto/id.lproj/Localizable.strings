@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "Nama pengguna tidak boleh lebih dari 15 karakter";
 "This username is already taken" = "Nama pengguna ini sudah digunakan";
 "Username contains invalid characters" = "Nama pengguna berisi karakter yang tidak valid";
+"Invalid URL" = "URL tidak valid";
 
 /* Settings */
 "Settings" = "Pengaturan";
@@ -99,6 +100,8 @@
 "Take Picture" = "Ambil Foto";
 "Extract from Image" = "Ekstrak dari Gambar";
 "Extract from Link" = "Ekstrak dari Tautan";
+"Enter Menu URL" = "Masukkan URL Menu";
+"Menu URL" = "URL Menu";
 "Extract from Website" = "Ekstrak dari Situs Web";
 "Search or enter website name" = "Cari atau masukkan nama situs web";
 "Find a Recipe" = "Temukan Resep";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "Ekstrak Resep dengan AI";
 "Extract with AI" = "Ekstrak dengan AI";
 "Detecting recipe..." = "Mendeteksi resep...";
+"Loading website..." = "Memuat situs web...";
 "No recipe detected on this page" = "Tidak ada resep terdeteksi di halaman ini";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Tempel tautan ke halaman web resep untuk mengekstrak informasi resep secara otomatis menggunakan AI.";
 

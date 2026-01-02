@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import FirebaseAuth
 import UIKit
+import WebKit
 
 @MainActor
 class ExtractMenuFromLinkViewModel: ObservableObject {
@@ -19,6 +20,7 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
     @Published var isDetectingCuisine = false
     @Published var isExtractingTime = false
     @Published var isDetectingDifficulty = false
+    @Published var isExtractingContent = false
     
     // Recipe fields for editing
     @Published var title = ""
@@ -40,17 +42,110 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
     @Published var toppingIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var instructions: [String] = []
     @Published var mainRecipeImages: [UIImage] = [] // Up to 5 images for the recipe
+    @Published var sourceURL: String? = nil // URL from which recipe was extracted
     
     private let recipeService = RecipeService()
     private let storageService = StorageService()
+    private let textProcessor = RecipeTextProcessor()
     
-    /// Extract recipe from URL using OpenAI
+    /// Extract recipe from URL by loading website in background WKWebView
+    /// Uses the same extraction approach as ExtractMenuFromWebsiteViewModel
     func extractRecipe(from urlString: String) async {
+        isExtractingContent = true
         isLoading = true
         errorMessage = nil
         
+        // Store the URL as source
+        sourceURL = urlString
+        
+        // Validate and prepare URL
+        var urlToLoad = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !urlToLoad.contains("://") {
+            urlToLoad = "https://\(urlToLoad)"
+        }
+        
+        guard let url = URL(string: urlToLoad) else {
+            isLoading = false
+            isExtractingContent = false
+            errorMessage = LocalizedString("Invalid URL", comment: "Invalid URL error")
+            return
+        }
+        
+        // Create a hidden WKWebView to load the website in the background
+        let webView = WKWebView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
+        webView.isHidden = true // Hide the webView so it's not visible
+        
+        // Add webView to window hierarchy so it can load (required for WKWebView)
+        // We'll remove it after extraction
+        var containerView: UIView? = nil
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            containerView = UIView(frame: .zero)
+            containerView?.isHidden = true
+            containerView?.addSubview(webView)
+            window.addSubview(containerView!)
+        }
+        
+        // Set up navigation delegate to detect when loading completes
+        let navigationDelegate = WebViewNavigationDelegate()
+        webView.navigationDelegate = navigationDelegate
+        
         do {
-            let response = try await OpenAIService.extractRecipe(fromURL: urlString)
+            // Load the URL
+            let request = URLRequest(url: url)
+            await webView.load(request)
+            
+            // Wait for the page to finish loading with timeout
+            let loadTimeout: TimeInterval = 15.0
+            let startTime = Date()
+            
+            // Wait for navigation to complete or timeout
+            while webView.isLoading {
+                // Check for timeout
+                if Date().timeIntervalSince(startTime) > loadTimeout {
+                    // Clean up
+                    containerView?.removeFromSuperview()
+                    throw WebContentExtractorError.noContentFound
+                }
+                // Small delay before checking again
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+            }
+            
+            // Give additional time for JavaScript to execute and render content
+            try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+            
+            // Step 1: Extract raw text from web page (uses cloneNode, doesn't modify DOM)
+            var rawText = try await WebContentExtractor.extractText(from: webView)
+            
+            // Step 1.5: Detect language and translate to English if needed
+            print("🔍 Detecting language of extracted web content...")
+            rawText = await TextTranslationService.translateToEnglish(rawText)
+            print("✅ Web content ready for processing (translated to English if needed)")
+            
+            // Step 1.6: Extract recipe image from web page
+            do {
+                if let recipeImage = try await WebContentExtractor.extractRecipeImage(from: webView) {
+                    // Only add if we don't already have 5 images
+                    if mainRecipeImages.count < 5 {
+                        addRecipeImage(recipeImage)
+                        print("✅ Added recipe image to collection")
+                    } else {
+                        print("⚠️ Recipe image found but already have 5 images")
+                    }
+                } else {
+                    print("⚠️ No recipe image found on webpage")
+                }
+            } catch {
+                print("⚠️ Error extracting recipe image: \(error.localizedDescription)")
+                // Continue with recipe extraction even if image extraction fails
+            }
+            
+            // Step 2: Use on-device Foundation models to clean and process text
+            // Note: rawText is already translated to English at this point
+            let cleanedText = await textProcessor.processAndCorrectText(rawText)
+            
+            // Step 3: Send to OpenAI API for parsing into recipe structure
+            let response = try await OpenAIService.parseRecipeFromText(cleanedText)
             
             // Step 4: Translate recipe to user's selected language
             print("🌍 Translating extracted recipe to user's selected language...")
@@ -84,7 +179,7 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             instructions = translated.instructions.isEmpty ? [""] : translated.instructions
             tips = translated.tips
             
-            // Use extracted servings, prepTime, and cookTime if available (non-zero means found in image)
+            // Use extracted servings, prepTime, and cookTime if available (non-zero means found)
             if response.servings > 0 {
                 servings = response.servings
             }
@@ -100,7 +195,7 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 second
             await generateDescription()
             await detectCuisine()
-            // Only extract time if it wasn't already extracted from the image
+            // Only extract time if it wasn't already extracted
             if response.prepTime == 0 && response.cookTime == 0 {
                 await extractTime()
             }
@@ -108,14 +203,31 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             
             showEditRecipe = true
             isLoading = false
+            isExtractingContent = false
+            
+            // Clean up: remove webView from window hierarchy
+            containerView?.removeFromSuperview()
         } catch {
             isLoading = false
-            if let openAIError = error as? OpenAIError {
+            isExtractingContent = false
+            
+            // Clean up: remove webView from window hierarchy
+            containerView?.removeFromSuperview()
+            
+            if let webError = error as? WebContentExtractorError {
+                errorMessage = webError.localizedDescription
+            } else if let openAIError = error as? OpenAIError {
                 errorMessage = openAIError.localizedDescription
             } else {
                 errorMessage = error.localizedDescription
             }
         }
+    }
+    
+    // MARK: - Helper class for web view navigation
+    
+    private class WebViewNavigationDelegate: NSObject, WKNavigationDelegate {
+        // This delegate can be extended if needed for more complex navigation handling
     }
     
     // MARK: - Ingredient Management

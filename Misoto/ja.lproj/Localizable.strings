@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "ユーザー名は15文字以下である必要があります";
 "This username is already taken" = "このユーザー名は既に使用されています";
 "Username contains invalid characters" = "ユーザー名に無効な文字が含まれています";
+"Invalid URL" = "無効なURL";
 
 /* Settings */
 "Settings" = "設定";
@@ -99,6 +100,8 @@
 "Take Picture" = "写真を撮る";
 "Extract from Image" = "画像から抽出";
 "Extract from Link" = "リンクから抽出";
+"Enter Menu URL" = "メニューURLを入力";
+"Menu URL" = "メニューURL";
 "Extract from Website" = "ウェブサイトから抽出";
 "Search or enter website name" = "検索またはウェブサイト名を入力";
 "Find a Recipe" = "レシピを見つける";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "AIでレシピを抽出";
 "Extract with AI" = "AIで抽出";
 "Detecting recipe..." = "レシピを検出中...";
+"Loading website..." = "ウェブサイトを読み込み中...";
 "No recipe detected on this page" = "このページでレシピが検出されませんでした";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "レシピのウェブページへのリンクを貼り付けて、AIを使用してレシピ情報を自動的に抽出します。";
 

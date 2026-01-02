@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "Имя пользователя не должно превышать 15 символов";
 "This username is already taken" = "Это имя пользователя уже занято";
 "Username contains invalid characters" = "Имя пользователя содержит недопустимые символы";
+"Invalid URL" = "Неверный URL";
 
 /* Settings */
 "Settings" = "Настройки";
@@ -99,6 +100,8 @@
 "Take Picture" = "Сделать фото";
 "Extract from Image" = "Извлечь из изображения";
 "Extract from Link" = "Извлечь из ссылки";
+"Enter Menu URL" = "Введите URL меню";
+"Menu URL" = "URL меню";
 "Extract from Website" = "Извлечь с веб-сайта";
 "Search or enter website name" = "Поиск или введите название сайта";
 "Find a Recipe" = "Найти Рецепт";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "Извлечь Рецепт с ИИ";
 "Extract with AI" = "Извлечь с ИИ";
 "Detecting recipe..." = "Обнаружение рецепта...";
+"Loading website..." = "Загрузка веб-сайта...";
 "No recipe detected on this page" = "На этой странице не обнаружено рецепта";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Вставьте ссылку на веб-страницу с рецептом, чтобы автоматически извлечь информацию о рецепте с помощью ИИ.";
 

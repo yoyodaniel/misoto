@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "Gebruikersnaam mag niet meer dan 15 tekens bevatten";
 "This username is already taken" = "Deze gebruikersnaam is al in gebruik";
 "Username contains invalid characters" = "Gebruikersnaam bevat ongeldige tekens";
+"Invalid URL" = "Ongeldige URL";
 
 /* Settings */
 "Settings" = "Instellingen";
@@ -99,6 +100,8 @@
 "Take Picture" = "Foto Maken";
 "Extract from Image" = "Extraheren uit Afbeelding";
 "Extract from Link" = "Extraheren uit Link";
+"Enter Menu URL" = "Menu-URL invoeren";
+"Menu URL" = "Menu-URL";
 "Extract from Website" = "Extraheren uit Website";
 "Search or enter website name" = "Zoeken of website naam invoeren";
 "Find a Recipe" = "Recept Zoeken";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "Recept Extraheren met AI";
 "Extract with AI" = "Extraheren met AI";
 "Detecting recipe..." = "Recept detecteren...";
+"Loading website..." = "Website laden...";
 "No recipe detected on this page" = "Geen recept gedetecteerd op deze pagina";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Plak een link naar een receptwebpagina om receptinformatie automatisch te extraheren met behulp van AI.";
 

@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "Username must be no more than 15 characters";
 "This username is already taken" = "This username is already taken";
 "Username contains invalid characters" = "Username contains invalid characters";
+"Invalid URL" = "Invalid URL";
 
 /* Settings */
 "Settings" = "Settings";
@@ -100,6 +101,8 @@
 "Take Picture" = "Take Picture";
 "Extract from Image" = "Extract from Image";
 "Extract from Link" = "Extract from Link";
+"Enter Menu URL" = "Enter Menu URL";
+"Menu URL" = "Menu URL";
 "Extract from Website" = "Extract from Website";
 "Search or enter website name" = "Search or enter website name";
 "Find a Recipe" = "Find a Recipe";
@@ -110,6 +113,7 @@
 "Extract Recipe with AI" = "Extract Recipe with AI";
 "Extract with AI" = "Extract with AI";
 "Detecting recipe..." = "Detecting recipe...";
+"Loading website..." = "Loading website...";
 "No recipe detected on this page" = "No recipe detected on this page";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Paste a link to a recipe webpage to extract recipe information automatically using AI.";
 

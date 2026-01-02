@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "ชื่อผู้ใช้ต้องไม่เกิน 15 ตัวอักษร";
 "This username is already taken" = "ชื่อผู้ใช้นี้ถูกใช้แล้ว";
 "Username contains invalid characters" = "ชื่อผู้ใช้มีอักขระที่ไม่ถูกต้อง";
+"Invalid URL" = "URL ไม่ถูกต้อง";
 
 /* Settings */
 "Settings" = "การตั้งค่า";
@@ -99,6 +100,8 @@
 "Take Picture" = "ถ่ายรูป";
 "Extract from Image" = "แยกจากรูปภาพ";
 "Extract from Link" = "แยกจากลิงก์";
+"Enter Menu URL" = "ใส่ลิงก์เมนู";
+"Menu URL" = "ลิงก์เมนู";
 "Extract from Website" = "แยกจากเว็บไซต์";
 "Search or enter website name" = "ค้นหาหรือใส่ชื่อเว็บไซต์";
 "Find a Recipe" = "ค้นหาสูตรอาหาร";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "แยกสูตรอาหารด้วย AI";
 "Extract with AI" = "แยกด้วย AI";
 "Detecting recipe..." = "กำลังตรวจจับสูตรอาหาร...";
+"Loading website..." = "กำลังโหลดเว็บไซต์...";
 "No recipe detected on this page" = "ไม่พบสูตรอาหารในหน้านี้";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "วางลิงก์ไปยังหน้าเว็บสูตรอาหารเพื่อแยกข้อมูลสูตรอาหารโดยอัตโนมัติโดยใช้ AI";
 

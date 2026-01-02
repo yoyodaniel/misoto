@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "उपयोगकर्ता नाम 15 वर्ण से अधिक नहीं होना चाहिए";
 "This username is already taken" = "यह उपयोगकर्ता नाम पहले से लिया गया है";
 "Username contains invalid characters" = "उपयोगकर्ता नाम में अमान्य वर्ण हैं";
+"Invalid URL" = "अमान्य URL";
 
 /* Settings */
 "Settings" = "सेटिंग्स";
@@ -99,6 +100,8 @@
 "Take Picture" = "तस्वीर लें";
 "Extract from Image" = "छवि से निकालें";
 "Extract from Link" = "लिंक से निकालें";
+"Enter Menu URL" = "मेनू URL दर्ज करें";
+"Menu URL" = "मेनू URL";
 "Extract from Website" = "वेबसाइट से निकालें";
 "Search or enter website name" = "खोजें या वेबसाइट नाम दर्ज करें";
 "Find a Recipe" = "व्यंजन खोजें";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "AI के साथ व्यंजन निकालें";
 "Extract with AI" = "AI के साथ निकालें";
 "Detecting recipe..." = "व्यंजन का पता लगा रहे हैं...";
+"Loading website..." = "वेबसाइट लोड हो रही है...";
 "No recipe detected on this page" = "इस पृष्ठ पर कोई व्यंजन नहीं मिला";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "व्यंजन जानकारी को स्वचालित रूप से निकालने के लिए AI का उपयोग करके एक व्यंजन वेबपेज का लिंक पेस्ट करें।";
 

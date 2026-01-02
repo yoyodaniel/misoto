@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "Nama pengguna tidak boleh melebihi 15 aksara";
 "This username is already taken" = "Nama pengguna ini sudah digunakan";
 "Username contains invalid characters" = "Nama pengguna mengandungi aksara yang tidak sah";
+"Invalid URL" = "URL tidak sah";
 
 /* Settings */
 "Settings" = "Tetapan";
@@ -99,6 +100,8 @@
 "Take Picture" = "Ambil Gambar";
 "Extract from Image" = "Ekstrak dari Gambar";
 "Extract from Link" = "Ekstrak dari Pautan";
+"Enter Menu URL" = "Masukkan URL Menu";
+"Menu URL" = "URL Menu";
 "Extract from Website" = "Ekstrak dari Laman Web";
 "Search or enter website name" = "Cari atau masukkan nama laman web";
 "Find a Recipe" = "Cari Resipi";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "Ekstrak Resipi dengan AI";
 "Extract with AI" = "Ekstrak dengan AI";
 "Detecting recipe..." = "Mengesan resipi...";
+"Loading website..." = "Memuatkan laman web...";
 "No recipe detected on this page" = "Tiada resipi dikesan di halaman ini";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Tampal pautan ke halaman web resipi untuk mengekstrak maklumat resipi secara automatik menggunakan AI.";
 

@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "Tên người dùng không được quá 15 ký tự";
 "This username is already taken" = "Tên người dùng này đã được sử dụng";
 "Username contains invalid characters" = "Tên người dùng chứa ký tự không hợp lệ";
+"Invalid URL" = "URL không hợp lệ";
 
 /* Settings */
 "Settings" = "Cài đặt";
@@ -99,6 +100,8 @@
 "Take Picture" = "Chụp ảnh";
 "Extract from Image" = "Trích xuất từ hình ảnh";
 "Extract from Link" = "Trích xuất từ liên kết";
+"Enter Menu URL" = "Nhập URL Menu";
+"Menu URL" = "URL Menu";
 "Extract from Website" = "Trích xuất từ trang web";
 "Search or enter website name" = "Tìm kiếm hoặc nhập tên trang web";
 "Find a Recipe" = "Tìm Công thức";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "Trích xuất Công thức bằng AI";
 "Extract with AI" = "Trích xuất bằng AI";
 "Detecting recipe..." = "Đang phát hiện công thức...";
+"Loading website..." = "Đang tải trang web...";
 "No recipe detected on this page" = "Không phát hiện công thức trên trang này";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Dán liên kết đến trang web công thức để tự động trích xuất thông tin công thức bằng AI.";
 

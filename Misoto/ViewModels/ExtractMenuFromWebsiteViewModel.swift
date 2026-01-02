@@ -618,18 +618,37 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
     }
     
     /// Normalize Chinese language codes to zh-Hans or zh-Hant
-    /// - Parameter code: Language code from system (e.g., "zh-HK", "zh-TW", "zh-CN", "zh-Hans", "zh-Hant")
+    /// - Parameter code: Language code from system (e.g., "zh-HK", "zh-TW", "zh-CN", "zh-Hans", "zh-Hant", "zh-Hant-HK")
     /// - Returns: Normalized code (zh-Hans or zh-Hant)
     private func normalizeChineseLanguageCode(_ code: String) -> String {
         let lowercased = code.lowercased()
         
         // Traditional Chinese regions: Hong Kong, Taiwan, Macau
-        if lowercased.hasPrefix("zh-hk") || lowercased.hasPrefix("zh-tw") || lowercased.hasPrefix("zh-mo") || lowercased == "zh-hant" {
+        // Check for zh-HK, zh-Hant-HK, zh-Hant_HK, or any variant containing hk/tw/mo
+        if lowercased.hasPrefix("zh-hk") || 
+           lowercased.contains("-hk") || 
+           lowercased.contains("_hk") ||
+           lowercased.hasPrefix("zh-tw") || 
+           lowercased.contains("-tw") || 
+           lowercased.contains("_tw") ||
+           lowercased.hasPrefix("zh-mo") || 
+           lowercased.contains("-mo") || 
+           lowercased.contains("_mo") ||
+           lowercased == "zh-hant" ||
+           lowercased.hasPrefix("zh-hant") {
             return "zh-Hant"
         }
         
         // Simplified Chinese regions: China, Singapore
-        if lowercased.hasPrefix("zh-cn") || lowercased.hasPrefix("zh-sg") || lowercased == "zh-hans" {
+        // Check for zh-CN, zh-Hans-CN, zh-Hans_CN, or any variant containing cn/sg
+        if lowercased.hasPrefix("zh-cn") || 
+           lowercased.contains("-cn") || 
+           lowercased.contains("_cn") ||
+           lowercased.hasPrefix("zh-sg") || 
+           lowercased.contains("-sg") || 
+           lowercased.contains("_sg") ||
+           lowercased == "zh-hans" ||
+           lowercased.hasPrefix("zh-hans") {
             return "zh-Hans"
         }
         

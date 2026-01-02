@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "Ang username ay hindi dapat lumampas sa 15 na karakter";
 "This username is already taken" = "Ang username na ito ay ginagamit na";
 "Username contains invalid characters" = "Ang username ay naglalaman ng hindi wasto na karakter";
+"Invalid URL" = "Hindi wastong URL";
 
 /* Settings */
 "Settings" = "Mga Setting";
@@ -99,6 +100,8 @@
 "Take Picture" = "Kumuha ng Larawan";
 "Extract from Image" = "Kunin mula sa Larawan";
 "Extract from Link" = "Kunin mula sa Link";
+"Enter Menu URL" = "Ilagay ang URL ng Menu";
+"Menu URL" = "URL ng Menu";
 "Extract from Website" = "Kunin mula sa Website";
 "Search or enter website name" = "Maghanap o maglagay ng pangalan ng website";
 "Find a Recipe" = "Maghanap ng Recipe";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "Kunin ang Recipe gamit ang AI";
 "Extract with AI" = "Kunin gamit ang AI";
 "Detecting recipe..." = "Nakikita ang recipe...";
+"Loading website..." = "Naglo-load ng website...";
 "No recipe detected on this page" = "Walang recipe na nakita sa pahinang ito";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "I-paste ang link sa isang recipe webpage upang awtomatikong kunin ang impormasyon ng recipe gamit ang AI.";
 

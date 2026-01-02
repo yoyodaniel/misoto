@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "사용자 이름은 15자를 초과할 수 없습니다";
 "This username is already taken" = "이 사용자 이름은 이미 사용 중입니다";
 "Username contains invalid characters" = "사용자 이름에 잘못된 문자가 포함되어 있습니다";
+"Invalid URL" = "잘못된 URL";
 
 /* Settings */
 "Settings" = "설정";
@@ -99,6 +100,8 @@
 "Take Picture" = "사진 찍기";
 "Extract from Image" = "이미지에서 추출";
 "Extract from Link" = "링크에서 추출";
+"Enter Menu URL" = "메뉴 URL 입력";
+"Menu URL" = "메뉴 URL";
 "Extract from Website" = "웹사이트에서 추출";
 "Search or enter website name" = "검색 또는 웹사이트 이름 입력";
 "Find a Recipe" = "레시피 찾기";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "AI로 레시피 추출";
 "Extract with AI" = "AI로 추출";
 "Detecting recipe..." = "레시피 감지 중...";
+"Loading website..." = "웹사이트 로딩 중...";
 "No recipe detected on this page" = "이 페이지에서 레시피를 찾을 수 없습니다";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "레시피 웹페이지 링크를 붙여넣어 AI를 사용하여 레시피 정보를 자동으로 추출합니다.";
 

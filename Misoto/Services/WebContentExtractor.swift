@@ -13,23 +13,12 @@ import UIKit
 class WebContentExtractor {
     
     /// Extract text content from a WKWebView
-    /// Uses JavaScript to extract visible text, removing HTML tags and non-relevant code
+    /// Uses JavaScript to extract visible text without modifying the webpage DOM
     static func extractText(from webView: WKWebView) async throws -> String {
-        // JavaScript to extract text content, focusing on main content areas
+        // JavaScript to extract text content without modifying the DOM
+        // Clones the content area and removes non-content elements from the clone
         let extractScript = """
         (function() {
-            // Remove script, style, nav, header, footer, aside, and other non-content elements
-            const nonContentSelectors = [
-                'script', 'style', 'nav', 'header', 'footer', 'aside', 
-                '.advertisement', '.ad', '.sidebar', '.menu', '.navigation',
-                '.social', '.share', '.comments', '.related', '.footer-content'
-            ];
-            
-            nonContentSelectors.forEach(selector => {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach(el => el.remove());
-            });
-            
             // Try to find main content area (common recipe website patterns)
             const contentSelectors = [
                 'article', '.recipe-content', '.recipe', '.content', 
@@ -49,8 +38,23 @@ class WebContentExtractor {
             // If no main content found, use body
             const targetElement = mainContent || document.body;
             
-            // Extract text, preserving line breaks
-            const text = targetElement.innerText || targetElement.textContent || '';
+            // Clone the element to avoid modifying the original DOM
+            const clone = targetElement.cloneNode(true);
+            
+            // Remove script, style, nav, header, footer, aside, and other non-content elements from clone
+            const nonContentSelectors = [
+                'script', 'style', 'nav', 'header', 'footer', 'aside', 
+                '.advertisement', '.ad', '.sidebar', '.menu', '.navigation',
+                '.social', '.share', '.comments', '.related', '.footer-content'
+            ];
+            
+            nonContentSelectors.forEach(selector => {
+                const elements = clone.querySelectorAll(selector);
+                elements.forEach(el => el.remove());
+            });
+            
+            // Extract text from the clone, preserving line breaks
+            const text = clone.innerText || clone.textContent || '';
             
             // Clean up excessive whitespace while preserving structure
             return text

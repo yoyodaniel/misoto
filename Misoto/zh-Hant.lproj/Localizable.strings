@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "用戶名不能超過 15 個字符";
 "This username is already taken" = "此用戶名已被使用";
 "Username contains invalid characters" = "用戶名包含無效字符";
+"Invalid URL" = "無效的 URL";
 
 /* Settings */
 "Settings" = "設定";
@@ -99,6 +100,8 @@
 "Take Picture" = "拍照";
 "Extract from Image" = "從圖片提取";
 "Extract from Link" = "從連結提取";
+"Enter Menu URL" = "輸入菜單連結";
+"Menu URL" = "菜單連結";
 "Extract from Website" = "從網站提取";
 "Search or enter website name" = "搜尋或輸入網站名稱";
 "Find a Recipe" = "查找食譜";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "使用 AI 提取食譜";
 "Extract with AI" = "使用 AI 提取";
 "Detecting recipe..." = "正在檢測食譜...";
+"Loading website..." = "正在載入網站...";
 "No recipe detected on this page" = "此頁面未檢測到食譜";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "貼上食譜網頁連結，使用 AI 自動提取食譜資訊。";
 

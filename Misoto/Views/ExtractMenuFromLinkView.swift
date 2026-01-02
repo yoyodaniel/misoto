@@ -72,6 +72,18 @@ struct ExtractMenuFromLinkView: View {
             }
             
             Section {
+                if viewModel.isExtractingContent {
+                    HStack {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                        Text(LocalizedString("Loading website...", comment: "Loading website message"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                }
+                
                 Button(action: {
                     Task {
                         await viewModel.extractRecipe(from: menuURL)
@@ -86,11 +98,11 @@ struct ExtractMenuFromLinkView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background(viewModel.isLoading || menuURL.isEmpty ? Color.gray : Color.accentColor)
+                    .background((viewModel.isLoading || viewModel.isExtractingContent || menuURL.isEmpty) ? Color.gray : Color.accentColor)
                     .foregroundColor(.white)
                     .cornerRadius(8)
                 }
-                .disabled(menuURL.isEmpty || viewModel.isLoading)
+                .disabled(menuURL.isEmpty || viewModel.isLoading || viewModel.isExtractingContent)
             }
         }
         .navigationTitle(LocalizedString("Extract from Link", comment: "Extract from link title"))

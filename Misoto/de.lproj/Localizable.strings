@@ -24,6 +24,7 @@
 "Username must be no more than 15 characters" = "Der Benutzername darf nicht mehr als 15 Zeichen lang sein";
 "This username is already taken" = "Dieser Benutzername ist bereits vergeben";
 "Username contains invalid characters" = "Der Benutzername enthält ungültige Zeichen";
+"Invalid URL" = "Ungültige URL";
 
 /* Settings */
 "Settings" = "Einstellungen";
@@ -99,6 +100,8 @@
 "Take Picture" = "Foto aufnehmen";
 "Extract from Image" = "Aus Bild extrahieren";
 "Extract from Link" = "Aus Link extrahieren";
+"Enter Menu URL" = "Menü-URL eingeben";
+"Menu URL" = "Menü-URL";
 "Extract from Website" = "Aus Website extrahieren";
 "Search or enter website name" = "Suchen oder Website-Name eingeben";
 "Find a Recipe" = "Rezept Finden";
@@ -109,6 +112,7 @@
 "Extract Recipe with AI" = "Rezept mit KI Extrahieren";
 "Extract with AI" = "Mit KI Extrahieren";
 "Detecting recipe..." = "Rezept wird erkannt...";
+"Loading website..." = "Website wird geladen...";
 "No recipe detected on this page" = "Auf dieser Seite wurde kein Rezept erkannt";
 "Paste a link to a recipe webpage to extract recipe information automatically using AI." = "Fügen Sie einen Link zu einer Rezept-Webseite ein, um Rezeptinformationen automatisch mit KI zu extrahieren.";
 
