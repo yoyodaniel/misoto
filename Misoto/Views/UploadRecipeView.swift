@@ -216,7 +216,7 @@ struct UploadRecipeView: View {
                         ProgressView()
                             .scaleEffect(0.8)
                     } else if let cuisine = viewModel.cuisine, !cuisine.isEmpty {
-                        Text(cuisine)
+                        Text(LocalizedString(cuisine, comment: "Cuisine name"))
                             .foregroundColor(.secondary)
                     } else {
                         Text(LocalizedString("Select Cuisine", comment: "Select cuisine placeholder"))

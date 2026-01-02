@@ -48,7 +48,7 @@ struct CuisineSelectionView: View {
                             dismiss()
                         }) {
                             HStack {
-                                Text(cuisine)
+                                Text(LocalizedString(cuisine, comment: "Cuisine name"))
                                     .foregroundColor(.primary)
                                 Spacer()
                                 if selectedCuisine == cuisine {
@@ -105,6 +105,7 @@ struct SearchBar: View {
 #Preview {
     CuisineSelectionView(selectedCuisine: .constant(nil))
 }
+
 
 
 
