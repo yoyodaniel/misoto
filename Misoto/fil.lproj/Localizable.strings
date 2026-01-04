@@ -52,6 +52,8 @@
 "Malay" = "Malay";
 "Filipino" = "Filipino";
 "Hindi" = "Hindi";
+"Arabic" = "Arabe";
+"Hebrew" = "Ebreo";
 "System Language (%@)" = "Wika ng Sistema (%@)";
 "Share App" = "Ibahagi ang App";
 "Share" = "Ibahagi";
@@ -138,11 +140,15 @@
 
 /* Explore */
 "Today's Recommendations" = "Mga Rekomendasyon Ngayon";
+"Today's Special" = "Espesyal Ngayon";
+"Follow" = "Sundan";
+"Chef's Choice" = "Pinili ng Chef";
 "Weekly Menu" = "Menu ng Linggo";
 "Trending" = "Trending";
 "Ranking" = "Ranggo";
 "Search ingredients, recipes" = "Maghanap ng mga sangkap, recipe";
 "No recipes found" = "Walang nahanap na recipe";
+"Collections" = "Mga Koleksyon";
 
 /* Favorites */
 "No favorites yet" = "Wala pang mga paborito";
@@ -233,11 +239,14 @@
 "Head" = "Ulo";
 "Strand" = "Hibla";
 "Strands" = "Hibla";
+"Large" = "Malaki";
+"Small" = "Maliit";
 "Source images used for recipe extraction" = "Mga source image na ginamit para sa recipe extraction";
 "Source image used for recipe extraction" = "Source image na ginamit para sa recipe extraction";
 "Source" = "Pinagmulan";
 "Created on:" = "Ginawa noong:";
 "Updated on:" = "Na-update noong:";
+"by" = "ni";
 
 /* Spicy Level */
 "None" = "Wala";

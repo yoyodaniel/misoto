@@ -10,6 +10,7 @@ import SwiftUI
 struct CuisineSelectionView: View {
     @Binding var selectedCuisine: String?
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var searchText = ""
     
     private var filteredCuisines: [String] {
@@ -48,7 +49,7 @@ struct CuisineSelectionView: View {
                             dismiss()
                         }) {
                             HStack {
-                                Text(LocalizedString(cuisine, comment: "Cuisine name"))
+                                Text(CuisineTranslations.translatedName(for: cuisine))
                                     .foregroundColor(.primary)
                                 Spacer()
                                 if selectedCuisine == cuisine {
@@ -58,6 +59,7 @@ struct CuisineSelectionView: View {
                             }
                         }
                     }
+                    .id(localizationManager.currentLanguage)
                 }
                 .listStyle(.plain)
             }

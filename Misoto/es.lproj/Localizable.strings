@@ -52,6 +52,8 @@
 "Malay" = "Malayo";
 "Filipino" = "Filipino";
 "Hindi" = "Hindi";
+"Arabic" = "Árabe";
+"Hebrew" = "Hebreo";
 "System Language (%@)" = "Idioma del Sistema (%@)";
 "Share App" = "Compartir App";
 "Share" = "Compartir";
@@ -237,11 +239,14 @@
 "Head" = "Cabeza";
 "Strand" = "Hebra";
 "Strands" = "Hebras";
+"Large" = "Grande";
+"Small" = "Pequeño";
 "Source images used for recipe extraction" = "Imágenes fuente utilizadas para la extracción de recetas";
 "Source image used for recipe extraction" = "Imagen fuente utilizada para la extracción de recetas";
 "Source" = "Fuente";
 "Created on:" = "Creado el:";
 "Updated on:" = "Actualizado el:";
+"by" = "por";
 
 /* Spicy Level */
 "None" = "Ninguno";

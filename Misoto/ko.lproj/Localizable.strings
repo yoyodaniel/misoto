@@ -52,6 +52,8 @@
 "Malay" = "말레이어";
 "Filipino" = "필리핀어";
 "Hindi" = "힌디어";
+"Arabic" = "아랍어";
+"Hebrew" = "히브리어";
 "System Language (%@)" = "시스템 언어 (%@)";
 "Share App" = "앱 공유";
 "Share" = "공유";
@@ -237,11 +239,14 @@
 "Head" = "통";
 "Strand" = "줄";
 "Strands" = "줄";
+"Large" = "큰";
+"Small" = "작은";
 "Source images used for recipe extraction" = "레시피 추출에 사용된 소스 이미지";
 "Source image used for recipe extraction" = "레시피 추출에 사용된 소스 이미지";
 "Source" = "소스";
 "Created on:" = "생성일:";
 "Updated on:" = "업데이트일:";
+"by" = "작성:";
 
 /* Spicy Level */
 "None" = "없음";

@@ -11,54 +11,7 @@ import PhotosUI
 struct UploadRecipeView: View {
     // Get localized unit display name for dropdown menu
     private func menuDisplayName(for unit: String) -> String {
-        switch unit {
-        case "":
-            return LocalizedString("-", comment: "No unit")
-        case "x":
-            return "x"
-        case "tsp":
-            return LocalizedString("Teaspoon (tsp)", comment: "Teaspoon unit")
-        case "tbsp":
-            return LocalizedString("Tablespoon (tbsp)", comment: "Tablespoon unit")
-        case "cup":
-            return LocalizedString("Cup", comment: "Cup unit")
-        case "oz":
-            return LocalizedString("Ounce (oz)", comment: "Ounce unit")
-        case "fl_oz":
-            return LocalizedString("Fluid Ounce (fl oz)", comment: "Fluid ounce unit")
-        case "lb":
-            return LocalizedString("Pound (lb)", comment: "Pound unit")
-        case "g":
-            return LocalizedString("Gram (g)", comment: "Gram unit")
-        case "kg":
-            return LocalizedString("Kilogram (kg)", comment: "Kilogram unit")
-        case "ml":
-            return LocalizedString("Milliliter (ml)", comment: "Milliliter unit")
-        case "l":
-            return LocalizedString("Liter (l)", comment: "Liter unit")
-        case "pinch":
-            return LocalizedString("Pinch", comment: "Pinch unit")
-        case "piece":
-            return LocalizedString("Piece", comment: "Piece unit")
-        case "pcs":
-            return LocalizedString("Pieces (pcs)", comment: "Pieces unit")
-        case "pc":
-            return LocalizedString("Piece (pc)", comment: "Piece unit")
-        case "slice":
-            return LocalizedString("Slice", comment: "Slice unit")
-        case "clove":
-            return LocalizedString("Clove", comment: "Clove unit")
-        case "bunch":
-            return LocalizedString("Bunch", comment: "Bunch unit")
-        case "head":
-            return LocalizedString("Head", comment: "Head unit")
-        case "strand":
-            return LocalizedString("Strand", comment: "Strand unit")
-        case "strands":
-            return LocalizedString("Strands", comment: "Strands unit")
-        default:
-            return unit
-        }
+        return UnitTranslations.translatedName(for: unit)
     }
     
     // Pluralization mapping for units that need to be pluralized
@@ -71,12 +24,14 @@ struct UploadRecipeView: View {
         "clove": "cloves",
         "bunch": "bunches",
         "head": "heads",
-        "strand": "strands"
+        "strand": "strands",
+        "large": "large",
+        "small": "small"
     ]
     
     // Common units (singular forms only)
     private var commonUnits: [String] {
-        ["", "x", "tsp", "tbsp", "cup", "oz", "fl_oz", "lb", "g", "kg", "ml", "l", "pinch", "piece", "pcs", "pc", "slice", "clove", "bunch", "head", "strand", "strands"].sorted { unit1, unit2 in
+        ["", "x", "tsp", "tbsp", "cup", "oz", "fl_oz", "lb", "g", "kg", "ml", "l", "pinch", "pc", "slice", "clove", "bunch", "head", "strand", "large", "small"].sorted { unit1, unit2 in
             // Sort: empty first, then "x", then alphabetically
             if unit1.isEmpty { return true }
             if unit2.isEmpty { return false }
@@ -86,38 +41,14 @@ struct UploadRecipeView: View {
         }
     }
     
-    // Get display name for a unit (pluralizes if amount > 1, shows abbreviation)
+    // Get display name for a unit (shows abbreviation in current language, pluralizes if amount > 1)
     private func displayName(for unit: String, amount: String) -> String {
         if unit.isEmpty {
-            return LocalizedString("-", comment: "No unit")
+            return "-"
         }
         
-        // Check if amount is greater than 1 for pluralization
-        let shouldPluralize = (Double(amount.trimmingCharacters(in: .whitespaces)) ?? 0) > 1
-        
-        // Handle plural forms that have separate localization keys
-        if shouldPluralize {
-            switch unit {
-            case "strand":
-                return LocalizedString("Strands", comment: "Strands unit")
-            case "pc", "piece":
-                return LocalizedString("Pieces (pcs)", comment: "Pieces unit")
-            default:
-                // For other units, use the localized singular form
-                // (most units don't change in plural form in many languages)
-                break
-            }
-        }
-        
-        // Get the localized name and extract the main word (before parentheses if any)
-        let localizedName = menuDisplayName(for: unit)
-        
-        // Extract main word before parentheses for compact display
-        if let parenIndex = localizedName.firstIndex(of: "(") {
-            return String(localizedName[..<parenIndex]).trimmingCharacters(in: .whitespaces)
-        }
-        
-        return localizedName
+        // Use UnitTranslations to get the language-specific abbreviation with pluralization support
+        return UnitTranslations.abbreviation(for: unit, amount: amount)
     }
     
     
@@ -164,10 +95,7 @@ struct UploadRecipeView: View {
     @State private var isDescriptionExpanded = true
     @State private var isMarinadeExpanded = false
     @State private var isSeasoningExpanded = false
-    @State private var isBatterExpanded = false
     @State private var isSauceExpanded = false
-    @State private var isBaseExpanded = false
-    @State private var isDoughExpanded = false
     @State private var isToppingExpanded = false
     @State private var isDishExpanded = true
     @State private var isInstructionsExpanded = true
@@ -445,34 +373,6 @@ struct UploadRecipeView: View {
         }
     }
     
-    private var batterIngredientsSection: some View {
-        Section {
-            DisclosureGroup(isExpanded: Binding(
-                get: { isBatterExpanded || !viewModel.batterIngredients.isEmpty },
-                set: { isBatterExpanded = $0 }
-            )) {
-                ForEach(Array(viewModel.batterIngredients.enumerated()), id: \.offset) { index, ingredient in
-                    batterIngredientRow(at: index)
-                }
-                .onDelete { indexSet in
-                    for index in indexSet.sorted(by: >) {
-                        viewModel.removeBatterIngredient(at: index)
-                    }
-                }
-                
-                Button(action: {
-                    viewModel.addBatterIngredient()
-                    isBatterExpanded = true
-                }) {
-                    Label(LocalizedString("Add Batter Ingredient", comment: "Add batter ingredient button"), systemImage: "plus.circle")
-                }
-            } label: {
-                Text(LocalizedString("Batter Ingredients", comment: "Batter ingredients section"))
-                    .font(.headline)
-            }
-        }
-    }
-    
     private var sauceIngredientsSection: some View {
         Section {
             DisclosureGroup(isExpanded: Binding(
@@ -496,62 +396,6 @@ struct UploadRecipeView: View {
                 }
             } label: {
                 Text(LocalizedString("Sauce Ingredients", comment: "Sauce ingredients section"))
-                    .font(.headline)
-            }
-        }
-    }
-    
-    private var baseIngredientsSection: some View {
-        Section {
-            DisclosureGroup(isExpanded: Binding(
-                get: { isBaseExpanded || !viewModel.baseIngredients.isEmpty },
-                set: { isBaseExpanded = $0 }
-            )) {
-                ForEach(Array(viewModel.baseIngredients.enumerated()), id: \.offset) { index, ingredient in
-                    baseIngredientRow(at: index)
-                }
-                .onDelete { indexSet in
-                    for index in indexSet.sorted(by: >) {
-                        viewModel.removeBaseIngredient(at: index)
-                    }
-                }
-                
-                Button(action: {
-                    viewModel.addBaseIngredient()
-                    isBaseExpanded = true
-                }) {
-                    Label(LocalizedString("Add Base Ingredient", comment: "Add base ingredient button"), systemImage: "plus.circle")
-                }
-            } label: {
-                Text(LocalizedString("Base Ingredients", comment: "Base ingredients section"))
-                    .font(.headline)
-            }
-        }
-    }
-    
-    private var doughIngredientsSection: some View {
-        Section {
-            DisclosureGroup(isExpanded: Binding(
-                get: { isDoughExpanded || !viewModel.doughIngredients.isEmpty },
-                set: { isDoughExpanded = $0 }
-            )) {
-                ForEach(Array(viewModel.doughIngredients.enumerated()), id: \.offset) { index, ingredient in
-                    doughIngredientRow(at: index)
-                }
-                .onDelete { indexSet in
-                    for index in indexSet.sorted(by: >) {
-                        viewModel.removeDoughIngredient(at: index)
-                    }
-                }
-                
-                Button(action: {
-                    viewModel.addDoughIngredient()
-                    isDoughExpanded = true
-                }) {
-                    Label(LocalizedString("Add Dough Ingredient", comment: "Add dough ingredient button"), systemImage: "plus.circle")
-                }
-            } label: {
-                Text(LocalizedString("Dough Ingredients", comment: "Dough ingredients section"))
                     .font(.headline)
             }
         }
@@ -765,25 +609,6 @@ struct UploadRecipeView: View {
         )
     }
     
-    private func batterIngredientRow(at index: Int) -> some View {
-        ingredientRow(
-            amount: Binding(
-                get: { viewModel.batterIngredients[index].amount },
-                set: { viewModel.updateBatterIngredientAmount($0, at: index) }
-            ),
-            unit: Binding(
-                get: { viewModel.batterIngredients[index].unit },
-                set: { viewModel.updateBatterIngredientUnit($0, at: index) }
-            ),
-            name: Binding(
-                get: { viewModel.batterIngredients[index].name },
-                set: { viewModel.updateBatterIngredientName($0, at: index) }
-            ),
-            amountIndex: index + 2000,
-            nameIndex: index + 2000
-        )
-    }
-    
     private func sauceIngredientRow(at index: Int) -> some View {
         ingredientRow(
             amount: Binding(
@@ -800,44 +625,6 @@ struct UploadRecipeView: View {
             ),
             amountIndex: index + 3000,
             nameIndex: index + 3000
-        )
-    }
-    
-    private func baseIngredientRow(at index: Int) -> some View {
-        ingredientRow(
-            amount: Binding(
-                get: { viewModel.baseIngredients[index].amount },
-                set: { viewModel.updateBaseIngredientAmount($0, at: index) }
-            ),
-            unit: Binding(
-                get: { viewModel.baseIngredients[index].unit },
-                set: { viewModel.updateBaseIngredientUnit($0, at: index) }
-            ),
-            name: Binding(
-                get: { viewModel.baseIngredients[index].name },
-                set: { viewModel.updateBaseIngredientName($0, at: index) }
-            ),
-            amountIndex: index + 4000,
-            nameIndex: index + 4000
-        )
-    }
-    
-    private func doughIngredientRow(at index: Int) -> some View {
-        ingredientRow(
-            amount: Binding(
-                get: { viewModel.doughIngredients[index].amount },
-                set: { viewModel.updateDoughIngredientAmount($0, at: index) }
-            ),
-            unit: Binding(
-                get: { viewModel.doughIngredients[index].unit },
-                set: { viewModel.updateDoughIngredientUnit($0, at: index) }
-            ),
-            name: Binding(
-                get: { viewModel.doughIngredients[index].name },
-                set: { viewModel.updateDoughIngredientName($0, at: index) }
-            ),
-            amountIndex: index + 5000,
-            nameIndex: index + 5000
         )
     }
     
@@ -1042,7 +829,7 @@ struct UploadRecipeView: View {
                     Task {
                         for image in images {
                             // Optimize image for display to reduce memory usage
-                            let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                            let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                             await MainActor.run {
                                 // addRecipeImage has a guard to prevent more than 5 images total
                                 viewModel.addRecipeImage(optimizedImage)
@@ -1056,7 +843,7 @@ struct UploadRecipeView: View {
                     // Add the captured image to recipe images
                     Task {
                         // Optimize image for display to reduce memory usage
-                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                        let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                         await MainActor.run {
                             // addRecipeImage has a guard to prevent more than 5 images total
                             viewModel.addRecipeImage(optimizedImage)
@@ -1081,7 +868,7 @@ struct UploadRecipeView: View {
                         if let data = try? await item.loadTransferable(type: Data.self),
                            let image = UIImage(data: data) {
                             // Optimize image for display to reduce memory usage
-                            let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                            let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                             await MainActor.run {
                                 // addRecipeImage has a guard to prevent more than 5 images total
                                 viewModel.addRecipeImage(optimizedImage)
@@ -1104,7 +891,7 @@ struct UploadRecipeView: View {
                 if let data = try? await item.loadTransferable(type: Data.self),
                    let image = UIImage(data: data) {
                     // Optimize image for display to reduce memory usage
-                    let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 600)
+                    let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 600)
                     viewModel.setInstructionImage(optimizedImage, at: index)
                     selectedInstructionPhotos.removeValue(forKey: index)
                 }
@@ -1117,11 +904,10 @@ struct UploadRecipeView: View {
         let dishIngredientMethods = makeDishIngredientMethods()
         let marinadeIngredientMethods = makeMarinadeIngredientMethods()
         let seasoningIngredientMethods = makeSeasoningIngredientMethods()
-        let batterIngredientMethods = makeBatterIngredientMethods()
+        let doughBatterFillingIngredientMethods = makeDoughBatterFillingIngredientMethods()
         let sauceIngredientMethods = makeSauceIngredientMethods()
-        let baseIngredientMethods = makeBaseIngredientMethods()
-        let doughIngredientMethods = makeDoughIngredientMethods()
         let toppingIngredientMethods = makeToppingIngredientMethods()
+        let garnishIngredientMethods = makeGarnishIngredientMethods()
         
         RecipeEditForm(
             title: $viewModel.title,
@@ -1139,11 +925,10 @@ struct UploadRecipeView: View {
             dishIngredients: $viewModel.dishIngredients,
             marinadeIngredients: $viewModel.marinadeIngredients,
             seasoningIngredients: $viewModel.seasoningIngredients,
-            batterIngredients: $viewModel.batterIngredients,
+            doughBatterFillingIngredients: $viewModel.doughBatterFillingIngredients,
             sauceIngredients: $viewModel.sauceIngredients,
-            baseIngredients: $viewModel.baseIngredients,
-            doughIngredients: $viewModel.doughIngredients,
             toppingIngredients: $viewModel.toppingIngredients,
+            garnishIngredients: $viewModel.garnishIngredients,
             mainRecipeImages: $viewModel.mainRecipeImages,
             isGeneratingDescription: viewModel.isGeneratingDescription,
             isDetectingCuisine: viewModel.isDetectingCuisine,
@@ -1163,31 +948,26 @@ struct UploadRecipeView: View {
             updateSeasoningIngredientAmount: seasoningIngredientMethods.updateAmount,
             updateSeasoningIngredientUnit: seasoningIngredientMethods.updateUnit,
             updateSeasoningIngredientName: seasoningIngredientMethods.updateName,
-            addBatterIngredient: batterIngredientMethods.add,
-            removeBatterIngredient: batterIngredientMethods.remove,
-            updateBatterIngredientAmount: batterIngredientMethods.updateAmount,
-            updateBatterIngredientUnit: batterIngredientMethods.updateUnit,
-            updateBatterIngredientName: batterIngredientMethods.updateName,
+            addDoughBatterFillingIngredient: doughBatterFillingIngredientMethods.add,
+            removeDoughBatterFillingIngredient: doughBatterFillingIngredientMethods.remove,
+            updateDoughBatterFillingIngredientAmount: doughBatterFillingIngredientMethods.updateAmount,
+            updateDoughBatterFillingIngredientUnit: doughBatterFillingIngredientMethods.updateUnit,
+            updateDoughBatterFillingIngredientName: doughBatterFillingIngredientMethods.updateName,
             addSauceIngredient: sauceIngredientMethods.add,
             removeSauceIngredient: sauceIngredientMethods.remove,
             updateSauceIngredientAmount: sauceIngredientMethods.updateAmount,
             updateSauceIngredientUnit: sauceIngredientMethods.updateUnit,
             updateSauceIngredientName: sauceIngredientMethods.updateName,
-            addBaseIngredient: baseIngredientMethods.add,
-            removeBaseIngredient: baseIngredientMethods.remove,
-            updateBaseIngredientAmount: baseIngredientMethods.updateAmount,
-            updateBaseIngredientUnit: baseIngredientMethods.updateUnit,
-            updateBaseIngredientName: baseIngredientMethods.updateName,
-            addDoughIngredient: doughIngredientMethods.add,
-            removeDoughIngredient: doughIngredientMethods.remove,
-            updateDoughIngredientAmount: doughIngredientMethods.updateAmount,
-            updateDoughIngredientUnit: doughIngredientMethods.updateUnit,
-            updateDoughIngredientName: doughIngredientMethods.updateName,
             addToppingIngredient: toppingIngredientMethods.add,
             removeToppingIngredient: toppingIngredientMethods.remove,
             updateToppingIngredientAmount: toppingIngredientMethods.updateAmount,
             updateToppingIngredientUnit: toppingIngredientMethods.updateUnit,
             updateToppingIngredientName: toppingIngredientMethods.updateName,
+            addGarnishIngredient: garnishIngredientMethods.add,
+            removeGarnishIngredient: garnishIngredientMethods.remove,
+            updateGarnishIngredientAmount: garnishIngredientMethods.updateAmount,
+            updateGarnishIngredientUnit: garnishIngredientMethods.updateUnit,
+            updateGarnishIngredientName: garnishIngredientMethods.updateName,
             addRecipeImage: { viewModel.addRecipeImage($0) },
             removeRecipeImage: { viewModel.removeRecipeImage(at: $0) },
             generateDescription: { await viewModel.generateDescription() },
@@ -1250,13 +1030,13 @@ struct UploadRecipeView: View {
         )
     }
     
-    private func makeBatterIngredientMethods() -> IngredientMethods {
+    private func makeDoughBatterFillingIngredientMethods() -> IngredientMethods {
         IngredientMethods(
-            add: { viewModel.addBatterIngredient() },
-            remove: { viewModel.removeBatterIngredient(at: $0) },
-            updateAmount: { viewModel.updateBatterIngredientAmount($0, at: $1) },
-            updateUnit: { viewModel.updateBatterIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateBatterIngredientName($0, at: $1) }
+            add: { viewModel.addDoughBatterFillingIngredient() },
+            remove: { viewModel.removeDoughBatterFillingIngredient(at: $0) },
+            updateAmount: { viewModel.updateDoughBatterFillingIngredientAmount($0, at: $1) },
+            updateUnit: { viewModel.updateDoughBatterFillingIngredientUnit($0, at: $1) },
+            updateName: { viewModel.updateDoughBatterFillingIngredientName($0, at: $1) }
         )
     }
     
@@ -1270,26 +1050,6 @@ struct UploadRecipeView: View {
         )
     }
     
-    private func makeBaseIngredientMethods() -> IngredientMethods {
-        IngredientMethods(
-            add: { viewModel.addBaseIngredient() },
-            remove: { viewModel.removeBaseIngredient(at: $0) },
-            updateAmount: { viewModel.updateBaseIngredientAmount($0, at: $1) },
-            updateUnit: { viewModel.updateBaseIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateBaseIngredientName($0, at: $1) }
-        )
-    }
-    
-    private func makeDoughIngredientMethods() -> IngredientMethods {
-        IngredientMethods(
-            add: { viewModel.addDoughIngredient() },
-            remove: { viewModel.removeDoughIngredient(at: $0) },
-            updateAmount: { viewModel.updateDoughIngredientAmount($0, at: $1) },
-            updateUnit: { viewModel.updateDoughIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateDoughIngredientName($0, at: $1) }
-        )
-    }
-    
     private func makeToppingIngredientMethods() -> IngredientMethods {
         IngredientMethods(
             add: { viewModel.addToppingIngredient() },
@@ -1297,6 +1057,16 @@ struct UploadRecipeView: View {
             updateAmount: { viewModel.updateToppingIngredientAmount($0, at: $1) },
             updateUnit: { viewModel.updateToppingIngredientUnit($0, at: $1) },
             updateName: { viewModel.updateToppingIngredientName($0, at: $1) }
+        )
+    }
+    
+    private func makeGarnishIngredientMethods() -> IngredientMethods {
+        IngredientMethods(
+            add: { viewModel.addGarnishIngredient() },
+            remove: { viewModel.removeGarnishIngredient(at: $0) },
+            updateAmount: { viewModel.updateGarnishIngredientAmount($0, at: $1) },
+            updateUnit: { viewModel.updateGarnishIngredientUnit($0, at: $1) },
+            updateName: { viewModel.updateGarnishIngredientName($0, at: $1) }
         )
     }
     

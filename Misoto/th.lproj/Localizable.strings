@@ -52,6 +52,8 @@
 "Malay" = "มาเลย์";
 "Filipino" = "ฟิลิปปินส์";
 "Hindi" = "ฮินดี";
+"Arabic" = "ภาษาอาหรับ";
+"Hebrew" = "ภาษาฮิบรู";
 "System Language (%@)" = "ภาษาของระบบ (%@)";
 "Share App" = "แชร์แอป";
 "Share" = "แชร์";
@@ -138,11 +140,15 @@
 
 /* Explore */
 "Today's Recommendations" = "คำแนะนำวันนี้";
+"Today's Special" = "พิเศษวันนี้";
+"Follow" = "ติดตาม";
+"Chef's Choice" = "แนะนำจากเชฟ";
 "Weekly Menu" = "เมนูรายสัปดาห์";
 "Trending" = "กำลังเป็นที่นิยม";
 "Ranking" = "อันดับ";
 "Search ingredients, recipes" = "ค้นหาวัตถุดิบ สูตรอาหาร";
 "No recipes found" = "ไม่พบสูตรอาหาร";
+"Collections" = "คอลเลกชัน";
 
 /* Favorites */
 "No favorites yet" = "ยังไม่มีรายการโปรด";
@@ -233,11 +239,14 @@
 "Head" = "หัว";
 "Strand" = "เส้น";
 "Strands" = "เส้น";
+"Large" = "ใหญ่";
+"Small" = "เล็ก";
 "Source images used for recipe extraction" = "รูปภาพต้นฉบับที่ใช้สำหรับการแยกสูตรอาหาร";
 "Source image used for recipe extraction" = "รูปภาพต้นฉบับที่ใช้สำหรับการแยกสูตรอาหาร";
 "Source" = "แหล่งที่มา";
 "Created on:" = "สร้างเมื่อ:";
 "Updated on:" = "อัปเดตเมื่อ:";
+"by" = "โดย";
 
 /* Spicy Level */
 "None" = "ไม่มี";

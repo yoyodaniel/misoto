@@ -128,7 +128,7 @@ class FriendsService: ObservableObject {
             .limit(to: 20)
             .getDocuments()
         
-        let results = try snapshot.documents.compactMap { document -> AppUser? in
+        let results = snapshot.documents.compactMap { document -> AppUser? in
             try? document.data(as: AppUser.self)
         }
         

@@ -52,6 +52,8 @@
 "Malay" = "Malese";
 "Filipino" = "Filipino";
 "Hindi" = "Hindi";
+"Arabic" = "Arabo";
+"Hebrew" = "Ebraico";
 "System Language (%@)" = "Lingua di Sistema (%@)";
 "Share App" = "Condividi App";
 "Share" = "Condividi";
@@ -138,6 +140,9 @@
 
 /* Explore */
 "Today's Recommendations" = "Raccomandazioni di Oggi";
+"Today's Special" = "Speciale di Oggi";
+"Follow" = "Segui";
+"Chef's Choice" = "Scelta dello Chef";
 "Weekly Menu" = "Menu Settimanale";
 "Trending" = "Tendenze";
 "Ranking" = "Classifica";
@@ -234,11 +239,14 @@
 "Head" = "Testa";
 "Strand" = "Filo";
 "Strands" = "Fili";
+"Large" = "Grande";
+"Small" = "Piccolo";
 "Source images used for recipe extraction" = "Immagini sorgente utilizzate per l'estrazione della ricetta";
 "Source image used for recipe extraction" = "Immagine sorgente utilizzata per l'estrazione della ricetta";
 "Source" = "Sorgente";
 "Created on:" = "Creato il:";
 "Updated on:" = "Aggiornato il:";
+"by" = "da";
 
 /* Spicy Level */
 "None" = "Nessuno";

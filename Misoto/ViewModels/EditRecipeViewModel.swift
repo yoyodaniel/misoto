@@ -24,11 +24,10 @@ class EditRecipeViewModel: ObservableObject {
     @Published var dishIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var marinadeIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var seasoningIngredients: [RecipeTextParser.IngredientItem] = []
-    @Published var batterIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var doughBatterFillingIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var sauceIngredients: [RecipeTextParser.IngredientItem] = []
-    @Published var baseIngredients: [RecipeTextParser.IngredientItem] = []
-    @Published var doughIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var toppingIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var garnishIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var instructions: [InstructionItem] = []
     @Published var prepTime = 0
     @Published var cookTime = 0
@@ -103,11 +102,10 @@ class EditRecipeViewModel: ObservableObject {
         dishIngredients = []
         marinadeIngredients = []
         seasoningIngredients = []
-        batterIngredients = []
+        doughBatterFillingIngredients = []
         sauceIngredients = []
-        baseIngredients = []
-        doughIngredients = []
         toppingIngredients = []
+        garnishIngredients = []
         
         for ingredient in recipe.ingredients {
             let item = RecipeTextParser.IngredientItem(
@@ -124,16 +122,15 @@ class EditRecipeViewModel: ObservableObject {
                     marinadeIngredients.append(item)
                 case .seasoning:
                     seasoningIngredients.append(item)
-                case .batter:
-                    batterIngredients.append(item)
+                case .batter, .base, .dough, .filling:
+                    // Consolidate batter, base, dough, and filling into doughBatterFillingIngredients
+                    doughBatterFillingIngredients.append(item)
                 case .sauce:
                     sauceIngredients.append(item)
-                case .base:
-                    baseIngredients.append(item)
-                case .dough:
-                    doughIngredients.append(item)
                 case .topping:
                     toppingIngredients.append(item)
+                case .garnish:
+                    garnishIngredients.append(item)
                 }
             } else {
                 // Default to dish if no category
@@ -246,11 +243,11 @@ class EditRecipeViewModel: ObservableObject {
     func updateSeasoningIngredientUnit(_ unit: String, at index: Int) { if index < seasoningIngredients.count { seasoningIngredients[index].unit = unit } }
     func updateSeasoningIngredientName(_ name: String, at index: Int) { if index < seasoningIngredients.count { seasoningIngredients[index].name = name } }
     
-    func addBatterIngredient() { batterIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")) }
-    func removeBatterIngredient(at index: Int) { if index < batterIngredients.count { batterIngredients.remove(at: index) } }
-    func updateBatterIngredientAmount(_ amount: String, at index: Int) { if index < batterIngredients.count { batterIngredients[index].amount = amount } }
-    func updateBatterIngredientUnit(_ unit: String, at index: Int) { if index < batterIngredients.count { batterIngredients[index].unit = unit } }
-    func updateBatterIngredientName(_ name: String, at index: Int) { if index < batterIngredients.count { batterIngredients[index].name = name } }
+    func addDoughBatterFillingIngredient() { doughBatterFillingIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")) }
+    func removeDoughBatterFillingIngredient(at index: Int) { if index < doughBatterFillingIngredients.count { doughBatterFillingIngredients.remove(at: index) } }
+    func updateDoughBatterFillingIngredientAmount(_ amount: String, at index: Int) { if index < doughBatterFillingIngredients.count { doughBatterFillingIngredients[index].amount = amount } }
+    func updateDoughBatterFillingIngredientUnit(_ unit: String, at index: Int) { if index < doughBatterFillingIngredients.count { doughBatterFillingIngredients[index].unit = unit } }
+    func updateDoughBatterFillingIngredientName(_ name: String, at index: Int) { if index < doughBatterFillingIngredients.count { doughBatterFillingIngredients[index].name = name } }
     
     func addSauceIngredient() { sauceIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")) }
     func removeSauceIngredient(at index: Int) { if index < sauceIngredients.count { sauceIngredients.remove(at: index) } }
@@ -258,23 +255,17 @@ class EditRecipeViewModel: ObservableObject {
     func updateSauceIngredientUnit(_ unit: String, at index: Int) { if index < sauceIngredients.count { sauceIngredients[index].unit = unit } }
     func updateSauceIngredientName(_ name: String, at index: Int) { if index < sauceIngredients.count { sauceIngredients[index].name = name } }
     
-    func addBaseIngredient() { baseIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")) }
-    func removeBaseIngredient(at index: Int) { if index < baseIngredients.count { baseIngredients.remove(at: index) } }
-    func updateBaseIngredientAmount(_ amount: String, at index: Int) { if index < baseIngredients.count { baseIngredients[index].amount = amount } }
-    func updateBaseIngredientUnit(_ unit: String, at index: Int) { if index < baseIngredients.count { baseIngredients[index].unit = unit } }
-    func updateBaseIngredientName(_ name: String, at index: Int) { if index < baseIngredients.count { baseIngredients[index].name = name } }
-    
-    func addDoughIngredient() { doughIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")) }
-    func removeDoughIngredient(at index: Int) { if index < doughIngredients.count { doughIngredients.remove(at: index) } }
-    func updateDoughIngredientAmount(_ amount: String, at index: Int) { if index < doughIngredients.count { doughIngredients[index].amount = amount } }
-    func updateDoughIngredientUnit(_ unit: String, at index: Int) { if index < doughIngredients.count { doughIngredients[index].unit = unit } }
-    func updateDoughIngredientName(_ name: String, at index: Int) { if index < doughIngredients.count { doughIngredients[index].name = name } }
-    
     func addToppingIngredient() { toppingIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")) }
     func removeToppingIngredient(at index: Int) { if index < toppingIngredients.count { toppingIngredients.remove(at: index) } }
     func updateToppingIngredientAmount(_ amount: String, at index: Int) { if index < toppingIngredients.count { toppingIngredients[index].amount = amount } }
     func updateToppingIngredientUnit(_ unit: String, at index: Int) { if index < toppingIngredients.count { toppingIngredients[index].unit = unit } }
     func updateToppingIngredientName(_ name: String, at index: Int) { if index < toppingIngredients.count { toppingIngredients[index].name = name } }
+    
+    func addGarnishIngredient() { garnishIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")) }
+    func removeGarnishIngredient(at index: Int) { if index < garnishIngredients.count { garnishIngredients.remove(at: index) } }
+    func updateGarnishIngredientAmount(_ amount: String, at index: Int) { if index < garnishIngredients.count { garnishIngredients[index].amount = amount } }
+    func updateGarnishIngredientUnit(_ unit: String, at index: Int) { if index < garnishIngredients.count { garnishIngredients[index].unit = unit } }
+    func updateGarnishIngredientName(_ name: String, at index: Int) { if index < garnishIngredients.count { garnishIngredients[index].name = name } }
     
     // MARK: - Instruction Management
     
@@ -377,13 +368,12 @@ class EditRecipeViewModel: ObservableObject {
         let validDishItems = dishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validMarinadeItems = marinadeIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validSeasoningItems = seasoningIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validBatterItems = batterIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validDoughBatterFillingItems = doughBatterFillingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validSauceItems = sauceIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validBaseItems = baseIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validDoughItems = doughIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validToppingItems = toppingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validGarnishItems = garnishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         
-        let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
+        let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validDoughBatterFillingItems + validSauceItems + validToppingItems + validGarnishItems
         
         guard !allValidIngredients.isEmpty else {
             errorMessage = LocalizedString("At least one ingredient is required", comment: "Ingredients required error")
@@ -402,20 +392,17 @@ class EditRecipeViewModel: ObservableObject {
         ingredientObjects.append(contentsOf: validSeasoningItems.map { 
             Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .seasoning) 
         })
-        ingredientObjects.append(contentsOf: validBatterItems.map { 
-            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .batter) 
+        ingredientObjects.append(contentsOf: validDoughBatterFillingItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .batter) // Default to .batter for consolidated dough/batter/filling section
         })
         ingredientObjects.append(contentsOf: validSauceItems.map { 
             Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .sauce) 
         })
-        ingredientObjects.append(contentsOf: validBaseItems.map { 
-            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .base) 
-        })
-        ingredientObjects.append(contentsOf: validDoughItems.map { 
-            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .dough) 
-        })
         ingredientObjects.append(contentsOf: validToppingItems.map { 
             Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .topping) 
+        })
+        ingredientObjects.append(contentsOf: validGarnishItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .garnish) 
         })
         
         let validInstructions = instructions.filter { !$0.text.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -547,7 +534,7 @@ class EditRecipeViewModel: ObservableObject {
         
         do {
             // Convert ingredients to string format for API
-            let allIngredients = (dishIngredients + marinadeIngredients + seasoningIngredients + batterIngredients + sauceIngredients + baseIngredients + doughIngredients + toppingIngredients)
+            let allIngredients = (dishIngredients + marinadeIngredients + seasoningIngredients + doughBatterFillingIngredients + sauceIngredients + toppingIngredients + garnishIngredients)
                 .map { item in
                     var parts: [String] = []
                     if !item.amount.isEmpty {

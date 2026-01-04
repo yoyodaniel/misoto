@@ -16,7 +16,7 @@ class StorageService: ObservableObject {
     
     func uploadImage(_ image: UIImage, path: String) async throws -> String {
         // Optimize image before upload (resize and compress)
-        let optimizedImage = await ImageOptimizer.resizeForUpload(image)
+        let optimizedImage = ImageOptimizer.resizeForUpload(image)
         guard let imageData = ImageOptimizer.compressImage(optimizedImage, quality: 0.8, maxFileSizeKB: 500) else {
             throw StorageError.invalidImage
         }

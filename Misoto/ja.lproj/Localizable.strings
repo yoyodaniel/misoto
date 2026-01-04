@@ -52,6 +52,8 @@
 "Malay" = "マレー語";
 "Filipino" = "フィリピン語";
 "Hindi" = "ヒンディー語";
+"Arabic" = "アラビア語";
+"Hebrew" = "ヘブライ語";
 "System Language (%@)" = "システム言語 (%@)";
 "Share App" = "アプリを共有";
 "Share" = "共有";
@@ -237,11 +239,14 @@
 "Head" = "個";
 "Strand" = "本";
 "Strands" = "本";
+"Large" = "大";
+"Small" = "小";
 "Source images used for recipe extraction" = "レシピ抽出に使用されたソース画像";
 "Source image used for recipe extraction" = "レシピ抽出に使用されたソース画像";
 "Source" = "ソース";
 "Created on:" = "作成日：";
 "Updated on:" = "更新日：";
+"by" = "作：";
 
 /* Spicy Level */
 "None" = "なし";

@@ -103,6 +103,22 @@ struct ModernRecipeCard: View {
                                 .shadow(color: Color.black.opacity(0.5), radius: 3, x: 0, y: 2)
                         }
                         
+                        // Author Caption
+                        if !recipe.authorName.isEmpty {
+                            HStack(spacing: 4) {
+                                Text(LocalizedString("by", comment: "Author by prefix"))
+                                    .font(.caption)
+                                Text(recipe.authorName)
+                                    .font(.custom("Caveat", size: 16))
+                                    .fontWeight(.bold)
+                            }
+                            .foregroundColor(.white.opacity(0.85))
+                            .padding(.leading, 20)
+                            .padding(.trailing, 20)
+                            .padding(.top, 4)
+                            .shadow(color: Color.black.opacity(0.5), radius: 3, x: 0, y: 2)
+                        }
+                        
                         // Bottom padding
                         Spacer()
                             .frame(height: 16)

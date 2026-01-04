@@ -1688,7 +1688,9 @@ class CuisineTranslations {
     /// - Parameter englishCuisine: The English cuisine name (as stored in Firebase)
     /// - Returns: The translated cuisine name, or the English name if translation not found
     static func translatedName(for englishCuisine: String) -> String {
-        guard !englishCuisine.isEmpty else { return "" }
+        // Trim whitespace and normalize the cuisine name
+        let trimmedCuisine = englishCuisine.trimmingCharacters(in: .whitespaces)
+        guard !trimmedCuisine.isEmpty else { return "" }
         
         // Get current language code
         let currentLanguage = LocalizationManager.shared.currentLanguage
@@ -1710,31 +1712,39 @@ class CuisineTranslations {
         
         // If English is selected, return English name
         if languageCode.lowercased() == "en" || languageCode.lowercased().hasPrefix("en-") {
-            return englishCuisine
+            return trimmedCuisine
         }
         
-        // Get translations for this cuisine
-        guard let cuisineTranslations = translations[englishCuisine] else {
-            // If cuisine not found in translations, return English name
-            return englishCuisine
-        }
-        
-        // Try to get translation for current language
-        if let translated = cuisineTranslations[languageCode] {
-            return translated
-        }
-        
-        // Try normalized Chinese codes
+        // Normalize language code first (handles variants like nl-NL -> nl, en-US -> en, etc.)
         let normalizedCode = normalizeLanguageCode(languageCode)
-        if let translated = cuisineTranslations[normalizedCode] {
-            return translated
+        
+        // Try exact match first (case-sensitive)
+        if let cuisineTranslations = translations[trimmedCuisine] {
+            if let translated = cuisineTranslations[normalizedCode] {
+                return translated
+            }
+            if let translated = cuisineTranslations[languageCode] {
+                return translated
+            }
+        }
+        
+        // Try case-insensitive lookup
+        if let cuisineKey = translations.keys.first(where: { $0.caseInsensitiveCompare(trimmedCuisine) == .orderedSame }) {
+            if let cuisineTranslations = translations[cuisineKey] {
+                if let translated = cuisineTranslations[normalizedCode] {
+                    return translated
+                }
+                if let translated = cuisineTranslations[languageCode] {
+                    return translated
+                }
+            }
         }
         
         // Fallback to English
-        return englishCuisine
+        return trimmedCuisine
     }
     
-    /// Normalize language codes (especially for Chinese variants)
+    /// Normalize language codes (handles variants like nl-NL -> nl, en-US -> en, zh-HK -> zh-Hant, etc.)
     private static func normalizeLanguageCode(_ code: String) -> String {
         let lowercased = code.lowercased()
         
@@ -1768,6 +1778,14 @@ class CuisineTranslations {
         // If it's just "zh" without variant, default to Simplified
         if lowercased == "zh" {
             return "zh-Hans"
+        }
+        
+        // Extract base language code (e.g., "nl-NL" -> "nl", "en-US" -> "en", "fr-FR" -> "fr")
+        // Split by "-" or "_" and take the first part
+        if let baseCode = lowercased.split(separator: "-").first ?? lowercased.split(separator: "_").first {
+            let base = String(baseCode)
+            // Return base code for common languages (our translations use base codes like "nl", "en", "es", etc.)
+            return base
         }
         
         return code

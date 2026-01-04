@@ -273,13 +273,15 @@ struct AccountView: View {
             EditRecipeView(recipe: recipe)
         }
         .fullScreenCover(item: $selectedRecipe) { recipe in
-            ModernRecipeDetailView(recipe: recipe)
+            RecipeDetailOverviewView(recipe: recipe)
         }
-        .confirmationDialog(
+        .alert(
             LocalizedString("Delete Recipe", comment: "Delete confirmation title"),
-            isPresented: $showDeleteConfirmation,
-            titleVisibility: .visible
+            isPresented: $showDeleteConfirmation
         ) {
+            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
+                recipeToDelete = nil
+            }
             Button(LocalizedString("Delete", comment: "Delete button"), role: .destructive) {
                 HapticFeedback.play(.error)
                 if let recipe = recipeToDelete {
@@ -288,9 +290,6 @@ struct AccountView: View {
                     // Clear the selected recipe
                     recipeToDelete = nil
                 }
-            }
-            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
-                recipeToDelete = nil
             }
         } message: {
             Text(LocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))

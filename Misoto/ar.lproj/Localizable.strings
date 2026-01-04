@@ -1,0 +1,356 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Arabic (العربية)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "شارك واكتشف وصفات رائعة";
+"Loading..." = "جاري التحميل...";
+"Version %@" = "الإصدار %@";
+"Unknown" = "غير معروف";
+
+/* Authentication */
+"Continue with Google" = "المتابعة مع Google";
+"Invalid credential" = "بيانات اعتماد غير صالحة";
+"Invalid nonce" = "Nonce غير صالح";
+"Invalid token" = "رمز غير صالح";
+"Missing client ID" = "معرف العميل مفقود";
+"Missing view controller" = "وحدة تحكم العرض مفقودة";
+"You are not authorized to perform this action" = "غير مصرح لك بتنفيذ هذا الإجراء";
+"Username must be at least 4 characters" = "يجب أن يكون اسم المستخدم 4 أحرف على الأقل";
+"Username must be no more than 15 characters" = "يجب ألا يزيد اسم المستخدم عن 15 حرفاً";
+"This username is already taken" = "اسم المستخدم هذا مستخدم بالفعل";
+"Username contains invalid characters" = "اسم المستخدم يحتوي على أحرف غير صالحة";
+"Invalid URL" = "رابط غير صالح";
+
+/* Settings */
+"Settings" = "الإعدادات";
+"Dark Mode" = "الوضع الداكن";
+"Haptic Feedback" = "الرد اللمسي";
+"Appearance" = "المظهر";
+"Language" = "اللغة";
+"The language selected will be used as the default writing language for recipe extractions." = "سيتم استخدام اللغة المحددة كلغة الكتابة الافتراضية لاستخراج الوصفات.";
+"The language selected will be used as the default writing language for recipe extractions." = "سيتم استخدام اللغة المحددة كلغة الكتابة الافتراضية لاستخراج الوصفات.";
+"English" = "الإنجليزية";
+"Chinese, Simplified" = "الصينية المبسطة";
+"Chinese, Traditional" = "الصينية التقليدية";
+"Spanish" = "الإسبانية";
+"French" = "الفرنسية";
+"German" = "الألمانية";
+"Italian" = "الإيطالية";
+"Portuguese" = "البرتغالية";
+"Dutch" = "الهولندية";
+"Russian" = "الروسية";
+"Japanese" = "اليابانية";
+"Korean" = "الكورية";
+"Thai" = "التايلاندية";
+"Vietnamese" = "الفيتنامية";
+"Indonesian" = "الإندونيسية";
+"Malay" = "الماليزية";
+"Filipino" = "الفلبينية";
+"Hindi" = "الهندية";
+"Arabic" = "العربية";
+"Hebrew" = "العبرية";
+"System Language (%@)" = "لغة النظام (%@)";
+"Share App" = "مشاركة التطبيق";
+"Share" = "مشاركة";
+"Check out %@! %@" = "تحقق من %@! %@";
+"Submit Feedback" = "إرسال الملاحظات";
+"Feedback" = "الملاحظات";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "نقدر التعاون مع مستخدمينا لتحسين التطبيق بشكل أكبر وتخصيصه لاحتياجاتك.";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "شارك أفكارك واقتراحاتك وطلبات الميزات أو الملاحظات العامة. مساهمتك تساعدنا في بناء تجربة أفضل للجميع.";
+"Done" = "تم";
+
+/* Feedback */
+"Type" = "النوع";
+"Feedback Type" = "نوع الملاحظات";
+"Feature Request" = "طلب ميزة";
+"General Feedback" = "ملاحظات عامة";
+"Translation Suggestion" = "اقتراح ترجمة";
+"Your name" = "اسمك";
+"Name" = "الاسم";
+"Describe your feature request" = "اوصف طلب الميزة";
+"Suggest a translation improvement" = "اقترح تحسيناً للترجمة";
+"Share your feedback" = "شارك ملاحظاتك";
+"Please describe the feature you'd like to see in the app." = "يرجى وصف الميزة التي ترغب في رؤيتها في التطبيق.";
+"Please suggest improvements to translations or report incorrect translations." = "يرجى اقتراح تحسينات للترجمات أو الإبلاغ عن ترجمات غير صحيحة.";
+"Please share your thoughts, suggestions, or report any issues." = "يرجى مشاركة أفكارك واقتراحاتك أو الإبلاغ عن أي مشاكل.";
+"Email address (optional)" = "عنوان البريد الإلكتروني (اختياري)";
+"Contact Email" = "البريد الإلكتروني للاتصال";
+"Optional: We'll use this to respond to your feature request if needed." = "اختياري: سنستخدم هذا للرد على طلب الميزة إذا لزم الأمر.";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "اختياري: سنستخدم هذا للرد على اقتراح الترجمة إذا لزم الأمر.";
+"Optional: We'll use this to respond to your feedback if needed." = "اختياري: سنستخدم هذا للرد على ملاحظاتك إذا لزم الأمر.";
+"Submit" = "إرسال";
+"Cancel" = "إلغاء";
+"Please enter a valid email address" = "يرجى إدخال عنوان بريد إلكتروني صالح";
+"You must be signed in to submit feedback" = "يجب تسجيل الدخول لإرسال الملاحظات";
+"Please provide your feedback or feature request" = "يرجى تقديم ملاحظاتك أو طلب الميزة";
+"Please provide a valid email address or leave it empty" = "يرجى تقديم عنوان بريد إلكتروني صالح أو تركه فارغاً";
+"Failed to submit: %@" = "فشل الإرسال: %@";
+"Thank you for your feature request!" = "شكراً لك على طلب الميزة!";
+"Thank you for your translation suggestion!" = "شكراً لك على اقتراح الترجمة!";
+"Thank you for your feedback!" = "شكراً لك على ملاحظاتك!";
+
+/* Navigation */
+"Explore" = "استكشف";
+"Account" = "الحساب";
+"Add Menu" = "إضافة قائمة";
+"Manual Entry" = "إدخال يدوي";
+"Take Picture" = "التقاط صورة";
+"Extract from Image" = "استخراج من الصورة";
+"Extract from Link" = "استخراج من الرابط";
+"Enter Menu URL" = "أدخل رابط القائمة";
+"Menu URL" = "رابط القائمة";
+"Extract from Website" = "استخراج من الموقع";
+"Search or enter website name" = "ابحث أو أدخل اسم الموقع";
+"Find a Recipe" = "العثور على وصفة";
+"Type a website URL or search for a recipe" = "اكتب رابط موقع أو ابحث عن وصفة";
+"Enter a website URL (e.g., example.com)" = "أدخل رابط موقع (مثال: example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "أو ابحث عن وصفة (مثال: وصفة كعكة الشوكولاتة)";
+"Extract Recipe" = "استخراج الوصفة";
+"Extract Recipe with AI" = "استخراج الوصفة بالذكاء الاصطناعي";
+"Extract with AI" = "استخراج بالذكاء الاصطناعي";
+"Detecting recipe..." = "جاري اكتشاف الوصفة...";
+"Loading website..." = "جاري تحميل الموقع...";
+"No recipe detected on this page" = "لم يتم اكتشاف وصفة في هذه الصفحة";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "الصق رابط صفحة وصفة لاستخراج معلومات الوصفة تلقائياً باستخدام الذكاء الاصطناعي.";
+
+/* Profile */
+"Edit Profile" = "تعديل الملف الشخصي";
+"Change Profile Picture" = "تغيير صورة الملف الشخصي";
+"Profile Information" = "معلومات الملف الشخصي";
+"Username" = "اسم المستخدم";
+"Suggested usernames:" = "أسماء المستخدمين المقترحة:";
+"Bio" = "السيرة الذاتية";
+"characters" = "أحرف";
+"%d/15 characters" = "%d/15 حرف";
+"Recipes" = "الوصفات";
+"Followers" = "المتابعون";
+"Following" = "يتابع";
+"Sign Out" = "تسجيل الخروج";
+"No recipes yet" = "لا توجد وصفات بعد";
+"Start sharing your favorite recipes with the community!" = "ابدأ بمشاركة وصفاتك المفضلة مع المجتمع!";
+"Delete Recipe" = "حذف الوصفة";
+"Delete" = "حذف";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "هل أنت متأكد من حذف هذه الوصفة؟ لا يمكن التراجع عن هذا الإجراء.";
+"Edit Recipe" = "تعديل الوصفة";
+
+/* Explore */
+"Today's Recommendations" = "توصيات اليوم";
+"Today's Special" = "خاص اليوم";
+"Follow" = "متابعة";
+"Chef's Choice" = "اختيار الشيف";
+"Weekly Menu" = "القائمة الأسبوعية";
+"Trending" = "رائج";
+"Ranking" = "التصنيف";
+"Search ingredients, recipes" = "ابحث عن المكونات والوصفات";
+"No recipes found" = "لم يتم العثور على وصفات";
+"Collections" = "المجموعات";
+
+/* Favorites */
+"No favorites yet" = "لا توجد مفضلات بعد";
+"Start exploring and save your favorite recipes!" = "ابدأ الاستكشاف واحفظ وصفاتك المفضلة!";
+
+/* Friends */
+"Friends" = "الأصدقاء";
+"Search" = "بحث";
+"No followers yet" = "لا يوجد متابعون بعد";
+"You're not following anyone yet" = "أنت لا تتابع أي شخص بعد";
+"Search users" = "ابحث عن المستخدمين";
+"No users found" = "لم يتم العثور على مستخدمين";
+
+/* Recipe */
+"Title" = "العنوان";
+"Recipe Title" = "عنوان الوصفة";
+"Main Title" = "العنوان الرئيسي";
+"System Language" = "لغة النظام";
+"Original Language" = "اللغة الأصلية";
+"Enter title" = "أدخل العنوان";
+"Description" = "الوصف";
+"Regenerate Description" = "إعادة إنشاء الوصف";
+"Cuisine" = "المطبخ";
+"Select Cuisine" = "اختر المطبخ";
+"Search cuisines..." = "ابحث عن المطابخ...";
+"Preparation Time" = "وقت التحضير";
+"Cooking Time" = "وقت الطهي";
+"Time" = "الوقت";
+"Servings" = "الحصص";
+"servings" = "حصص";
+"Difficulty" = "الصعوبة";
+"Spicy Level" = "مستوى الحرارة";
+"Add Dish Image" = "إضافة صورة الطبق";
+"Take picture" = "التقاط صورة";
+"Select image" = "اختر صورة";
+"Select Dish images" = "اختر صور الطبق";
+"Take another picture" = "التقاط صورة أخرى";
+"Dish Images" = "صور الطبق";
+"Dish images can be added later as required" = "يمكن إضافة صور الطبق لاحقاً حسب الحاجة";
+"Add" = "إضافة";
+"Save" = "حفظ";
+"Upload" = "رفع";
+"Step" = "خطوة";
+"View Video" = "عرض الفيديو";
+"Remove Media" = "إزالة الوسائط";
+"Add Step" = "إضافة خطوة";
+"Instructions" = "التعليمات";
+"Dish Ingredients" = "مكونات الطبق";
+"Add Dish Ingredient" = "إضافة مكون الطبق";
+"Marinade Ingredients" = "مكونات التتبيلة";
+"Add Marinade Ingredient" = "إضافة مكون التتبيلة";
+"Seasoning Ingredients" = "مكونات التوابل";
+"Add Seasoning Ingredient" = "إضافة مكون التوابل";
+"Batter Ingredients" = "مكونات الخليط";
+"Add Batter Ingredient" = "إضافة مكون الخليط";
+"Sauce Ingredients" = "مكونات الصلصة";
+"Add Sauce Ingredient" = "إضافة مكون الصلصة";
+"Base Ingredients" = "المكونات الأساسية";
+"Add Base Ingredient" = "إضافة مكون أساسي";
+"Dough Ingredients" = "مكونات العجين";
+"Add Dough Ingredient" = "إضافة مكون العجين";
+"Topping Ingredients" = "مكونات الطبقة العلوية";
+"Add Topping Ingredient" = "إضافة مكون الطبقة العلوية";
+"Additional Tips" = "نصائح إضافية";
+"Add Tip" = "إضافة نصيحة";
+"View Source Website" = "عرض موقع المصدر";
+"Source Website" = "موقع المصدر";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "ملعقة صغيرة (ملعقة ص)";
+"Tablespoon (tbsp)" = "ملعقة كبيرة (ملعقة ك)";
+"Cup" = "كوب";
+"Ounce (oz)" = "أونصة (أونصة)";
+"Fluid Ounce (fl oz)" = "أونصة سائلة (أونصة س)";
+"Pound (lb)" = "رطل (رطل)";
+"Gram (g)" = "جرام (ج)";
+"Kilogram (kg)" = "كيلوجرام (كج)";
+"Milliliter (ml)" = "مليلتر (مل)";
+"Liter (l)" = "لتر (ل)";
+"Pinch" = "قبضة";
+"Piece" = "قطعة";
+"Pieces (pcs)" = "قطع (قطع)";
+"Piece (pc)" = "قطعة (قطعة)";
+"Slice" = "شريحة";
+"Clove" = "فص";
+"Bunch" = "حزمة";
+"Head" = "رأس";
+"Strand" = "خيط";
+"Strands" = "خيوط";
+"Large" = "كبير";
+"Small" = "صغير";
+"Source images used for recipe extraction" = "الصور المصدر المستخدمة لاستخراج الوصفة";
+"Source image used for recipe extraction" = "الصورة المصدر المستخدمة لاستخراج الوصفة";
+"Source" = "المصدر";
+"Created on:" = "تم الإنشاء في:";
+"Updated on:" = "تم التحديث في:";
+"by" = "بواسطة";
+
+/* Spicy Level */
+"None" = "لا شيء";
+"Mild" = "خفيف";
+"Hot" = "حار";
+"Very Hot" = "حار جداً";
+"Extreme" = "شديد";
+"Insane" = "شديد جداً";
+
+/* Time Units */
+"seconds" = "ثواني";
+"minutes" = "دقائق";
+"hours" = "ساعات";
+"days" = "أيام";
+
+/* Common Actions */
+"Ingredient" = "المكون";
+"Extract" = "استخراج";
+"Upload Recipe" = "رفع الوصفة";
+"Extracting recipe from image..." = "جاري استخراج الوصفة من الصورة...";
+"Extracting recipe from images..." = "جاري استخراج الوصفة من الصور...";
+
+/* Cuisines */
+"Chinese" = "صيني";
+"Sichuan" = "سيتشوان";
+"Cantonese" = "كانتوني";
+"Hunan" = "هونان";
+"Shanghainese" = "شنغهاي";
+"Japanese" = "ياباني";
+"Korean" = "كوري";
+"Thai" = "تايلاندي";
+"Vietnamese" = "فيتنامي";
+"Indian" = "هندي";
+"Indonesian" = "إندونيسي";
+"Malaysian" = "ماليزي";
+"Singaporean" = "سنغافوري";
+"Filipino" = "فلبيني";
+"Burmese" = "بورمي";
+"Cambodian" = "كمبودي";
+"Laotian" = "لاوسي";
+"Sri Lankan" = "سريلانكي";
+"Pakistani" = "باكستاني";
+"Bangladeshi" = "بنغلاديشي";
+"Italian" = "إيطالي";
+"French" = "فرنسي";
+"Spanish" = "إسباني";
+"Greek" = "يوناني";
+"Turkish" = "تركي";
+"German" = "ألماني";
+"British" = "بريطاني";
+"Irish" = "أيرلندي";
+"Scottish" = "اسكتلندي";
+"Polish" = "بولندي";
+"Russian" = "روسي";
+"Swedish" = "سويدي";
+"Norwegian" = "نرويجي";
+"Danish" = "دنماركي";
+"Finnish" = "فنلندي";
+"Dutch" = "هولندي";
+"Belgian" = "بلجيكي";
+"Swiss" = "سويسري";
+"Austrian" = "نمساوي";
+"Portuguese" = "برتغالي";
+"Czech" = "تشيكي";
+"Hungarian" = "مجري";
+"Romanian" = "روماني";
+"Bulgarian" = "بلغاري";
+"Lebanese" = "لبناني";
+"Israeli" = "إسرائيلي";
+"Iranian" = "إيراني";
+"Iraqi" = "عراقي";
+"Syrian" = "سوري";
+"Egyptian" = "مصري";
+"Moroccan" = "مغربي";
+"Tunisian" = "تونسي";
+"Algerian" = "جزائري";
+"Yemeni" = "يمني";
+"Ethiopian" = "إثيوبي";
+"Nigerian" = "نيجيري";
+"South African" = "جنوب أفريقي";
+"Ghanaian" = "غاني";
+"Kenyan" = "كيني";
+"Senegalese" = "سنغالي";
+"Tanzanian" = "تنزاني";
+"American" = "أمريكي";
+"Mexican" = "مكسيكي";
+"Tex-Mex" = "تكساس-مكسيكي";
+"Cuban" = "كوبي";
+"Brazilian" = "برازيلي";
+"Argentinian" = "أرجنتيني";
+"Peruvian" = "بيروفي";
+"Colombian" = "كولومبي";
+"Chilean" = "تشيلي";
+"Venezuelan" = "فنزويلي";
+"Jamaican" = "جامايكي";
+"Caribbean" = "كاريبي";
+"Surinam" = "سورينامي";
+"Australian" = "أسترالي";
+"New Zealand" = "نيوزيلندي";
+"Fusion" = "مزيج";
+"Mediterranean" = "متوسطي";
+"Middle Eastern" = "شرق أوسطي";
+"International" = "دولي";
+"Vegetarian" = "نباتي";
+"Vegan" = "نباتي صرف";
+"Other" = "أخرى";
+

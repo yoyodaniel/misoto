@@ -12,6 +12,7 @@ struct ModernRecipeDetailView: View {
     let recipe: Recipe
     @Environment(\.dismiss) private var dismiss
     @StateObject private var recipeService = RecipeService()
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var isFavorite = false
     @State private var currentStep = 0
     @State private var showDeleteConfirmation = false
@@ -153,6 +154,7 @@ struct ModernRecipeDetailView: View {
                                             .font(.system(size: 16))
                                     }
                                 }
+                                .id(localizationManager.currentLanguage)
                             }
                             .padding(20)
                             .background(Color(.secondarySystemBackground))
@@ -233,17 +235,18 @@ struct ModernRecipeDetailView: View {
         .task {
             await checkFavoriteStatus()
         }
-        .confirmationDialog(
+        .alert(
             LocalizedString("Delete Recipe", comment: "Delete confirmation title"),
-            isPresented: $showDeleteConfirmation,
-            titleVisibility: .visible
+            isPresented: $showDeleteConfirmation
         ) {
+            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
+                showDeleteConfirmation = false
+            }
             Button(LocalizedString("Delete", comment: "Delete button"), role: .destructive) {
                 Task {
                     await deleteRecipe()
                 }
             }
-            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
         } message: {
             Text(LocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))
         }

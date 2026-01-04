@@ -33,7 +33,6 @@
 "Appearance" = "Erscheinungsbild";
 "Language" = "Sprache";
 "The language selected will be used as the default writing language for recipe extractions." = "Die ausgewählte Sprache wird als Standard-Schreibsprache für Rezeptextraktionen verwendet.";
-"The language selected will be used as the default writing language for recipe extractions." = "Die ausgewählte Sprache wird als Standard-Schreibsprache für Rezeptextraktionen verwendet.";
 "English" = "Englisch";
 "Chinese, Simplified" = "Vereinfachtes Chinesisch";
 "Chinese, Traditional" = "Traditionelles Chinesisch";
@@ -52,6 +51,8 @@
 "Malay" = "Malaiisch";
 "Filipino" = "Filipino";
 "Hindi" = "Hindi";
+"Arabic" = "Arabisch";
+"Hebrew" = "Hebräisch";
 "System Language (%@)" = "Systemsprache (%@)";
 "Share App" = "App teilen";
 "Share" = "Teilen";
@@ -138,6 +139,9 @@
 
 /* Explore */
 "Today's Recommendations" = "Empfehlungen von heute";
+"Today's Special" = "Heute's Spezial";
+"Follow" = "Folgen";
+"Chef's Choice" = "Küchenchef's Wahl";
 "Weekly Menu" = "Wöchentliches Menü";
 "Trending" = "Trending";
 "Ranking" = "Rangliste";
@@ -234,11 +238,14 @@
 "Head" = "Kopf";
 "Strand" = "Strang";
 "Strands" = "Stränge";
+"Large" = "Groß";
+"Small" = "Klein";
 "Source images used for recipe extraction" = "Quellbilder für Rezeptextraktion verwendet";
 "Source image used for recipe extraction" = "Quellbild für Rezeptextraktion verwendet";
 "Source" = "Quelle";
 "Created on:" = "Erstellt am:";
 "Updated on:" = "Aktualisiert am:";
+"by" = "von";
 
 /* Spicy Level */
 "None" = "Keine";

@@ -52,6 +52,8 @@
 "Malay" = "मलय";
 "Filipino" = "फिलिपिनो";
 "Hindi" = "हिंदी";
+"Arabic" = "अरबी";
+"Hebrew" = "हिब्रू";
 "System Language (%@)" = "सिस्टम भाषा (%@)";
 "Share App" = "ऐप साझा करें";
 "Share" = "साझा करें";
@@ -138,6 +140,9 @@
 
 /* Explore */
 "Today's Recommendations" = "आज की सिफारिशें";
+"Today's Special" = "आज का विशेष";
+"Follow" = "फॉलो करें";
+"Chef's Choice" = "शेफ की पसंद";
 "Weekly Menu" = "साप्ताहिक मेनू";
 "Trending" = "ट्रेंडिंग";
 "Ranking" = "रैंकिंग";
@@ -234,11 +239,14 @@
 "Head" = "सिर";
 "Strand" = "लड़ी";
 "Strands" = "लड़ियाँ";
+"Large" = "बड़ा";
+"Small" = "छोटा";
 "Source images used for recipe extraction" = "व्यंजन निष्कर्षण के लिए उपयोग की गई स्रोत छवियां";
 "Source image used for recipe extraction" = "व्यंजन निष्कर्षण के लिए उपयोग की गई स्रोत छवि";
 "Source" = "स्रोत";
 "Created on:" = "बनाया गया:";
 "Updated on:" = "अपडेट किया गया:";
+"by" = "द्वारा";
 
 /* Spicy Level */
 "None" = "कोई नहीं";

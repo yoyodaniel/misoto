@@ -34,11 +34,10 @@ class ExtractMenuWithAIViewModel: ObservableObject {
     @Published var marinadeIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var seasoningIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var dishIngredients: [RecipeTextParser.IngredientItem] = []
-    @Published var batterIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var doughBatterFillingIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var sauceIngredients: [RecipeTextParser.IngredientItem] = []
-    @Published var baseIngredients: [RecipeTextParser.IngredientItem] = []
-    @Published var doughIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var toppingIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var garnishIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var instructions: [String] = []
     @Published var mainRecipeImages: [UIImage] = [] // Up to 5 images for the recipe
     private var sourceImage: UIImage? = nil // Source image used for extraction
@@ -111,10 +110,10 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             dishIngredients = translated.dishIngredients.isEmpty ? [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")] : translated.dishIngredients
             marinadeIngredients = translated.marinadeIngredients
             seasoningIngredients = translated.seasoningIngredients
-            batterIngredients = translated.batterIngredients
+            // Consolidate batter, base, and dough into doughBatterFillingIngredients
+            // Note: fillingIngredients is not returned by translateRecipe, so we only consolidate the available types
+            doughBatterFillingIngredients = translated.batterIngredients + translated.baseIngredients + translated.doughIngredients
             sauceIngredients = translated.sauceIngredients
-            baseIngredients = translated.baseIngredients
-            doughIngredients = translated.doughIngredients
             toppingIngredients = translated.toppingIngredients
             instructions = translated.instructions.isEmpty ? [""] : translated.instructions
             tips = translated.tips
@@ -227,28 +226,28 @@ class ExtractMenuWithAIViewModel: ObservableObject {
         seasoningIngredients[index].name = name
     }
     
-    func addBatterIngredient() {
-        batterIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    func addDoughBatterFillingIngredient() {
+        doughBatterFillingIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
     }
     
-    func removeBatterIngredient(at index: Int) {
-        guard index >= 0 && index < batterIngredients.count else { return }
-        batterIngredients.remove(at: index)
+    func removeDoughBatterFillingIngredient(at index: Int) {
+        guard index >= 0 && index < doughBatterFillingIngredients.count else { return }
+        doughBatterFillingIngredients.remove(at: index)
     }
     
-    func updateBatterIngredientAmount(_ amount: String, at index: Int) {
-        guard index >= 0 && index < batterIngredients.count else { return }
-        batterIngredients[index].amount = amount
+    func updateDoughBatterFillingIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < doughBatterFillingIngredients.count else { return }
+        doughBatterFillingIngredients[index].amount = amount
     }
     
-    func updateBatterIngredientUnit(_ unit: String, at index: Int) {
-        guard index >= 0 && index < batterIngredients.count else { return }
-        batterIngredients[index].unit = unit
+    func updateDoughBatterFillingIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < doughBatterFillingIngredients.count else { return }
+        doughBatterFillingIngredients[index].unit = unit
     }
     
-    func updateBatterIngredientName(_ name: String, at index: Int) {
-        guard index >= 0 && index < batterIngredients.count else { return }
-        batterIngredients[index].name = name
+    func updateDoughBatterFillingIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < doughBatterFillingIngredients.count else { return }
+        doughBatterFillingIngredients[index].name = name
     }
     
     func addSauceIngredient() {
@@ -275,54 +274,6 @@ class ExtractMenuWithAIViewModel: ObservableObject {
         sauceIngredients[index].name = name
     }
     
-    func addBaseIngredient() {
-        baseIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
-    }
-    
-    func removeBaseIngredient(at index: Int) {
-        guard index >= 0 && index < baseIngredients.count else { return }
-        baseIngredients.remove(at: index)
-    }
-    
-    func updateBaseIngredientAmount(_ amount: String, at index: Int) {
-        guard index >= 0 && index < baseIngredients.count else { return }
-        baseIngredients[index].amount = amount
-    }
-    
-    func updateBaseIngredientUnit(_ unit: String, at index: Int) {
-        guard index >= 0 && index < baseIngredients.count else { return }
-        baseIngredients[index].unit = unit
-    }
-    
-    func updateBaseIngredientName(_ name: String, at index: Int) {
-        guard index >= 0 && index < baseIngredients.count else { return }
-        baseIngredients[index].name = name
-    }
-    
-    func addDoughIngredient() {
-        doughIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
-    }
-    
-    func removeDoughIngredient(at index: Int) {
-        guard index >= 0 && index < doughIngredients.count else { return }
-        doughIngredients.remove(at: index)
-    }
-    
-    func updateDoughIngredientAmount(_ amount: String, at index: Int) {
-        guard index >= 0 && index < doughIngredients.count else { return }
-        doughIngredients[index].amount = amount
-    }
-    
-    func updateDoughIngredientUnit(_ unit: String, at index: Int) {
-        guard index >= 0 && index < doughIngredients.count else { return }
-        doughIngredients[index].unit = unit
-    }
-    
-    func updateDoughIngredientName(_ name: String, at index: Int) {
-        guard index >= 0 && index < doughIngredients.count else { return }
-        doughIngredients[index].name = name
-    }
-    
     func addToppingIngredient() {
         toppingIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
     }
@@ -345,6 +296,30 @@ class ExtractMenuWithAIViewModel: ObservableObject {
     func updateToppingIngredientName(_ name: String, at index: Int) {
         guard index >= 0 && index < toppingIngredients.count else { return }
         toppingIngredients[index].name = name
+    }
+    
+    func addGarnishIngredient() {
+        garnishIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeGarnishIngredient(at index: Int) {
+        guard index >= 0 && index < garnishIngredients.count else { return }
+        garnishIngredients.remove(at: index)
+    }
+    
+    func updateGarnishIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < garnishIngredients.count else { return }
+        garnishIngredients[index].amount = amount
+    }
+    
+    func updateGarnishIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < garnishIngredients.count else { return }
+        garnishIngredients[index].unit = unit
+    }
+    
+    func updateGarnishIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < garnishIngredients.count else { return }
+        garnishIngredients[index].name = name
     }
     
     func updateInstruction(_ instruction: String, at index: Int) {
@@ -386,6 +361,8 @@ class ExtractMenuWithAIViewModel: ObservableObject {
         let authService = AuthService()
         await authService.reloadUserData()
         let username = authService.currentUser?.username
+        // Use username for authorName if available, otherwise fall back to displayName
+        let authorName = username ?? displayName
         
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
             errorMessage = LocalizedString("Title is required", comment: "Title required error")
@@ -396,11 +373,10 @@ class ExtractMenuWithAIViewModel: ObservableObject {
         let validMarinadeItems = marinadeIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validSeasoningItems = seasoningIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validDishItems = dishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validBatterItems = batterIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validDoughBatterFillingItems = doughBatterFillingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validSauceItems = sauceIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validBaseItems = baseIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validDoughItems = doughIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validToppingItems = toppingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validGarnishItems = garnishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         
         guard !validDishItems.isEmpty else {
             errorMessage = LocalizedString("At least one dish ingredient is required", comment: "Dish ingredients required error")
@@ -420,20 +396,17 @@ class ExtractMenuWithAIViewModel: ObservableObject {
         ingredientObjects.append(contentsOf: validSeasoningItems.map { 
             Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .seasoning) 
         })
-        ingredientObjects.append(contentsOf: validBatterItems.map { 
-            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .batter) 
+        ingredientObjects.append(contentsOf: validDoughBatterFillingItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .batter) // Default to .batter for consolidated dough/batter/filling section
         })
         ingredientObjects.append(contentsOf: validSauceItems.map { 
             Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .sauce) 
         })
-        ingredientObjects.append(contentsOf: validBaseItems.map { 
-            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .base) 
-        })
-        ingredientObjects.append(contentsOf: validDoughItems.map { 
-            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .dough) 
-        })
         ingredientObjects.append(contentsOf: validToppingItems.map { 
             Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .topping) 
+        })
+        ingredientObjects.append(contentsOf: validGarnishItems.map { 
+            Ingredient(amount: $0.amount, unit: $0.unit, name: $0.name, category: .garnish) 
         })
         
         let validInstructions = instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -489,7 +462,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             
             print("📝 Creating recipe with sourceImageURLs: \(sourceImageURLs)")
             // Use original language as primary title
-            let primaryTitle = titleOriginal ?? titleLocal ?? titleEnglish ?? ""
+            let primaryTitle = titleOriginal ?? (titleLocal.isEmpty ? titleEnglish : titleLocal)
             let recipe = Recipe(
                 title: primaryTitle, // Use original language as primary
                 titleEnglish: titleEnglish,
@@ -510,7 +483,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
                 sourceImageURL: sourceImageURLs.first, // For backward compatibility
                 sourceImageURLs: sourceImageURLs,
                 authorID: userID,
-                authorName: displayName,
+                authorName: authorName,
                 authorUsername: username
             )
             

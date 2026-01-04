@@ -44,7 +44,7 @@ class OpenAIService {
         
         for image in images {
         // Optimize image before sending to API (resize and compress to reduce payload size)
-        let optimizedImage = await ImageOptimizer.resizeForProcessing(image)
+        let optimizedImage = ImageOptimizer.resizeForProcessing(image)
         
         // Convert image to base64 with compression (reduced quality slightly to save on tokens)
         guard let imageData = ImageOptimizer.compressImage(optimizedImage, quality: 0.75, maxFileSizeKB: 800) else {
@@ -79,8 +79,7 @@ class OpenAIService {
         Extract recipe from image(s). If multiple images are provided, combine information from all images to create a complete recipe. 
         IMPORTANT: Check ALL text in the images for references to other pages or recipes (e.g., "see page 245", "refer to page X"). 
         If ingredients mention other pages, those pages likely contain marinade/sauce/preparation recipes that must be included FIRST in the instructions.
-        TRANSLATE ALL TEXT TO ENGLISH: If the recipe text is in any language other than English, translate it to English before extracting. 
-        All extracted content (title, description, ingredients, instructions) must be in English. Return JSON only.
+        PRESERVE THE ORIGINAL LANGUAGE: Keep the same language as the text in the images. Do NOT translate to English unless the language is not supported. Preserve original terminology and key details. Return JSON only.
         
         Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions.
         Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch), name (Capitalized Words).
@@ -142,12 +141,21 @@ class OpenAIService {
         - COMMON ERRORS TO AVOID: Do not confuse "powder" with "oil", "fresh" with "dried", "ground" with "whole", "chopped" with "whole", etc. Extract the exact word as written.
         
         INGREDIENT SECTION ASSIGNMENT RULES (CRITICAL - NO DUPLICATION):
-        - marinadeIngredients: ONLY ingredients that are explicitly part of a marinade, sauce, or pre-soaking mixture. If an ingredient is mentioned as part of a marinade (e.g., "marinate with mirin, soy sauce, and sugar"), place it ONLY in marinadeIngredients, NOT in dishIngredients.
-        - dishIngredients: ONLY ingredients that are used directly in the main cooking/preparation process, NOT ingredients that are already included in marinades.
-        - seasoningIngredients: ONLY spices, herbs, salt, pepper, and other seasonings used for flavoring during cooking.
-        - CHECK FOR DUPLICATION: Before placing an ingredient, verify it does not already exist in another section. If an ingredient is part of a marinade, it should ONLY appear in marinadeIngredients, never in dishIngredients.
-        - If the recipe mentions "marinade" or "marinate", all ingredients listed in that marinade must go ONLY in marinadeIngredients.
-        - Example: If mirin is used in a marinade, it should ONLY be in marinadeIngredients, NOT duplicated in dishIngredients.
+        Use these category names when assigning ingredients:
+        - dishIngredients: "For the main ingredients" - ONLY ingredients that are used directly in the main cooking/preparation process, NOT ingredients that are already included in marinades, sauces, batters, etc.
+        - marinadeIngredients: "For the marinade / brine" - ONLY ingredients that are explicitly part of a marinade, brine, or pre-soaking mixture. If an ingredient is mentioned as part of a marinade (e.g., "marinate with mirin, soy sauce, and sugar"), place it ONLY in marinadeIngredients, NOT in dishIngredients.
+        - seasoningIngredients: "For seasoning during cooking" - ONLY spices, herbs, salt, pepper, and other seasonings used for flavoring during cooking, NOT ingredients that belong to other specific sections.
+        - batterIngredients: "For the dough / batter / filling" - ONLY ingredients that are explicitly part of a batter. If text says "batter", "for batter", "batter ingredients", or lists ingredients under a "batter" heading, place them ONLY in batterIngredients.
+        - doughIngredients: "For the dough / batter / filling" - ONLY ingredients that are explicitly part of a dough. If text says "dough", "for dough", "dough ingredients", or lists ingredients under a "dough" heading, place them ONLY in doughIngredients.
+        - fillingIngredients: "For the dough / batter / filling" - ONLY ingredients that are explicitly part of a filling. If text says "filling", "for filling", "filling ingredients", or lists ingredients under a "filling" heading, place them ONLY in fillingIngredients.
+        - sauceIngredients: "For the sauce" - ONLY ingredients that are explicitly part of a sauce. If text says "sauce", "for sauce", "sauce ingredients", or lists ingredients under a "sauce" heading, place them ONLY in sauceIngredients.
+        - toppingIngredients: "For the toppings" - ONLY ingredients that are explicitly part of a topping. If text says "topping", "for topping", "topping ingredients", or lists ingredients under a "topping" heading, place them ONLY in toppingIngredients.
+        - garnishIngredients: "To finish / To garnish" - ONLY ingredients that are used for finishing, garnishing, or decorating the dish at the end. If text says "garnish", "to garnish", "to finish", "for garnish", "garnish ingredients", or lists ingredients under a "garnish" or "finish" heading, place them ONLY in garnishIngredients.
+        - CHECK FOR DUPLICATION: Before placing an ingredient, verify it does not already exist in another section. Each ingredient should appear in ONLY ONE section based on the text context.
+        - CONTEXT-BASED ASSIGNMENT: If the text clearly indicates a section (e.g., "Sauce: soy sauce, mirin, sugar" or "For the batter: flour, eggs, milk"), assign ingredients to that specific section.
+        - Example: If text says "Sauce: soy sauce, mirin, sugar", place ALL three in sauceIngredients, NOT in dishIngredients or marinadeIngredients.
+        - Example: If text says "Batter: flour, eggs, water", place ALL three in batterIngredients, NOT in dishIngredients.
+        - Example: If text says "For garnish: green onions, sesame seeds", place them in garnishIngredients, NOT in dishIngredients.
         
         INSTRUCTIONS EXTRACTION GUIDELINES:
         - CHECK TEXT BEFORE WRITING: Carefully read and analyze ALL text in the images before extracting instructions. Look for references to other pages, recipes, or preparations (e.g., "see page 245", "refer to recipe on page X", "Nubo-style saikyo miso (see page 245)").
@@ -200,7 +208,7 @@ class OpenAIService {
         - If no tips are found, use an empty array []
         
         JSON format:
-        {"title":"Recipe Title","description":"Description","servings":4,"prepTime":30,"cookTime":60,"dishIngredients":[{"amount":"12","unit":"","name":"Item"}],"marinadeIngredients":[],"seasoningIngredients":[],"batterIngredients":[],"sauceIngredients":[],"baseIngredients":[],"doughIngredients":[],"toppingIngredients":[],"instructions":["Step 1 with full details","Step 2 with full details"],"tips":["Tip 1","Tip 2"]}
+        {"title":"Recipe Title","description":"Description","servings":4,"prepTime":30,"cookTime":60,"dishIngredients":[{"amount":"12","unit":"","name":"Item"}],"marinadeIngredients":[],"seasoningIngredients":[],"batterIngredients":[],"sauceIngredients":[],"baseIngredients":[],"doughIngredients":[],"toppingIngredients":[],"fillingIngredients":[],"garnishIngredients":[],"instructions":["Step 1 with full details","Step 2 with full details"],"tips":["Tip 1","Tip 2"]}
         """
         
         let userPrompt = images.count > 1 ? "Extract recipe from all images. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. Combine information from all pages to create a complete recipe. PRESERVE the original language. Rewrite instructions for better flow and clarity, keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only." : "Extract recipe from image. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. PRESERVE the original language. Rewrite instructions for better flow and clarity, keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only."
@@ -301,7 +309,7 @@ class OpenAIService {
         IMPORTANT: Ingredients may be formatted with bullet points, dashes, or hyphens (e.g., "- 500gr bakkeljauw", "– 2 uien", "• 4 teentjes knoflook"). 
         Always extract the amount and unit correctly even when prefixed with these characters. Ignore leading dashes, bullets, or hyphens when parsing amounts.
         
-        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions.
+        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, fillingIngredients, garnishIngredients, instructions.
         Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch/gr/gram/grams), name (Capitalized Words).
         Note: "Oz" unit usage - CRITICAL DISTINCTION:
         - Use "fl_oz" (liquid ounces) ONLY for liquids: water, milk, oil, broth, juice, wine, vinegar, etc.
@@ -361,19 +369,23 @@ class OpenAIService {
         - COMMON ERRORS TO AVOID: Do not confuse "powder" with "oil", "fresh" with "dried", "ground" with "whole", "chopped" with "whole", etc. Extract the exact word as written.
         
         INGREDIENT SECTION ASSIGNMENT RULES (CRITICAL - NO DUPLICATION):
-        - READ TEXT CONTEXT CAREFULLY: Pay attention to how ingredients are described in the text. If the text explicitly mentions a section name (e.g., "sauce", "batter", "base", "dough", "topping", "marinade"), place those ingredients in the corresponding section.
-        - marinadeIngredients: ONLY ingredients that are explicitly part of a marinade or pre-soaking mixture. If text says "marinade", "marinate", or lists ingredients "for marinade", place them ONLY in marinadeIngredients.
-        - sauceIngredients: ONLY ingredients that are explicitly part of a sauce. If text says "sauce", "for sauce", "sauce ingredients", or lists ingredients under a "sauce" heading, place them ONLY in sauceIngredients.
-        - batterIngredients: ONLY ingredients that are explicitly part of a batter. If text says "batter", "for batter", "batter ingredients", or lists ingredients under a "batter" heading, place them ONLY in batterIngredients.
+        Use these category names when assigning ingredients:
+        - dishIngredients: "For the main ingredients" - ONLY ingredients that are used directly in the main cooking/preparation process, NOT ingredients that are already included in marinades, sauces, batters, etc.
+        - marinadeIngredients: "For the marinade / brine" - ONLY ingredients that are explicitly part of a marinade, brine, or pre-soaking mixture. If text says "marinade", "marinate", "brine", or lists ingredients "for marinade" or "for brine", place them ONLY in marinadeIngredients.
+        - seasoningIngredients: "For seasoning during cooking" - ONLY spices, herbs, salt, pepper, and other seasonings used for flavoring during cooking, NOT ingredients that belong to other specific sections.
+        - batterIngredients: "For the dough / batter / filling" - ONLY ingredients that are explicitly part of a batter. If text says "batter", "for batter", "batter ingredients", or lists ingredients under a "batter" heading, place them ONLY in batterIngredients.
+        - doughIngredients: "For the dough / batter / filling" - ONLY ingredients that are explicitly part of a dough. If text says "dough", "for dough", "dough ingredients", or lists ingredients under a "dough" heading, place them ONLY in doughIngredients.
+        - fillingIngredients: "For the dough / batter / filling" - ONLY ingredients that are explicitly part of a filling. If text says "filling", "for filling", "filling ingredients", or lists ingredients under a "filling" heading, place them ONLY in fillingIngredients.
+        - sauceIngredients: "For the sauce" - ONLY ingredients that are explicitly part of a sauce. If text says "sauce", "for sauce", "sauce ingredients", or lists ingredients under a "sauce" heading, place them ONLY in sauceIngredients.
         - baseIngredients: ONLY ingredients that are explicitly part of a base. If text says "base", "for base", "base ingredients", or lists ingredients under a "base" heading, place them ONLY in baseIngredients.
-        - doughIngredients: ONLY ingredients that are explicitly part of a dough. If text says "dough", "for dough", "dough ingredients", or lists ingredients under a "dough" heading, place them ONLY in doughIngredients.
-        - toppingIngredients: ONLY ingredients that are explicitly part of a topping. If text says "topping", "for topping", "topping ingredients", or lists ingredients under a "topping" heading, place them ONLY in toppingIngredients.
-        - dishIngredients: ONLY ingredients that are used directly in the main cooking/preparation process, NOT ingredients that are already included in other sections (marinade, sauce, batter, base, dough, topping).
-        - seasoningIngredients: ONLY spices, herbs, salt, pepper, and other seasonings used for flavoring during cooking, NOT ingredients that belong to other specific sections.
+        - toppingIngredients: "For the toppings" - ONLY ingredients that are explicitly part of a topping. If text says "topping", "for topping", "topping ingredients", or lists ingredients under a "topping" heading, place them ONLY in toppingIngredients.
+        - garnishIngredients: "To finish / To garnish" - ONLY ingredients that are used for finishing, garnishing, or decorating the dish at the end. If text says "garnish", "to garnish", "to finish", "for garnish", "garnish ingredients", or lists ingredients under a "garnish" or "finish" heading, place them ONLY in garnishIngredients.
+        - READ TEXT CONTEXT CAREFULLY: Pay attention to how ingredients are described in the text. If the text explicitly mentions a section name, place those ingredients in the corresponding section.
         - CHECK FOR DUPLICATION: Before placing an ingredient, verify it does not already exist in another section. Each ingredient should appear in ONLY ONE section based on the text context.
         - CONTEXT-BASED ASSIGNMENT: If the text clearly indicates a section (e.g., "Sauce: soy sauce, mirin, sugar" or "For the batter: flour, eggs, milk"), assign ingredients to that specific section.
         - Example: If text says "Sauce: soy sauce, mirin, sugar", place ALL three in sauceIngredients, NOT in dishIngredients or marinadeIngredients.
         - Example: If text says "Batter: flour, eggs, water", place ALL three in batterIngredients, NOT in dishIngredients.
+        - Example: If text says "For garnish: green onions, sesame seeds", place them in garnishIngredients, NOT in dishIngredients.
         
         SERVINGS EXTRACTION:
         - Look for text indicating number of servings: "serves 4", "4 servings", "serves 4-6", "makes 4 servings", etc.
@@ -535,7 +547,7 @@ class OpenAIService {
         IMPORTANT: Ingredients may be formatted with bullet points, dashes, or hyphens (e.g., "- 500gr bakkeljauw", "– 2 uien", "• 4 teentjes knoflook"). 
         Always extract the amount and unit correctly even when prefixed with these characters. Ignore leading dashes, bullets, or hyphens when parsing amounts.
         
-        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions.
+        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, fillingIngredients, garnishIngredients, instructions.
         Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch/gr/gram/grams), name (Capitalized Words).
         Note: "Oz" unit usage - CRITICAL DISTINCTION:
         - Use "fl_oz" (liquid ounces) ONLY for liquids: water, milk, oil, broth, juice, wine, vinegar, etc.
@@ -595,19 +607,23 @@ class OpenAIService {
         - COMMON ERRORS TO AVOID: Do not confuse "powder" with "oil", "fresh" with "dried", "ground" with "whole", "chopped" with "whole", etc. Extract the exact word as written.
         
         INGREDIENT SECTION ASSIGNMENT RULES (CRITICAL - NO DUPLICATION):
-        - READ TEXT CONTEXT CAREFULLY: Pay attention to how ingredients are described in the text. If the text explicitly mentions a section name (e.g., "sauce", "batter", "base", "dough", "topping", "marinade"), place those ingredients in the corresponding section.
-        - marinadeIngredients: ONLY ingredients that are explicitly part of a marinade or pre-soaking mixture. If text says "marinade", "marinate", or lists ingredients "for marinade", place them ONLY in marinadeIngredients.
-        - sauceIngredients: ONLY ingredients that are explicitly part of a sauce. If text says "sauce", "for sauce", "sauce ingredients", or lists ingredients under a "sauce" heading, place them ONLY in sauceIngredients.
-        - batterIngredients: ONLY ingredients that are explicitly part of a batter. If text says "batter", "for batter", "batter ingredients", or lists ingredients under a "batter" heading, place them ONLY in batterIngredients.
+        Use these category names when assigning ingredients:
+        - dishIngredients: "For the main ingredients" - ONLY ingredients that are used directly in the main cooking/preparation process, NOT ingredients that are already included in marinades, sauces, batters, etc.
+        - marinadeIngredients: "For the marinade / brine" - ONLY ingredients that are explicitly part of a marinade, brine, or pre-soaking mixture. If text says "marinade", "marinate", "brine", or lists ingredients "for marinade" or "for brine", place them ONLY in marinadeIngredients.
+        - seasoningIngredients: "For seasoning during cooking" - ONLY spices, herbs, salt, pepper, and other seasonings used for flavoring during cooking, NOT ingredients that belong to other specific sections.
+        - batterIngredients: "For the dough / batter / filling" - ONLY ingredients that are explicitly part of a batter. If text says "batter", "for batter", "batter ingredients", or lists ingredients under a "batter" heading, place them ONLY in batterIngredients.
+        - doughIngredients: "For the dough / batter / filling" - ONLY ingredients that are explicitly part of a dough. If text says "dough", "for dough", "dough ingredients", or lists ingredients under a "dough" heading, place them ONLY in doughIngredients.
+        - fillingIngredients: "For the dough / batter / filling" - ONLY ingredients that are explicitly part of a filling. If text says "filling", "for filling", "filling ingredients", or lists ingredients under a "filling" heading, place them ONLY in fillingIngredients.
+        - sauceIngredients: "For the sauce" - ONLY ingredients that are explicitly part of a sauce. If text says "sauce", "for sauce", "sauce ingredients", or lists ingredients under a "sauce" heading, place them ONLY in sauceIngredients.
         - baseIngredients: ONLY ingredients that are explicitly part of a base. If text says "base", "for base", "base ingredients", or lists ingredients under a "base" heading, place them ONLY in baseIngredients.
-        - doughIngredients: ONLY ingredients that are explicitly part of a dough. If text says "dough", "for dough", "dough ingredients", or lists ingredients under a "dough" heading, place them ONLY in doughIngredients.
-        - toppingIngredients: ONLY ingredients that are explicitly part of a topping. If text says "topping", "for topping", "topping ingredients", or lists ingredients under a "topping" heading, place them ONLY in toppingIngredients.
-        - dishIngredients: ONLY ingredients that are used directly in the main cooking/preparation process, NOT ingredients that are already included in other sections (marinade, sauce, batter, base, dough, topping).
-        - seasoningIngredients: ONLY spices, herbs, salt, pepper, and other seasonings used for flavoring during cooking, NOT ingredients that belong to other specific sections.
+        - toppingIngredients: "For the toppings" - ONLY ingredients that are explicitly part of a topping. If text says "topping", "for topping", "topping ingredients", or lists ingredients under a "topping" heading, place them ONLY in toppingIngredients.
+        - garnishIngredients: "To finish / To garnish" - ONLY ingredients that are used for finishing, garnishing, or decorating the dish at the end. If text says "garnish", "to garnish", "to finish", "for garnish", "garnish ingredients", or lists ingredients under a "garnish" or "finish" heading, place them ONLY in garnishIngredients.
+        - READ TEXT CONTEXT CAREFULLY: Pay attention to how ingredients are described in the text. If the text explicitly mentions a section name, place those ingredients in the corresponding section.
         - CHECK FOR DUPLICATION: Before placing an ingredient, verify it does not already exist in another section. Each ingredient should appear in ONLY ONE section based on the text context.
         - CONTEXT-BASED ASSIGNMENT: If the text clearly indicates a section (e.g., "Sauce: soy sauce, mirin, sugar" or "For the batter: flour, eggs, milk"), assign ingredients to that specific section.
         - Example: If text says "Sauce: soy sauce, mirin, sugar", place ALL three in sauceIngredients, NOT in dishIngredients or marinadeIngredients.
         - Example: If text says "Batter: flour, eggs, water", place ALL three in batterIngredients, NOT in dishIngredients.
+        - Example: If text says "For garnish: green onions, sesame seeds", place them in garnishIngredients, NOT in dishIngredients.
         
         SERVINGS EXTRACTION:
         - Look for text indicating number of servings: "serves 4", "4 servings", "serves 4-6", "makes 4 servings", etc.
@@ -1363,7 +1379,6 @@ class OpenAIService {
         }
         
         guard httpResponse.statusCode == 200 else {
-            let errorMessage = String(data: responseData, encoding: .utf8) ?? "Unknown error"
             throw OpenAIError.httpError(httpResponse.statusCode)
         }
         
@@ -1489,7 +1504,9 @@ class OpenAIService {
             "id": "Indonesian",
             "ms": "Malay",
             "fil": "Filipino",
-            "hi": "Hindi"
+            "hi": "Hindi",
+            "ar": "Arabic",
+            "he": "Hebrew"
         ]
         
         // Check for exact match first

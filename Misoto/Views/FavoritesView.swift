@@ -54,7 +54,7 @@ struct FavoritesView: View {
             await viewModel.loadFavorites()
         }
         .fullScreenCover(item: $selectedRecipe) { recipe in
-            ModernRecipeDetailView(recipe: recipe)
+            RecipeDetailOverviewView(recipe: recipe)
         }
     }
 }

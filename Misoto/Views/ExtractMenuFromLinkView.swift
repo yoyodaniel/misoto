@@ -184,7 +184,7 @@ struct ExtractMenuFromLinkView: View {
                 Task {
                     for image in images {
                         // Optimize image for display to reduce memory usage
-                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                        let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                         await MainActor.run {
                             // addRecipeImage has a guard to prevent more than 5 images total
                             viewModel.addRecipeImage(optimizedImage)
@@ -198,7 +198,7 @@ struct ExtractMenuFromLinkView: View {
                 // Add the captured image to recipe images
                 Task {
                     // Optimize image for display to reduce memory usage
-                    let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                    let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                     await MainActor.run {
                         // addRecipeImage has a guard to prevent more than 5 images total
                         viewModel.addRecipeImage(optimizedImage)
@@ -240,7 +240,7 @@ struct ExtractMenuFromLinkView: View {
                     if let data = try? await item.loadTransferable(type: Data.self),
                        let image = UIImage(data: data) {
                         // Optimize image for display and add to recipe images
-                        let optimizedImage = await ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+                        let optimizedImage = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
                         await MainActor.run {
                             // addRecipeImage has a guard to prevent more than 5 images total
                             viewModel.addRecipeImage(optimizedImage)
@@ -260,11 +260,10 @@ struct ExtractMenuFromLinkView: View {
         let dishIngredientMethods = makeDishIngredientMethods()
         let marinadeIngredientMethods = makeMarinadeIngredientMethods()
         let seasoningIngredientMethods = makeSeasoningIngredientMethods()
-        let batterIngredientMethods = makeBatterIngredientMethods()
+        let doughBatterFillingIngredientMethods = makeDoughBatterFillingIngredientMethods()
         let sauceIngredientMethods = makeSauceIngredientMethods()
-        let baseIngredientMethods = makeBaseIngredientMethods()
-        let doughIngredientMethods = makeDoughIngredientMethods()
         let toppingIngredientMethods = makeToppingIngredientMethods()
+        let garnishIngredientMethods = makeGarnishIngredientMethods()
         
         RecipeEditForm(
             title: $viewModel.title,
@@ -282,11 +281,10 @@ struct ExtractMenuFromLinkView: View {
             dishIngredients: $viewModel.dishIngredients,
             marinadeIngredients: $viewModel.marinadeIngredients,
             seasoningIngredients: $viewModel.seasoningIngredients,
-            batterIngredients: $viewModel.batterIngredients,
+            doughBatterFillingIngredients: $viewModel.doughBatterFillingIngredients,
             sauceIngredients: $viewModel.sauceIngredients,
-            baseIngredients: $viewModel.baseIngredients,
-            doughIngredients: $viewModel.doughIngredients,
             toppingIngredients: $viewModel.toppingIngredients,
+            garnishIngredients: $viewModel.garnishIngredients,
             mainRecipeImages: $viewModel.mainRecipeImages,
             isGeneratingDescription: viewModel.isGeneratingDescription,
             isDetectingCuisine: viewModel.isDetectingCuisine,
@@ -306,31 +304,26 @@ struct ExtractMenuFromLinkView: View {
             updateSeasoningIngredientAmount: seasoningIngredientMethods.updateAmount,
             updateSeasoningIngredientUnit: seasoningIngredientMethods.updateUnit,
             updateSeasoningIngredientName: seasoningIngredientMethods.updateName,
-            addBatterIngredient: batterIngredientMethods.add,
-            removeBatterIngredient: batterIngredientMethods.remove,
-            updateBatterIngredientAmount: batterIngredientMethods.updateAmount,
-            updateBatterIngredientUnit: batterIngredientMethods.updateUnit,
-            updateBatterIngredientName: batterIngredientMethods.updateName,
+            addDoughBatterFillingIngredient: doughBatterFillingIngredientMethods.add,
+            removeDoughBatterFillingIngredient: doughBatterFillingIngredientMethods.remove,
+            updateDoughBatterFillingIngredientAmount: doughBatterFillingIngredientMethods.updateAmount,
+            updateDoughBatterFillingIngredientUnit: doughBatterFillingIngredientMethods.updateUnit,
+            updateDoughBatterFillingIngredientName: doughBatterFillingIngredientMethods.updateName,
             addSauceIngredient: sauceIngredientMethods.add,
             removeSauceIngredient: sauceIngredientMethods.remove,
             updateSauceIngredientAmount: sauceIngredientMethods.updateAmount,
             updateSauceIngredientUnit: sauceIngredientMethods.updateUnit,
             updateSauceIngredientName: sauceIngredientMethods.updateName,
-            addBaseIngredient: baseIngredientMethods.add,
-            removeBaseIngredient: baseIngredientMethods.remove,
-            updateBaseIngredientAmount: baseIngredientMethods.updateAmount,
-            updateBaseIngredientUnit: baseIngredientMethods.updateUnit,
-            updateBaseIngredientName: baseIngredientMethods.updateName,
-            addDoughIngredient: doughIngredientMethods.add,
-            removeDoughIngredient: doughIngredientMethods.remove,
-            updateDoughIngredientAmount: doughIngredientMethods.updateAmount,
-            updateDoughIngredientUnit: doughIngredientMethods.updateUnit,
-            updateDoughIngredientName: doughIngredientMethods.updateName,
             addToppingIngredient: toppingIngredientMethods.add,
             removeToppingIngredient: toppingIngredientMethods.remove,
             updateToppingIngredientAmount: toppingIngredientMethods.updateAmount,
             updateToppingIngredientUnit: toppingIngredientMethods.updateUnit,
             updateToppingIngredientName: toppingIngredientMethods.updateName,
+            addGarnishIngredient: garnishIngredientMethods.add,
+            removeGarnishIngredient: garnishIngredientMethods.remove,
+            updateGarnishIngredientAmount: garnishIngredientMethods.updateAmount,
+            updateGarnishIngredientUnit: garnishIngredientMethods.updateUnit,
+            updateGarnishIngredientName: garnishIngredientMethods.updateName,
             addRecipeImage: { image in
                 viewModel.addRecipeImage(image)
             },
@@ -399,16 +392,6 @@ struct ExtractMenuFromLinkView: View {
         )
     }
     
-    private func makeBatterIngredientMethods() -> IngredientMethods {
-        IngredientMethods(
-            add: { viewModel.addBatterIngredient() },
-            remove: { viewModel.removeBatterIngredient(at: $0) },
-            updateAmount: { viewModel.updateBatterIngredientAmount($0, at: $1) },
-            updateUnit: { viewModel.updateBatterIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateBatterIngredientName($0, at: $1) }
-        )
-    }
-    
     private func makeSauceIngredientMethods() -> IngredientMethods {
         IngredientMethods(
             add: { viewModel.addSauceIngredient() },
@@ -419,23 +402,13 @@ struct ExtractMenuFromLinkView: View {
         )
     }
     
-    private func makeBaseIngredientMethods() -> IngredientMethods {
+    private func makeDoughBatterFillingIngredientMethods() -> IngredientMethods {
         IngredientMethods(
-            add: { viewModel.addBaseIngredient() },
-            remove: { viewModel.removeBaseIngredient(at: $0) },
-            updateAmount: { viewModel.updateBaseIngredientAmount($0, at: $1) },
-            updateUnit: { viewModel.updateBaseIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateBaseIngredientName($0, at: $1) }
-        )
-    }
-    
-    private func makeDoughIngredientMethods() -> IngredientMethods {
-        IngredientMethods(
-            add: { viewModel.addDoughIngredient() },
-            remove: { viewModel.removeDoughIngredient(at: $0) },
-            updateAmount: { viewModel.updateDoughIngredientAmount($0, at: $1) },
-            updateUnit: { viewModel.updateDoughIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateDoughIngredientName($0, at: $1) }
+            add: { viewModel.addDoughBatterFillingIngredient() },
+            remove: { viewModel.removeDoughBatterFillingIngredient(at: $0) },
+            updateAmount: { viewModel.updateDoughBatterFillingIngredientAmount($0, at: $1) },
+            updateUnit: { viewModel.updateDoughBatterFillingIngredientUnit($0, at: $1) },
+            updateName: { viewModel.updateDoughBatterFillingIngredientName($0, at: $1) }
         )
     }
     
@@ -446,6 +419,16 @@ struct ExtractMenuFromLinkView: View {
             updateAmount: { viewModel.updateToppingIngredientAmount($0, at: $1) },
             updateUnit: { viewModel.updateToppingIngredientUnit($0, at: $1) },
             updateName: { viewModel.updateToppingIngredientName($0, at: $1) }
+        )
+    }
+    
+    private func makeGarnishIngredientMethods() -> IngredientMethods {
+        IngredientMethods(
+            add: { viewModel.addGarnishIngredient() },
+            remove: { viewModel.removeGarnishIngredient(at: $0) },
+            updateAmount: { viewModel.updateGarnishIngredientAmount($0, at: $1) },
+            updateUnit: { viewModel.updateGarnishIngredientUnit($0, at: $1) },
+            updateName: { viewModel.updateGarnishIngredientName($0, at: $1) }
         )
     }
     

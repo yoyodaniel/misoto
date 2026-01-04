@@ -52,6 +52,8 @@
 "Malay" = "Maleis";
 "Filipino" = "Filipino";
 "Hindi" = "Hindi";
+"Arabic" = "Arabisch";
+"Hebrew" = "Hebreeuws";
 "System Language (%@)" = "Systeemtaal (%@)";
 "Share App" = "App Delen";
 "Share" = "Delen";
@@ -138,6 +140,9 @@
 
 /* Explore */
 "Today's Recommendations" = "Aanbevelingen van Vandaag";
+"Today's Special" = "Speciaal van Vandaag";
+"Follow" = "Volgend";
+"Chef's Choice" = "Keuze van de Chef";
 "Weekly Menu" = "Wekelijks Menu";
 "Trending" = "Trending";
 "Ranking" = "Ranglijst";
@@ -234,11 +239,14 @@
 "Head" = "Kop";
 "Strand" = "Streng";
 "Strands" = "Strengen";
+"Large" = "Groot";
+"Small" = "Klein";
 "Source images used for recipe extraction" = "Bronafbeeldingen gebruikt voor receptextractie";
 "Source image used for recipe extraction" = "Bronafbeelding gebruikt voor receptextractie";
 "Source" = "Bron";
 "Created on:" = "Gemaakt op:";
 "Updated on:" = "Bijgewerkt op:";
+"by" = "door";
 
 /* Spicy Level */
 "None" = "Geen";

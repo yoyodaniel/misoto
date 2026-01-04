@@ -52,6 +52,8 @@
 "Malay" = "Tiếng Mã Lai";
 "Filipino" = "Tiếng Filipino";
 "Hindi" = "Tiếng Hindi";
+"Arabic" = "Tiếng Ả Rập";
+"Hebrew" = "Tiếng Do Thái";
 "System Language (%@)" = "Ngôn ngữ hệ thống (%@)";
 "Share App" = "Chia sẻ ứng dụng";
 "Share" = "Chia sẻ";
@@ -138,11 +140,15 @@
 
 /* Explore */
 "Today's Recommendations" = "Đề xuất hôm nay";
+"Today's Special" = "Đặc biệt hôm nay";
+"Follow" = "Theo dõi";
+"Chef's Choice" = "Lựa chọn của đầu bếp";
 "Weekly Menu" = "Thực đơn tuần";
 "Trending" = "Đang thịnh hành";
 "Ranking" = "Bảng xếp hạng";
 "Search ingredients, recipes" = "Tìm kiếm nguyên liệu, công thức";
 "No recipes found" = "Không tìm thấy công thức";
+"Collections" = "Bộ sưu tập";
 
 /* Favorites */
 "No favorites yet" = "Chưa có yêu thích";
@@ -233,11 +239,14 @@
 "Head" = "Củ";
 "Strand" = "Sợi";
 "Strands" = "Sợi";
+"Large" = "Lớn";
+"Small" = "Nhỏ";
 "Source images used for recipe extraction" = "Hình ảnh nguồn được sử dụng để trích xuất công thức";
 "Source image used for recipe extraction" = "Hình ảnh nguồn được sử dụng để trích xuất công thức";
 "Source" = "Nguồn";
 "Created on:" = "Tạo vào:";
 "Updated on:" = "Cập nhật vào:";
+"by" = "bởi";
 
 /* Spicy Level */
 "None" = "Không";

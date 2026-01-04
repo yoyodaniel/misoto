@@ -107,11 +107,23 @@ class CuisineTypes {
     
     static func searchCuisines(query: String) -> [String] {
         let lowercaseQuery = query.lowercased().trimmingCharacters(in: .whitespaces)
+        let results: [String]
         if lowercaseQuery.isEmpty {
-            return allCuisines
+            results = allCuisines
+        } else {
+            results = allCuisines.filter { cuisine in
+                // Search in both English and translated names
+                let englishMatch = cuisine.lowercased().contains(lowercaseQuery)
+                let translatedName = CuisineTranslations.translatedName(for: cuisine)
+                let translatedMatch = translatedName.lowercased().contains(lowercaseQuery)
+                return englishMatch || translatedMatch
+            }
         }
-        return allCuisines.filter { cuisine in
-            cuisine.lowercased().contains(lowercaseQuery)
+        // Sort by translated names alphabetically based on current language
+        return results.sorted { cuisine1, cuisine2 in
+            let translated1 = CuisineTranslations.translatedName(for: cuisine1)
+            let translated2 = CuisineTranslations.translatedName(for: cuisine2)
+            return translated1.localizedCaseInsensitiveCompare(translated2) == .orderedAscending
         }
     }
 }

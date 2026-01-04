@@ -18,11 +18,10 @@ class UploadRecipeViewModel: ObservableObject {
     @Published var dishIngredients: [RecipeTextParser.IngredientItem] = [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")]
     @Published var marinadeIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var seasoningIngredients: [RecipeTextParser.IngredientItem] = []
-    @Published var batterIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var doughBatterFillingIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var sauceIngredients: [RecipeTextParser.IngredientItem] = []
-    @Published var baseIngredients: [RecipeTextParser.IngredientItem] = []
-    @Published var doughIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var toppingIngredients: [RecipeTextParser.IngredientItem] = []
+    @Published var garnishIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var instructions: [InstructionItem] = [InstructionItem()]
     @Published var prepTime = 15
     @Published var cookTime = 30
@@ -128,28 +127,28 @@ class UploadRecipeViewModel: ObservableObject {
         seasoningIngredients[index].name = name
     }
     
-    func addBatterIngredient() {
-        batterIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    func addDoughBatterFillingIngredient() {
+        doughBatterFillingIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
     }
     
-    func removeBatterIngredient(at index: Int) {
-        guard index >= 0 && index < batterIngredients.count else { return }
-        batterIngredients.remove(at: index)
+    func removeDoughBatterFillingIngredient(at index: Int) {
+        guard index >= 0 && index < doughBatterFillingIngredients.count else { return }
+        doughBatterFillingIngredients.remove(at: index)
     }
     
-    func updateBatterIngredientAmount(_ amount: String, at index: Int) {
-        guard index >= 0 && index < batterIngredients.count else { return }
-        batterIngredients[index].amount = amount
+    func updateDoughBatterFillingIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < doughBatterFillingIngredients.count else { return }
+        doughBatterFillingIngredients[index].amount = amount
     }
     
-    func updateBatterIngredientUnit(_ unit: String, at index: Int) {
-        guard index >= 0 && index < batterIngredients.count else { return }
-        batterIngredients[index].unit = unit
+    func updateDoughBatterFillingIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < doughBatterFillingIngredients.count else { return }
+        doughBatterFillingIngredients[index].unit = unit
     }
     
-    func updateBatterIngredientName(_ name: String, at index: Int) {
-        guard index >= 0 && index < batterIngredients.count else { return }
-        batterIngredients[index].name = name
+    func updateDoughBatterFillingIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < doughBatterFillingIngredients.count else { return }
+        doughBatterFillingIngredients[index].name = name
     }
     
     func addSauceIngredient() {
@@ -176,54 +175,6 @@ class UploadRecipeViewModel: ObservableObject {
         sauceIngredients[index].name = name
     }
     
-    func addBaseIngredient() {
-        baseIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
-    }
-    
-    func removeBaseIngredient(at index: Int) {
-        guard index >= 0 && index < baseIngredients.count else { return }
-        baseIngredients.remove(at: index)
-    }
-    
-    func updateBaseIngredientAmount(_ amount: String, at index: Int) {
-        guard index >= 0 && index < baseIngredients.count else { return }
-        baseIngredients[index].amount = amount
-    }
-    
-    func updateBaseIngredientUnit(_ unit: String, at index: Int) {
-        guard index >= 0 && index < baseIngredients.count else { return }
-        baseIngredients[index].unit = unit
-    }
-    
-    func updateBaseIngredientName(_ name: String, at index: Int) {
-        guard index >= 0 && index < baseIngredients.count else { return }
-        baseIngredients[index].name = name
-    }
-    
-    func addDoughIngredient() {
-        doughIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
-    }
-    
-    func removeDoughIngredient(at index: Int) {
-        guard index >= 0 && index < doughIngredients.count else { return }
-        doughIngredients.remove(at: index)
-    }
-    
-    func updateDoughIngredientAmount(_ amount: String, at index: Int) {
-        guard index >= 0 && index < doughIngredients.count else { return }
-        doughIngredients[index].amount = amount
-    }
-    
-    func updateDoughIngredientUnit(_ unit: String, at index: Int) {
-        guard index >= 0 && index < doughIngredients.count else { return }
-        doughIngredients[index].unit = unit
-    }
-    
-    func updateDoughIngredientName(_ name: String, at index: Int) {
-        guard index >= 0 && index < doughIngredients.count else { return }
-        doughIngredients[index].name = name
-    }
-    
     func addToppingIngredient() {
         toppingIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
     }
@@ -246,6 +197,30 @@ class UploadRecipeViewModel: ObservableObject {
     func updateToppingIngredientName(_ name: String, at index: Int) {
         guard index >= 0 && index < toppingIngredients.count else { return }
         toppingIngredients[index].name = name
+    }
+    
+    func addGarnishIngredient() {
+        garnishIngredients.append(RecipeTextParser.IngredientItem(amount: "", unit: "", name: ""))
+    }
+    
+    func removeGarnishIngredient(at index: Int) {
+        guard index >= 0 && index < garnishIngredients.count else { return }
+        garnishIngredients.remove(at: index)
+    }
+    
+    func updateGarnishIngredientAmount(_ amount: String, at index: Int) {
+        guard index >= 0 && index < garnishIngredients.count else { return }
+        garnishIngredients[index].amount = amount
+    }
+    
+    func updateGarnishIngredientUnit(_ unit: String, at index: Int) {
+        guard index >= 0 && index < garnishIngredients.count else { return }
+        garnishIngredients[index].unit = unit
+    }
+    
+    func updateGarnishIngredientName(_ name: String, at index: Int) {
+        guard index >= 0 && index < garnishIngredients.count else { return }
+        garnishIngredients[index].name = name
     }
     
     func addRecipeImage(_ image: UIImage) {
@@ -318,6 +293,8 @@ class UploadRecipeViewModel: ObservableObject {
         // Get username from AuthService (ensure user data is loaded)
         await authService.reloadUserData()
         let username = authService.currentUser?.username
+        // Use username for authorName if available, otherwise fall back to displayName
+        let authorName = username ?? displayName
         
         // Validate
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
@@ -329,13 +306,12 @@ class UploadRecipeViewModel: ObservableObject {
         let validDishItems = dishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validMarinadeItems = marinadeIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validSeasoningItems = seasoningIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validBatterItems = batterIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validDoughBatterFillingItems = doughBatterFillingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validSauceItems = sauceIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validBaseItems = baseIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-        let validDoughItems = doughIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         let validToppingItems = toppingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        let validGarnishItems = garnishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
         
-        let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
+        let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validDoughBatterFillingItems + validSauceItems + validToppingItems + validGarnishItems
         
         guard !allValidIngredients.isEmpty else {
             errorMessage = LocalizedString("At least one ingredient is required", comment: "Ingredients required error")
@@ -352,16 +328,14 @@ class UploadRecipeViewModel: ObservableObject {
                 category = .marinade
             } else if validSeasoningItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
                 category = .seasoning
-            } else if validBatterItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
-                category = .batter
+            } else if validDoughBatterFillingItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .batter // Default to .batter for consolidated dough/batter/filling section
             } else if validSauceItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
                 category = .sauce
-            } else if validBaseItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
-                category = .base
-            } else if validDoughItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
-                category = .dough
             } else if validToppingItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
                 category = .topping
+            } else if validGarnishItems.contains(where: { $0.name == item.name && $0.amount == item.amount && $0.unit == item.unit }) {
+                category = .garnish
             } else {
                 category = nil
             }
@@ -428,7 +402,7 @@ class UploadRecipeViewModel: ObservableObject {
             let (titleEnglish, titleLocal, titleOriginal) = await RecipeTranslationService.translateTitle(titleTrimmed)
             
             // Use original language as primary title
-            let primaryTitle = titleOriginal ?? titleLocal ?? titleEnglish ?? ""
+            let primaryTitle = titleOriginal ?? (titleLocal.isEmpty ? titleEnglish : titleLocal)
             
             // Save cuisine in English (translations are handled by CuisineTranslations)
             let cuisineEnglish: String? = cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil
@@ -453,7 +427,7 @@ class UploadRecipeViewModel: ObservableObject {
                 imageURL: mainImageURL, // For backward compatibility
                 imageURLs: allImageURLs, // Array of all image URLs
                 authorID: userID,
-                authorName: displayName,
+                authorName: authorName,
                 authorUsername: username
             )
             
@@ -476,11 +450,10 @@ class UploadRecipeViewModel: ObservableObject {
         dishIngredients = [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")]
         marinadeIngredients = []
         seasoningIngredients = []
-        batterIngredients = []
+        doughBatterFillingIngredients = []
         sauceIngredients = []
-        baseIngredients = []
-        doughIngredients = []
         toppingIngredients = []
+        garnishIngredients = []
         instructions = [InstructionItem()]
         prepTime = 15
         cookTime = 30
@@ -509,13 +482,12 @@ class UploadRecipeViewModel: ObservableObject {
             let validDishItems = dishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             let validMarinadeItems = marinadeIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             let validSeasoningItems = seasoningIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-            let validBatterItems = batterIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+            let validDoughBatterFillingItems = doughBatterFillingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             let validSauceItems = sauceIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-            let validBaseItems = baseIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-            let validDoughItems = doughIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             let validToppingItems = toppingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+            let validGarnishItems = garnishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             
-            let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
+            let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validDoughBatterFillingItems + validSauceItems + validToppingItems + validGarnishItems
             
             // Convert to string format for API
             let ingredientsStrings = allValidIngredients.map { item in
@@ -568,13 +540,12 @@ class UploadRecipeViewModel: ObservableObject {
             let validDishItems = dishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             let validMarinadeItems = marinadeIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             let validSeasoningItems = seasoningIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-            let validBatterItems = batterIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+            let validDoughBatterFillingItems = doughBatterFillingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             let validSauceItems = sauceIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-            let validBaseItems = baseIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
-            let validDoughItems = doughIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             let validToppingItems = toppingIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+            let validGarnishItems = garnishIngredients.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
             
-            let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validBatterItems + validSauceItems + validBaseItems + validDoughItems + validToppingItems
+            let allValidIngredients = validDishItems + validMarinadeItems + validSeasoningItems + validDoughBatterFillingItems + validSauceItems + validToppingItems + validGarnishItems
             
             // Convert to string format for API
             let ingredientsStrings = allValidIngredients.map { item in

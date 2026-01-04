@@ -22,6 +22,8 @@ struct Ingredient: Codable, Equatable {
         case base = "base"
         case dough = "dough"
         case topping = "topping"
+        case filling = "filling"
+        case garnish = "garnish"
     }
     
     init(
@@ -41,7 +43,9 @@ struct Ingredient: Codable, Equatable {
         if unit.isEmpty {
             return amount.isEmpty ? name : "\(amount) \(name)"
         } else {
-            return "\(amount) \(unit) \(name)"
+            // Use UnitTranslations to get the translated and pluralized unit abbreviation
+            let translatedUnit = UnitTranslations.abbreviation(for: unit, amount: amount)
+            return "\(amount) \(translatedUnit) \(name)"
         }
     }
 }

@@ -52,6 +52,8 @@
 "Malay" = "Bahasa Melayu";
 "Filipino" = "Bahasa Filipino";
 "Hindi" = "Bahasa Hindi";
+"Arabic" = "Bahasa Arab";
+"Hebrew" = "Bahasa Ibrani";
 "System Language (%@)" = "Bahasa Sistem (%@)";
 "Share App" = "Bagikan Aplikasi";
 "Share" = "Bagikan";
@@ -138,11 +140,15 @@
 
 /* Explore */
 "Today's Recommendations" = "Rekomendasi Hari Ini";
+"Today's Special" = "Spesial Hari Ini";
+"Follow" = "Ikuti";
+"Chef's Choice" = "Pilihan Chef";
 "Weekly Menu" = "Menu Mingguan";
 "Trending" = "Trending";
 "Ranking" = "Peringkat";
 "Search ingredients, recipes" = "Cari bahan, resep";
 "No recipes found" = "Tidak ada resep ditemukan";
+"Collections" = "Koleksi";
 
 /* Favorites */
 "No favorites yet" = "Belum ada favorit";
@@ -233,11 +239,14 @@
 "Head" = "Kepala";
 "Strand" = "Helai";
 "Strands" = "Helai";
+"Large" = "Besar";
+"Small" = "Kecil";
 "Source images used for recipe extraction" = "Gambar sumber yang digunakan untuk ekstraksi resep";
 "Source image used for recipe extraction" = "Gambar sumber yang digunakan untuk ekstraksi resep";
 "Source" = "Sumber";
 "Created on:" = "Dibuat pada:";
 "Updated on:" = "Diperbarui pada:";
+"by" = "oleh";
 
 /* Spicy Level */
 "None" = "Tidak ada";

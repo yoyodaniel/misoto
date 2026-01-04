@@ -51,6 +51,8 @@
 "Malay" = "Malay";
 "Filipino" = "Filipino";
 "Hindi" = "Hindi";
+"Arabic" = "Arabic";
+"Hebrew" = "Hebrew";
 "System Language (%@)" = "System Language (%@)";
 "Share App" = "Share App";
 "Share" = "Share";
@@ -90,8 +92,6 @@
 "Thank you for your translation suggestion!" = "Thank you for your translation suggestion!";
 "Thank you for your feedback!" = "Thank you for your feedback!";
 "Failed to submit: %@" = "Failed to submit: %@";
-"Thank you for your feature request!" = "Thank you for your feature request!";
-"Thank you for your feedback!" = "Thank you for your feedback!";
 
 /* Navigation */
 "Explore" = "Explore";
@@ -238,11 +238,14 @@
 "Head" = "Head";
 "Strand" = "Strand";
 "Strands" = "Strands";
+"Large" = "Large";
+"Small" = "Small";
 "Source images used for recipe extraction" = "Source images used for recipe extraction";
 "Source image used for recipe extraction" = "Source image used for recipe extraction";
 "Source" = "Source";
 "Created on:" = "Created on:";
 "Updated on:" = "Updated on:";
+"by" = "by";
 
 /* Spicy Level */
 "None" = "None";

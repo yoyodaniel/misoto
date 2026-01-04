@@ -15,6 +15,13 @@
 		7C05564F2EFC766E0083BFEC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 7C05564E2EFC766E0083BFEC /* FirebaseStorage */; };
 		7C0556522EFC79200083BFEC /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 7C0556512EFC79200083BFEC /* GoogleSignIn */; };
 		7C0556542EFC79200083BFEC /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7C0556532EFC79200083BFEC /* GoogleSignInSwift */; };
+		7C7E21F02F09FA500030300D /* Caveat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21E92F09FA500030300D /* Caveat-Regular.ttf */; };
+		7C7E21F12F09FA500030300D /* Caveat-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21EC2F09FA500030300D /* Caveat-VariableFont_wght.ttf */; };
+		7C7E21F22F09FA500030300D /* Caveat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21E82F09FA500030300D /* Caveat-Medium.ttf */; };
+		7C7E21F32F09FA500030300D /* Caveat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21E72F09FA500030300D /* Caveat-Bold.ttf */; };
+		7C7E21F52F09FA500030300D /* Caveat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21EA2F09FA500030300D /* Caveat-SemiBold.ttf */; };
+		7C7E21F62F09FA500030300D /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21EE2F09FA500030300D /* README.txt */; };
+		7C7E21FC2F0A00240030300D /* Inspiration-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21F92F0A00240030300D /* Inspiration-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +45,15 @@
 		7C0555DA2EFC44760083BFEC /* Misoto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Misoto.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C0555E92EFC44780083BFEC /* MisotoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MisotoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C0555F32EFC44780083BFEC /* MisotoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MisotoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C7E21E72F09FA500030300D /* Caveat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Caveat-Bold.ttf"; sourceTree = "<group>"; };
+		7C7E21E82F09FA500030300D /* Caveat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Caveat-Medium.ttf"; sourceTree = "<group>"; };
+		7C7E21E92F09FA500030300D /* Caveat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Caveat-Regular.ttf"; sourceTree = "<group>"; };
+		7C7E21EA2F09FA500030300D /* Caveat-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Caveat-SemiBold.ttf"; sourceTree = "<group>"; };
+		7C7E21EC2F09FA500030300D /* Caveat-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Caveat-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		7C7E21ED2F09FA500030300D /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
+		7C7E21EE2F09FA500030300D /* README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		7C7E21F92F0A00240030300D /* Inspiration-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inspiration-Regular.ttf"; sourceTree = "<group>"; };
+		7C7E21FA2F0A00240030300D /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -107,6 +123,7 @@
 		7C0555D12EFC44760083BFEC = {
 			isa = PBXGroup;
 			children = (
+				7C7E21E62F09F96E0030300D /* Fonts */,
 				7C0555DC2EFC44760083BFEC /* Misoto */,
 				7C0555EC2EFC44780083BFEC /* MisotoTests */,
 				7C0555F62EFC44780083BFEC /* MisotoUITests */,
@@ -122,6 +139,46 @@
 				7C0555F32EFC44780083BFEC /* MisotoUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7C7E21E62F09F96E0030300D /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				7C7E21EF2F09FA500030300D /* Caveat */,
+				7C7E21FB2F0A00240030300D /* Inspiration */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		7C7E21EB2F09FA500030300D /* static */ = {
+			isa = PBXGroup;
+			children = (
+				7C7E21E72F09FA500030300D /* Caveat-Bold.ttf */,
+				7C7E21E82F09FA500030300D /* Caveat-Medium.ttf */,
+				7C7E21E92F09FA500030300D /* Caveat-Regular.ttf */,
+				7C7E21EA2F09FA500030300D /* Caveat-SemiBold.ttf */,
+			);
+			path = static;
+			sourceTree = "<group>";
+		};
+		7C7E21EF2F09FA500030300D /* Caveat */ = {
+			isa = PBXGroup;
+			children = (
+				7C7E21EB2F09FA500030300D /* static */,
+				7C7E21EC2F09FA500030300D /* Caveat-VariableFont_wght.ttf */,
+				7C7E21ED2F09FA500030300D /* OFL.txt */,
+				7C7E21EE2F09FA500030300D /* README.txt */,
+			);
+			path = Caveat;
+			sourceTree = "<group>";
+		};
+		7C7E21FB2F0A00240030300D /* Inspiration */ = {
+			isa = PBXGroup;
+			children = (
+				7C7E21F92F0A00240030300D /* Inspiration-Regular.ttf */,
+				7C7E21FA2F0A00240030300D /* OFL.txt */,
+			);
+			path = Inspiration;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -251,6 +308,8 @@
 				"zh-Hant 3",
 				"zh-Hant",
 				"zh-Hans",
+				ar,
+				he,
 			);
 			mainGroup = 7C0555D12EFC44760083BFEC;
 			minimizedProjectReferenceProxies = 1;
@@ -275,6 +334,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C7E21FC2F0A00240030300D /* Inspiration-Regular.ttf in Resources */,
+				7C7E21F02F09FA500030300D /* Caveat-Regular.ttf in Resources */,
+				7C7E21F12F09FA500030300D /* Caveat-VariableFont_wght.ttf in Resources */,
+				7C7E21F22F09FA500030300D /* Caveat-Medium.ttf in Resources */,
+				7C7E21F32F09FA500030300D /* Caveat-Bold.ttf in Resources */,
+				7C7E21F52F09FA500030300D /* Caveat-SemiBold.ttf in Resources */,
+				7C7E21F62F09FA500030300D /* README.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

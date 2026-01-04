@@ -154,6 +154,8 @@ enum AppLanguage: String, CaseIterable {
     case malay = "ms"
     case filipino = "fil"
     case hindi = "hi"
+    case arabic = "ar"
+    case hebrew = "he"
     case system = "system"
     
     /// Available languages for selection (currently only English and System Language)
@@ -201,6 +203,10 @@ enum AppLanguage: String, CaseIterable {
             return LocalizedString("Filipino", comment: "Filipino language option")
         case .hindi:
             return LocalizedString("Hindi", comment: "Hindi language option")
+        case .arabic:
+            return LocalizedString("Arabic", comment: "Arabic language option")
+        case .hebrew:
+            return LocalizedString("Hebrew", comment: "Hebrew language option")
         case .system:
             let systemLanguageName = AppLanguage.getSystemLanguageName()
             return String(format: LocalizedString("System Language (%@)", comment: "System language option with language name"), systemLanguageName)

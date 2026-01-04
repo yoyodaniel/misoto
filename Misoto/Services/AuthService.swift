@@ -229,7 +229,7 @@ class AuthService: ObservableObject {
                     displayName: displayName,
                     lastLogin: Date()
                 )
-                try await userRef.setData(from: newUser)
+                try userRef.setData(from: newUser)
             }
         } catch {
             print("Error creating/updating user: \(error.localizedDescription)")

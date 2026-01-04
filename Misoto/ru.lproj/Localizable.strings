@@ -52,6 +52,8 @@
 "Malay" = "Малайский";
 "Filipino" = "Филиппинский";
 "Hindi" = "Хинди";
+"Arabic" = "Арабский";
+"Hebrew" = "Иврит";
 "System Language (%@)" = "Язык системы (%@)";
 "Share App" = "Поделиться приложением";
 "Share" = "Поделиться";
@@ -138,6 +140,9 @@
 
 /* Explore */
 "Today's Recommendations" = "Рекомендации на сегодня";
+"Today's Special" = "Специальное предложение";
+"Follow" = "Подписаться";
+"Chef's Choice" = "Выбор шефа";
 "Weekly Menu" = "Еженедельное меню";
 "Trending" = "В тренде";
 "Ranking" = "Рейтинг";
@@ -234,11 +239,14 @@
 "Head" = "Головка";
 "Strand" = "Прядь";
 "Strands" = "Пряди";
+"Large" = "Большой";
+"Small" = "Маленький";
 "Source images used for recipe extraction" = "Исходные изображения, использованные для извлечения рецепта";
 "Source image used for recipe extraction" = "Исходное изображение, использованное для извлечения рецепта";
 "Source" = "Источник";
 "Created on:" = "Создано:";
 "Updated on:" = "Обновлено:";
+"by" = "от";
 
 /* Spicy Level */
 "None" = "Нет";

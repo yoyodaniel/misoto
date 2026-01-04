@@ -52,6 +52,8 @@
 "Malay" = "马来语";
 "Filipino" = "菲律宾语";
 "Hindi" = "印地语";
+"Arabic" = "阿拉伯语";
+"Hebrew" = "希伯来语";
 "System Language (%@)" = "系统语言 (%@)";
 "Share App" = "分享应用";
 "Share" = "分享";
@@ -237,11 +239,14 @@
 "Head" = "头";
 "Strand" = "缕";
 "Strands" = "缕";
+"Large" = "大";
+"Small" = "小";
 "Source images used for recipe extraction" = "用于食谱提取的源图片";
 "Source image used for recipe extraction" = "用于食谱提取的源图片";
 "Source" = "来源";
 "Created on:" = "创建于：";
 "Updated on:" = "更新于：";
+"by" = "作者：";
 
 /* Spicy Level */
 "None" = "无";

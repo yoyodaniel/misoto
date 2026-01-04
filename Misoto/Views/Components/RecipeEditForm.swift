@@ -30,7 +30,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         "clove": "Clove",
         "bunch": "Bunch",
         "head": "Head",
-        "strand": "Strand"
+        "strand": "Strand",
+        "large": "Large",
+        "small": "Small"
     ]
     
     // Unit abbreviation mapping: internal unit -> display abbreviation when in use
@@ -48,12 +50,14 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         "clove": "cloves",
         "bunch": "bunches",
         "head": "heads",
-        "strand": "strands"
+        "strand": "strands",
+        "large": "large",
+        "small": "small"
     ]
     
     // Common units (singular forms only)
     private var commonUnits: [String] {
-        ["", "x", "tsp", "tbsp", "cup", "oz", "fl_oz", "lb", "g", "kg", "ml", "l", "pinch", "piece", "pcs", "pc", "slice", "clove", "bunch", "head", "strand", "strands"].sorted { unit1, unit2 in
+        ["", "x", "tsp", "tbsp", "cup", "oz", "fl_oz", "lb", "g", "kg", "ml", "l", "pinch", "pc", "slice", "clove", "bunch", "head", "strand", "large", "small"].sorted { unit1, unit2 in
             // Sort: empty first, then "x", then alphabetically
             if unit1.isEmpty { return true }
             if unit2.isEmpty { return false }
@@ -65,54 +69,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     
     // Get localized unit display name for dropdown menu
     private func menuDisplayName(for unit: String) -> String {
-        switch unit {
-        case "":
-            return LocalizedString("-", comment: "No unit")
-        case "x":
-            return "x"
-        case "tsp":
-            return LocalizedString("Teaspoon (tsp)", comment: "Teaspoon unit")
-        case "tbsp":
-            return LocalizedString("Tablespoon (tbsp)", comment: "Tablespoon unit")
-        case "cup":
-            return LocalizedString("Cup", comment: "Cup unit")
-        case "oz":
-            return LocalizedString("Ounce (oz)", comment: "Ounce unit")
-        case "fl_oz":
-            return LocalizedString("Fluid Ounce (fl oz)", comment: "Fluid ounce unit")
-        case "lb":
-            return LocalizedString("Pound (lb)", comment: "Pound unit")
-        case "g":
-            return LocalizedString("Gram (g)", comment: "Gram unit")
-        case "kg":
-            return LocalizedString("Kilogram (kg)", comment: "Kilogram unit")
-        case "ml":
-            return LocalizedString("Milliliter (ml)", comment: "Milliliter unit")
-        case "l":
-            return LocalizedString("Liter (l)", comment: "Liter unit")
-        case "pinch":
-            return LocalizedString("Pinch", comment: "Pinch unit")
-        case "piece":
-            return LocalizedString("Piece", comment: "Piece unit")
-        case "pcs":
-            return LocalizedString("Pieces (pcs)", comment: "Pieces unit")
-        case "pc":
-            return LocalizedString("Piece (pc)", comment: "Piece unit")
-        case "slice":
-            return LocalizedString("Slice", comment: "Slice unit")
-        case "clove":
-            return LocalizedString("Clove", comment: "Clove unit")
-        case "bunch":
-            return LocalizedString("Bunch", comment: "Bunch unit")
-        case "head":
-            return LocalizedString("Head", comment: "Head unit")
-        case "strand":
-            return LocalizedString("Strand", comment: "Strand unit")
-        case "strands":
-            return LocalizedString("Strands", comment: "Strands unit")
-        default:
-            return unit
-        }
+        return UnitTranslations.translatedName(for: unit)
     }
     
     // Extract abbreviation from unit display name (the part in parentheses)
@@ -126,31 +83,19 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     }
     
     // Get abbreviation for a unit (for display when selected)
-    private func unitAbbreviation(for unit: String) -> String {
-        // Check if this unit has a specific abbreviation mapping
-        if let abbreviation = unitAbbreviations[unit] {
-            return abbreviation
-        }
-        
-        // Try to extract abbreviation from menu display name
-        let menuName = menuDisplayName(for: unit)
-        if let abbreviation = extractAbbreviation(from: menuName) {
-            return abbreviation
-        }
-        
-        // If no abbreviation found, return the unit code itself (for units like "cup", "pinch", etc.)
-        // These units don't have abbreviations, so display them as-is
-        return unit
+    private func unitAbbreviation(for unit: String, amount: String? = nil) -> String {
+        // Use UnitTranslations to get the language-specific abbreviation with pluralization support
+        return UnitTranslations.abbreviation(for: unit, amount: amount)
     }
     
-    // Get display name for a unit (shows abbreviation when selected)
+    // Get display name for a unit (shows abbreviation when selected, pluralizes if amount > 1)
     private func displayName(for unit: String, amount: String) -> String {
         if unit.isEmpty {
-            return LocalizedString("-", comment: "No unit")
+            return "-"
         }
         
-        // Return the abbreviation for the selected unit
-        return unitAbbreviation(for: unit)
+        // Return the abbreviation for the selected unit (with pluralization if needed)
+        return unitAbbreviation(for: unit, amount: amount)
     }
     
     
@@ -171,11 +116,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     @Binding var dishIngredients: [RecipeTextParser.IngredientItem]
     @Binding var marinadeIngredients: [RecipeTextParser.IngredientItem]
     @Binding var seasoningIngredients: [RecipeTextParser.IngredientItem]
-    @Binding var batterIngredients: [RecipeTextParser.IngredientItem]
+    @Binding var doughBatterFillingIngredients: [RecipeTextParser.IngredientItem]
     @Binding var sauceIngredients: [RecipeTextParser.IngredientItem]
-    @Binding var baseIngredients: [RecipeTextParser.IngredientItem]
-    @Binding var doughIngredients: [RecipeTextParser.IngredientItem]
     @Binding var toppingIngredients: [RecipeTextParser.IngredientItem]
+    @Binding var garnishIngredients: [RecipeTextParser.IngredientItem]
     @Binding var mainRecipeImages: [UIImage]
     
     var isGeneratingDescription: Bool
@@ -201,11 +145,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     var updateSeasoningIngredientUnit: (String, Int) -> Void
     var updateSeasoningIngredientName: (String, Int) -> Void
     
-    var addBatterIngredient: () -> Void
-    var removeBatterIngredient: (Int) -> Void
-    var updateBatterIngredientAmount: (String, Int) -> Void
-    var updateBatterIngredientUnit: (String, Int) -> Void
-    var updateBatterIngredientName: (String, Int) -> Void
+    var addDoughBatterFillingIngredient: () -> Void
+    var removeDoughBatterFillingIngredient: (Int) -> Void
+    var updateDoughBatterFillingIngredientAmount: (String, Int) -> Void
+    var updateDoughBatterFillingIngredientUnit: (String, Int) -> Void
+    var updateDoughBatterFillingIngredientName: (String, Int) -> Void
     
     var addSauceIngredient: () -> Void
     var removeSauceIngredient: (Int) -> Void
@@ -213,23 +157,17 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     var updateSauceIngredientUnit: (String, Int) -> Void
     var updateSauceIngredientName: (String, Int) -> Void
     
-    var addBaseIngredient: () -> Void
-    var removeBaseIngredient: (Int) -> Void
-    var updateBaseIngredientAmount: (String, Int) -> Void
-    var updateBaseIngredientUnit: (String, Int) -> Void
-    var updateBaseIngredientName: (String, Int) -> Void
-    
-    var addDoughIngredient: () -> Void
-    var removeDoughIngredient: (Int) -> Void
-    var updateDoughIngredientAmount: (String, Int) -> Void
-    var updateDoughIngredientUnit: (String, Int) -> Void
-    var updateDoughIngredientName: (String, Int) -> Void
-    
     var addToppingIngredient: () -> Void
     var removeToppingIngredient: (Int) -> Void
     var updateToppingIngredientAmount: (String, Int) -> Void
     var updateToppingIngredientUnit: (String, Int) -> Void
     var updateToppingIngredientName: (String, Int) -> Void
+    
+    var addGarnishIngredient: () -> Void
+    var removeGarnishIngredient: (Int) -> Void
+    var updateGarnishIngredientAmount: (String, Int) -> Void
+    var updateGarnishIngredientUnit: (String, Int) -> Void
+    var updateGarnishIngredientName: (String, Int) -> Void
     
     var addRecipeImage: (UIImage) -> Void
     var removeRecipeImage: (Int) -> Void
@@ -270,11 +208,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         dishIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         marinadeIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         seasoningIngredients: Binding<[RecipeTextParser.IngredientItem]>,
-        batterIngredients: Binding<[RecipeTextParser.IngredientItem]>,
+        doughBatterFillingIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         sauceIngredients: Binding<[RecipeTextParser.IngredientItem]>,
-        baseIngredients: Binding<[RecipeTextParser.IngredientItem]>,
-        doughIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         toppingIngredients: Binding<[RecipeTextParser.IngredientItem]>,
+        garnishIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         mainRecipeImages: Binding<[UIImage]>,
         isGeneratingDescription: Bool,
         isDetectingCuisine: Bool,
@@ -294,31 +231,26 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         updateSeasoningIngredientAmount: @escaping (String, Int) -> Void,
         updateSeasoningIngredientUnit: @escaping (String, Int) -> Void,
         updateSeasoningIngredientName: @escaping (String, Int) -> Void,
-        addBatterIngredient: @escaping () -> Void,
-        removeBatterIngredient: @escaping (Int) -> Void,
-        updateBatterIngredientAmount: @escaping (String, Int) -> Void,
-        updateBatterIngredientUnit: @escaping (String, Int) -> Void,
-        updateBatterIngredientName: @escaping (String, Int) -> Void,
+        addDoughBatterFillingIngredient: @escaping () -> Void,
+        removeDoughBatterFillingIngredient: @escaping (Int) -> Void,
+        updateDoughBatterFillingIngredientAmount: @escaping (String, Int) -> Void,
+        updateDoughBatterFillingIngredientUnit: @escaping (String, Int) -> Void,
+        updateDoughBatterFillingIngredientName: @escaping (String, Int) -> Void,
         addSauceIngredient: @escaping () -> Void,
         removeSauceIngredient: @escaping (Int) -> Void,
         updateSauceIngredientAmount: @escaping (String, Int) -> Void,
         updateSauceIngredientUnit: @escaping (String, Int) -> Void,
         updateSauceIngredientName: @escaping (String, Int) -> Void,
-        addBaseIngredient: @escaping () -> Void,
-        removeBaseIngredient: @escaping (Int) -> Void,
-        updateBaseIngredientAmount: @escaping (String, Int) -> Void,
-        updateBaseIngredientUnit: @escaping (String, Int) -> Void,
-        updateBaseIngredientName: @escaping (String, Int) -> Void,
-        addDoughIngredient: @escaping () -> Void,
-        removeDoughIngredient: @escaping (Int) -> Void,
-        updateDoughIngredientAmount: @escaping (String, Int) -> Void,
-        updateDoughIngredientUnit: @escaping (String, Int) -> Void,
-        updateDoughIngredientName: @escaping (String, Int) -> Void,
         addToppingIngredient: @escaping () -> Void,
         removeToppingIngredient: @escaping (Int) -> Void,
         updateToppingIngredientAmount: @escaping (String, Int) -> Void,
         updateToppingIngredientUnit: @escaping (String, Int) -> Void,
         updateToppingIngredientName: @escaping (String, Int) -> Void,
+        addGarnishIngredient: @escaping () -> Void,
+        removeGarnishIngredient: @escaping (Int) -> Void,
+        updateGarnishIngredientAmount: @escaping (String, Int) -> Void,
+        updateGarnishIngredientUnit: @escaping (String, Int) -> Void,
+        updateGarnishIngredientName: @escaping (String, Int) -> Void,
         addRecipeImage: @escaping (UIImage) -> Void,
         removeRecipeImage: @escaping (Int) -> Void,
         generateDescription: @escaping () async -> Void,
@@ -346,11 +278,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         _dishIngredients = dishIngredients
         _marinadeIngredients = marinadeIngredients
         _seasoningIngredients = seasoningIngredients
-        _batterIngredients = batterIngredients
+        _doughBatterFillingIngredients = doughBatterFillingIngredients
         _sauceIngredients = sauceIngredients
-        _baseIngredients = baseIngredients
-        _doughIngredients = doughIngredients
         _toppingIngredients = toppingIngredients
+        _garnishIngredients = garnishIngredients
         _mainRecipeImages = mainRecipeImages
         self.isGeneratingDescription = isGeneratingDescription
         self.isDetectingCuisine = isDetectingCuisine
@@ -370,31 +301,26 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         self.updateSeasoningIngredientAmount = updateSeasoningIngredientAmount
         self.updateSeasoningIngredientUnit = updateSeasoningIngredientUnit
         self.updateSeasoningIngredientName = updateSeasoningIngredientName
-        self.addBatterIngredient = addBatterIngredient
-        self.removeBatterIngredient = removeBatterIngredient
-        self.updateBatterIngredientAmount = updateBatterIngredientAmount
-        self.updateBatterIngredientUnit = updateBatterIngredientUnit
-        self.updateBatterIngredientName = updateBatterIngredientName
+        self.addDoughBatterFillingIngredient = addDoughBatterFillingIngredient
+        self.removeDoughBatterFillingIngredient = removeDoughBatterFillingIngredient
+        self.updateDoughBatterFillingIngredientAmount = updateDoughBatterFillingIngredientAmount
+        self.updateDoughBatterFillingIngredientUnit = updateDoughBatterFillingIngredientUnit
+        self.updateDoughBatterFillingIngredientName = updateDoughBatterFillingIngredientName
         self.addSauceIngredient = addSauceIngredient
         self.removeSauceIngredient = removeSauceIngredient
         self.updateSauceIngredientAmount = updateSauceIngredientAmount
         self.updateSauceIngredientUnit = updateSauceIngredientUnit
         self.updateSauceIngredientName = updateSauceIngredientName
-        self.addBaseIngredient = addBaseIngredient
-        self.removeBaseIngredient = removeBaseIngredient
-        self.updateBaseIngredientAmount = updateBaseIngredientAmount
-        self.updateBaseIngredientUnit = updateBaseIngredientUnit
-        self.updateBaseIngredientName = updateBaseIngredientName
-        self.addDoughIngredient = addDoughIngredient
-        self.removeDoughIngredient = removeDoughIngredient
-        self.updateDoughIngredientAmount = updateDoughIngredientAmount
-        self.updateDoughIngredientUnit = updateDoughIngredientUnit
-        self.updateDoughIngredientName = updateDoughIngredientName
         self.addToppingIngredient = addToppingIngredient
         self.removeToppingIngredient = removeToppingIngredient
         self.updateToppingIngredientAmount = updateToppingIngredientAmount
         self.updateToppingIngredientUnit = updateToppingIngredientUnit
         self.updateToppingIngredientName = updateToppingIngredientName
+        self.addGarnishIngredient = addGarnishIngredient
+        self.removeGarnishIngredient = removeGarnishIngredient
+        self.updateGarnishIngredientAmount = updateGarnishIngredientAmount
+        self.updateGarnishIngredientUnit = updateGarnishIngredientUnit
+        self.updateGarnishIngredientName = updateGarnishIngredientName
         self.addRecipeImage = addRecipeImage
         self.removeRecipeImage = removeRecipeImage
         self.generateDescription = generateDescription
@@ -419,11 +345,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     @State private var isDescriptionExpanded = true
     @State private var isMarinadeExpanded = false
     @State private var isSeasoningExpanded = false
-    @State private var isBatterExpanded = false
+    @State private var isDoughBatterFillingExpanded = false
     @State private var isSauceExpanded = false
-    @State private var isBaseExpanded = false
-    @State private var isDoughExpanded = false
     @State private var isToppingExpanded = false
+    @State private var isGarnishExpanded = false
     @State private var isDishExpanded = true
     @State private var isInstructionsExpanded = true
     @State private var isRecipeImagesExpanded = true
@@ -802,10 +727,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 Button(action: {
                     addDishIngredient()
                 }) {
-                    Label(LocalizedString("Add Dish Ingredient", comment: "Add dish ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add ingredient", comment: "Add ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(LocalizedString("Dish Ingredients", comment: "Dish ingredients section"))
+                Text(LocalizedString("For the main ingredients", comment: "Main ingredients section"))
                     .font(.headline)
             }
         }
@@ -830,10 +755,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addMarinadeIngredient()
                     isMarinadeExpanded = true
                 }) {
-                    Label(LocalizedString("Add Marinade Ingredient", comment: "Add marinade ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add ingredient", comment: "Add ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(LocalizedString("Marinade Ingredients", comment: "Marinade ingredients section"))
+                Text(LocalizedString("For the marinade / brine", comment: "Marinade ingredients section"))
                     .font(.headline)
             }
         }
@@ -858,38 +783,38 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addSeasoningIngredient()
                     isSeasoningExpanded = true
                 }) {
-                    Label(LocalizedString("Add Seasoning Ingredient", comment: "Add seasoning ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add ingredient", comment: "Add ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(LocalizedString("Seasoning Ingredients", comment: "Seasoning ingredients section"))
+                Text(LocalizedString("For seasoning during cooking", comment: "Seasoning ingredients section"))
                     .font(.headline)
             }
         }
     }
     
-    private var batterIngredientsSection: some View {
+    private var doughBatterFillingIngredientsSection: some View {
         Section {
             DisclosureGroup(isExpanded: Binding(
-                get: { isBatterExpanded || !batterIngredients.isEmpty },
-                set: { isBatterExpanded = $0 }
+                get: { isDoughBatterFillingExpanded || !doughBatterFillingIngredients.isEmpty },
+                set: { isDoughBatterFillingExpanded = $0 }
             )) {
-                ForEach(Array(batterIngredients.enumerated()), id: \.offset) { index, ingredient in
-                    batterIngredientRow(at: index)
+                ForEach(Array(doughBatterFillingIngredients.enumerated()), id: \.offset) { index, ingredient in
+                    doughBatterFillingIngredientRow(at: index)
                 }
                 .onDelete { indexSet in
                     for index in indexSet.sorted(by: >) {
-                        removeBatterIngredient(index)
+                        removeDoughBatterFillingIngredient(index)
                     }
                 }
                 
                 Button(action: {
-                    addBatterIngredient()
-                    isBatterExpanded = true
+                    addDoughBatterFillingIngredient()
+                    isDoughBatterFillingExpanded = true
                 }) {
-                    Label(LocalizedString("Add Batter Ingredient", comment: "Add batter ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add ingredient", comment: "Add ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(LocalizedString("Batter Ingredients", comment: "Batter ingredients section"))
+                Text(LocalizedString("For the dough / batter / filling", comment: "Dough batter filling ingredients section"))
                     .font(.headline)
             }
         }
@@ -914,66 +839,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addSauceIngredient()
                     isSauceExpanded = true
                 }) {
-                    Label(LocalizedString("Add Sauce Ingredient", comment: "Add sauce ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add ingredient", comment: "Add ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(LocalizedString("Sauce Ingredients", comment: "Sauce ingredients section"))
-                    .font(.headline)
-            }
-        }
-    }
-    
-    private var baseIngredientsSection: some View {
-        Section {
-            DisclosureGroup(isExpanded: Binding(
-                get: { isBaseExpanded || !baseIngredients.isEmpty },
-                set: { isBaseExpanded = $0 }
-            )) {
-                ForEach(Array(baseIngredients.enumerated()), id: \.offset) { index, ingredient in
-                    baseIngredientRow(at: index)
-                }
-                .onDelete { indexSet in
-                    for index in indexSet.sorted(by: >) {
-                        removeBaseIngredient(index)
-                    }
-                }
-                
-                Button(action: {
-                    addBaseIngredient()
-                    isBaseExpanded = true
-                }) {
-                    Label(LocalizedString("Add Base Ingredient", comment: "Add base ingredient button"), systemImage: "plus.circle")
-                }
-            } label: {
-                Text(LocalizedString("Base Ingredients", comment: "Base ingredients section"))
-                    .font(.headline)
-            }
-        }
-    }
-    
-    private var doughIngredientsSection: some View {
-        Section {
-            DisclosureGroup(isExpanded: Binding(
-                get: { isDoughExpanded || !doughIngredients.isEmpty },
-                set: { isDoughExpanded = $0 }
-            )) {
-                ForEach(Array(doughIngredients.enumerated()), id: \.offset) { index, ingredient in
-                    doughIngredientRow(at: index)
-                }
-                .onDelete { indexSet in
-                    for index in indexSet.sorted(by: >) {
-                        removeDoughIngredient(index)
-                    }
-                }
-                
-                Button(action: {
-                    addDoughIngredient()
-                    isDoughExpanded = true
-                }) {
-                    Label(LocalizedString("Add Dough Ingredient", comment: "Add dough ingredient button"), systemImage: "plus.circle")
-                }
-            } label: {
-                Text(LocalizedString("Dough Ingredients", comment: "Dough ingredients section"))
+                Text(LocalizedString("For the sauce", comment: "Sauce ingredients section"))
                     .font(.headline)
             }
         }
@@ -998,10 +867,38 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     addToppingIngredient()
                     isToppingExpanded = true
                 }) {
-                    Label(LocalizedString("Add Topping Ingredient", comment: "Add topping ingredient button"), systemImage: "plus.circle")
+                    Label(LocalizedString("Add ingredient", comment: "Add ingredient button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(LocalizedString("Topping Ingredients", comment: "Topping ingredients section"))
+                Text(LocalizedString("For the toppings", comment: "Topping ingredients section"))
+                    .font(.headline)
+            }
+        }
+    }
+    
+    private var garnishIngredientsSection: some View {
+        Section {
+            DisclosureGroup(isExpanded: Binding(
+                get: { isGarnishExpanded || !garnishIngredients.isEmpty },
+                set: { isGarnishExpanded = $0 }
+            )) {
+                ForEach(Array(garnishIngredients.enumerated()), id: \.offset) { index, ingredient in
+                    garnishIngredientRow(at: index)
+                }
+                .onDelete { indexSet in
+                    for index in indexSet.sorted(by: >) {
+                        removeGarnishIngredient(index)
+                    }
+                }
+                
+                Button(action: {
+                    addGarnishIngredient()
+                    isGarnishExpanded = true
+                }) {
+                    Label(LocalizedString("Add ingredient", comment: "Add ingredient button"), systemImage: "plus.circle")
+                }
+            } label: {
+                Text(LocalizedString("To finish / To garnish", comment: "Garnish ingredients section"))
                     .font(.headline)
             }
         }
@@ -1066,25 +963,6 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         )
     }
     
-    private func batterIngredientRow(at index: Int) -> some View {
-        ingredientRow(
-            amount: Binding(
-                get: { batterIngredients[index].amount },
-                set: { updateBatterIngredientAmount($0, index) }
-            ),
-            unit: Binding(
-                get: { batterIngredients[index].unit },
-                set: { updateBatterIngredientUnit($0, index) }
-            ),
-            name: Binding(
-                get: { batterIngredients[index].name },
-                set: { updateBatterIngredientName($0, index) }
-            ),
-            amountIndex: index + 2000,
-            nameIndex: index + 2000
-        )
-    }
-    
     private func sauceIngredientRow(at index: Int) -> some View {
         ingredientRow(
             amount: Binding(
@@ -1104,41 +982,22 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         )
     }
     
-    private func baseIngredientRow(at index: Int) -> some View {
+    private func doughBatterFillingIngredientRow(at index: Int) -> some View {
         ingredientRow(
             amount: Binding(
-                get: { baseIngredients[index].amount },
-                set: { updateBaseIngredientAmount($0, index) }
+                get: { doughBatterFillingIngredients[index].amount },
+                set: { updateDoughBatterFillingIngredientAmount($0, index) }
             ),
             unit: Binding(
-                get: { baseIngredients[index].unit },
-                set: { updateBaseIngredientUnit($0, index) }
+                get: { doughBatterFillingIngredients[index].unit },
+                set: { updateDoughBatterFillingIngredientUnit($0, index) }
             ),
             name: Binding(
-                get: { baseIngredients[index].name },
-                set: { updateBaseIngredientName($0, index) }
+                get: { doughBatterFillingIngredients[index].name },
+                set: { updateDoughBatterFillingIngredientName($0, index) }
             ),
-            amountIndex: index + 4000,
-            nameIndex: index + 4000
-        )
-    }
-    
-    private func doughIngredientRow(at index: Int) -> some View {
-        ingredientRow(
-            amount: Binding(
-                get: { doughIngredients[index].amount },
-                set: { updateDoughIngredientAmount($0, index) }
-            ),
-            unit: Binding(
-                get: { doughIngredients[index].unit },
-                set: { updateDoughIngredientUnit($0, index) }
-            ),
-            name: Binding(
-                get: { doughIngredients[index].name },
-                set: { updateDoughIngredientName($0, index) }
-            ),
-            amountIndex: index + 5000,
-            nameIndex: index + 5000
+            amountIndex: index + 2000,
+            nameIndex: index + 2000
         )
     }
     
@@ -1158,6 +1017,25 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             ),
             amountIndex: index + 6000,
             nameIndex: index + 6000
+        )
+    }
+    
+    private func garnishIngredientRow(at index: Int) -> some View {
+        ingredientRow(
+            amount: Binding(
+                get: { garnishIngredients[index].amount },
+                set: { updateGarnishIngredientAmount($0, index) }
+            ),
+            unit: Binding(
+                get: { garnishIngredients[index].unit },
+                set: { updateGarnishIngredientUnit($0, index) }
+            ),
+            name: Binding(
+                get: { garnishIngredients[index].name },
+                set: { updateGarnishIngredientName($0, index) }
+            ),
+            amountIndex: index + 8000,
+            nameIndex: index + 8000
         )
     }
     
@@ -1219,11 +1097,10 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             dishIngredientsSection
             marinadeIngredientsSection
             seasoningIngredientsSection
-            batterIngredientsSection
+            doughBatterFillingIngredientsSection
             sauceIngredientsSection
-            baseIngredientsSection
-            doughIngredientsSection
             toppingIngredientsSection
+            garnishIngredientsSection
             
             // Instructions section - provided by parent view
             Section {
@@ -1272,11 +1149,10 @@ extension RecipeEditForm where OptionalContent == EmptyView {
         dishIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         marinadeIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         seasoningIngredients: Binding<[RecipeTextParser.IngredientItem]>,
-        batterIngredients: Binding<[RecipeTextParser.IngredientItem]>,
+        doughBatterFillingIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         sauceIngredients: Binding<[RecipeTextParser.IngredientItem]>,
-        baseIngredients: Binding<[RecipeTextParser.IngredientItem]>,
-        doughIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         toppingIngredients: Binding<[RecipeTextParser.IngredientItem]>,
+        garnishIngredients: Binding<[RecipeTextParser.IngredientItem]>,
         mainRecipeImages: Binding<[UIImage]>,
         isGeneratingDescription: Bool,
         isDetectingCuisine: Bool,
@@ -1296,31 +1172,26 @@ extension RecipeEditForm where OptionalContent == EmptyView {
         updateSeasoningIngredientAmount: @escaping (String, Int) -> Void,
         updateSeasoningIngredientUnit: @escaping (String, Int) -> Void,
         updateSeasoningIngredientName: @escaping (String, Int) -> Void,
-        addBatterIngredient: @escaping () -> Void,
-        removeBatterIngredient: @escaping (Int) -> Void,
-        updateBatterIngredientAmount: @escaping (String, Int) -> Void,
-        updateBatterIngredientUnit: @escaping (String, Int) -> Void,
-        updateBatterIngredientName: @escaping (String, Int) -> Void,
+        addDoughBatterFillingIngredient: @escaping () -> Void,
+        removeDoughBatterFillingIngredient: @escaping (Int) -> Void,
+        updateDoughBatterFillingIngredientAmount: @escaping (String, Int) -> Void,
+        updateDoughBatterFillingIngredientUnit: @escaping (String, Int) -> Void,
+        updateDoughBatterFillingIngredientName: @escaping (String, Int) -> Void,
         addSauceIngredient: @escaping () -> Void,
         removeSauceIngredient: @escaping (Int) -> Void,
         updateSauceIngredientAmount: @escaping (String, Int) -> Void,
         updateSauceIngredientUnit: @escaping (String, Int) -> Void,
         updateSauceIngredientName: @escaping (String, Int) -> Void,
-        addBaseIngredient: @escaping () -> Void,
-        removeBaseIngredient: @escaping (Int) -> Void,
-        updateBaseIngredientAmount: @escaping (String, Int) -> Void,
-        updateBaseIngredientUnit: @escaping (String, Int) -> Void,
-        updateBaseIngredientName: @escaping (String, Int) -> Void,
-        addDoughIngredient: @escaping () -> Void,
-        removeDoughIngredient: @escaping (Int) -> Void,
-        updateDoughIngredientAmount: @escaping (String, Int) -> Void,
-        updateDoughIngredientUnit: @escaping (String, Int) -> Void,
-        updateDoughIngredientName: @escaping (String, Int) -> Void,
         addToppingIngredient: @escaping () -> Void,
         removeToppingIngredient: @escaping (Int) -> Void,
         updateToppingIngredientAmount: @escaping (String, Int) -> Void,
         updateToppingIngredientUnit: @escaping (String, Int) -> Void,
         updateToppingIngredientName: @escaping (String, Int) -> Void,
+        addGarnishIngredient: @escaping () -> Void,
+        removeGarnishIngredient: @escaping (Int) -> Void,
+        updateGarnishIngredientAmount: @escaping (String, Int) -> Void,
+        updateGarnishIngredientUnit: @escaping (String, Int) -> Void,
+        updateGarnishIngredientName: @escaping (String, Int) -> Void,
         addRecipeImage: @escaping (UIImage) -> Void,
         removeRecipeImage: @escaping (Int) -> Void,
         generateDescription: @escaping () async -> Void,
@@ -1346,11 +1217,10 @@ extension RecipeEditForm where OptionalContent == EmptyView {
             dishIngredients: dishIngredients,
             marinadeIngredients: marinadeIngredients,
             seasoningIngredients: seasoningIngredients,
-            batterIngredients: batterIngredients,
+            doughBatterFillingIngredients: doughBatterFillingIngredients,
             sauceIngredients: sauceIngredients,
-            baseIngredients: baseIngredients,
-            doughIngredients: doughIngredients,
             toppingIngredients: toppingIngredients,
+            garnishIngredients: garnishIngredients,
             mainRecipeImages: mainRecipeImages,
             isGeneratingDescription: isGeneratingDescription,
             isDetectingCuisine: isDetectingCuisine,
@@ -1370,31 +1240,26 @@ extension RecipeEditForm where OptionalContent == EmptyView {
             updateSeasoningIngredientAmount: updateSeasoningIngredientAmount,
             updateSeasoningIngredientUnit: updateSeasoningIngredientUnit,
             updateSeasoningIngredientName: updateSeasoningIngredientName,
-            addBatterIngredient: addBatterIngredient,
-            removeBatterIngredient: removeBatterIngredient,
-            updateBatterIngredientAmount: updateBatterIngredientAmount,
-            updateBatterIngredientUnit: updateBatterIngredientUnit,
-            updateBatterIngredientName: updateBatterIngredientName,
+            addDoughBatterFillingIngredient: addDoughBatterFillingIngredient,
+            removeDoughBatterFillingIngredient: removeDoughBatterFillingIngredient,
+            updateDoughBatterFillingIngredientAmount: updateDoughBatterFillingIngredientAmount,
+            updateDoughBatterFillingIngredientUnit: updateDoughBatterFillingIngredientUnit,
+            updateDoughBatterFillingIngredientName: updateDoughBatterFillingIngredientName,
             addSauceIngredient: addSauceIngredient,
             removeSauceIngredient: removeSauceIngredient,
             updateSauceIngredientAmount: updateSauceIngredientAmount,
             updateSauceIngredientUnit: updateSauceIngredientUnit,
             updateSauceIngredientName: updateSauceIngredientName,
-            addBaseIngredient: addBaseIngredient,
-            removeBaseIngredient: removeBaseIngredient,
-            updateBaseIngredientAmount: updateBaseIngredientAmount,
-            updateBaseIngredientUnit: updateBaseIngredientUnit,
-            updateBaseIngredientName: updateBaseIngredientName,
-            addDoughIngredient: addDoughIngredient,
-            removeDoughIngredient: removeDoughIngredient,
-            updateDoughIngredientAmount: updateDoughIngredientAmount,
-            updateDoughIngredientUnit: updateDoughIngredientUnit,
-            updateDoughIngredientName: updateDoughIngredientName,
             addToppingIngredient: addToppingIngredient,
             removeToppingIngredient: removeToppingIngredient,
             updateToppingIngredientAmount: updateToppingIngredientAmount,
             updateToppingIngredientUnit: updateToppingIngredientUnit,
             updateToppingIngredientName: updateToppingIngredientName,
+            addGarnishIngredient: addGarnishIngredient,
+            removeGarnishIngredient: removeGarnishIngredient,
+            updateGarnishIngredientAmount: updateGarnishIngredientAmount,
+            updateGarnishIngredientUnit: updateGarnishIngredientUnit,
+            updateGarnishIngredientName: updateGarnishIngredientName,
             addRecipeImage: addRecipeImage,
             removeRecipeImage: removeRecipeImage,
             generateDescription: generateDescription,
@@ -1402,6 +1267,8 @@ extension RecipeEditForm where OptionalContent == EmptyView {
             showFullScreenImage: showFullScreenImage,
             fullScreenImage: fullScreenImage,
             selectedRecipePhotos: selectedRecipePhotos,
+            onTakePicture: nil,
+            onSelectFromLibrary: nil,
             instructionsContent: instructionsContent,
             optionalContent: nil
         )

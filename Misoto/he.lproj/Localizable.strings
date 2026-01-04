@@ -1,0 +1,355 @@
+/* 
+  Localizable.strings
+  Misoto
+  
+  Hebrew (עברית)
+*/
+
+/* App */
+"Misoto" = "Misoto";
+"Share and discover amazing recipes" = "שתף וגלה מתכונים מדהימים";
+"Loading..." = "טוען...";
+"Version %@" = "גרסה %@";
+"Unknown" = "לא ידוע";
+
+/* Authentication */
+"Continue with Google" = "המשך עם Google";
+"Invalid credential" = "פרטי התחברות לא תקינים";
+"Invalid nonce" = "Nonce לא תקין";
+"Invalid token" = "אסימון לא תקין";
+"Missing client ID" = "חסר מזהה לקוח";
+"Missing view controller" = "חסר בקר תצוגה";
+"You are not authorized to perform this action" = "אין לך הרשאה לבצע פעולה זו";
+"Username must be at least 4 characters" = "שם המשתמש חייב להכיל לפחות 4 תווים";
+"Username must be no more than 15 characters" = "שם המשתמש לא יכול להכיל יותר מ-15 תווים";
+"This username is already taken" = "שם המשתמש הזה כבר תפוס";
+"Username contains invalid characters" = "שם המשתמש מכיל תווים לא תקינים";
+"Invalid URL" = "כתובת URL לא תקינה";
+
+/* Settings */
+"Settings" = "הגדרות";
+"Dark Mode" = "מצב כהה";
+"Haptic Feedback" = "משוב מישושי";
+"Appearance" = "מראה";
+"Language" = "שפה";
+"The language selected will be used as the default writing language for recipe extractions." = "השפה שנבחרה תשמש כשפת הכתיבה הברירת מחדל לחילוץ מתכונים.";
+"English" = "אנגלית";
+"Chinese, Simplified" = "סינית מפושטת";
+"Chinese, Traditional" = "סינית מסורתית";
+"Spanish" = "ספרדית";
+"French" = "צרפתית";
+"German" = "גרמנית";
+"Italian" = "איטלקית";
+"Portuguese" = "פורטוגזית";
+"Dutch" = "הולנדית";
+"Russian" = "רוסית";
+"Japanese" = "יפנית";
+"Korean" = "קוריאנית";
+"Thai" = "תאילנדית";
+"Vietnamese" = "וייטנאמית";
+"Indonesian" = "אינדונזית";
+"Malay" = "מלאית";
+"Filipino" = "פיליפינית";
+"Hindi" = "הינדי";
+"Arabic" = "ערבית";
+"Hebrew" = "עברית";
+"System Language (%@)" = "שפת המערכת (%@)";
+"Share App" = "שתף אפליקציה";
+"Share" = "שתף";
+"Check out %@! %@" = "בדוק את %@! %@";
+"Submit Feedback" = "שלח משוב";
+"Feedback" = "משוב";
+"We appreciate collaborating with our users to improve the app further and tailor it to your needs." = "אנו מעריכים שיתוף פעולה עם המשתמשים שלנו כדי לשפר את האפליקציה עוד יותר ולהתאים אותה לצרכיך.";
+"Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone." = "שתף את הרעיונות, ההצעות, בקשות התכונות או המשוב הכללי שלך. הקלט שלך עוזר לנו לבנות חוויה טובה יותר לכולם.";
+"Done" = "סיום";
+
+/* Feedback */
+"Type" = "סוג";
+"Feedback Type" = "סוג משוב";
+"Feature Request" = "בקשת תכונה";
+"General Feedback" = "משוב כללי";
+"Translation Suggestion" = "הצעה לתרגום";
+"Your name" = "השם שלך";
+"Name" = "שם";
+"Describe your feature request" = "תאר את בקשת התכונה שלך";
+"Suggest a translation improvement" = "הצע שיפור תרגום";
+"Share your feedback" = "שתף את המשוב שלך";
+"Please describe the feature you'd like to see in the app." = "אנא תאר את התכונה שתרצה לראות באפליקציה.";
+"Please suggest improvements to translations or report incorrect translations." = "אנא הצע שיפורים לתרגומים או דווח על תרגומים לא נכונים.";
+"Please share your thoughts, suggestions, or report any issues." = "אנא שתף את המחשבות, ההצעות שלך או דווח על בעיות.";
+"Email address (optional)" = "כתובת אימייל (אופציונלי)";
+"Contact Email" = "אימייל ליצירת קשר";
+"Optional: We'll use this to respond to your feature request if needed." = "אופציונלי: נשתמש בזה כדי להגיב לבקשת התכונה שלך במידת הצורך.";
+"Optional: We'll use this to respond to your translation suggestion if needed." = "אופציונלי: נשתמש בזה כדי להגיב להצעת התרגום שלך במידת הצורך.";
+"Optional: We'll use this to respond to your feedback if needed." = "אופציונלי: נשתמש בזה כדי להגיב למשוב שלך במידת הצורך.";
+"Submit" = "שלח";
+"Cancel" = "ביטול";
+"Please enter a valid email address" = "אנא הזן כתובת אימייל תקינה";
+"You must be signed in to submit feedback" = "עליך להתחבר כדי לשלוח משוב";
+"Please provide your feedback or feature request" = "אנא ספק את המשוב או בקשת התכונה שלך";
+"Please provide a valid email address or leave it empty" = "אנא ספק כתובת אימייל תקינה או השאר ריק";
+"Failed to submit: %@" = "שליחה נכשלה: %@";
+"Thank you for your feature request!" = "תודה על בקשת התכונה שלך!";
+"Thank you for your translation suggestion!" = "תודה על הצעת התרגום שלך!";
+"Thank you for your feedback!" = "תודה על המשוב שלך!";
+
+/* Navigation */
+"Explore" = "גלה";
+"Account" = "חשבון";
+"Add Menu" = "הוסף תפריט";
+"Manual Entry" = "הזנה ידנית";
+"Take Picture" = "צלם תמונה";
+"Extract from Image" = "חלץ מתמונה";
+"Extract from Link" = "חלץ מקישור";
+"Enter Menu URL" = "הזן כתובת URL של תפריט";
+"Menu URL" = "כתובת URL של תפריט";
+"Extract from Website" = "חלץ מאתר";
+"Search or enter website name" = "חפש או הזן שם אתר";
+"Find a Recipe" = "מצא מתכון";
+"Type a website URL or search for a recipe" = "הקלד כתובת URL של אתר או חפש מתכון";
+"Enter a website URL (e.g., example.com)" = "הזן כתובת URL של אתר (למשל, example.com)";
+"Or search for a recipe (e.g., chocolate cake recipe)" = "או חפש מתכון (למשל, מתכון עוגת שוקולד)";
+"Extract Recipe" = "חלץ מתכון";
+"Extract Recipe with AI" = "חלץ מתכון עם בינה מלאכותית";
+"Extract with AI" = "חלץ עם בינה מלאכותית";
+"Detecting recipe..." = "מזהה מתכון...";
+"Loading website..." = "טוען אתר...";
+"No recipe detected on this page" = "לא זוהה מתכון בדף זה";
+"Paste a link to a recipe webpage to extract recipe information automatically using AI." = "הדבק קישור לדף מתכון כדי לחלץ מידע על המתכון אוטומטית באמצעות בינה מלאכותית.";
+
+/* Profile */
+"Edit Profile" = "ערוך פרופיל";
+"Change Profile Picture" = "שנה תמונת פרופיל";
+"Profile Information" = "מידע פרופיל";
+"Username" = "שם משתמש";
+"Suggested usernames:" = "שמות משתמש מוצעים:";
+"Bio" = "ביוגרפיה";
+"characters" = "תווים";
+"%d/15 characters" = "%d/15 תווים";
+"Recipes" = "מתכונים";
+"Followers" = "עוקבים";
+"Following" = "עוקב";
+"Sign Out" = "התנתק";
+"No recipes yet" = "אין עדיין מתכונים";
+"Start sharing your favorite recipes with the community!" = "התחל לשתף את המתכונים האהובים עליך עם הקהילה!";
+"Delete Recipe" = "מחק מתכון";
+"Delete" = "מחק";
+"Are you sure you want to delete this recipe? This action cannot be undone." = "האם אתה בטוח שברצונך למחוק את המתכון הזה? פעולה זו לא ניתנת לביטול.";
+"Edit Recipe" = "ערוך מתכון";
+
+/* Explore */
+"Today's Recommendations" = "המלצות היום";
+"Today's Special" = "המיוחד של היום";
+"Follow" = "עקוב";
+"Chef's Choice" = "בחירת השף";
+"Weekly Menu" = "תפריט שבועי";
+"Trending" = "טרנדים";
+"Ranking" = "דירוג";
+"Search ingredients, recipes" = "חפש מרכיבים, מתכונים";
+"No recipes found" = "לא נמצאו מתכונים";
+"Collections" = "אוספים";
+
+/* Favorites */
+"No favorites yet" = "אין עדיין מועדפים";
+"Start exploring and save your favorite recipes!" = "התחל לחקור ושמור את המתכונים האהובים עליך!";
+
+/* Friends */
+"Friends" = "חברים";
+"Search" = "חפש";
+"No followers yet" = "אין עדיין עוקבים";
+"You're not following anyone yet" = "אתה עדיין לא עוקב אחרי אף אחד";
+"Search users" = "חפש משתמשים";
+"No users found" = "לא נמצאו משתמשים";
+
+/* Recipe */
+"Title" = "כותרת";
+"Recipe Title" = "כותרת המתכון";
+"Main Title" = "כותרת ראשית";
+"System Language" = "שפת המערכת";
+"Original Language" = "שפה מקורית";
+"Enter title" = "הזן כותרת";
+"Description" = "תיאור";
+"Regenerate Description" = "צור תיאור מחדש";
+"Cuisine" = "מטבח";
+"Select Cuisine" = "בחר מטבח";
+"Search cuisines..." = "חפש מטבחים...";
+"Preparation Time" = "זמן הכנה";
+"Cooking Time" = "זמן בישול";
+"Time" = "זמן";
+"Servings" = "מנות";
+"servings" = "מנות";
+"Difficulty" = "קושי";
+"Spicy Level" = "רמת חריפות";
+"Add Dish Image" = "הוסף תמונת מנה";
+"Take picture" = "צלם תמונה";
+"Select image" = "בחר תמונה";
+"Select Dish images" = "בחר תמונות מנה";
+"Take another picture" = "צלם תמונה נוספת";
+"Dish Images" = "תמונות מנה";
+"Dish images can be added later as required" = "ניתן להוסיף תמונות מנה מאוחר יותר לפי הצורך";
+"Add" = "הוסף";
+"Save" = "שמור";
+"Upload" = "העלה";
+"Step" = "שלב";
+"View Video" = "צפה בסרטון";
+"Remove Media" = "הסר מדיה";
+"Add Step" = "הוסף שלב";
+"Instructions" = "הוראות";
+"Dish Ingredients" = "מרכיבי המנה";
+"Add Dish Ingredient" = "הוסף מרכיב מנה";
+"Marinade Ingredients" = "מרכיבי מרינדה";
+"Add Marinade Ingredient" = "הוסף מרכיב מרינדה";
+"Seasoning Ingredients" = "מרכיבי תיבול";
+"Add Seasoning Ingredient" = "הוסף מרכיב תיבול";
+"Batter Ingredients" = "מרכיבי בלילה";
+"Add Batter Ingredient" = "הוסף מרכיב בלילה";
+"Sauce Ingredients" = "מרכיבי רוטב";
+"Add Sauce Ingredient" = "הוסף מרכיב רוטב";
+"Base Ingredients" = "מרכיבי בסיס";
+"Add Base Ingredient" = "הוסף מרכיב בסיס";
+"Dough Ingredients" = "מרכיבי בצק";
+"Add Dough Ingredient" = "הוסף מרכיב בצק";
+"Topping Ingredients" = "מרכיבי תוספת";
+"Add Topping Ingredient" = "הוסף מרכיב תוספת";
+"Additional Tips" = "טיפים נוספים";
+"Add Tip" = "הוסף טיפ";
+"View Source Website" = "צפה באתר המקור";
+"Source Website" = "אתר מקור";
+
+/* Units */
+"-" = "-";
+"Teaspoon (tsp)" = "כפית (כפית)";
+"Tablespoon (tbsp)" = "כף (כף)";
+"Cup" = "כוס";
+"Ounce (oz)" = "אונקיה (אונקיה)";
+"Fluid Ounce (fl oz)" = "אונקיה נוזלית (אונקיה נ)";
+"Pound (lb)" = "פאונד (פאונד)";
+"Gram (g)" = "גרם (גרם)";
+"Kilogram (kg)" = "קילוגרם (קילוגרם)";
+"Milliliter (ml)" = "מיליליטר (מיליליטר)";
+"Liter (l)" = "ליטר (ליטר)";
+"Pinch" = "קורט";
+"Piece" = "חתיכה";
+"Pieces (pcs)" = "חתיכות (חתיכות)";
+"Piece (pc)" = "חתיכה (חתיכה)";
+"Slice" = "פרוסה";
+"Clove" = "שיני";
+"Bunch" = "צרור";
+"Head" = "ראש";
+"Strand" = "חוט";
+"Strands" = "חוטים";
+"Large" = "גדול";
+"Small" = "קטן";
+"Source images used for recipe extraction" = "תמונות מקור המשמשות לחילוץ מתכון";
+"Source image used for recipe extraction" = "תמונת מקור המשמשת לחילוץ מתכון";
+"Source" = "מקור";
+"Created on:" = "נוצר ב:";
+"Updated on:" = "עודכן ב:";
+"by" = "מאת";
+
+/* Spicy Level */
+"None" = "ללא";
+"Mild" = "קל";
+"Hot" = "חריף";
+"Very Hot" = "חריף מאוד";
+"Extreme" = "קיצוני";
+"Insane" = "קיצוני מאוד";
+
+/* Time Units */
+"seconds" = "שניות";
+"minutes" = "דקות";
+"hours" = "שעות";
+"days" = "ימים";
+
+/* Common Actions */
+"Ingredient" = "מרכיב";
+"Extract" = "חלץ";
+"Upload Recipe" = "העלה מתכון";
+"Extracting recipe from image..." = "מחלץ מתכון מתמונה...";
+"Extracting recipe from images..." = "מחלץ מתכון מתמונות...";
+
+/* Cuisines */
+"Chinese" = "סיני";
+"Sichuan" = "סצ'ואן";
+"Cantonese" = "קנטונזי";
+"Hunan" = "הונאן";
+"Shanghainese" = "שנחאי";
+"Japanese" = "יפני";
+"Korean" = "קוריאני";
+"Thai" = "תאילנדי";
+"Vietnamese" = "וייטנאמי";
+"Indian" = "הודי";
+"Indonesian" = "אינדונזי";
+"Malaysian" = "מלזי";
+"Singaporean" = "סינגפורי";
+"Filipino" = "פיליפיני";
+"Burmese" = "בורמזי";
+"Cambodian" = "קמבודי";
+"Laotian" = "לאוסי";
+"Sri Lankan" = "סרי לנקי";
+"Pakistani" = "פקיסטני";
+"Bangladeshi" = "בנגלדשי";
+"Italian" = "איטלקי";
+"French" = "צרפתי";
+"Spanish" = "ספרדי";
+"Greek" = "יווני";
+"Turkish" = "טורקי";
+"German" = "גרמני";
+"British" = "בריטי";
+"Irish" = "אירי";
+"Scottish" = "סקוטי";
+"Polish" = "פולני";
+"Russian" = "רוסי";
+"Swedish" = "שוודי";
+"Norwegian" = "נורווגי";
+"Danish" = "דני";
+"Finnish" = "פיני";
+"Dutch" = "הולנדי";
+"Belgian" = "בלגי";
+"Swiss" = "שוויצרי";
+"Austrian" = "אוסטרי";
+"Portuguese" = "פורטוגזי";
+"Czech" = "צ'כי";
+"Hungarian" = "הונגרי";
+"Romanian" = "רומני";
+"Bulgarian" = "בולגרי";
+"Lebanese" = "לבנוני";
+"Israeli" = "ישראלי";
+"Iranian" = "איראני";
+"Iraqi" = "עיראקי";
+"Syrian" = "סורי";
+"Egyptian" = "מצרי";
+"Moroccan" = "מרוקאי";
+"Tunisian" = "תוניסאי";
+"Algerian" = "אלג'יראי";
+"Yemeni" = "תימני";
+"Ethiopian" = "אתיופי";
+"Nigerian" = "ניגרי";
+"South African" = "דרום אפריקני";
+"Ghanaian" = "גאני";
+"Kenyan" = "קנייתי";
+"Senegalese" = "סנגלי";
+"Tanzanian" = "טנזני";
+"American" = "אמריקאי";
+"Mexican" = "מקסיקני";
+"Tex-Mex" = "טקס-מקס";
+"Cuban" = "קובני";
+"Brazilian" = "ברזילאי";
+"Argentinian" = "ארגנטינאי";
+"Peruvian" = "פרואני";
+"Colombian" = "קולומביאני";
+"Chilean" = "צ'יליאני";
+"Venezuelan" = "ונצואלי";
+"Jamaican" = "ג'מייקני";
+"Caribbean" = "קריבי";
+"Surinam" = "סורינמי";
+"Australian" = "אוסטרלי";
+"New Zealand" = "ניו זילנדי";
+"Fusion" = "מיזוג";
+"Mediterranean" = "ים תיכוני";
+"Middle Eastern" = "מזרח תיכוני";
+"International" = "בינלאומי";
+"Vegetarian" = "צמחוני";
+"Vegan" = "טבעוני";
+"Other" = "אחר";
+

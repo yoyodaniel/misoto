@@ -125,7 +125,7 @@ struct ExploreView: View {
             }
         }
         .fullScreenCover(item: $selectedRecipe) { recipe in
-            ModernRecipeDetailView(recipe: recipe)
+            RecipeDetailOverviewView(recipe: recipe)
         }
         .task {
             await viewModel.loadRecipes()
@@ -215,7 +215,7 @@ struct CollectionsSection: View {
         }
         .padding(.vertical, 16)
         .fullScreenCover(item: $selectedRecipe) { recipe in
-            ModernRecipeDetailView(recipe: recipe)
+            RecipeDetailOverviewView(recipe: recipe)
         }
     }
 }

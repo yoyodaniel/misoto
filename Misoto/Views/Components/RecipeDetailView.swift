@@ -12,6 +12,7 @@ struct RecipeDetailView: View {
     let recipe: Recipe
     @Environment(\.dismiss) private var dismiss
     @StateObject private var recipeService = RecipeService()
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var isFavorite = false
     @State private var isLoadingFavorite = false
     
@@ -93,6 +94,7 @@ struct RecipeDetailView: View {
                                         .font(.body)
                                 }
                             }
+                            .id(localizationManager.currentLanguage)
                         }
                         
                         Divider()
