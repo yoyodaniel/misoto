@@ -136,5 +136,19 @@ class AccountViewModel: ObservableObject {
         }
         return try await authService.isUsernameAvailable(username, excludingUserID: userID)
     }
+    
+    // MARK: - Account Management
+    
+    func toggleProfileVisibility(hidden: Bool) async throws {
+        try await authService.toggleProfileVisibility(hidden: hidden)
+    }
+    
+    func toggleCompletePrivacy(isPrivate: Bool) async throws {
+        try await authService.toggleCompletePrivacy(isPrivate: isPrivate)
+    }
+    
+    func deleteAccount() async throws {
+        try await authService.deleteAccount()
+    }
 }
 

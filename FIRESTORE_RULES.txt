@@ -19,8 +19,11 @@ service cloud.firestore {
     match /favorites/{favoriteId} {
       allow read: if request.auth != null && 
         resource.data.userID == request.auth.uid;
-      allow write: if request.auth != null && 
-        request.auth.uid == resource.data.userID;
+      allow create: if request.auth != null && 
+        request.resource.data.userID == request.auth.uid &&
+        request.resource.data.recipeID is string;
+      allow update, delete: if request.auth != null && 
+        resource.data.userID == request.auth.uid;
     }
     
     // Follows collection
@@ -36,6 +39,53 @@ service cloud.firestore {
         request.resource.data.userID == request.auth.uid;
       // Admin read access can be added later if needed
       allow read: if false; // Disable read access for now
+    }
+    
+    // Recipe Notes collection - users can read all notes, but only create/update/delete their own
+    match /recipeNotes/{noteId} {
+      // Allow create if userID matches authenticated user
+      allow create: if request.auth != null && 
+        request.resource.data.userID == request.auth.uid;
+      
+      // Allow read for all authenticated users (needed for note count and viewing all notes)
+      allow read: if request.auth != null;
+      
+      // Allow update if userID matches authenticated user
+      allow update: if request.auth != null && 
+        resource.data.userID == request.auth.uid &&
+        request.resource.data.userID == request.auth.uid;
+      
+      // Allow delete if userID matches authenticated user
+      allow delete: if request.auth != null && 
+        resource.data.userID == request.auth.uid;
+    }
+    
+    // Recipe Reports collection - users can report recipes
+    match /recipeReports/{reportId} {
+      // Allow users to read their own reports (for duplicate checking)
+      allow read: if request.auth != null && 
+        resource.data.reporterID == request.auth.uid;
+      // Allow users to create reports where they are the reporter
+      allow create: if request.auth != null && 
+        request.resource.data.reporterID == request.auth.uid &&
+        request.resource.data.recipeID is string &&
+        request.resource.data.reason is string &&
+        request.resource.data.createdAt is timestamp;
+      allow update, delete: if false; // Only admins can update/delete
+    }
+    
+    // User Reports collection - users can report other users
+    match /userReports/{reportId} {
+      // Allow users to read their own reports (for duplicate checking)
+      allow read: if request.auth != null && 
+        resource.data.reporterID == request.auth.uid;
+      // Allow users to create reports where they are the reporter
+      allow create: if request.auth != null && 
+        request.resource.data.reporterID == request.auth.uid &&
+        request.resource.data.reportedUserID is string &&
+        request.resource.data.reason is string &&
+        request.resource.data.createdAt is timestamp;
+      allow update, delete: if false; // Only admins can update/delete
     }
   }
 }

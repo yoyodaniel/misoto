@@ -179,6 +179,7 @@
 "Time" = "時間";
 "Servings" = "人数";
 "servings" = "人前";
+"Ingredients for %d servings" = "%d人前の材料";
 "Difficulty" = "難易度";
 "Spicy Level" = "辛さレベル";
 "Add Dish Image" = "料理の画像を追加";
@@ -354,3 +355,62 @@
 "Vegan" = "ビーガン";
 "Other" = "その他";
 
+"For the main ingredients" = "メイン材料用";
+"For the marinade / brine" = "マリネ・ブライン用";
+"For seasoning during cooking" = "調理中の調味料用";
+"For the dough / batter / filling" = "生地・バッター・フィリング用";
+"For the sauce" = "ソース用";
+"For the toppings" = "トッピング用";
+"To finish / To garnish" = "仕上げ・ガーニッシュ用";
+"Add ingredient" = "材料を追加";
+
+"Steps" = "手順";
+"Edited" = "編集済み";
+"Start Cooking" = "調理を開始";
+"Edit" = "編集";
+"Save Recipe" = "レシピを保存";
+"Unsave Recipe" = "保存を解除";
+"Report" = "報告";
+"Report Recipe" = "レシピを報告";
+"min" = "分";
+"Select from Photo Library" = "フォトライブラリから選択";
+"Tips" = "コツ";
+"Write a Note" = "メモを書く";
+"Write Note" = "メモを書く";
+"Edit Note" = "メモを編集";
+"My Notes" = "マイノート";
+"Edited" = "編集済み";
+"Delete Note" = "メモを削除";
+"Are you sure you want to delete this note? This action cannot be undone." = "このメモを削除してもよろしいですか？この操作は元に戻せません。";
+"Update Profile" = "プロフィールを更新";
+"Private Account" = "プライベートアカウント";
+"Hide Profile" = "プライベートアカウント";
+"Delete Account" = "アカウントを削除";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "アカウントを削除してもよろしいですか？この操作は元に戻せず、すべてのデータが永続的に削除されます。
+
+アカウントは30日後に削除されます。削除をキャンセルするには、30日以内に再度ログインしてください。";
+"Privacy & Terms" = "プライバシーと利用規約";
+"Privacy Policy" = "プライバシーポリシー";
+"Terms of Service" = "利用規約";
+
+// NOTE: Full privacy policy and terms translations needed for ja
+"Hide from Followers" = "フォロワーから非表示";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "あなたのアカウントはプライベートです。プロフィールは探索ビューから非表示になっています。承認されたフォロワーのみがプロフィールとレシピを閲覧できます。";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "あなたのアカウントは完全にプライベートです。プロフィールとレシピは、フォロワーを含むすべてのユーザーから非表示になっています。";
+"Public" = "公開";
+"Private" = "非公開";
+"Completely Private" = "完全非公開";
+"Account Privacy" = "アカウントのプライバシー";
+"Your profile is visible to everyone" = "あなたのプロフィールはすべての人に表示されます";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "あなたのプロフィールは探索ビューから非表示になっています。承認されたフォロワーのみがプロフィールとレシピを閲覧できます。";
+"Your profile and recipes are hidden from all users, including followers." = "あなたのプロフィールとレシピは、フォロワーを含むすべてのユーザーから非表示になっています。";
+"Limited" = "限定";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "アカウントは30日後に削除されます。削除をキャンセルするには、30日以内に再度ログインしてください。";
+"Are you sure you want to delete your account?" = "アカウントを削除してもよろしいですか？";
+"If yes, please enter your username and press delete to confirm the deletion." = "はいの場合、ユーザー名を入力し、削除を確認するために削除を押してください。";
+"Confirm Deletion" = "削除の確認";
+"Username does not match" = "ユーザー名が一致しません";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "アカウントは30日以内に削除されます。削除をキャンセルするには、再度ログインしてください。";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "アカウントを削除してもよろしいですか？アカウントは即座に削除され、この操作は元に戻せません。";

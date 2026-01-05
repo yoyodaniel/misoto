@@ -16,6 +16,8 @@ struct MisotoApp: App {
     // Configure Firebase first, before creating view models
     init() {
         FirebaseApp.configure()
+        // Configure image cache for better performance
+        _ = ImageCache.shared
     }
     
     @StateObject private var authViewModel = AuthViewModel()

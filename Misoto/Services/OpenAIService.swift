@@ -292,6 +292,20 @@ class OpenAIService {
             throw OpenAIError.invalidResponse
         }
         
+        // Truncate text early to stay within token limits
+        // gpt-3.5-turbo has 16384 token context window
+        // Reserve tokens for: system prompt (~800), user prompt template (~100), response (2000), buffer (~500)
+        // Available for content: ~13000 tokens ≈ 52000 characters (roughly 4 chars per token)
+        // Use conservative limit of 50000 characters to stay well within limits
+        let maxContentLength = 50000
+        let truncatedText: String
+        if extractedText.count > maxContentLength {
+            truncatedText = String(extractedText.prefix(maxContentLength)) + "..."
+            print("⚠️ Text truncated from \(extractedText.count) to \(maxContentLength) characters to stay within token limits")
+        } else {
+            truncatedText = extractedText
+        }
+        
         // Create the request
         guard let url = URL(string: "\(baseURL)/chat/completions") else {
             throw OpenAIError.invalidURL
@@ -441,7 +455,7 @@ class OpenAIService {
         Extract recipe from content. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. PRESERVE the original language. Rewrite instructions for better flow and clarity, keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only.
         
         Content:
-        \(extractedText)
+        \(truncatedText)
         """
         
         let requestBody: [String: Any] = [
@@ -822,8 +836,9 @@ class OpenAIService {
         let doughIngredients = parseIngredients(from: dict["doughIngredients"] as? [[String: Any]] ?? [])
         let toppingIngredients = parseIngredients(from: dict["toppingIngredients"] as? [[String: Any]] ?? [])
         
-        // Parse instructions
-        let instructions = (dict["instructions"] as? [String]) ?? []
+        // Parse instructions and clean step prefixes
+        let rawInstructions = (dict["instructions"] as? [String]) ?? []
+        let instructions = rawInstructions.map { cleanInstructionText($0) }
         
         // Parse tips
         let tips = (dict["tips"] as? [String]) ?? []
@@ -863,6 +878,67 @@ class OpenAIService {
             let unit = dict["unit"] as? String ?? ""
             return RecipeTextParser.IngredientItem(amount: amount, unit: unit, name: name)
         }
+    }
+    
+    /// Clean instruction text by removing step prefixes (e.g., "Step 1:", "Step 2", "Étape 1", etc.)
+    /// The app already numbers steps, so these prefixes are redundant
+    private static func cleanInstructionText(_ instruction: String) -> String {
+        var cleaned = instruction.trimmingCharacters(in: .whitespaces)
+        
+        // Remove common step prefixes with numbers in multiple languages
+        // Patterns: "Step 1", "Step 1:", "Step 1.", "Étape 1", "Paso 1", etc.
+        let stepPrefixPatterns = [
+            // English
+            "^step\\s+\\d+[.:]?\\s*",
+            "^step\\s+\\d+\\s*-\\s*",
+            // French
+            "^étape\\s+\\d+[.:]?\\s*",
+            "^Étape\\s+\\d+[.:]?\\s*",
+            "^ETAPE\\s+\\d+[.:]?\\s*",
+            // Spanish
+            "^paso\\s+\\d+[.:]?\\s*",
+            "^Paso\\s+\\d+[.:]?\\s*",
+            "^PASO\\s+\\d+[.:]?\\s*",
+            // German
+            "^schritt\\s+\\d+[.:]?\\s*",
+            "^Schritt\\s+\\d+[.:]?\\s*",
+            "^SCHRITT\\s+\\d+[.:]?\\s*",
+            // Italian
+            "^passo\\s+\\d+[.:]?\\s*",
+            "^Passo\\s+\\d+[.:]?\\s*",
+            "^PASSO\\s+\\d+[.:]?\\s*",
+            // Portuguese
+            "^passo\\s+\\d+[.:]?\\s*",
+            "^Passo\\s+\\d+[.:]?\\s*",
+            "^PASSO\\s+\\d+[.:]?\\s*",
+            // Dutch
+            "^stap\\s+\\d+[.:]?\\s*",
+            "^Stap\\s+\\d+[.:]?\\s*",
+            "^STAP\\s+\\d+[.:]?\\s*",
+            // Russian (Cyrillic)
+            "^шаг\\s+\\d+[.:]?\\s*",
+            "^Шаг\\s+\\d+[.:]?\\s*",
+            "^ШАГ\\s+\\d+[.:]?\\s*",
+            // Chinese (Simplified) - 步骤
+            "^步骤\\s*\\d+[.:]?\\s*",
+            "^步驟\\s*\\d+[.:]?\\s*", // Traditional
+            // Japanese - ステップ
+            "^ステップ\\s*\\d+[.:]?\\s*",
+            // Korean - 단계
+            "^단계\\s*\\d+[.:]?\\s*",
+            // Arabic numerals with common prefixes
+            "^\\d+[.:)\\-]\\s*", // "1.", "1:", "1)", "1-"
+        ]
+        
+        for pattern in stepPrefixPatterns {
+            cleaned = cleaned.replacingOccurrences(
+                of: pattern,
+                with: "",
+                options: [.regularExpression, .caseInsensitive]
+            )
+        }
+        
+        return cleaned.trimmingCharacters(in: .whitespaces)
     }
     
     // MARK: - Recipe Description and Cuisine Detection

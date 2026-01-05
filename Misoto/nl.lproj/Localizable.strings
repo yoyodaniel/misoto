@@ -179,6 +179,7 @@
 "Time" = "Tijd";
 "Servings" = "Porties";
 "servings" = "porties";
+"Ingredients for %d servings" = "Ingrediënten voor %d porties";
 "Difficulty" = "Moeilijkheidsgraad";
 "Spicy Level" = "Pittigheidsniveau";
 "Add Dish Image" = "Gerechtfoto Toevoegen";
@@ -354,3 +355,63 @@
 "Vegan" = "Veganistisch";
 "Other" = "Anders";
 
+
+"For the main ingredients" = "Voor de hoofdingrediënten";
+"For the marinade / brine" = "Voor de marinade / pekel";
+"For seasoning during cooking" = "Voor kruiden tijdens het koken";
+"For the dough / batter / filling" = "Voor het deeg / beslag / vulling";
+"For the sauce" = "Voor de saus";
+"For the toppings" = "Voor de toppings";
+"To finish / To garnish" = "Om af te maken / Om te garneren";
+"Add ingredient" = "Ingrediënt toevoegen";
+
+"Steps" = "Stappen";
+"Edited" = "Bewerkt";
+"Start Cooking" = "Beginnen met koken";
+"Edit" = "Bewerken";
+"Save Recipe" = "Recept opslaan";
+"Unsave Recipe" = "Recept niet meer opslaan";
+"Report" = "Rapporteren";
+"Report Recipe" = "Recept rapporteren";
+"min" = "min";
+"Select from Photo Library" = "Selecteren uit fotobibliotheek";
+"Tips" = "Tips";
+"Write a Note" = "Notitie schrijven";
+"Write Note" = "Notitie schrijven";
+"Edit Note" = "Notitie bewerken";
+"My Notes" = "Mijn notities";
+"Edited" = "Bewerkt";
+"Delete Note" = "Notitie verwijderen";
+"Are you sure you want to delete this note? This action cannot be undone." = "Weet u zeker dat u deze notitie wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.";
+"Update Profile" = "Profiel bijwerken";
+"Private Account" = "Privéaccount";
+"Hide Profile" = "Privéaccount";
+"Delete Account" = "Account verwijderen";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Weet u zeker dat u uw account wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt en zal al uw gegevens permanent verwijderen.
+
+Uw account wordt na 30 dagen verwijderd. Om de verwijdering te annuleren, log binnen 30 dagen weer in.";
+"Privacy & Terms" = "Privacy en Voorwaarden";
+"Privacy Policy" = "Privacybeleid";
+"Terms of Service" = "Servicevoorwaarden";
+
+// NOTE: Full privacy policy and terms translations needed for nl
+"Hide from Followers" = "Verbergen voor volgers";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Uw account is privé. Uw profiel is verborgen in de verkenweergave. Alleen uw geaccepteerde volgers kunnen uw profiel en recepten zien.";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "Uw account is volledig privé. Uw profiel en recepten zijn verborgen voor alle gebruikers, inclusief volgers.";
+"Public" = "Openbaar";
+"Private" = "Privé";
+"Completely Private" = "Volledig privé";
+"Account Privacy" = "Accountprivacy";
+"Your profile is visible to everyone" = "Uw profiel is zichtbaar voor iedereen";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Uw profiel is verborgen in de verkenweergave. Alleen uw geaccepteerde volgers kunnen uw profiel en recepten zien.";
+"Your profile and recipes are hidden from all users, including followers." = "Uw profiel en recepten zijn verborgen voor alle gebruikers, inclusief volgers.";
+"Limited" = "Beperkt";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Uw account wordt na 30 dagen verwijderd. Om de verwijdering te annuleren, log binnen 30 dagen weer in.";
+"Are you sure you want to delete your account?" = "Weet u zeker dat u uw account wilt verwijderen?";
+"If yes, please enter your username and press delete to confirm the deletion." = "Als dat zo is, voer dan uw gebruikersnaam in en druk op verwijderen om de verwijdering te bevestigen.";
+"Confirm Deletion" = "Verwijdering bevestigen";
+"Username does not match" = "Gebruikersnaam komt niet overeen";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Uw account wordt binnen 30 dagen verwijderd. Om de verwijdering te annuleren, log opnieuw in.";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Weet u zeker dat u uw account wilt verwijderen? Uw account wordt onmiddellijk verwijderd en deze actie kan niet ongedaan worden gemaakt.";

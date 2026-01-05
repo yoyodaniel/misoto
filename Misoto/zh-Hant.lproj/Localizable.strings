@@ -179,6 +179,7 @@
 "Time" = "時間";
 "Servings" = "份量";
 "servings" = "份";
+"Ingredients for %d servings" = "%d人份的材料";
 "Difficulty" = "難度";
 "Spicy Level" = "辣度";
 "Add Dish Image" = "添加菜品圖片";
@@ -354,3 +355,61 @@
 "Vegan" = "純素";
 "Other" = "其他";
 
+
+"For the main ingredients" = "主要材料用";
+"For the marinade / brine" = "醃料/鹽水用";
+"For seasoning during cooking" = "烹飪時調味用";
+"For the dough / batter / filling" = "麵糰/麵糊/餡料用";
+"For the sauce" = "醬汁用";
+"For the toppings" = "配料用";
+"To finish / To garnish" = "完成/裝飾用";
+"Add ingredient" = "新增材料";
+
+"Steps" = "步驟";
+"Start Cooking" = "開始烹飪";
+"Edit" = "編輯";
+"Save Recipe" = "儲存食譜";
+"Unsave Recipe" = "取消儲存";
+"Report" = "舉報";
+"Report Recipe" = "舉報食譜";
+"min" = "分鐘";
+"Select from Photo Library" = "從照片庫選擇";
+"Write a Note" = "寫筆記";
+"Write Note" = "寫筆記";
+"Edit Note" = "編輯筆記";
+"My Notes" = "我的筆記";
+"Edited" = "已編輯";
+"Delete Note" = "刪除筆記";
+"Are you sure you want to delete this note? This action cannot be undone." = "您確定要刪除此筆記嗎？此操作無法撤銷。";
+"Update Profile" = "更新個人資料";
+"Private Account" = "私人帳戶";
+"Hide Profile" = "私人帳戶";
+"Delete Account" = "刪除帳戶";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "您確定要刪除您的帳戶嗎？此操作無法撤銷，將永久刪除您的所有資料。
+
+您的帳戶將在30天後被刪除。要取消刪除，請在30天內重新登入。";
+"Privacy & Terms" = "隱私與條款";
+"Privacy Policy" = "隱私政策";
+"Terms of Service" = "服務條款";
+
+// NOTE: Full privacy policy and terms translations needed for zh-Hant
+"Hide from Followers" = "對追蹤者隱藏";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "您的帳戶是私人的。您的個人資料在探索視圖中隱藏。只有您接受的追蹤者才能看到您的個人資料和食譜。";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "您的帳戶完全私密。您的個人資料和食譜對所有用戶隱藏，包括追蹤者。";
+"Public" = "公開";
+"Private" = "私人";
+"Completely Private" = "完全私密";
+"Account Privacy" = "帳戶隱私";
+"Your profile is visible to everyone" = "您的個人資料對所有人可見";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "您的個人資料在探索視圖中隱藏。只有您接受的追蹤者才能看到您的個人資料和食譜。";
+"Your profile and recipes are hidden from all users, including followers." = "您的個人資料和食譜對所有用戶隱藏，包括追蹤者。";
+"Limited" = "受限";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "您的帳戶將在30天後被刪除。要取消刪除，請在30天內重新登入。";
+"Are you sure you want to delete your account?" = "您確定要刪除您的帳戶嗎？";
+"If yes, please enter your username and press delete to confirm the deletion." = "如果是，請輸入您的用戶名並按刪除以確認刪除。";
+"Confirm Deletion" = "確認刪除";
+"Username does not match" = "用戶名不匹配";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "您的帳戶將在30天內被刪除。要取消刪除，請重新登入。";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "您確定要刪除您的帳戶嗎？您的帳戶將立即被刪除，此操作不可逆。";

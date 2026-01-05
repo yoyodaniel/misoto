@@ -55,20 +55,125 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
     /// Extract original title from web page - tries multiple strategies
     /// 1. Extract from HTML title/h1 tags via JavaScript
     /// 2. Extract from raw text (first meaningful line)
+    /// Then extracts only the dish name from the full title
     private func extractOriginalTitle(from webView: WKWebView, rawText: String) async -> String? {
+        var fullTitle: String?
+        
         // Strategy 1: Try to extract from HTML title/h1 tags (most reliable)
         if let htmlTitle = await extractTitleFromHTML(webView: webView) {
             print("✅ Found title from HTML: \(htmlTitle)")
-            return htmlTitle
+            fullTitle = htmlTitle
         }
         
         // Strategy 2: Extract from raw text
-        if let textTitle = extractPotentialTitle(from: rawText) {
+        if fullTitle == nil, let textTitle = extractPotentialTitle(from: rawText) {
             print("✅ Found title from raw text: \(textTitle)")
-            return textTitle
+            fullTitle = textTitle
+        }
+        
+        // Extract only the dish name from the full title
+        if let title = fullTitle {
+            let dishName = extractDishName(from: title)
+            print("🍽️ Extracted dish name: \(dishName) (from: \(title))")
+            return dishName
         }
         
         return nil
+    }
+    
+    /// Extract only the dish name from a full recipe title
+    /// Removes descriptive words, author names, subtitles, etc.
+    /// Example: "Dad's authentic char siu pork: A Chinese Chef's Secrets" → "Char Siu Pork"
+    private func extractDishName(from title: String) -> String {
+        var cleaned = title.trimmingCharacters(in: .whitespaces)
+        
+        // Remove subtitle after colon or dash
+        if let colonRange = cleaned.range(of: ":") {
+            cleaned = String(cleaned[..<colonRange.lowerBound])
+        }
+        if let dashRange = cleaned.range(of: " - ") {
+            cleaned = String(cleaned[..<dashRange.lowerBound])
+        }
+        if let dashRange = cleaned.range(of: " — ") {
+            cleaned = String(cleaned[..<dashRange.lowerBound])
+        }
+        
+        // Remove common prefixes (possessive names, descriptive words)
+        let prefixesToRemove = [
+            // Possessive names
+            "^[A-Z][a-z]+'s\\s+",
+            "^[A-Z][a-z]+'\\s+",
+            // Descriptive words
+            "^(authentic|best|easy|simple|quick|homemade|traditional|classic|perfect|delicious|amazing|ultimate|famous|grandma's|mom's|dad's|chef's|chef|master|secret|recipe|recipes|how to make|how to cook)\\s+",
+            // Recipe-related words at start
+            "^(recipe|recipes|dish|dishes|food|meal|meals)\\s+",
+            // Articles and common words
+            "^(the|a|an)\\s+"
+        ]
+        
+        for pattern in prefixesToRemove {
+            cleaned = cleaned.replacingOccurrences(of: pattern, with: "", options: [.regularExpression, .caseInsensitive])
+        }
+        
+        // Remove common suffixes
+        let suffixesToRemove = [
+            "\\s+(recipe|recipes|dish|dishes|food|meal|meals|secrets|secret|guide|tutorial|instructions|method|way|style|version)$",
+            "\\s+by\\s+[A-Z][a-z]+(\\s+[A-Z][a-z]+)?$", // "by Author Name"
+            "\\s+from\\s+[A-Z][a-z]+(\\s+[A-Z][a-z]+)?$" // "from Source"
+        ]
+        
+        for pattern in suffixesToRemove {
+            cleaned = cleaned.replacingOccurrences(of: pattern, with: "", options: [.regularExpression, .caseInsensitive])
+        }
+        
+        // Remove extra descriptive words in the middle (but keep the core dish name)
+        // Split into words and filter out common descriptive words
+        let words = cleaned.components(separatedBy: .whitespaces)
+        let descriptiveWords: Set<String> = [
+            "authentic", "best", "easy", "simple", "quick", "homemade", "traditional",
+            "classic", "perfect", "delicious", "amazing", "ultimate", "famous",
+            "grandma's", "mom's", "dad's", "chef's", "chef", "master", "secret",
+            "recipe", "recipes", "dish", "dishes", "food", "meal", "meals",
+            "style", "version", "way", "method", "guide", "tutorial", "instructions",
+            "chinese", "italian", "french", "japanese", "thai", "indian", "mexican",
+            "a", "an", "the", "of", "with", "and", "or"
+        ]
+        
+        let filteredWords = words.filter { word in
+            let lowercased = word.lowercased().trimmingCharacters(in: CharacterSet(charactersIn: ".,!?;:"))
+            return !descriptiveWords.contains(lowercased) && !lowercased.isEmpty
+        }
+        
+        // If we filtered out too much, use original but cleaned
+        if filteredWords.count < 2 && words.count > 2 {
+            // Keep original but remove obvious prefixes/suffixes
+            cleaned = cleaned.trimmingCharacters(in: .whitespaces)
+        } else if !filteredWords.isEmpty {
+            cleaned = filteredWords.joined(separator: " ")
+        }
+        
+        // Clean up and capitalize properly
+        cleaned = cleaned
+            .trimmingCharacters(in: .whitespaces)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+        
+        // If result is too short or empty, return original title cleaned
+        if cleaned.count < 3 {
+            // Fallback: try to extract the longest capitalized phrase
+            let capitalizedWords = words.filter { word in
+                let trimmed = word.trimmingCharacters(in: CharacterSet(charactersIn: ".,!?;:"))
+                return !trimmed.isEmpty && (trimmed.first?.isUppercase == true || trimmed.allSatisfy { $0.isLetter == false })
+            }
+            if !capitalizedWords.isEmpty {
+                cleaned = capitalizedWords.joined(separator: " ")
+            } else {
+                // Last resort: return first few meaningful words
+                let meaningfulWords = words.prefix(4).filter { $0.count > 2 }
+                cleaned = meaningfulWords.joined(separator: " ")
+            }
+        }
+        
+        return cleaned.trimmingCharacters(in: .whitespaces)
     }
     
     /// Extract title from HTML using JavaScript (tries title tag, h1, and recipe-specific selectors)
@@ -260,23 +365,49 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             rawText = await TextTranslationService.translateToEnglish(rawText)
             print("✅ Web content ready for processing (translated to English if needed)")
             
-            // Step 1.6: Extract recipe image from web page
-            do {
-                if let recipeImage = try await WebContentExtractor.extractRecipeImage(from: webView) {
-                    // Only add if we don't already have 5 images
-                    if mainRecipeImages.count < 5 {
-                        addRecipeImage(recipeImage)
-                        print("✅ Added recipe image to collection")
-                    } else {
-                        print("⚠️ Recipe image found but already have 5 images")
+                // Step 1.6: Extract recipe images from web page using Vision framework
+                do {
+                    let recipeImageURLs = try await WebContentExtractor.extractRecipeImageURLs(from: webView)
+                    print("🔍 Extracted \(recipeImageURLs.count) food image URLs from webpage")
+                    
+                    // Download images from URLs and add to collection
+                    for imageURLString in recipeImageURLs {
+                        guard mainRecipeImages.count < 5 else {
+                            print("⚠️ Already have 5 images, skipping additional images")
+                            break
+                        }
+                        
+                        guard let imageURL = URL(string: imageURLString) else {
+                            continue
+                        }
+                        
+                        do {
+                            var request = URLRequest(url: imageURL)
+                            request.timeoutInterval = 10.0
+                            let (data, response) = try await URLSession.shared.data(for: request)
+                            
+                            guard let httpResponse = response as? HTTPURLResponse,
+                                  httpResponse.statusCode == 200,
+                                  let image = UIImage(data: data) else {
+                                print("⚠️ Failed to download image from \(imageURLString)")
+                                continue
+                            }
+                            
+                            addRecipeImage(image)
+                            print("✅ Added recipe image to collection: \(imageURLString)")
+                        } catch {
+                            print("⚠️ Error downloading image from \(imageURLString): \(error.localizedDescription)")
+                            continue
+                        }
                     }
-                } else {
-                    print("⚠️ No recipe image found on webpage")
+                    
+                    if mainRecipeImages.isEmpty {
+                        print("⚠️ No recipe images found on webpage")
+                    }
+                } catch {
+                    print("⚠️ Error extracting recipe images: \(error.localizedDescription)")
+                    // Continue with recipe extraction even if image extraction fails
                 }
-            } catch {
-                print("⚠️ Error extracting recipe image: \(error.localizedDescription)")
-                // Continue with recipe extraction even if image extraction fails
-            }
             
             // Step 2: Use on-device Foundation models to clean and process text
             // Note: rawText is already translated to English at this point
@@ -575,8 +706,7 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
     // MARK: - Save Recipe
     
     func saveRecipe(image: UIImage? = nil) async -> Bool {
-        guard let userID = Auth.auth().currentUser?.uid,
-              let displayName = Auth.auth().currentUser?.displayName else {
+        guard let userID = Auth.auth().currentUser?.uid else {
             errorMessage = LocalizedString("You must be logged in to save a recipe", comment: "Not logged in error")
             return false
         }
@@ -585,6 +715,7 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
         let authService = AuthService()
         await authService.reloadUserData()
         let username = authService.currentUser?.username
+        let displayName = authService.currentUser?.displayName ?? Auth.auth().currentUser?.displayName ?? "User"
         // Use username for authorName if available, otherwise fall back to displayName
         let authorName = username ?? displayName
         
@@ -709,6 +840,18 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
                 authorName: authorName,
                 authorUsername: username
             )
+            
+            // Profanity check - first line of defense
+            let profanityCheck = ProfanityFilter.shared.checkRecipe(recipe)
+            if profanityCheck.hasProfanity {
+                let errorMsg = ProfanityFilter.shared.getErrorMessage(
+                    field: profanityCheck.field,
+                    detectedWords: profanityCheck.detectedWords
+                )
+                errorMessage = errorMsg
+                isLoading = false
+                return false
+            }
             
             try await recipeService.createRecipe(recipe)
             isLoading = false

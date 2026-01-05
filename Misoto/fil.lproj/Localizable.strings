@@ -179,6 +179,7 @@
 "Time" = "Oras";
 "Servings" = "Mga Servings";
 "servings" = "servings";
+"Ingredients for %d servings" = "Mga sangkap para sa %d na servings";
 "Difficulty" = "Kahirapan";
 "Spicy Level" = "Antas ng Maanghang";
 "Add Dish Image" = "Magdagdag ng Larawan ng Ulam";
@@ -354,3 +355,62 @@
 "Vegan" = "Vegan";
 "Other" = "Iba pa";
 
+
+"For the main ingredients" = "Para sa mga pangunahing sangkap";
+"For the marinade / brine" = "Para sa marinade / brine";
+"For seasoning during cooking" = "Para sa pampalasa habang nagluluto";
+"For the dough / batter / filling" = "Para sa masa / batter / palaman";
+"For the sauce" = "Para sa sarsa";
+"For the toppings" = "Para sa toppings";
+"To finish / To garnish" = "Para tapusin / Para sa dekorasyon";
+"Add ingredient" = "Magdagdag ng sangkap";
+
+"Steps" = "Mga hakbang";
+"Start Cooking" = "Simulan ang pagluluto";
+"Edit" = "I-edit";
+"Save Recipe" = "I-save ang recipe";
+"Unsave Recipe" = "Alisin sa naka-save";
+"Report" = "I-report";
+"Report Recipe" = "I-report ang recipe";
+"min" = "min";
+"Select from Photo Library" = "Pumili mula sa photo library";
+"Tips" = "Mga Tip";
+"Write a Note" = "Sumulat ng tala";
+"Write Note" = "Sumulat ng tala";
+"Edit Note" = "I-edit ang tala";
+"My Notes" = "Aking mga tala";
+"Edited" = "Na-edit";
+"Delete Note" = "Tanggalin ang tala";
+"Are you sure you want to delete this note? This action cannot be undone." = "Sigurado ka bang gusto mong tanggalin ang tala na ito? Hindi na mababalik ang aksyon na ito.";
+"Update Profile" = "I-update ang profile";
+"Private Account" = "Pribadong account";
+"Hide Profile" = "Pribadong account";
+"Delete Account" = "Tanggalin ang account";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Sigurado ka bang gusto mong tanggalin ang iyong account? Hindi na mababalik ang aksyon na ito at permanenteng tatanggalin ang lahat ng iyong data.
+
+Ang iyong account ay tatanggalin pagkatapos ng 30 araw. Upang kanselahin ang pagtanggal, mag-log in ulit sa loob ng 30 araw.";
+"Privacy & Terms" = "Privacy at Tuntunin";
+"Privacy Policy" = "Patakaran sa Privacy";
+"Terms of Service" = "Mga Tuntunin ng Serbisyo";
+
+// NOTE: Full privacy policy and terms translations needed for fil
+"Hide from Followers" = "Itago sa mga tagasunod";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Ang iyong account ay pribado. Ang iyong profile ay nakatago sa explore view. Tanging ang iyong tinanggap na mga tagasunod ang makakakita ng iyong profile at mga recipe.";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "Ang iyong account ay ganap na pribado. Ang iyong profile at mga recipe ay nakatago sa lahat ng mga user, kabilang ang mga tagasunod.";
+"Public" = "Pampubliko";
+"Private" = "Pribado";
+"Completely Private" = "Ganap na pribado";
+"Account Privacy" = "Privacy ng account";
+"Your profile is visible to everyone" = "Ang iyong profile ay nakikita ng lahat";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Ang iyong profile ay nakatago sa explore view. Tanging ang iyong tinanggap na mga tagasunod ang makakakita ng iyong profile at mga recipe.";
+"Your profile and recipes are hidden from all users, including followers." = "Ang iyong profile at mga recipe ay nakatago sa lahat ng mga user, kabilang ang mga tagasunod.";
+"Limited" = "Limitado";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Ang iyong account ay tatanggalin pagkatapos ng 30 araw. Upang kanselahin ang pagtanggal, mag-log in ulit sa loob ng 30 araw.";
+"Are you sure you want to delete your account?" = "Sigurado ka bang gusto mong tanggalin ang iyong account?";
+"If yes, please enter your username and press delete to confirm the deletion." = "Kung oo, mangyaring ilagay ang iyong username at pindutin ang tanggalin upang kumpirmahin ang pagtanggal.";
+"Confirm Deletion" = "Kumpirmahin ang Pagtanggal";
+"Username does not match" = "Hindi tumugma ang username";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Ang iyong account ay tatanggalin sa loob ng 30 araw. Upang kanselahin ang pagtanggal, mangyaring mag-log in ulit.";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Sigurado ka bang gusto mong tanggalin ang iyong account? Ang iyong account ay tatanggalin kaagad at ang pagkilos na ito ay hindi maibabalik.";

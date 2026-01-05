@@ -22,15 +22,25 @@ struct WriteNoteView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                // Text Editor
-                TextEditor(text: $viewModel.content)
-                    .font(.system(size: 16))
-                    .padding(12)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(12)
-                    .focused($isContentFocused)
-                    .frame(minHeight: 200)
+            VStack(spacing: 16) {
+                // Text Editor with rounded rectangle background
+                ZStack(alignment: .topLeading) {
+                    // Rounded rectangle background (adapts to dark mode)
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.systemBackground))
+                        .frame(maxWidth: .infinity, minHeight: 200)
+                    
+                    // Text Editor with indentation
+                    TextEditor(text: $viewModel.content)
+                        .font(.custom("Caveat", size: 18))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .scrollContentBackground(.hidden) // Hide TextEditor's default background
+                        .background(Color.clear)
+                        .focused($isContentFocused)
+                        .frame(maxWidth: .infinity, minHeight: 200)
+                }
+                .frame(maxWidth: .infinity)
                 
                 // Error Message
                 if let errorMessage = viewModel.errorMessage {
@@ -38,11 +48,18 @@ struct WriteNoteView: View {
                         .font(.system(size: 14))
                         .foregroundColor(.red)
                         .padding(.horizontal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 
                 Spacer()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        // Dismiss keyboard when tapping on the spacer area
+                        isContentFocused = false
+                    }
             }
-            .padding(20)
+            .frame(maxWidth: .infinity)
+            .padding(12)
             .navigationTitle(viewModel.existingNote != nil ? 
                             LocalizedString("Edit Note", comment: "Edit note title") :
                             LocalizedString("Write Note", comment: "Write note title"))

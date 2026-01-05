@@ -19,128 +19,267 @@ struct SettingsView: View {
     @State private var feedbackEmail = ""
     @State private var showShareSheet = false
     @State private var showSignOutConfirmation = false
+    @State private var showEditProfile = false
+    @State private var showDeleteAccountConfirmation = false
+    @State private var showReAuthenticate = false
+    @State private var showPrivacyPolicy = false
+    @State private var showTermsOfService = false
+    @State private var deleteAccountError: String?
+    @StateObject private var accountViewModel = AccountViewModel()
+    private let authService = AuthService()
+    
+    // Section expansion states
+    @State private var isAppearanceExpanded = true
+    @State private var isLanguageExpanded = true
+    @State private var isShareExpanded = true
+    @State private var isFeedbackExpanded = true
+    @State private var isPrivacyTermsExpanded = true
+    @State private var isAccountExpanded = false // Collapsed by default
     
     var body: some View {
         NavigationView {
             Form {
                 // MARK: - Appearance Section
                 Section {
-                    Toggle(isOn: $appSettings.isDarkModeEnabled) {
-                        HStack {
-                            Image(systemName: "moon.fill")
-                                .foregroundColor(.blue)
-                                .frame(width: 24)
-                            Text(LocalizedString("Dark Mode", comment: "Dark mode setting"))
+                    DisclosureGroup(isExpanded: $isAppearanceExpanded) {
+                        Toggle(isOn: $appSettings.isDarkModeEnabled) {
+                            HStack {
+                                Image(systemName: "moon.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Dark Mode", comment: "Dark mode setting"))
+                            }
                         }
-                    }
-                    .onChange(of: appSettings.isDarkModeEnabled) {
-                        HapticFeedback.buttonTap()
-                    }
-                    
-                    Toggle(isOn: $appSettings.isHapticFeedbackEnabled) {
-                        HStack {
-                            Image(systemName: "hand.tap.fill")
-                                .foregroundColor(.blue)
-                                .frame(width: 24)
-                            Text(LocalizedString("Haptic Feedback", comment: "Haptic feedback setting"))
+                        .onChange(of: appSettings.isDarkModeEnabled) {
+                            HapticFeedback.buttonTap()
                         }
-                    }
-                    .onChange(of: appSettings.isHapticFeedbackEnabled) {
-                        // Play haptic when toggling (if it was enabled)
-                        if appSettings.isHapticFeedbackEnabled {
-                            HapticFeedback.play(.medium)
+                        
+                        Toggle(isOn: $appSettings.isHapticFeedbackEnabled) {
+                            HStack {
+                                Image(systemName: "hand.tap.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Haptic Feedback", comment: "Haptic feedback setting"))
+                            }
                         }
+                        .onChange(of: appSettings.isHapticFeedbackEnabled) {
+                            // Play haptic when toggling (if it was enabled)
+                            if appSettings.isHapticFeedbackEnabled {
+                                HapticFeedback.play(.medium)
+                            }
+                        }
+                    } label: {
+                        Text(LocalizedString("Appearance", comment: "Appearance section header"))
+                            .font(.headline)
                     }
-                } header: {
-                    Text(LocalizedString("Appearance", comment: "Appearance section header"))
                 }
                 
                 // MARK: - Language Section
                 Section {
-                    // Only show English and System Language for now
-                    // Other languages are commented out but code is preserved
-                    ForEach(AppLanguage.availableLanguages, id: \.self) { language in
-                        Button(action: {
-                            HapticFeedback.play(.selection)
-                            Task {
-                                await viewModel.selectLanguage(language)
-                            }
-                        }) {
-                            HStack {
-                                Image(systemName: "globe")
-                                    .foregroundColor(.blue)
-                                    .frame(width: 24)
-                                HStack(spacing: 4) {
-                                    Text(language.displayName)
-                                    if language == .system {
-                                        Text("(BETA)")
-                                            .font(.caption)
-                                            .italic()
-                                            .foregroundColor(.secondary)
+                    DisclosureGroup(isExpanded: $isLanguageExpanded) {
+                        // Only show English and System Language for now
+                        // Other languages are commented out but code is preserved
+                        ForEach(AppLanguage.availableLanguages, id: \.self) { language in
+                            Button(action: {
+                                HapticFeedback.play(.selection)
+                                Task {
+                                    await viewModel.selectLanguage(language)
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "globe")
+                                        .foregroundColor(.blue)
+                                        .frame(width: 24)
+                                    HStack(spacing: 4) {
+                                        Text(language.displayName)
+                                        if language == .system {
+                                            Text("(BETA)")
+                                                .font(.caption)
+                                                .italic()
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
+                                    Spacer()
+                                    if viewModel.isChangingLanguage && viewModel.pendingLanguage == language {
+                                        ProgressView()
+                                            .scaleEffect(0.8)
+                                    } else if !viewModel.isChangingLanguage && viewModel.selectedLanguage == language {
+                                        Image(systemName: "checkmark")
+                                            .foregroundColor(.accentColor)
                                     }
                                 }
-                                Spacer()
-                                if viewModel.isChangingLanguage && viewModel.pendingLanguage == language {
-                                    ProgressView()
-                                        .scaleEffect(0.8)
-                                } else if !viewModel.isChangingLanguage && viewModel.selectedLanguage == language {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.accentColor)
-                                }
                             }
+                            .foregroundColor(.primary)
+                            .disabled(viewModel.isChangingLanguage)
                         }
-                        .foregroundColor(.primary)
-                        .disabled(viewModel.isChangingLanguage)
+                    } label: {
+                        Text(LocalizedString("Language", comment: "Language section header"))
+                            .font(.headline)
                     }
-                } header: {
-                    Text(LocalizedString("Language", comment: "Language section header"))
                 } footer: {
-                    Text(LocalizedString("The language selected will be used as the default writing language for recipe extractions.", comment: "Language selection footnote"))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    if isLanguageExpanded {
+                        Text(LocalizedString("The language selected will be used as the default writing language for recipe extractions.", comment: "Language selection footnote"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
                 // MARK: - Share Section
                 Section {
-                    Button(action: {
-                        HapticFeedback.buttonTap()
-                        showShareSheet = true
-                    }) {
-                        HStack {
-                            Image(systemName: "square.and.arrow.up")
-                                .foregroundColor(.blue)
-                                .frame(width: 24)
-                            Text(LocalizedString("Share App", comment: "Share app button"))
+                    DisclosureGroup(isExpanded: $isShareExpanded) {
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            showShareSheet = true
+                        }) {
+                            HStack {
+                                Image(systemName: "square.and.arrow.up")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Share App", comment: "Share app button"))
+                            }
                         }
+                        .foregroundColor(.primary)
+                    } label: {
+                        Text(LocalizedString("Share", comment: "Share section header"))
+                            .font(.headline)
                     }
-                    .foregroundColor(.primary)
-                } header: {
-                    Text(LocalizedString("Share", comment: "Share section header"))
                 }
                 
                 // MARK: - Feedback Section
                 Section {
-                    Button(action: {
-                        HapticFeedback.buttonTap()
-                        showFeedbackSheet = true
+                    DisclosureGroup(isExpanded: $isFeedbackExpanded) {
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            showFeedbackSheet = true
+                        }) {
+                            HStack {
+                                Image(systemName: "lightbulb.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Submit Feedback", comment: "Submit feedback button"))
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    } label: {
+                        Text(LocalizedString("Feedback", comment: "Feedback section header"))
+                            .font(.headline)
+                    }
+                } footer: {
+                    if isFeedbackExpanded {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(LocalizedString("We appreciate collaborating with our users to improve the app further and tailor it to your needs.", comment: "Feedback instructional text"))
+                            Text(LocalizedString("Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone.", comment: "Feedback how it works text"))
+                        }
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    }
+                }
+                
+                // MARK: - Privacy & Terms Section
+                Section {
+                    DisclosureGroup(isExpanded: $isPrivacyTermsExpanded) {
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            showPrivacyPolicy = true
+                        }) {
+                            HStack {
+                                Image(systemName: "hand.raised.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Privacy Policy", comment: "Privacy policy button"))
+                            }
+                        }
+                        .foregroundColor(.primary)
+                        
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            showTermsOfService = true
+                        }) {
+                            HStack {
+                                Image(systemName: "doc.text.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Terms of Service", comment: "Terms of service button"))
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    } label: {
+                        Text(LocalizedString("Privacy & Terms", comment: "Privacy and terms section header"))
+                            .font(.headline)
+                    }
+                }
+                
+                // MARK: - Account Section
+                Section {
+                    DisclosureGroup(isExpanded: $isAccountExpanded) {
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            showEditProfile = true
+                        }) {
+                            HStack {
+                                Image(systemName: "person.circle")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Update Profile", comment: "Update profile button"))
+                            }
+                        }
+                        .foregroundColor(.primary)
+                        
+                        Picker(selection: Binding(
+                            get: { PrivacyLevel.from(user: authViewModel.currentUser) },
+                            set: { newLevel in
+                                Task {
+                                    await updatePrivacyLevel(newLevel)
+                                }
+                            }
+                        )) {
+                            ForEach(PrivacyLevel.allCases) { level in
+                                HStack {
+                                    Image(systemName: level == .public ? "globe" : level == .limited ? "lock.fill" : "eye.slash.fill")
+                                        .foregroundColor(.blue)
+                                        .frame(width: 20)
+                                    Text(level.displayName)
+                                }
+                                .tag(level)
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "lock.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Account Privacy", comment: "Account privacy picker label"))
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .onChange(of: PrivacyLevel.from(user: authViewModel.currentUser)) {
+                            HapticFeedback.buttonTap()
+                        }
+                        
+                    Button(role: .destructive, action: {
+                        HapticFeedback.play(.warning)
+                        showDeleteAccountConfirmation = true
                     }) {
-                        HStack {
-                            Image(systemName: "lightbulb.fill")
-                                .foregroundColor(.blue)
-                                .frame(width: 24)
-                            Text(LocalizedString("Submit Feedback", comment: "Submit feedback button"))
+                            HStack {
+                                Image(systemName: "trash.fill")
+                                    .foregroundColor(.red)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Delete Account", comment: "Delete account button"))
+                            }
+                        }
+                        .foregroundColor(.red)
+                    } label: {
+                        Text(LocalizedString("Account", comment: "Account section header"))
+                        .font(.headline)
+                    }
+                } footer: {
+                    if isAccountExpanded {
+                        let privacyLevel = PrivacyLevel.from(user: authViewModel.currentUser)
+                        if privacyLevel != .public {
+                            Text(privacyLevel.description)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     }
-                    .foregroundColor(.primary)
-                } header: {
-                    Text(LocalizedString("Feedback", comment: "Feedback section header"))
-                } footer: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(LocalizedString("We appreciate collaborating with our users to improve the app further and tailor it to your needs.", comment: "Feedback instructional text"))
-                        Text(LocalizedString("Share your ideas, suggestions, feature requests, or general feedback. Your input helps us build a better experience for everyone.", comment: "Feedback how it works text"))
-                    }
-                    .font(.caption)
-                    .foregroundColor(.secondary)
                 }
                 
                 // MARK: - Sign Out Section
@@ -207,6 +346,66 @@ struct SettingsView: View {
             } message: {
                 Text(LocalizedString("Are you sure you want to sign out?", comment: "Sign out confirmation message"))
             }
+            .sheet(isPresented: $showEditProfile) {
+                EditProfileView(viewModel: accountViewModel, authViewModel: authViewModel)
+            }
+            .confirmationDialog(
+                LocalizedString("Delete Account", comment: "Delete account confirmation title"),
+                isPresented: $showDeleteAccountConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(LocalizedString("Delete Account", comment: "Delete account button"), role: .destructive) {
+                    HapticFeedback.play(.error)
+                    // Show re-authentication screen first
+                    showReAuthenticate = true
+                }
+                Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+            } message: {
+                Text(LocalizedString("Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible.", comment: "Delete account confirmation message"))
+            }
+            .sheet(isPresented: $showReAuthenticate) {
+                ReAuthenticateView(authService: authService) {
+                    // After successful re-authentication, proceed with deletion
+                    Task {
+                        await deleteAccount()
+                    }
+                }
+                .presentationDetents([.fraction(0.4)])
+            }
+            .sheet(isPresented: $showPrivacyPolicy) {
+                PrivacyPolicyView()
+            }
+            .sheet(isPresented: $showTermsOfService) {
+                TermsOfServiceView()
+            }
+            .onAppear {
+                accountViewModel.authViewModel = authViewModel
+            }
+        }
+    }
+    
+    // MARK: - Account Management
+    
+    private func updatePrivacyLevel(_ level: PrivacyLevel) async {
+        do {
+            try await accountViewModel.toggleProfileVisibility(hidden: level.isProfileHidden)
+            try await accountViewModel.toggleCompletePrivacy(isPrivate: level.isCompletelyPrivate)
+            await authViewModel.reloadUserData()
+        } catch {
+            print("⚠️ Error updating privacy level: \(error.localizedDescription)")
+        }
+    }
+    
+    private func deleteAccount() async {
+        deleteAccountError = nil
+        do {
+            try await accountViewModel.deleteAccount()
+            // Sign out after account deletion
+            authViewModel.signOut()
+            dismiss()
+        } catch {
+            deleteAccountError = error.localizedDescription
+            print("⚠️ Error deleting account: \(error.localizedDescription)")
         }
     }
     

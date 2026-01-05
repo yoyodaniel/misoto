@@ -45,6 +45,9 @@ struct RecipeDetailOverviewView: View {
     @State private var showReportSheet = false
     @State private var showShareSheet = false
     @State private var showEditRecipe = false
+    @State private var noteToEdit: RecipeNote?
+    @State private var noteToDelete: RecipeNote?
+    @State private var showDeleteNoteConfirmation = false
     @State private var scrollOffset: CGFloat = 0
     @State private var shareImage: UIImage?
     @State private var isPreparingShare = false
@@ -138,13 +141,13 @@ struct RecipeDetailOverviewView: View {
                                         
                                         // Metadata Rows
                                         VStack(alignment: .leading, spacing: 8) {
-                                            // First Row: Time, Servings, Difficulty, Spicy Level
-                                            HStack(spacing: 16) {
+                                            // First Row: Time, Servings, Difficulty, Spicy Level, Cuisine (wraps if needed)
+                                            HStack(alignment: .top, spacing: 16) {
                                                 // Time
                                                 HStack(spacing: 4) {
                                                     Image(systemName: "clock")
                                                         .font(.system(size: 14))
-                                                    Text("\(viewModel.totalTime) min")
+                                                    Text("\(viewModel.totalTime) \(LocalizedString("min", comment: "Minutes abbreviation"))")
                                                         .font(.system(size: 14))
                                                 }
                                                 
@@ -174,15 +177,15 @@ struct RecipeDetailOverviewView: View {
                                                             .font(.system(size: 14))
                                                     }
                                                 }
-                                            }
-                                            
-                                            // Second Row: Cuisine (if available)
-                                            if let cuisine = viewModel.recipe.displayCuisine {
-                                                HStack(spacing: 4) {
-                                                    Image(systemName: "globe")
-                                                        .font(.system(size: 14))
-                                                    Text(cuisine)
-                                                        .font(.system(size: 14))
+                                                
+                                                // Cuisine (if available) - now on same row
+                                                if let cuisine = viewModel.recipe.displayCuisine {
+                                                    HStack(spacing: 4) {
+                                                        Image(systemName: "globe")
+                                                            .font(.system(size: 14))
+                                                        Text(cuisine)
+                                                            .font(.system(size: 14))
+                                                    }
                                                 }
                                             }
                                         }
@@ -204,7 +207,7 @@ struct RecipeDetailOverviewView: View {
                             // Ingredients Card (overlaps image more significantly)
                             VStack(alignment: .leading, spacing: 16) {
                                 // Header
-                                Text(String(format: LocalizedString("Ingredients for %d serving", comment: "Ingredients header"), viewModel.recipe.servings))
+                                Text(String(format: LocalizedString("Ingredients for %d servings", comment: "Ingredients header"), viewModel.recipe.servings))
                                     .font(.system(size: 20, weight: .bold))
                                     .foregroundColor(.primary)
                                 
@@ -258,6 +261,125 @@ struct RecipeDetailOverviewView: View {
                                             }
                                         }
                                     }
+                                    
+                                    // Dotted Line Separator before Tips
+                                    if !viewModel.recipe.tips.isEmpty {
+                                        dottedLineSeparator
+                                            .padding(.vertical, 20)
+                                        
+                                        // Tips Section
+                                        VStack(alignment: .leading, spacing: 16) {
+                                            Text(LocalizedString("Tips", comment: "Tips header"))
+                                                .font(.system(size: 20, weight: .bold))
+                                                .foregroundColor(.primary)
+                                            
+                                            ForEach(Array(viewModel.recipe.tips.enumerated()), id: \.offset) { index, tip in
+                                                if !tip.trimmingCharacters(in: .whitespaces).isEmpty {
+                                                    HStack(alignment: .top, spacing: 12) {
+                                                        // Bullet point
+                                                        Text("•")
+                                                            .font(.system(size: 18, weight: .semibold))
+                                                            .foregroundColor(.secondary)
+                                                            .padding(.top, 2)
+                                                        
+                                                        Text(tip)
+                                                            .font(.system(size: 16))
+                                                            .foregroundColor(.primary)
+                                                            .lineSpacing(4)
+                                                            .fixedSize(horizontal: false, vertical: true)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Dotted Line Separator before User Notes
+                                    if !viewModel.userNotes.isEmpty {
+                                        dottedLineSeparator
+                                            .padding(.vertical, 20)
+                                        
+                                        // User Notes Section
+                                        VStack(alignment: .leading, spacing: 16) {
+                                            Text(LocalizedString("My Notes", comment: "My notes header"))
+                                                .font(.system(size: 20, weight: .bold))
+                                                .foregroundColor(.primary)
+                                            
+                                            ForEach(viewModel.userNotes) { note in
+                                                VStack(alignment: .leading, spacing: 8) {
+                                                    // Note content
+                                                    Text(note.content)
+                                                        .font(.custom("Caveat", size: 16))
+                                                        .foregroundColor(.primary)
+                                                        .lineSpacing(4)
+                                                        .multilineTextAlignment(.leading)
+                                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                                    
+                                                    // Note metadata
+                                                    HStack {
+                                                        if note.updatedAt != note.createdAt {
+                                                            Text(LocalizedString("Edited", comment: "Edited label"))
+                                                                .font(.system(size: 12))
+                                                                .foregroundColor(.secondary)
+                                                        }
+                                                        
+                                                        Spacer()
+                                                        
+                                                        Text(formatDate(note.updatedAt))
+                                                            .font(.system(size: 12))
+                                                            .foregroundColor(.secondary)
+                                                    }
+                                                }
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .padding(16)
+                                                .background(Color(.systemGray6))
+                                                .cornerRadius(12)
+                                                .contextMenu {
+                                                    // Edit option
+                                                    Button(action: {
+                                                        HapticFeedback.buttonTap()
+                                                        noteToEdit = note
+                                                        showWriteNote = true
+                                                    }) {
+                                                        Label(LocalizedString("Edit", comment: "Edit button"), systemImage: "pencil")
+                                                    }
+                                                    
+                                                    // Delete option
+                                                    Button(role: .destructive, action: {
+                                                        HapticFeedback.buttonTap()
+                                                        noteToDelete = note
+                                                        showDeleteNoteConfirmation = true
+                                                    }) {
+                                                        Label(LocalizedString("Delete", comment: "Delete button"), systemImage: "trash")
+                                                    }
+                                                }
+                                            }
+                                            
+                                            // Load More Button
+                                            if viewModel.hasMoreNotes {
+                                                Button(action: {
+                                                    HapticFeedback.buttonTap()
+                                                    Task {
+                                                        await viewModel.loadMoreUserNotes()
+                                                    }
+                                                }) {
+                                                    HStack {
+                                                        if viewModel.isLoadingMoreNotes {
+                                                            ProgressView()
+                                                                .progressViewStyle(CircularProgressViewStyle())
+                                                        } else {
+                                                            Text(LocalizedString("Load More", comment: "Load more notes button"))
+                                                                .font(.system(size: 14, weight: .medium))
+                                                        }
+                                                    }
+                                                    .frame(maxWidth: .infinity)
+                                                    .padding(.vertical, 12)
+                                                    .background(Color(.systemGray5))
+                                                    .cornerRadius(12)
+                                                }
+                                                .disabled(viewModel.isLoadingMoreNotes)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -290,6 +412,7 @@ struct RecipeDetailOverviewView: View {
                                 
                                 // Write Note Button
                                 Button(action: {
+                                    HapticFeedback.buttonTap()
                                     showWriteNote = true
                                 }) {
                                     Text(LocalizedString("Write a Note", comment: "Write note button"))
@@ -301,9 +424,12 @@ struct RecipeDetailOverviewView: View {
                                         .cornerRadius(12)
                                 }
                                 
-                                // Start Cooking Button
+                                // Start Cooking Button (hidden for now)
+                                // TODO: Re-enable when Start Cooking feature is ready
+                                /*
                                 if !viewModel.recipe.instructions.isEmpty {
                                     Button(action: {
+                                        HapticFeedback.importantAction()
                                         showStepView = true
                                     }) {
                                         Text(LocalizedString("Start Cooking", comment: "Start cooking button"))
@@ -315,6 +441,7 @@ struct RecipeDetailOverviewView: View {
                                             .cornerRadius(16)
                                     }
                                 }
+                                */
                             }
                             .frame(width: geometry.size.width)
                             .padding(.horizontal, 20)
@@ -332,7 +459,10 @@ struct RecipeDetailOverviewView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { dismiss() }) {
+                    Button(action: {
+                        HapticFeedback.buttonTap()
+                        dismiss()
+                    }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.white)
@@ -345,6 +475,7 @@ struct RecipeDetailOverviewView: View {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     // Favorite/Like Button
                     Button(action: {
+                        HapticFeedback.importantAction()
                         Task {
                             await viewModel.toggleFavorite()
                         }
@@ -362,6 +493,7 @@ struct RecipeDetailOverviewView: View {
                         if isAuthor {
                             // For user's own posts: Edit, Share, Delete
                             Button(action: {
+                                HapticFeedback.importantAction()
                                 showEditRecipe = true
                                 showMenu = false
                             }) {
@@ -397,6 +529,7 @@ struct RecipeDetailOverviewView: View {
                             }
                             
                             Button(action: {
+                                HapticFeedback.importantAction()
                                 Task {
                                     await viewModel.toggleFavorite()
                                 }
@@ -432,10 +565,20 @@ struct RecipeDetailOverviewView: View {
             await viewModel.loadData()
         }
         .sheet(isPresented: $showWriteNote) {
-            WriteNoteView(recipeID: viewModel.recipe.id) {
+            WriteNoteView(recipeID: viewModel.recipe.id, existingNote: noteToEdit) {
                 Task {
+                    // Add a small delay to allow Firestore to propagate the write
+                    try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
                     await viewModel.loadNoteCount()
+                    await viewModel.loadUserNotes()
                 }
+                // Reset noteToEdit after saving
+                noteToEdit = nil
+            }
+            .id(noteToEdit?.id ?? "new-note") // Force view recreation when note changes
+            .onDisappear {
+                // Reset noteToEdit when sheet is dismissed
+                noteToEdit = nil
             }
         }
         .sheet(isPresented: $showNotesList) {
@@ -462,9 +605,44 @@ struct RecipeDetailOverviewView: View {
         } message: {
             Text(LocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))
         }
+        .alert(
+            LocalizedString("Delete Note", comment: "Delete note confirmation title"),
+            isPresented: $showDeleteNoteConfirmation
+        ) {
+            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
+                noteToDelete = nil
+            }
+            Button(LocalizedString("Delete", comment: "Delete button"), role: .destructive) {
+                if let note = noteToDelete {
+                    Task {
+                        await viewModel.deleteNote(note)
+                        noteToDelete = nil
+                    }
+                }
+            }
+        } message: {
+            Text(LocalizedString("Are you sure you want to delete this note? This action cannot be undone.", comment: "Delete note confirmation message"))
+        }
+        .alert(
+            LocalizedString("Delete Note", comment: "Delete note confirmation title"),
+            isPresented: $showDeleteNoteConfirmation
+        ) {
+            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
+                noteToDelete = nil
+            }
+            Button(LocalizedString("Delete", comment: "Delete button"), role: .destructive) {
+                if let note = noteToDelete {
+                    Task {
+                        await viewModel.deleteNote(note)
+                        noteToDelete = nil
+                    }
+                }
+            }
+        } message: {
+            Text(LocalizedString("Are you sure you want to delete this note? This action cannot be undone.", comment: "Delete note confirmation message"))
+        }
         .sheet(isPresented: $showReportSheet) {
-            // Report sheet would go here
-            Text(LocalizedString("Report Recipe", comment: "Report title"))
+            ReportView(recipeID: viewModel.recipe.id, userID: viewModel.recipe.authorID)
         }
         .sheet(isPresented: $showShareSheet) {
             let shareItems = createShareItems()
@@ -488,6 +666,66 @@ struct RecipeDetailOverviewView: View {
                 await viewModel.refreshRecipe()
             }
         }
+    }
+    
+    // MARK: - Date Formatting
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMM yyyy HH:mm"
+        
+        // Get locale based on current language setting
+        let currentLanguage = LocalizationManager.shared.currentLanguage
+        let localeIdentifier: String
+        
+        switch currentLanguage {
+        case .english:
+            localeIdentifier = "en_US"
+        case .system:
+            // Use system locale
+            localeIdentifier = Locale.current.identifier
+        case .spanish:
+            localeIdentifier = "es_ES"
+        case .french:
+            localeIdentifier = "fr_FR"
+        case .german:
+            localeIdentifier = "de_DE"
+        case .italian:
+            localeIdentifier = "it_IT"
+        case .portuguese:
+            localeIdentifier = "pt_PT"
+        case .dutch:
+            localeIdentifier = "nl_NL"
+        case .russian:
+            localeIdentifier = "ru_RU"
+        case .japanese:
+            localeIdentifier = "ja_JP"
+        case .korean:
+            localeIdentifier = "ko_KR"
+        case .thai:
+            localeIdentifier = "th_TH"
+        case .vietnamese:
+            localeIdentifier = "vi_VN"
+        case .indonesian:
+            localeIdentifier = "id_ID"
+        case .malay:
+            localeIdentifier = "ms_MY"
+        case .filipino:
+            localeIdentifier = "fil_PH"
+        case .hindi:
+            localeIdentifier = "hi_IN"
+        case .chineseSimplified:
+            localeIdentifier = "zh_Hans_CN"
+        case .chineseTraditional:
+            localeIdentifier = "zh_Hant_TW"
+        case .arabic:
+            localeIdentifier = "ar_SA"
+        case .hebrew:
+            localeIdentifier = "he_IL"
+        }
+        
+        formatter.locale = Locale(identifier: localeIdentifier)
+        return formatter.string(from: date)
     }
     
     // MARK: - Helper Methods
@@ -629,9 +867,9 @@ struct RecipeDetailOverviewView: View {
         }
         
         // Recipe Info
-        text += "\(LocalizedString("Prep Time", comment: "Prep time label")): \(viewModel.recipe.prepTime) min\n"
-        text += "\(LocalizedString("Cook Time", comment: "Cook time label")): \(viewModel.recipe.cookTime) min\n"
-        text += "\(LocalizedString("Total Time", comment: "Total time label")): \(viewModel.totalTime) min\n"
+        text += "\(LocalizedString("Prep Time", comment: "Prep time label")): \(viewModel.recipe.prepTime) \(LocalizedString("min", comment: "Minutes abbreviation"))\n"
+        text += "\(LocalizedString("Cook Time", comment: "Cook time label")): \(viewModel.recipe.cookTime) \(LocalizedString("min", comment: "Minutes abbreviation"))\n"
+        text += "\(LocalizedString("Total Time", comment: "Total time label")): \(viewModel.totalTime) \(LocalizedString("min", comment: "Minutes abbreviation"))\n"
         text += "\(LocalizedString("Servings", comment: "Servings label")): \(viewModel.recipe.servings)\n"
         text += "\(LocalizedString("Difficulty", comment: "Difficulty label")): \(viewModel.recipe.difficulty.rawValue)\n"
         
@@ -642,7 +880,7 @@ struct RecipeDetailOverviewView: View {
         text += "\n"
         
         // Ingredients
-        text += String(format: LocalizedString("Ingredients for %d serving", comment: "Ingredients header"), viewModel.recipe.servings)
+        text += String(format: LocalizedString("Ingredients for %d servings", comment: "Ingredients header"), viewModel.recipe.servings)
         text += "\n\n"
         
         let sortedCategories = groupedIngredients.keys.sorted(by: { categoryOrder($0) < categoryOrder($1) })
@@ -680,9 +918,12 @@ struct RecipeDetailOverviewView: View {
             }
         }
         
-        // App Store link
+        // App Store link - formatted as plain text with app name and link
+        text += "\n\n"
+        text += LocalizedString("Create your own recipe with", comment: "App store link prefix")
+        text += " 🍽️ Misoto App"
         text += "\n"
-        text += String(format: LocalizedString("Create your own recipe with the Misoto App: %@", comment: "App store link text"), misotoAppStoreURL)
+        text += misotoAppStoreURL
         
         return text
     }

@@ -16,6 +16,7 @@ class RecipeNoteService {
     
     // MARK: - Fetch Notes
     
+    /// Fetch all notes for a recipe (all users)
     func fetchNotes(for recipeID: String) async throws -> [RecipeNote] {
         let snapshot = try await firestore.collection(notesCollection)
             .whereField("recipeID", isEqualTo: recipeID)
@@ -36,6 +37,91 @@ class RecipeNoteService {
         return notes
     }
     
+    /// Fetch notes for a specific user and recipe with pagination
+    func fetchUserNotes(
+        for recipeID: String,
+        userID: String,
+        limit: Int = 5,
+        startAfter: DocumentSnapshot? = nil
+    ) async throws -> (notes: [RecipeNote], lastDocument: DocumentSnapshot?, hasMore: Bool) {
+        print("🔍 Fetching user notes for recipeID: \(recipeID), userID: \(userID), limit: \(limit)")
+        
+        // Try with ordering first (requires composite index)
+        do {
+            var query = firestore.collection(notesCollection)
+                .whereField("recipeID", isEqualTo: recipeID)
+                .whereField("userID", isEqualTo: userID)
+                .order(by: "createdAt", descending: true)
+                .limit(to: limit + 1) // Fetch one extra to check if there are more
+            
+            if let startAfter = startAfter {
+                query = query.start(afterDocument: startAfter)
+            }
+            
+            let snapshot = try await query.getDocuments()
+            
+            var notes: [RecipeNote] = []
+            var lastDoc: DocumentSnapshot?
+            
+            // Check if we have more than the limit
+            let hasMore = snapshot.documents.count > limit
+            let documentsToProcess = hasMore ? Array(snapshot.documents.prefix(limit)) : snapshot.documents
+            
+            for document in documentsToProcess {
+                do {
+                    var note = try document.data(as: RecipeNote.self)
+                    note.id = document.documentID
+                    notes.append(note)
+                    lastDoc = document
+                } catch {
+                    print("⚠️ Failed to decode note \(document.documentID): \(error.localizedDescription)")
+                }
+            }
+            
+            print("✅ Found \(notes.count) notes with ordering, hasMore: \(hasMore)")
+            return (notes, lastDoc, hasMore)
+        } catch {
+            print("⚠️ Query with ordering failed: \(error.localizedDescription)")
+            print("🔄 Trying fallback query without ordering...")
+            
+            // Fallback: query without ordering (doesn't require composite index)
+            var query = firestore.collection(notesCollection)
+                .whereField("recipeID", isEqualTo: recipeID)
+                .whereField("userID", isEqualTo: userID)
+                .limit(to: limit + 1) // Fetch one extra to check if there are more
+            
+            if let startAfter = startAfter {
+                query = query.start(afterDocument: startAfter)
+            }
+            
+            let snapshot = try await query.getDocuments()
+            
+            var notes: [RecipeNote] = []
+            var lastDoc: DocumentSnapshot?
+            
+            // Check if we have more than the limit
+            let hasMore = snapshot.documents.count > limit
+            let documentsToProcess = hasMore ? Array(snapshot.documents.prefix(limit)) : snapshot.documents
+            
+            for document in documentsToProcess {
+                do {
+                    var note = try document.data(as: RecipeNote.self)
+                    note.id = document.documentID
+                    notes.append(note)
+                    lastDoc = document
+                } catch {
+                    print("⚠️ Failed to decode note \(document.documentID): \(error.localizedDescription)")
+                }
+            }
+            
+            // Sort manually by createdAt
+            notes.sort { $0.createdAt > $1.createdAt }
+            
+            print("✅ Found \(notes.count) notes with fallback query, hasMore: \(hasMore)")
+            return (notes, lastDoc, hasMore)
+        }
+    }
+    
     func getNoteCount(for recipeID: String) async throws -> Int {
         let snapshot = try await firestore.collection(notesCollection)
             .whereField("recipeID", isEqualTo: recipeID)
@@ -52,7 +138,9 @@ class RecipeNoteService {
         }
         
         var newNote = note
+        // Ensure both userID and recipeID are set (note is linked to both user and recipe)
         newNote.userID = userID
+        newNote.recipeID = note.recipeID // Ensure recipeID is set
         newNote.id = UUID().uuidString
         newNote.createdAt = Date()
         newNote.updatedAt = Date()
@@ -64,8 +152,13 @@ class RecipeNoteService {
             }
         }
         
+        print("💾 Saving note with ID: \(newNote.id), recipeID: \(newNote.recipeID), userID: \(newNote.userID)")
+        
+        // Save note to collection - document contains both userID and recipeID for proper linking
         let noteRef = firestore.collection(notesCollection).document(newNote.id)
         try noteRef.setData(from: newNote)
+        
+        print("✅ Note saved successfully to document: \(newNote.id)")
     }
     
     // MARK: - Update Note

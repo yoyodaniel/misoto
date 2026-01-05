@@ -178,6 +178,7 @@
 "Time" = "זמן";
 "Servings" = "מנות";
 "servings" = "מנות";
+"Ingredients for %d servings" = "מרכיבים ל-%d מנות";
 "Difficulty" = "קושי";
 "Spicy Level" = "רמת חריפות";
 "Add Dish Image" = "הוסף תמונת מנה";
@@ -274,41 +275,28 @@
 "Cantonese" = "קנטונזי";
 "Hunan" = "הונאן";
 "Shanghainese" = "שנחאי";
-"Japanese" = "יפני";
-"Korean" = "קוריאני";
-"Thai" = "תאילנדי";
-"Vietnamese" = "וייטנאמי";
 "Indian" = "הודי";
-"Indonesian" = "אינדונזי";
 "Malaysian" = "מלזי";
 "Singaporean" = "סינגפורי";
-"Filipino" = "פיליפיני";
 "Burmese" = "בורמזי";
 "Cambodian" = "קמבודי";
 "Laotian" = "לאוסי";
 "Sri Lankan" = "סרי לנקי";
 "Pakistani" = "פקיסטני";
 "Bangladeshi" = "בנגלדשי";
-"Italian" = "איטלקי";
-"French" = "צרפתי";
-"Spanish" = "ספרדי";
 "Greek" = "יווני";
 "Turkish" = "טורקי";
-"German" = "גרמני";
 "British" = "בריטי";
 "Irish" = "אירי";
 "Scottish" = "סקוטי";
 "Polish" = "פולני";
-"Russian" = "רוסי";
 "Swedish" = "שוודי";
 "Norwegian" = "נורווגי";
 "Danish" = "דני";
 "Finnish" = "פיני";
-"Dutch" = "הולנדי";
 "Belgian" = "בלגי";
 "Swiss" = "שוויצרי";
 "Austrian" = "אוסטרי";
-"Portuguese" = "פורטוגזי";
 "Czech" = "צ'כי";
 "Hungarian" = "הונגרי";
 "Romanian" = "רומני";
@@ -353,3 +341,62 @@
 "Vegan" = "טבעוני";
 "Other" = "אחר";
 
+"For the main ingredients" = "למרכיבים העיקריים";
+"For the marinade / brine" = "למרינדה / מי מלח";
+"For seasoning during cooking" = "לתיבול במהלך הבישול";
+"For the dough / batter / filling" = "לבצק / לבלילה / למילוי";
+"For the sauce" = "לרוטב";
+"For the toppings" = "לתוספות";
+"To finish / To garnish" = "לגימור / לקישוט";
+"Add ingredient" = "הוסף מרכיב";
+
+"Steps" = "שלבים";
+"Edited" = "נערך";
+"Start Cooking" = "התחל בישול";
+"Edit" = "ערוך";
+"Save Recipe" = "שמור מתכון";
+"Unsave Recipe" = "בטל שמירת מתכון";
+"Report" = "דווח";
+"Report Recipe" = "דווח על מתכון";
+"min" = "דק'";
+"Select from Photo Library" = "בחר מספריית התמונות";
+"Tips" = "טיפים";
+"Write a Note" = "כתוב הערה";
+"Write Note" = "כתוב הערה";
+"Edit Note" = "ערוך הערה";
+"My Notes" = "ההערות שלי";
+"Edited" = "נערך";
+"Delete Note" = "מחק הערה";
+"Are you sure you want to delete this note? This action cannot be undone." = "האם אתה בטוח שברצונך למחוק הערה זו? פעולה זו לא ניתנת לביטול.";
+"Update Profile" = "עדכן פרופיל";
+"Private Account" = "חשבון פרטי";
+"Hide Profile" = "חשבון פרטי";
+"Delete Account" = "מחק חשבון";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "האם אתה בטוח שברצונך למחוק את החשבון שלך? פעולה זו לא ניתנת לביטול ותמחק לצמיתות את כל הנתונים שלך.
+
+החשבון שלך ימחק לאחר 30 יום. כדי לבטל את המחיקה, היכנס שוב תוך 30 יום.";
+"Privacy & Terms" = "פרטיות ותנאים";
+"Privacy Policy" = "מדיניות פרטיות";
+"Terms of Service" = "תנאי שירות";
+
+// NOTE: Full privacy policy and terms translations needed for he
+"Hide from Followers" = "הסתר מעוקבים";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "החשבון שלך פרטי. הפרופיל שלך מוסתר מתצוגת החיפוש. רק העוקבים המקובלים שלך יכולים לראות את הפרופיל והמתכונים שלך.";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "החשבון שלך פרטי לחלוטין. הפרופיל והמתכונים שלך מוסתרים מכל המשתמשים, כולל עוקבים.";
+"Public" = "ציבורי";
+"Private" = "פרטי";
+"Completely Private" = "פרטי לחלוטין";
+"Account Privacy" = "פרטיות חשבון";
+"Your profile is visible to everyone" = "הפרופיל שלך גלוי לכולם";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "הפרופיל שלך מוסתר מתצוגת החיפוש. רק העוקבים המקובלים שלך יכולים לראות את הפרופיל והמתכונים שלך.";
+"Your profile and recipes are hidden from all users, including followers." = "הפרופיל והמתכונים שלך מוסתרים מכל המשתמשים, כולל עוקבים.";
+"Limited" = "מוגבל";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "החשבון שלך ימחק לאחר 30 יום. כדי לבטל את המחיקה, היכנס שוב תוך 30 יום.";
+"Are you sure you want to delete your account?" = "האם אתה בטוח שברצונך למחוק את החשבון שלך?";
+"If yes, please enter your username and press delete to confirm the deletion." = "אם כן, אנא הכנס את שם המשתמש שלך ולחץ על מחק כדי לאשר את המחיקה.";
+"Confirm Deletion" = "אישור מחיקה";
+"Username does not match" = "שם המשתמש לא תואם";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "החשבון שלך ימחק תוך 30 יום. כדי לבטל את המחיקה, אנא היכנס שוב.";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "האם אתה בטוח שברצונך למחוק את החשבון שלך? החשבון שלך יימחק מיד ופעולה זו בלתי הפיכה.";

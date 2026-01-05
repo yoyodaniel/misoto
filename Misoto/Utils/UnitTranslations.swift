@@ -30,7 +30,9 @@ class UnitTranslations {
             "id": "-",
             "ms": "-",
             "fil": "-",
-            "hi": "-"
+            "hi": "-",
+            "ar": "-",
+            "he": "-"
         ],
         // Multiplier (x)
         "x": [
@@ -51,7 +53,9 @@ class UnitTranslations {
             "id": "x",
             "ms": "x",
             "fil": "x",
-            "hi": "x"
+            "hi": "x",
+            "ar": "x",
+            "he": "x"
         ],
         // Teaspoon
         "tsp": [
@@ -72,7 +76,9 @@ class UnitTranslations {
             "id": "Sendok teh (sdt)",
             "ms": "Sudu teh (sdt)",
             "fil": "Kutsarita (kuts.)",
-            "hi": "चम्मच (चम्मच)"
+            "hi": "चम्मच (चम्मच)",
+            "ar": "ملعقة صغيرة (ملعقة صغيرة)",
+            "he": "כפית (כפית)"
         ],
         // Tablespoon
         "tbsp": [
@@ -93,7 +99,9 @@ class UnitTranslations {
             "id": "Sendok makan (sdm)",
             "ms": "Sudu besar (sdm)",
             "fil": "Kutsara (kuts.)",
-            "hi": "बड़ा चम्मच (बड़ा चम्मच)"
+            "hi": "बड़ा चम्मच (बड़ा चम्मच)",
+            "ar": "ملعقة كبيرة (ملعقة كبيرة)",
+            "he": "כף (כף)"
         ],
         // Cup
         "cup": [
@@ -114,7 +122,9 @@ class UnitTranslations {
             "id": "Cangkir",
             "ms": "Cawan",
             "fil": "Tasa",
-            "hi": "कप"
+            "hi": "कप",
+            "ar": "كوب",
+            "he": "כוס"
         ],
         // Ounce
         "oz": [
@@ -135,7 +145,9 @@ class UnitTranslations {
             "id": "Ons (oz)",
             "ms": "Auns (oz)",
             "fil": "Onsa (oz)",
-            "hi": "औंस (oz)"
+            "hi": "औंस (oz)",
+            "ar": "أونصة (أونصة)",
+            "he": "אונקיה (אונקיה)"
         ],
         // Fluid Ounce
         "fl_oz": [
@@ -156,7 +168,9 @@ class UnitTranslations {
             "id": "Ons cair (fl oz)",
             "ms": "Auns cecair (fl oz)",
             "fil": "Onsang likido (fl oz)",
-            "hi": "तरल औंस (fl oz)"
+            "hi": "औंस (oz)",
+            "ar": "أونصة سائلة (أونصة سائلة)",
+            "he": "אונקיה נוזלית (אונקיה נוזלית)"
         ],
         // Pound
         "lb": [
@@ -177,7 +191,9 @@ class UnitTranslations {
             "id": "Pon (lb)",
             "ms": "Paun (lb)",
             "fil": "Libra (lb)",
-            "hi": "पाउंड (lb)"
+            "hi": "औंस (oz)",
+            "ar": "رطل (رطل)",
+            "he": "פאונד (פאונד)"
         ],
         // Gram
         "g": [
@@ -198,7 +214,9 @@ class UnitTranslations {
             "id": "Gram (g)",
             "ms": "Gram (g)",
             "fil": "Gramo (g)",
-            "hi": "ग्राम (g)"
+            "hi": "औंस (oz)",
+            "ar": "جرام (جرام)",
+            "he": "גרם (גרם)"
         ],
         // Kilogram
         "kg": [
@@ -219,7 +237,9 @@ class UnitTranslations {
             "id": "Kilogram (kg)",
             "ms": "Kilogram (kg)",
             "fil": "Kilogramo (kg)",
-            "hi": "किलोग्राम (kg)"
+            "hi": "औंस (oz)",
+            "ar": "كيلوغرام (كيلوغرام)",
+            "he": "קילוגרם (קילוגרם)"
         ],
         // Milliliter
         "ml": [
@@ -240,7 +260,9 @@ class UnitTranslations {
             "id": "Mililiter (ml)",
             "ms": "Mililiter (ml)",
             "fil": "Mililitro (ml)",
-            "hi": "मिलीलीटर (ml)"
+            "hi": "औंस (oz)",
+            "ar": "مليلتر (مليلتر)",
+            "he": "מיליליטר (מיליליטר)"
         ],
         // Liter
         "l": [
@@ -261,7 +283,32 @@ class UnitTranslations {
             "id": "Liter (l)",
             "ms": "Liter (l)",
             "fil": "Litro (l)",
-            "hi": "लीटर (l)"
+            "hi": "औंस (oz)",
+            "ar": "لتر (لتر)",
+            "he": "ליטר (ליטר)"
+        ],
+        // Quart
+        "qt": [
+            "en": "Quart (qt)",
+            "zh-Hans": "夸脱 (qt)",
+            "zh-Hant": "夸脫 (qt)",
+            "es": "Cuarto de galón (qt)",
+            "fr": "Quart (qt)",
+            "de": "Quart (qt)",
+            "it": "Quarto (qt)",
+            "pt": "Quarto (qt)",
+            "nl": "Kwart (qt)",
+            "ru": "Кварта (qt)",
+            "ja": "クォート (qt)",
+            "ko": "쿼트 (qt)",
+            "th": "ควอร์ต (qt)",
+            "vi": "Quart (qt)",
+            "id": "Quart (qt)",
+            "ms": "Quart (qt)",
+            "fil": "Quart (qt)",
+            "hi": "क्वार्ट (qt)",
+            "ar": "كوارت (qt)",
+            "he": "קוורט (qt)"
         ],
         // Pinch
         "pinch": [
@@ -282,7 +329,9 @@ class UnitTranslations {
             "id": "Sejumput",
             "ms": "Secubit",
             "fil": "Kurot",
-            "hi": "चुटकी"
+            "hi": "औंस (oz)",
+            "ar": "قبضة",
+            "he": "קורט"
         ],
         // Piece (pc)
         "pc": [
@@ -303,7 +352,9 @@ class UnitTranslations {
             "id": "Buah (pc)",
             "ms": "Keping (pc)",
             "fil": "Piraso (pc)",
-            "hi": "टुकड़ा (pc)"
+            "hi": "औंस (oz)",
+            "ar": "قطعة (قطعة)",
+            "he": "חתיכה (חתיכה)"
         ],
         // Pieces (pcs)
         "pcs": [
@@ -324,7 +375,9 @@ class UnitTranslations {
             "id": "Buah (pcs)",
             "ms": "Keping (pcs)",
             "fil": "Piraso (pcs)",
-            "hi": "टुकड़े (pcs)"
+            "hi": "औंस (oz)",
+            "ar": "قطع (قطع)",
+            "he": "חתיכות (חתיכות)"
         ],
         // Slice
         "slice": [
@@ -345,7 +398,9 @@ class UnitTranslations {
             "id": "Iris",
             "ms": "Hiris",
             "fil": "Hiwa",
-            "hi": "टुकड़ा"
+            "hi": "औंस (oz)",
+            "ar": "شريحة",
+            "he": "פרוסה"
         ],
         // Clove
         "clove": [
@@ -366,7 +421,9 @@ class UnitTranslations {
             "id": "Siung",
             "ms": "Ulas",
             "fil": "Butil",
-            "hi": "कली"
+            "hi": "औंस (oz)",
+            "ar": "فص",
+            "he": "שיני"
         ],
         // Bunch
         "bunch": [
@@ -387,7 +444,9 @@ class UnitTranslations {
             "id": "Ikat",
             "ms": "Ikat",
             "fil": "Bigkis",
-            "hi": "गुच्छा"
+            "hi": "औंस (oz)",
+            "ar": "حزمة",
+            "he": "צרור"
         ],
         // Head
         "head": [
@@ -408,7 +467,9 @@ class UnitTranslations {
             "id": "Kepala",
             "ms": "Biji",
             "fil": "Ulo",
-            "hi": "सिर"
+            "hi": "औंस (oz)",
+            "ar": "رأس",
+            "he": "ראש"
         ],
         // Strand
         "strand": [
@@ -429,7 +490,9 @@ class UnitTranslations {
             "id": "Helai",
             "ms": "Helai",
             "fil": "Hibla",
-            "hi": "लड़ी"
+            "hi": "औंस (oz)",
+            "ar": "خيط",
+            "he": "חוט"
         ],
         // Strands
         "strands": [
@@ -450,7 +513,9 @@ class UnitTranslations {
             "id": "Helai",
             "ms": "Helai",
             "fil": "Hibla",
-            "hi": "लड़ियाँ"
+            "hi": "औंस (oz)",
+            "ar": "خيوط",
+            "he": "חוטים"
         ],
         // Large
         "large": [
@@ -471,7 +536,9 @@ class UnitTranslations {
             "id": "Besar",
             "ms": "Besar",
             "fil": "Malaki",
-            "hi": "बड़ा"
+            "hi": "औंस (oz)",
+            "ar": "كبير",
+            "he": "גדול"
         ],
         // Small
         "small": [
@@ -492,13 +559,66 @@ class UnitTranslations {
             "id": "Kecil",
             "ms": "Kecil",
             "fil": "Maliit",
-            "hi": "छोटा"
+            "hi": "औंस (oz)",
+            "ar": "صغير",
+            "he": "קטן"
         ]
     ]
     
+    /// Normalize unit key - converts full unit names to keys (e.g., "tablespoon" -> "tbsp")
+    private static func normalizeUnitKey(_ unit: String) -> String {
+        let lowercased = unit.lowercased().trimmingCharacters(in: .whitespaces)
+        
+        // Mapping of common full names to keys
+        let nameToKey: [String: String] = [
+            "teaspoon": "tsp",
+            "teaspoons": "tsp",
+            "tablespoon": "tbsp",
+            "tablespoons": "tbsp",
+            "cup": "cup",
+            "cups": "cup",
+            "ounce": "oz",
+            "ounces": "oz",
+            "fluid ounce": "fl_oz",
+            "fluid ounces": "fl_oz",
+            "pound": "lb",
+            "pounds": "lb",
+            "gram": "g",
+            "grams": "g",
+            "kilogram": "kg",
+            "kilograms": "kg",
+            "milliliter": "ml",
+            "milliliters": "ml",
+            "liter": "l",
+            "liters": "l",
+            "litre": "l",
+            "litres": "l",
+            "quart": "qt",
+            "quarts": "qt",
+            "pinch": "pinch",
+            "pinches": "pinch",
+            "piece": "pc",
+            "pieces": "pc",
+            "slice": "slice",
+            "slices": "slice",
+            "clove": "clove",
+            "cloves": "clove",
+            "bunch": "bunch",
+            "bunches": "bunch",
+            "head": "head",
+            "heads": "head",
+            "strand": "strand",
+            "strands": "strand",
+            "large": "large",
+            "small": "small"
+        ]
+        
+        return nameToKey[lowercased] ?? unit
+    }
+    
     /// Get the abbreviation for a unit in the current language
     /// - Parameters:
-    ///   - unitKey: The English unit key (e.g., "tsp", "tbsp")
+    ///   - unitKey: The English unit key (e.g., "tsp", "tbsp") or full name (e.g., "tablespoon")
     ///   - amount: Optional amount string to determine if plural form should be used
     /// - Returns: The abbreviation in the current language, or the English abbreviation if not found
     static func abbreviation(for unitKey: String, amount: String? = nil) -> String {
@@ -508,9 +628,12 @@ class UnitTranslations {
             return "-"
         }
         
+        // Normalize unit key (convert full names to keys)
+        let normalizedKey = normalizeUnitKey(trimmedUnit)
+        
         // Determine if we should use plural form
-        let shouldPluralize = shouldUsePluralForm(unitKey: trimmedUnit, amount: amount)
-        let unitToTranslate = shouldPluralize ? getPluralForm(unitKey: trimmedUnit) : trimmedUnit
+        let shouldPluralize = shouldUsePluralForm(unitKey: normalizedKey, amount: amount)
+        let unitToTranslate = shouldPluralize ? getPluralForm(unitKey: normalizedKey) : normalizedKey
         
         // Get the translated name (which includes abbreviation in parentheses)
         let translatedName = self.translatedName(for: unitToTranslate)
@@ -529,7 +652,7 @@ class UnitTranslations {
     
     /// Get the translated unit name with pluralization support
     /// - Parameters:
-    ///   - unitKey: The English unit key (e.g., "tsp", "cup", "pc")
+    ///   - unitKey: The English unit key (e.g., "tsp", "cup", "pc") or full name (e.g., "tablespoon")
     ///   - amount: Optional amount string to determine if plural form should be used
     /// - Returns: The translated unit name with appropriate pluralization
     static func translatedName(for unitKey: String, amount: String? = nil) -> String {
@@ -540,9 +663,12 @@ class UnitTranslations {
             return getTranslation(for: "", languageCode: getCurrentLanguageCode()) ?? "-"
         }
         
+        // Normalize unit key (convert full names to keys)
+        let normalizedKey = normalizeUnitKey(trimmedUnit)
+        
         // Determine if we should use plural form
-        let shouldPluralize = shouldUsePluralForm(unitKey: trimmedUnit, amount: amount)
-        let unitToTranslate = shouldPluralize ? getPluralForm(unitKey: trimmedUnit) : trimmedUnit
+        let shouldPluralize = shouldUsePluralForm(unitKey: normalizedKey, amount: amount)
+        let unitToTranslate = shouldPluralize ? getPluralForm(unitKey: normalizedKey) : normalizedKey
         
         // Get current language code
         let languageCode = getCurrentLanguageCode()

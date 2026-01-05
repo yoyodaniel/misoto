@@ -353,8 +353,7 @@ class EditRecipeViewModel: ObservableObject {
     // MARK: - Save Recipe
     
     func updateRecipe() async -> Bool {
-        guard Auth.auth().currentUser?.uid != nil,
-              Auth.auth().currentUser?.displayName != nil else {
+        guard let userID = Auth.auth().currentUser?.uid else {
             errorMessage = LocalizedString("You must be logged in to update a recipe", comment: "Not logged in error")
             return false
         }

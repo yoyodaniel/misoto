@@ -79,7 +79,10 @@ class FriendsService: ObservableObject {
         var users: [AppUser] = []
         for followerID in followerIDs {
             if let user = try await fetchUser(userID: followerID) {
-                users.append(user)
+                // Filter out banned users
+                if !user.isBanned {
+                    users.append(user)
+                }
             }
         }
         
@@ -99,7 +102,10 @@ class FriendsService: ObservableObject {
         var users: [AppUser] = []
         for followingID in followingIDs {
             if let user = try await fetchUser(userID: followingID) {
-                users.append(user)
+                // Filter out banned users
+                if !user.isBanned {
+                    users.append(user)
+                }
             }
         }
         
@@ -132,10 +138,10 @@ class FriendsService: ObservableObject {
             try? document.data(as: AppUser.self)
         }
         
-        // Additional case-insensitive filtering
+        // Additional case-insensitive filtering and filter out banned users
         let lowercaseQuery = query.lowercased()
         return results.filter { user in
-            user.displayName.lowercased().hasPrefix(lowercaseQuery)
+            user.displayName.lowercased().hasPrefix(lowercaseQuery) && !user.isBanned
         }
     }
     

@@ -56,7 +56,7 @@ struct RecipeCard: View {
                     .lineLimit(2)
                 
                 HStack {
-                    Label("\(recipe.prepTime + recipe.cookTime) min", systemImage: "clock")
+                    Label("\(recipe.prepTime + recipe.cookTime) \(LocalizedString("min", comment: "Minutes abbreviation"))", systemImage: "clock")
                     Label("\(recipe.servings)", systemImage: "person.2")
                     Label(recipe.difficulty.rawValue, systemImage: "chart.bar")
                 }

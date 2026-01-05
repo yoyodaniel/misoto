@@ -351,8 +351,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
     // MARK: - Save Recipe
     
     func saveRecipe(image: UIImage? = nil) async -> Bool {
-        guard let userID = Auth.auth().currentUser?.uid,
-              let displayName = Auth.auth().currentUser?.displayName else {
+        guard let userID = Auth.auth().currentUser?.uid else {
             errorMessage = LocalizedString("You must be logged in to save a recipe", comment: "Not logged in error")
             return false
         }
@@ -361,6 +360,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
         let authService = AuthService()
         await authService.reloadUserData()
         let username = authService.currentUser?.username
+        let displayName = authService.currentUser?.displayName ?? Auth.auth().currentUser?.displayName ?? "User"
         // Use username for authorName if available, otherwise fall back to displayName
         let authorName = username ?? displayName
         
@@ -452,6 +452,71 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             // Convert instructions to Instruction objects
             let instructionObjects = validInstructions.map { text in
                 Instruction(text: text.trimmingCharacters(in: .whitespaces))
+            }
+            
+            // Profanity check - first line of defense (before creating recipe object)
+            // Check all text fields
+            var profanityDetected = false
+            var profanityField: String? = nil
+            var detectedWords: [String] = []
+            
+            // Check title
+            let titleCheck = ProfanityFilter.shared.checkProfanity(in: title)
+            if titleCheck.hasProfanity {
+                profanityDetected = true
+                profanityField = "title"
+                detectedWords.append(contentsOf: titleCheck.detectedWords)
+            }
+            
+            // Check description
+            if !description.isEmpty {
+                let descCheck = ProfanityFilter.shared.checkProfanity(in: description)
+                if descCheck.hasProfanity {
+                    profanityDetected = true
+                    if profanityField == nil { profanityField = "description" }
+                    detectedWords.append(contentsOf: descCheck.detectedWords)
+                }
+            }
+            
+            // Check ingredients
+            for ingredient in dishIngredients + marinadeIngredients + seasoningIngredients + doughBatterFillingIngredients + sauceIngredients + toppingIngredients + garnishIngredients {
+                let ingredientText = "\(ingredient.name) \(ingredient.amount) \(ingredient.unit)"
+                let ingredientCheck = ProfanityFilter.shared.checkProfanity(in: ingredientText)
+                if ingredientCheck.hasProfanity {
+                    profanityDetected = true
+                    if profanityField == nil { profanityField = "ingredients" }
+                    detectedWords.append(contentsOf: ingredientCheck.detectedWords)
+                }
+            }
+            
+            // Check instructions
+            for instruction in instructions {
+                let instructionCheck = ProfanityFilter.shared.checkProfanity(in: instruction)
+                if instructionCheck.hasProfanity {
+                    profanityDetected = true
+                    if profanityField == nil { profanityField = "instructions" }
+                    detectedWords.append(contentsOf: instructionCheck.detectedWords)
+                }
+            }
+            
+            // Check tips
+            for tip in tips {
+                let tipCheck = ProfanityFilter.shared.checkProfanity(in: tip)
+                if tipCheck.hasProfanity {
+                    profanityDetected = true
+                    if profanityField == nil { profanityField = "tips" }
+                    detectedWords.append(contentsOf: tipCheck.detectedWords)
+                }
+            }
+            
+            if profanityDetected {
+                let errorMsg = ProfanityFilter.shared.getErrorMessage(
+                    field: profanityField,
+                    detectedWords: Array(Set(detectedWords))
+                )
+                errorMessage = errorMsg
+                isLoading = false
+                return false
             }
             
             // Create recipe

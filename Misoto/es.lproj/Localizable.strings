@@ -33,7 +33,6 @@
 "Appearance" = "Apariencia";
 "Language" = "Idioma";
 "The language selected will be used as the default writing language for recipe extractions." = "El idioma seleccionado se utilizará como idioma de escritura predeterminado para las extracciones de recetas.";
-"The language selected will be used as the default writing language for recipe extractions." = "El idioma seleccionado se utilizará como idioma de escritura predeterminado para las extracciones de recetas.";
 "English" = "Inglés";
 "Chinese, Simplified" = "Chino Simplificado";
 "Chinese, Traditional" = "Chino Tradicional";
@@ -179,6 +178,7 @@
 "Time" = "Tiempo";
 "Servings" = "Porciones";
 "servings" = "porciones";
+"Ingredients for %d servings" = "Ingredientes para %d porciones";
 "Difficulty" = "Dificultad";
 "Spicy Level" = "Nivel de Picante";
 "Add Dish Image" = "Agregar Imagen del Plato";
@@ -275,41 +275,28 @@
 "Cantonese" = "Cantonés";
 "Hunan" = "Hunan";
 "Shanghainese" = "Shanghainés";
-"Japanese" = "Japón";
-"Korean" = "Corea";
-"Thai" = "Tailandia";
-"Vietnamese" = "Vietnam";
 "Indian" = "India";
-"Indonesian" = "Indonesia";
 "Malaysian" = "Malasia";
 "Singaporean" = "Singapur";
-"Filipino" = "Filipinas";
 "Burmese" = "Birmania";
 "Cambodian" = "Camboya";
 "Laotian" = "Laos";
 "Sri Lankan" = "Sri Lanka";
 "Pakistani" = "Pakistán";
 "Bangladeshi" = "Bangladesh";
-"Italian" = "Italia";
-"French" = "Francia";
-"Spanish" = "España";
 "Greek" = "Grecia";
 "Turkish" = "Turquía";
-"German" = "Alemania";
 "British" = "Reino Unido";
 "Irish" = "Irlanda";
 "Scottish" = "Escocia";
 "Polish" = "Polonia";
-"Russian" = "Rusia";
 "Swedish" = "Suecia";
 "Norwegian" = "Noruega";
 "Danish" = "Dinamarca";
 "Finnish" = "Finlandia";
-"Dutch" = "Países Bajos";
 "Belgian" = "Bélgica";
 "Swiss" = "Suiza";
 "Austrian" = "Austria";
-"Portuguese" = "Portugal";
 "Czech" = "República Checa";
 "Hungarian" = "Hungría";
 "Romanian" = "Rumania";
@@ -354,3 +341,62 @@
 "Vegan" = "Vegano";
 "Other" = "Otro";
 
+
+"For the main ingredients" = "Para los ingredientes principales";
+"For the marinade / brine" = "Para la marinada / salmuera";
+"For seasoning during cooking" = "Para condimentar durante la cocción";
+"For the dough / batter / filling" = "Para la masa / rebozado / relleno";
+"For the sauce" = "Para la salsa";
+"For the toppings" = "Para las coberturas";
+"To finish / To garnish" = "Para terminar / Para decorar";
+"Add ingredient" = "Agregar ingrediente";
+
+"Steps" = "Pasos";
+"Start Cooking" = "Comenzar a cocinar";
+"Edit" = "Editar";
+"Save Recipe" = "Guardar receta";
+"Unsave Recipe" = "Quitar receta guardada";
+"Report" = "Reportar";
+"Report Recipe" = "Reportar receta";
+"min" = "min";
+"Select from Photo Library" = "Seleccionar de la biblioteca de fotos";
+"Tips" = "Consejos";
+"Write a Note" = "Escribir una nota";
+"Write Note" = "Escribir nota";
+"Edit Note" = "Editar nota";
+"My Notes" = "Mis notas";
+"Edited" = "Editado";
+"Delete Note" = "Eliminar nota";
+"Are you sure you want to delete this note? This action cannot be undone." = "¿Está seguro de que desea eliminar esta nota? Esta acción no se puede deshacer.";
+"Update Profile" = "Actualizar perfil";
+"Private Account" = "Cuenta privada";
+"Hide Profile" = "Cuenta privada";
+"Delete Account" = "Eliminar cuenta";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "¿Está seguro de que desea eliminar su cuenta? Esta acción no se puede deshacer y eliminará todos sus datos de forma permanente.
+
+Su cuenta se eliminará después de 30 días. Para cancelar la eliminación, inicie sesión nuevamente dentro de 30 días.";
+"Privacy & Terms" = "Privacidad y Términos";
+"Privacy Policy" = "Política de Privacidad";
+"Terms of Service" = "Términos de Servicio";
+
+// NOTE: Full privacy policy and terms translations needed for es
+"Hide from Followers" = "Ocultar de seguidores";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Su cuenta es privada. Su perfil está oculto en la vista de exploración. Solo sus seguidores aceptados pueden ver su perfil y recetas.";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "Su cuenta es completamente privada. Su perfil y recetas están ocultos para todos los usuarios, incluidos los seguidores.";
+"Public" = "Público";
+"Private" = "Privado";
+"Completely Private" = "Completamente privado";
+"Account Privacy" = "Privacidad de la cuenta";
+"Your profile is visible to everyone" = "Su perfil es visible para todos";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Su perfil está oculto en la vista de exploración. Solo sus seguidores aceptados pueden ver su perfil y recetas.";
+"Your profile and recipes are hidden from all users, including followers." = "Su perfil y recetas están ocultos para todos los usuarios, incluidos los seguidores.";
+"Limited" = "Limitado";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Su cuenta se eliminará después de 30 días. Para cancelar la eliminación, inicie sesión nuevamente dentro de 30 días.";
+"Are you sure you want to delete your account?" = "¿Está seguro de que desea eliminar su cuenta?";
+"If yes, please enter your username and press delete to confirm the deletion." = "Si es así, ingrese su nombre de usuario y presione eliminar para confirmar la eliminación.";
+"Confirm Deletion" = "Confirmar eliminación";
+"Username does not match" = "El nombre de usuario no coincide";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Su cuenta se eliminará en 30 días. Para cancelar la eliminación, inicie sesión nuevamente.";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "¿Está seguro de que desea eliminar su cuenta? Su cuenta se eliminará de inmediato y esta acción no se puede revertir.";

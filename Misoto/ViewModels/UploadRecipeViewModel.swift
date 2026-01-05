@@ -284,8 +284,7 @@ class UploadRecipeViewModel: ObservableObject {
     }
     
     func uploadRecipe() async {
-        guard let userID = Auth.auth().currentUser?.uid,
-              let displayName = Auth.auth().currentUser?.displayName else {
+        guard let userID = Auth.auth().currentUser?.uid else {
             errorMessage = LocalizedString("You must be logged in to upload a recipe", comment: "Not logged in error")
             return
         }
@@ -293,6 +292,7 @@ class UploadRecipeViewModel: ObservableObject {
         // Get username from AuthService (ensure user data is loaded)
         await authService.reloadUserData()
         let username = authService.currentUser?.username
+        let displayName = authService.currentUser?.displayName ?? Auth.auth().currentUser?.displayName ?? "User"
         // Use username for authorName if available, otherwise fall back to displayName
         let authorName = username ?? displayName
         
@@ -430,6 +430,22 @@ class UploadRecipeViewModel: ObservableObject {
                 authorName: authorName,
                 authorUsername: username
             )
+            
+            // Profanity check - first line of defense
+            print("🔍 Running profanity check on recipe...")
+            let profanityCheck = ProfanityFilter.shared.checkRecipe(recipe)
+            if profanityCheck.hasProfanity {
+                print("🚫 Profanity detected! Field: \(profanityCheck.field ?? "unknown"), Words: \(profanityCheck.detectedWords)")
+                let errorMsg = ProfanityFilter.shared.getErrorMessage(
+                    field: profanityCheck.field,
+                    detectedWords: profanityCheck.detectedWords
+                )
+                print("🚫 Throwing error: \(errorMsg)")
+                errorMessage = errorMsg
+                isLoading = false
+                return
+            }
+            print("✅ Profanity check passed")
             
             try await recipeService.createRecipe(recipe)
             isSuccess = true

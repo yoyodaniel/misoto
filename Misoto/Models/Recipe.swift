@@ -35,6 +35,8 @@ struct Recipe: Identifiable, Codable {
     var createdAt: Date
     var updatedAt: Date
     var favoriteCount: Int
+    var reportCount: Int
+    var isHidden: Bool
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -63,6 +65,8 @@ struct Recipe: Identifiable, Codable {
         case createdAt
         case updatedAt
         case favoriteCount
+        case reportCount
+        case isHidden
     }
     
     init(from decoder: Decoder) throws {
@@ -145,6 +149,8 @@ struct Recipe: Identifiable, Codable {
         cookTime = try container.decodeIfPresent(Int.self, forKey: .cookTime) ?? 0
         servings = try container.decodeIfPresent(Int.self, forKey: .servings) ?? 1
         favoriteCount = try container.decodeIfPresent(Int.self, forKey: .favoriteCount) ?? 0
+        reportCount = try container.decodeIfPresent(Int.self, forKey: .reportCount) ?? 0
+        isHidden = try container.decodeIfPresent(Bool.self, forKey: .isHidden) ?? false
         
         // Optional fields
         // Handle cuisine with backward compatibility
@@ -307,7 +313,9 @@ struct Recipe: Identifiable, Codable {
         authorUsername: String? = nil,
         createdAt: Date = Date(),
         updatedAt: Date = Date(),
-        favoriteCount: Int = 0
+        favoriteCount: Int = 0,
+        reportCount: Int = 0,
+        isHidden: Bool = false
     ) {
         self.id = id
         
@@ -387,6 +395,8 @@ struct Recipe: Identifiable, Codable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.favoriteCount = favoriteCount
+        self.reportCount = reportCount
+        self.isHidden = isHidden
     }
     
     /// Get the appropriate cuisine name based on the current language setting

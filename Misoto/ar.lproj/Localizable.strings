@@ -179,6 +179,7 @@
 "Time" = "الوقت";
 "Servings" = "الحصص";
 "servings" = "حصص";
+"Ingredients for %d servings" = "مكونات لـ %d حصة";
 "Difficulty" = "الصعوبة";
 "Spicy Level" = "مستوى الحرارة";
 "Add Dish Image" = "إضافة صورة الطبق";
@@ -354,3 +355,61 @@
 "Vegan" = "نباتي صرف";
 "Other" = "أخرى";
 
+"For the main ingredients" = "للمكونات الرئيسية";
+"For the marinade / brine" = "للتتبيلة / المحلول الملحي";
+"For seasoning during cooking" = "للتتبيل أثناء الطهي";
+"For the dough / batter / filling" = "للعجين / الخليط / الحشو";
+"For the sauce" = "للصلصة";
+"For the toppings" = "للإضافات";
+"To finish / To garnish" = "لإنهاء / للتزيين";
+"Add ingredient" = "إضافة مكون";
+
+"Steps" = "الخطوات";
+"Start Cooking" = "ابدأ الطهي";
+"Edit" = "تعديل";
+"Save Recipe" = "حفظ الوصفة";
+"Unsave Recipe" = "إلغاء حفظ الوصفة";
+"Report" = "إبلاغ";
+"Report Recipe" = "الإبلاغ عن الوصفة";
+"min" = "دقيقة";
+"Select from Photo Library" = "اختر من مكتبة الصور";
+"Tips" = "نصائح";
+"Write a Note" = "اكتب ملاحظة";
+"Write Note" = "اكتب ملاحظة";
+"Edit Note" = "تحرير الملاحظة";
+"My Notes" = "ملاحظاتي";
+"Edited" = "تم التحرير";
+"Delete Note" = "حذف الملاحظة";
+"Are you sure you want to delete this note? This action cannot be undone." = "هل أنت متأكد أنك تريد حذف هذه الملاحظة؟ لا يمكن التراجع عن هذا الإجراء.";
+"Update Profile" = "تحديث الملف الشخصي";
+"Private Account" = "حساب خاص";
+"Hide Profile" = "حساب خاص";
+"Delete Account" = "حذف الحساب";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء وسيتم حذف جميع بياناتك بشكل دائم.
+
+سيتم حذف حسابك بعد 30 يوماً. لإلغاء الحذف، قم بتسجيل الدخول مرة أخرى خلال 30 يوماً.";
+"Privacy & Terms" = "الخصوصية والشروط";
+"Privacy Policy" = "سياسة الخصوصية";
+"Terms of Service" = "شروط الخدمة";
+
+// NOTE: Full privacy policy and terms translations needed for ar
+"Hide from Followers" = "إخفاء من المتابعين";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "حسابك خاص. ملفك الشخصي مخفي من صفحة الاستكشاف. فقط متابعوك المقبولون يمكنهم رؤية ملفك الشخصي ووصفاتك.";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "حسابك خاص تماماً. ملفك الشخصي ووصفاتك مخفية من جميع المستخدمين، بما في ذلك المتابعين.";
+"Public" = "عام";
+"Private" = "خاص";
+"Completely Private" = "خاص تماماً";
+"Account Privacy" = "خصوصية الحساب";
+"Your profile is visible to everyone" = "ملفك الشخصي مرئي للجميع";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "ملفك الشخصي مخفي من صفحة الاستكشاف. فقط متابعوك المقبولون يمكنهم رؤية ملفك الشخصي ووصفاتك.";
+"Your profile and recipes are hidden from all users, including followers." = "ملفك الشخصي ووصفاتك مخفية من جميع المستخدمين، بما في ذلك المتابعين.";
+"Limited" = "محدود";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "سيتم حذف حسابك بعد 30 يوماً. لإلغاء الحذف، قم بتسجيل الدخول مرة أخرى خلال 30 يوماً.";
+"Are you sure you want to delete your account?" = "هل أنت متأكد أنك تريد حذف حسابك؟";
+"If yes, please enter your username and press delete to confirm the deletion." = "إذا كانت الإجابة نعم، يرجى إدخال اسم المستخدم الخاص بك واضغط على حذف لتأكيد الحذف.";
+"Confirm Deletion" = "تأكيد الحذف";
+"Username does not match" = "اسم المستخدم غير متطابق";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "سيتم حذف حسابك خلال 30 يوماً. لإلغاء الحذف، يرجى تسجيل الدخول مرة أخرى.";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "هل أنت متأكد أنك تريد حذف حسابك؟ سيتم حذف حسابك على الفور ولا يمكن التراجع عن هذا الإجراء.";

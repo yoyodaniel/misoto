@@ -338,8 +338,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
     }
     
     func saveRecipe(image: UIImage? = nil) async -> Bool {
-        guard let userID = Auth.auth().currentUser?.uid,
-              let displayName = Auth.auth().currentUser?.displayName else {
+        guard let userID = Auth.auth().currentUser?.uid else {
             errorMessage = LocalizedString("You must be logged in to save a recipe", comment: "Not logged in error")
             return false
         }
@@ -348,6 +347,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
         let authService = AuthService()
         await authService.reloadUserData()
         let username = authService.currentUser?.username
+        let displayName = authService.currentUser?.displayName ?? Auth.auth().currentUser?.displayName ?? "User"
         // Use username for authorName if available, otherwise fall back to displayName
         let authorName = username ?? displayName
         
@@ -507,6 +507,18 @@ class ExtractMenuFromImageViewModel: ObservableObject {
                 authorName: authorName,
                 authorUsername: username
             )
+            
+            // Profanity check - first line of defense
+            let profanityCheck = ProfanityFilter.shared.checkRecipe(recipe)
+            if profanityCheck.hasProfanity {
+                let errorMsg = ProfanityFilter.shared.getErrorMessage(
+                    field: profanityCheck.field,
+                    detectedWords: profanityCheck.detectedWords
+                )
+                errorMessage = errorMsg
+                isLoading = false
+                return false
+            }
             
             print("📝 Recipe created with sourceImageURLs count: \(recipe.sourceImageURLs.count)")
             try await recipeService.createRecipe(recipe)

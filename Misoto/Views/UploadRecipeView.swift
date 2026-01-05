@@ -811,7 +811,10 @@ struct UploadRecipeView: View {
                     ProgressView()
                 }
             }
-            .alert(LocalizedString("Error", comment: "Error alert title"), isPresented: .constant(viewModel.errorMessage != nil)) {
+            .alert(LocalizedString("Error", comment: "Error alert title"), isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.errorMessage = nil } }
+            )) {
                 Button(LocalizedString("OK", comment: "OK button")) {
                     viewModel.errorMessage = nil
                 }

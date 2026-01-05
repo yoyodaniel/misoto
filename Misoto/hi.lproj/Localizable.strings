@@ -179,6 +179,7 @@
 "Time" = "समय";
 "Servings" = "सर्विंग्स";
 "servings" = "सर्विंग्स";
+"Ingredients for %d servings" = "%d सर्विंग्स के लिए सामग्री";
 "Difficulty" = "कठिनाई";
 "Spicy Level" = "मसालेदार स्तर";
 "Add Dish Image" = "व्यंजन छवि जोड़ें";
@@ -354,3 +355,63 @@
 "Vegan" = "वीगन";
 "Other" = "अन्य";
 
+
+"For the main ingredients" = "मुख्य सामग्री के लिए";
+"For the marinade / brine" = "मैरिनेड / ब्राइन के लिए";
+"For seasoning during cooking" = "खाना पकाने के दौरान मसाला के लिए";
+"For the dough / batter / filling" = "आटा / बैटर / भरने के लिए";
+"For the sauce" = "सॉस के लिए";
+"For the toppings" = "टॉपिंग के लिए";
+"To finish / To garnish" = "समाप्त करने के लिए / सजाने के लिए";
+"Add ingredient" = "सामग्री जोड़ें";
+
+"Steps" = "चरण";
+"Edited" = "संपादित";
+"Start Cooking" = "खाना बनाना शुरू करें";
+"Edit" = "संपादित करें";
+"Save Recipe" = "रेसिपी सहेजें";
+"Unsave Recipe" = "सहेजी गई रेसिपी हटाएं";
+"Report" = "रिपोर्ट करें";
+"Report Recipe" = "रेसिपी रिपोर्ट करें";
+"min" = "मिनट";
+"Select from Photo Library" = "फोटो लाइब्रेरी से चुनें";
+"Tips" = "सुझाव";
+"Write a Note" = "नोट लिखें";
+"Write Note" = "नोट लिखें";
+"Edit Note" = "नोट संपादित करें";
+"My Notes" = "मेरे नोट्स";
+"Edited" = "संपादित";
+"Delete Note" = "नोट हटाएं";
+"Are you sure you want to delete this note? This action cannot be undone." = "क्या आप वाकई इस नोट को हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती।";
+"Update Profile" = "प्रोफ़ाइल अपडेट करें";
+"Private Account" = "निजी खाता";
+"Hide Profile" = "निजी खाता";
+"Delete Account" = "खाता हटाएं";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "क्या आप वाकई अपना खाता हटाना चाहते हैं? यह कार्रवाई पूर्ववत नहीं की जा सकती और आपके सभी डेटा को स्थायी रूप से हटा देगी।
+
+आपका खाता 30 दिनों के बाद हटा दिया जाएगा। हटाना रद्द करने के लिए, 30 दिनों के भीतर वापस लॉग इन करें।";
+"Privacy & Terms" = "गोपनीयता और नियम";
+"Privacy Policy" = "गोपनीयता नीति";
+"Terms of Service" = "सेवा की शर्तें";
+
+// NOTE: Full privacy policy and terms translations needed for hi
+"Hide from Followers" = "अनुयायियों से छुपाएं";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "आपका खाता निजी है। आपका प्रोफ़ाइल एक्सप्लोर दृश्य से छुपा हुआ है। केवल आपके स्वीकृत अनुयायी आपका प्रोफ़ाइल और रेसिपी देख सकते हैं।";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "आपका खाता पूरी तरह से निजी है। आपका प्रोफ़ाइल और रेसिपी सभी उपयोगकर्ताओं से छुपे हुए हैं, जिसमें अनुयायी भी शामिल हैं।";
+"Public" = "सार्वजनिक";
+"Private" = "निजी";
+"Completely Private" = "पूरी तरह से निजी";
+"Account Privacy" = "खाता गोपनीयता";
+"Your profile is visible to everyone" = "आपका प्रोफ़ाइल सभी के लिए दिखाई देता है";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "आपका प्रोफ़ाइल एक्सप्लोर दृश्य से छुपा हुआ है। केवल आपके स्वीकृत अनुयायी आपका प्रोफ़ाइल और रेसिपी देख सकते हैं।";
+"Your profile and recipes are hidden from all users, including followers." = "आपका प्रोफ़ाइल और रेसिपी सभी उपयोगकर्ताओं से छुपे हुए हैं, जिसमें अनुयायी भी शामिल हैं।";
+"Limited" = "सीमित";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "आपका खाता 30 दिनों के बाद हटा दिया जाएगा। हटाना रद्द करने के लिए, 30 दिनों के भीतर वापस लॉग इन करें।";
+"Are you sure you want to delete your account?" = "क्या आप वाकई अपना खाता हटाना चाहते हैं?";
+"If yes, please enter your username and press delete to confirm the deletion." = "यदि हाँ, कृपया अपना उपयोगकर्ता नाम दर्ज करें और हटाने की पुष्टि करने के लिए हटाएं दबाएं।";
+"Confirm Deletion" = "हटाने की पुष्टि करें";
+"Username does not match" = "उपयोगकर्ता नाम मेल नहीं खाता";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "आपका खाता 30 दिनों में हटा दिया जाएगा। हटाना रद्द करने के लिए, कृपया वापस लॉग इन करें।";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "क्या आप वाकई अपना खाता हटाना चाहते हैं? आपका खाता तुरंत हटा दिया जाएगा और यह कार्रवाई प्रतिवर्ती नहीं है।";

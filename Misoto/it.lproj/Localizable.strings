@@ -33,7 +33,6 @@
 "Appearance" = "Aspetto";
 "Language" = "Lingua";
 "The language selected will be used as the default writing language for recipe extractions." = "La lingua selezionata verrà utilizzata come lingua di scrittura predefinita per le estrazioni di ricette.";
-"The language selected will be used as the default writing language for recipe extractions." = "La lingua selezionata verrà utilizzata come lingua di scrittura predefinita per le estrazioni di ricette.";
 "English" = "Inglese";
 "Chinese, Simplified" = "Cinese Semplificato";
 "Chinese, Traditional" = "Cinese Tradizionale";
@@ -179,6 +178,7 @@
 "Time" = "Tempo";
 "Servings" = "Porzioni";
 "servings" = "porzioni";
+"Ingredients for %d servings" = "Ingredienti per %d porzioni";
 "Difficulty" = "Difficoltà";
 "Spicy Level" = "Livello di Piccantezza";
 "Add Dish Image" = "Aggiungi Immagine del Piatto";
@@ -275,41 +275,28 @@
 "Cantonese" = "Cantonese";
 "Hunan" = "Hunan";
 "Shanghainese" = "Shanghainese";
-"Japanese" = "Giapponese";
-"Korean" = "Coreano";
-"Thai" = "Tailandese";
-"Vietnamese" = "Vietnamita";
 "Indian" = "Indiano";
-"Indonesian" = "Indonesiano";
 "Malaysian" = "Malese";
 "Singaporean" = "Singaporiano";
-"Filipino" = "Filippino";
 "Burmese" = "Birmano";
 "Cambodian" = "Cambogiano";
 "Laotian" = "Laotiano";
 "Sri Lankan" = "Sri Lankese";
 "Pakistani" = "Pakistano";
 "Bangladeshi" = "Bangladese";
-"Italian" = "Italiano";
-"French" = "Francese";
-"Spanish" = "Spagnolo";
 "Greek" = "Greco";
 "Turkish" = "Turco";
-"German" = "Tedesco";
 "British" = "Britannico";
 "Irish" = "Irlandese";
 "Scottish" = "Scozzese";
 "Polish" = "Polacco";
-"Russian" = "Russo";
 "Swedish" = "Svedese";
 "Norwegian" = "Norvegese";
 "Danish" = "Danese";
 "Finnish" = "Finlandese";
-"Dutch" = "Olandese";
 "Belgian" = "Belga";
 "Swiss" = "Svizzero";
 "Austrian" = "Austriaco";
-"Portuguese" = "Portoghese";
 "Czech" = "Ceco";
 "Hungarian" = "Ungherese";
 "Romanian" = "Rumeno";
@@ -354,3 +341,63 @@
 "Vegan" = "Vegano";
 "Other" = "Altro";
 
+
+"For the main ingredients" = "Per gli ingredienti principali";
+"For the marinade / brine" = "Per la marinata / salamoia";
+"For seasoning during cooking" = "Per condire durante la cottura";
+"For the dough / batter / filling" = "Per l'impasto / pastella / ripieno";
+"For the sauce" = "Per la salsa";
+"For the toppings" = "Per i condimenti";
+"To finish / To garnish" = "Per finire / Per guarnire";
+"Add ingredient" = "Aggiungi ingrediente";
+
+"Steps" = "Passaggi";
+"Edited" = "Modificato";
+"Start Cooking" = "Inizia a cucinare";
+"Edit" = "Modifica";
+"Save Recipe" = "Salva ricetta";
+"Unsave Recipe" = "Rimuovi ricetta salvata";
+"Report" = "Segnala";
+"Report Recipe" = "Segnala ricetta";
+"min" = "min";
+"Select from Photo Library" = "Seleziona dalla libreria foto";
+"Tips" = "Consigli";
+"Write a Note" = "Scrivi una nota";
+"Write Note" = "Scrivi nota";
+"Edit Note" = "Modifica nota";
+"My Notes" = "Le mie note";
+"Edited" = "Modificato";
+"Delete Note" = "Elimina nota";
+"Are you sure you want to delete this note? This action cannot be undone." = "Sei sicuro di voler eliminare questa nota? Questa azione non può essere annullata.";
+"Update Profile" = "Aggiorna profilo";
+"Private Account" = "Account privato";
+"Hide Profile" = "Account privato";
+"Delete Account" = "Elimina account";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata ed eliminerà permanentemente tutti i tuoi dati.
+
+Il tuo account verrà eliminato dopo 30 giorni. Per annullare l'eliminazione, accedi di nuovo entro 30 giorni.";
+"Privacy & Terms" = "Privacy e Termini";
+"Privacy Policy" = "Informativa sulla Privacy";
+"Terms of Service" = "Termini di Servizio";
+
+// NOTE: Full privacy policy and terms translations needed for it
+"Hide from Followers" = "Nascondi dai follower";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Il tuo account è privato. Il tuo profilo è nascosto dalla vista esplora. Solo i tuoi follower accettati possono vedere il tuo profilo e le tue ricette.";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "Il tuo account è completamente privato. Il tuo profilo e le tue ricette sono nascosti a tutti gli utenti, inclusi i follower.";
+"Public" = "Pubblico";
+"Private" = "Privato";
+"Completely Private" = "Completamente privato";
+"Account Privacy" = "Privacy dell'account";
+"Your profile is visible to everyone" = "Il tuo profilo è visibile a tutti";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Il tuo profilo è nascosto dalla vista esplora. Solo i tuoi follower accettati possono vedere il tuo profilo e le tue ricette.";
+"Your profile and recipes are hidden from all users, including followers." = "Il tuo profilo e le tue ricette sono nascosti a tutti gli utenti, inclusi i follower.";
+"Limited" = "Limitato";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Il tuo account verrà eliminato dopo 30 giorni. Per annullare l'eliminazione, accedi di nuovo entro 30 giorni.";
+"Are you sure you want to delete your account?" = "Sei sicuro di voler eliminare il tuo account?";
+"If yes, please enter your username and press delete to confirm the deletion." = "Se sì, inserisci il tuo nome utente e premi elimina per confermare l'eliminazione.";
+"Confirm Deletion" = "Conferma eliminazione";
+"Username does not match" = "Il nome utente non corrisponde";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Il tuo account verrà eliminato entro 30 giorni. Per annullare l'eliminazione, accedi di nuovo.";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Sei sicuro di voler eliminare il tuo account? Il tuo account verrà eliminato immediatamente e questa azione è irreversibile.";

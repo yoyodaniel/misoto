@@ -178,6 +178,7 @@
 "Time" = "Zeit";
 "Servings" = "Portionen";
 "servings" = "Portionen";
+"Ingredients for %d servings" = "Zutaten für %d Portionen";
 "Difficulty" = "Schwierigkeit";
 "Spicy Level" = "Scharfegrad";
 "Add Dish Image" = "Gerichtbild hinzufügen";
@@ -274,41 +275,28 @@
 "Cantonese" = "Kantonesisch";
 "Hunan" = "Hunan";
 "Shanghainese" = "Shanghai";
-"Japanese" = "Japanisch";
-"Korean" = "Koreanisch";
-"Thai" = "Thailändisch";
-"Vietnamese" = "Vietnamesisch";
 "Indian" = "Indisch";
-"Indonesian" = "Indonesisch";
 "Malaysian" = "Malaysisch";
 "Singaporean" = "Singapurisch";
-"Filipino" = "Philippinisch";
 "Burmese" = "Birmanisch";
 "Cambodian" = "Kambodschanisch";
 "Laotian" = "Laotisch";
 "Sri Lankan" = "Sri-Lankisch";
 "Pakistani" = "Pakistanisch";
 "Bangladeshi" = "Bangladeschisch";
-"Italian" = "Italienisch";
-"French" = "Französisch";
-"Spanish" = "Spanisch";
 "Greek" = "Griechisch";
 "Turkish" = "Türkisch";
-"German" = "Deutsch";
 "British" = "Britisch";
 "Irish" = "Irisch";
 "Scottish" = "Schottisch";
 "Polish" = "Polnisch";
-"Russian" = "Russisch";
 "Swedish" = "Schwedisch";
 "Norwegian" = "Norwegisch";
 "Danish" = "Dänisch";
 "Finnish" = "Finnisch";
-"Dutch" = "Niederländisch";
 "Belgian" = "Belgisch";
 "Swiss" = "Schweizerisch";
 "Austrian" = "Österreichisch";
-"Portuguese" = "Portugiesisch";
 "Czech" = "Tschechisch";
 "Hungarian" = "Ungarisch";
 "Romanian" = "Rumänisch";
@@ -353,3 +341,63 @@
 "Vegan" = "Vegan";
 "Other" = "Andere";
 
+
+"For the main ingredients" = "Für die Hauptzutaten";
+"For the marinade / brine" = "Für die Marinade / Salzlake";
+"For seasoning during cooking" = "Zum Würzen beim Kochen";
+"For the dough / batter / filling" = "Für den Teig / Teig / Füllung";
+"For the sauce" = "Für die Soße";
+"For the toppings" = "Für die Beläge";
+"To finish / To garnish" = "Zum Fertigstellen / Zum Garnieren";
+"Add ingredient" = "Zutat hinzufügen";
+
+"Steps" = "Schritte";
+"Edited" = "Bearbeitet";
+"Start Cooking" = "Kochen beginnen";
+"Edit" = "Bearbeiten";
+"Save Recipe" = "Rezept speichern";
+"Unsave Recipe" = "Rezept nicht mehr speichern";
+"Report" = "Melden";
+"Report Recipe" = "Rezept melden";
+"min" = "Min";
+"Select from Photo Library" = "Aus Fotobibliothek auswählen";
+"Tips" = "Tipps";
+"Write a Note" = "Notiz schreiben";
+"Write Note" = "Notiz schreiben";
+"Edit Note" = "Notiz bearbeiten";
+"My Notes" = "Meine Notizen";
+"Edited" = "Bearbeitet";
+"Delete Note" = "Notiz löschen";
+"Are you sure you want to delete this note? This action cannot be undone." = "Sind Sie sicher, dass Sie diese Notiz löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.";
+"Update Profile" = "Profil aktualisieren";
+"Private Account" = "Privates Konto";
+"Hide Profile" = "Privates Konto";
+"Delete Account" = "Konto löschen";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden und löscht alle Ihre Daten dauerhaft.
+
+Ihr Konto wird nach 30 Tagen gelöscht. Um die Löschung abzubrechen, melden Sie sich innerhalb von 30 Tagen erneut an.";
+"Privacy & Terms" = "Datenschutz & Bedingungen";
+"Privacy Policy" = "Datenschutzerklärung";
+"Terms of Service" = "Nutzungsbedingungen";
+
+// NOTE: Full privacy policy and terms translations needed for de
+"Hide from Followers" = "Vor Followern verbergen";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Ihr Konto ist privat. Ihr Profil ist in der Entdecken-Ansicht verborgen. Nur Ihre akzeptierten Follower können Ihr Profil und Ihre Rezepte sehen.";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "Ihr Konto ist vollständig privat. Ihr Profil und Ihre Rezepte sind vor allen Benutzern verborgen, einschließlich Followern.";
+"Public" = "Öffentlich";
+"Private" = "Privat";
+"Completely Private" = "Vollständig privat";
+"Account Privacy" = "Konto-Datenschutz";
+"Your profile is visible to everyone" = "Ihr Profil ist für alle sichtbar";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "Ihr Profil ist in der Entdecken-Ansicht verborgen. Nur Ihre akzeptierten Follower können Ihr Profil und Ihre Rezepte sehen.";
+"Your profile and recipes are hidden from all users, including followers." = "Ihr Profil und Ihre Rezepte sind vor allen Benutzern verborgen, einschließlich Followern.";
+"Limited" = "Eingeschränkt";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Ihr Konto wird nach 30 Tagen gelöscht. Um die Löschung abzubrechen, melden Sie sich innerhalb von 30 Tagen erneut an.";
+"Are you sure you want to delete your account?" = "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?";
+"If yes, please enter your username and press delete to confirm the deletion." = "Wenn ja, geben Sie bitte Ihren Benutzernamen ein und drücken Sie auf Löschen, um die Löschung zu bestätigen.";
+"Confirm Deletion" = "Löschung bestätigen";
+"Username does not match" = "Benutzername stimmt nicht überein";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Ihr Konto wird in 30 Tagen gelöscht. Um die Löschung abzubrechen, melden Sie sich bitte erneut an.";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Ihr Konto wird sofort gelöscht und diese Aktion kann nicht rückgängig gemacht werden.";

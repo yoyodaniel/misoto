@@ -72,10 +72,49 @@ class RelatedRecipesService {
             }
         }
         
-        return Array(relatedRecipes.prefix(limit))
+        // Filter out recipes from banned users and hidden recipes before returning
+        let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: Array(relatedRecipes.prefix(limit)))
+        // Also filter recipes with report count >= 10 (defensive check in case isHidden wasn't set)
+        return filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
     }
     
     // MARK: - Helper Methods
+    
+    /// Filters out recipes from banned users
+    private func filterRecipesFromBannedUsers(recipes: [Recipe]) async throws -> [Recipe] {
+        // Get unique author IDs
+        let authorIDs = Set(recipes.map { $0.authorID })
+        
+        // Batch check which users are banned
+        var bannedUserIDs: Set<String> = []
+        
+        await withTaskGroup(of: (String, Bool).self) { group in
+            for authorID in authorIDs {
+                group.addTask {
+                    do {
+                        let userDoc = try await self.firestore.collection("users").document(authorID).getDocument()
+                        if userDoc.exists, let userData = userDoc.data() {
+                            let isBanned = (userData["isBanned"] as? Bool) ?? false
+                            return (authorID, isBanned)
+                        }
+                        return (authorID, false)
+                    } catch {
+                        print("⚠️ Error checking ban status for user \(authorID): \(error.localizedDescription)")
+                        return (authorID, false) // Err on the side of caution - don't filter if we can't verify
+                    }
+                }
+            }
+            
+            for await (userID, isBanned) in group {
+                if isBanned {
+                    bannedUserIDs.insert(userID)
+                }
+            }
+        }
+        
+        // Filter out recipes from banned users
+        return recipes.filter { !bannedUserIDs.contains($0.authorID) }
+    }
     
     private func fetchAllRecipesExcept(recipeID: String, limit: Int) async throws -> [Recipe] {
         let snapshot = try await firestore.collection(recipesCollection)

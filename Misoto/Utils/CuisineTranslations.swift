@@ -23,14 +23,16 @@ class CuisineTranslations {
             "pt": "Chinesa",
             "nl": "Chinees",
             "ru": "Китайская",
-            "ja": "中華",
-            "ko": "중국",
-            "th": "จีน",
-            "vi": "Trung Quốc",
+            "ja": "中華料理",
+            "ko": "중국 요리",
+            "th": "อาหารจีน",
+            "vi": "Ẩm thực Trung Quốc",
             "id": "Tionghoa",
             "ms": "Cina",
             "fil": "Tsino",
-            "hi": "चीनी"
+            "hi": "चीनी",
+            "ar": "صيني",
+            "he": "סיני"
         ],
         "Sichuan": [
             "en": "Sichuan",
@@ -50,7 +52,9 @@ class CuisineTranslations {
             "id": "Sichuan",
             "ms": "Sichuan",
             "fil": "Sichuan",
-            "hi": "सिचुआन"
+            "hi": "सिचुआन",
+            "ar": "سيتشوان",
+            "he": "סצ'ואן"
         ],
         "Cantonese": [
             "en": "Cantonese",
@@ -70,7 +74,9 @@ class CuisineTranslations {
             "id": "Kanton",
             "ms": "Kanton",
             "fil": "Kantones",
-            "hi": "कैंटोनीज़"
+            "hi": "कैंटोनीज़",
+            "ar": "كانتوني",
+            "he": "קנטונזי"
         ],
         "Hunan": [
             "en": "Hunan",
@@ -90,7 +96,9 @@ class CuisineTranslations {
             "id": "Hunan",
             "ms": "Hunan",
             "fil": "Hunan",
-            "hi": "हुनान"
+            "hi": "हुनान",
+            "ar": "هونان",
+            "he": "הונאן"
         ],
         "Shanghainese": [
             "en": "Shanghainese",
@@ -110,7 +118,9 @@ class CuisineTranslations {
             "id": "Shanghai",
             "ms": "Shanghai",
             "fil": "Shanghai",
-            "hi": "शंघाई"
+            "hi": "शंघाई",
+            "ar": "شنغهاي",
+            "he": "שנחאי"
         ],
         "Japanese": [
             "en": "Japanese",
@@ -123,14 +133,16 @@ class CuisineTranslations {
             "pt": "Japonesa",
             "nl": "Japans",
             "ru": "Японская",
-            "ja": "日本",
+            "ja": "日本料理",
             "ko": "일본",
             "th": "ญี่ปุ่น",
             "vi": "Nhật Bản",
             "id": "Jepang",
             "ms": "Jepun",
             "fil": "Hapon",
-            "hi": "जापानी"
+            "hi": "जापानी",
+            "ar": "ياباني",
+            "he": "יפני"
         ],
         "Korean": [
             "en": "Korean",
@@ -143,14 +155,16 @@ class CuisineTranslations {
             "pt": "Coreana",
             "nl": "Koreaans",
             "ru": "Корейская",
-            "ja": "韓国",
-            "ko": "한국",
-            "th": "เกาหลี",
-            "vi": "Hàn Quốc",
+            "ja": "韓国料理",
+            "ko": "한국 요리",
+            "th": "อาหารเกาหลี",
+            "vi": "Ẩm thực Hàn Quốc",
             "id": "Korea",
             "ms": "Korea",
             "fil": "Koreano",
-            "hi": "कोरियाई"
+            "hi": "कोरियाई",
+            "ar": "كوري",
+            "he": "קוריאני"
         ],
         "Thai": [
             "en": "Thai",
@@ -163,14 +177,16 @@ class CuisineTranslations {
             "pt": "Tailandesa",
             "nl": "Thais",
             "ru": "Тайская",
-            "ja": "タイ",
-            "ko": "태국",
-            "th": "ไทย",
-            "vi": "Thái Lan",
+            "ja": "タイ料理",
+            "ko": "태국 요리",
+            "th": "อาหารไทย",
+            "vi": "Ẩm thực Thái Lan",
             "id": "Thailand",
             "ms": "Thailand",
             "fil": "Thai",
-            "hi": "थाई"
+            "hi": "थाई",
+            "ar": "تايلندي",
+            "he": "תאילנדי"
         ],
         "Vietnamese": [
             "en": "Vietnamese",
@@ -183,14 +199,16 @@ class CuisineTranslations {
             "pt": "Vietnamita",
             "nl": "Vietnamees",
             "ru": "Вьетнамская",
-            "ja": "ベトナム",
-            "ko": "베트남",
-            "th": "เวียดนาม",
-            "vi": "Việt Nam",
+            "ja": "ベトナム料理",
+            "ko": "베트남 요리",
+            "th": "อาหารเวียดนาม",
+            "vi": "Ẩm thực Việt Nam",
             "id": "Vietnam",
             "ms": "Vietnam",
             "fil": "Biyetnames",
-            "hi": "वियतनामी"
+            "hi": "वियतनामी",
+            "ar": "فيتنامي",
+            "he": "וייטנאמי"
         ],
         "Indian": [
             "en": "Indian",
@@ -203,14 +221,16 @@ class CuisineTranslations {
             "pt": "Indiana",
             "nl": "Indiaas",
             "ru": "Индийская",
-            "ja": "インド",
-            "ko": "인도",
-            "th": "อินเดีย",
-            "vi": "Ấn Độ",
+            "ja": "インド料理",
+            "ko": "인도 요리",
+            "th": "อาหารอินเดีย",
+            "vi": "Ẩm thực Ấn Độ",
             "id": "India",
             "ms": "India",
             "fil": "Indiyano",
-            "hi": "भारतीय"
+            "hi": "भारतीय",
+            "ar": "هندي",
+            "he": "הודי"
         ],
         "Indonesian": [
             "en": "Indonesian",
@@ -223,14 +243,16 @@ class CuisineTranslations {
             "pt": "Indonésia",
             "nl": "Indonesisch",
             "ru": "Индонезийская",
-            "ja": "インドネシア",
-            "ko": "인도네시아",
-            "th": "อินโดนีเซีย",
-            "vi": "Indonesia",
+            "ja": "インドネシア料理",
+            "ko": "인도네시아 요리",
+            "th": "อาหารอินโดนีเซีย",
+            "vi": "Ẩm thực Indonesia",
             "id": "Indonesia",
             "ms": "Indonesia",
             "fil": "Indones",
-            "hi": "इंडोनेशियाई"
+            "hi": "इंडोनेशियाई",
+            "ar": "إندونيسي",
+            "he": "אינדונזי"
         ],
         "Malaysian": [
             "en": "Malaysian",
@@ -243,14 +265,16 @@ class CuisineTranslations {
             "pt": "Malaia",
             "nl": "Maleis",
             "ru": "Малайзийская",
-            "ja": "マレーシア",
-            "ko": "말레이시아",
-            "th": "มาเลเซีย",
-            "vi": "Malaysia",
+            "ja": "マレーシア料理",
+            "ko": "말레이시아 요리",
+            "th": "อาหารมาเลเซีย",
+            "vi": "Ẩm thực Malaysia",
             "id": "Malaysia",
             "ms": "Malaysia",
             "fil": "Malaysian",
-            "hi": "मलेशियाई"
+            "hi": "मलेशियाई",
+            "ar": "ماليزي",
+            "he": "מלזי"
         ],
         "Singaporean": [
             "en": "Singaporean",
@@ -270,7 +294,9 @@ class CuisineTranslations {
             "id": "Singapura",
             "ms": "Singapura",
             "fil": "Singaporean",
-            "hi": "सिंगापुरी"
+            "hi": "सिंगापुरी",
+            "ar": "سنغافوري",
+            "he": "סינגפורי"
         ],
         "Filipino": [
             "en": "Filipino",
@@ -290,7 +316,9 @@ class CuisineTranslations {
             "id": "Filipina",
             "ms": "Filipina",
             "fil": "Pilipino",
-            "hi": "फिलिपिनो"
+            "hi": "फिलिपिनो",
+            "ar": "فلبيني",
+            "he": "פיליפיני"
         ],
         "Burmese": [
             "en": "Burmese",
@@ -310,7 +338,9 @@ class CuisineTranslations {
             "id": "Myanmar",
             "ms": "Myanmar",
             "fil": "Burmese",
-            "hi": "बर्मी"
+            "hi": "बर्मी",
+            "ar": "بورمي",
+            "he": "בורמזי"
         ],
         "Cambodian": [
             "en": "Cambodian",
@@ -330,7 +360,9 @@ class CuisineTranslations {
             "id": "Kamboja",
             "ms": "Kemboja",
             "fil": "Cambodian",
-            "hi": "कंबोडियाई"
+            "hi": "कंबोडियाई",
+            "ar": "كمبودي",
+            "he": "קמבודי"
         ],
         "Laotian": [
             "en": "Laotian",
@@ -350,7 +382,9 @@ class CuisineTranslations {
             "id": "Laos",
             "ms": "Laos",
             "fil": "Laotian",
-            "hi": "लाओ"
+            "hi": "लाओ",
+            "ar": "لاوسي",
+            "he": "לאוסי"
         ],
         "Sri Lankan": [
             "en": "Sri Lankan",
@@ -370,7 +404,9 @@ class CuisineTranslations {
             "id": "Sri Lanka",
             "ms": "Sri Lanka",
             "fil": "Sri Lankan",
-            "hi": "श्रीलंकाई"
+            "hi": "श्रीलंकाई",
+            "ar": "سريلانكي",
+            "he": "סרי לנקי"
         ],
         "Pakistani": [
             "en": "Pakistani",
@@ -390,7 +426,9 @@ class CuisineTranslations {
             "id": "Pakistan",
             "ms": "Pakistan",
             "fil": "Pakistani",
-            "hi": "पाकिस्तानी"
+            "hi": "पाकिस्तानी",
+            "ar": "باكستاني",
+            "he": "פקיסטני"
         ],
         "Bangladeshi": [
             "en": "Bangladeshi",
@@ -410,7 +448,9 @@ class CuisineTranslations {
             "id": "Bangladesh",
             "ms": "Bangladesh",
             "fil": "Bangladeshi",
-            "hi": "बांग्लादेशी"
+            "hi": "बांग्लादेशी",
+            "ar": "بنغلاديشي",
+            "he": "בנגלדשי"
         ],
         
         // European
@@ -425,14 +465,16 @@ class CuisineTranslations {
             "pt": "Italiana",
             "nl": "Italiaans",
             "ru": "Итальянская",
-            "ja": "イタリア",
-            "ko": "이탈리아",
-            "th": "อิตาลี",
-            "vi": "Ý",
+            "ja": "イタリア料理",
+            "ko": "이탈리아 요리",
+            "th": "อาหารอิตาลี",
+            "vi": "Ẩm thực Ý",
             "id": "Italia",
             "ms": "Itali",
             "fil": "Italyano",
-            "hi": "इतालवी"
+            "hi": "इतालवी",
+            "ar": "إيطالي",
+            "he": "איטלקי"
         ],
         "French": [
             "en": "French",
@@ -445,14 +487,16 @@ class CuisineTranslations {
             "pt": "Francesa",
             "nl": "Frans",
             "ru": "Французская",
-            "ja": "フランス",
-            "ko": "프랑스",
-            "th": "ฝรั่งเศส",
-            "vi": "Pháp",
+            "ja": "フランス料理",
+            "ko": "프랑스 요리",
+            "th": "อาหารฝรั่งเศส",
+            "vi": "Ẩm thực Pháp",
             "id": "Prancis",
             "ms": "Perancis",
             "fil": "Pranses",
-            "hi": "फ्रेंच"
+            "hi": "फ्रेंच",
+            "ar": "فرنسي",
+            "he": "צרפתי"
         ],
         "Spanish": [
             "en": "Spanish",
@@ -465,14 +509,16 @@ class CuisineTranslations {
             "pt": "Espanhola",
             "nl": "Spaans",
             "ru": "Испанская",
-            "ja": "スペイン",
-            "ko": "스페인",
-            "th": "สเปน",
-            "vi": "Tây Ban Nha",
+            "ja": "スペイン料理",
+            "ko": "스페인 요리",
+            "th": "อาหารสเปน",
+            "vi": "Ẩm thực Tây Ban Nha",
             "id": "Spanyol",
             "ms": "Sepanyol",
             "fil": "Espanyol",
-            "hi": "स्पेनिश"
+            "hi": "स्पेनिश",
+            "ar": "إسباني",
+            "he": "ספרדי"
         ],
         "Greek": [
             "en": "Greek",
@@ -492,7 +538,9 @@ class CuisineTranslations {
             "id": "Yunani",
             "ms": "Yunani",
             "fil": "Griyego",
-            "hi": "ग्रीक"
+            "hi": "ग्रीक",
+            "ar": "يوناني",
+            "he": "יווני"
         ],
         "Turkish": [
             "en": "Turkish",
@@ -512,7 +560,9 @@ class CuisineTranslations {
             "id": "Turki",
             "ms": "Turki",
             "fil": "Turko",
-            "hi": "तुर्की"
+            "hi": "तुर्की",
+            "ar": "تركي",
+            "he": "טורקי"
         ],
         "German": [
             "en": "German",
@@ -525,14 +575,16 @@ class CuisineTranslations {
             "pt": "Alemã",
             "nl": "Duits",
             "ru": "Немецкая",
-            "ja": "ドイツ",
-            "ko": "독일",
-            "th": "เยอรมัน",
-            "vi": "Đức",
+            "ja": "ドイツ料理",
+            "ko": "독일 요리",
+            "th": "อาหารเยอรมัน",
+            "vi": "Ẩm thực Đức",
             "id": "Jerman",
             "ms": "Jerman",
             "fil": "Aleman",
-            "hi": "जर्मन"
+            "hi": "जर्मन",
+            "ar": "ألماني",
+            "he": "גרמני"
         ],
         "British": [
             "en": "British",
@@ -552,7 +604,9 @@ class CuisineTranslations {
             "id": "Inggris",
             "ms": "British",
             "fil": "British",
-            "hi": "ब्रिटिश"
+            "hi": "ब्रिटिश",
+            "ar": "بريطاني",
+            "he": "בריטי"
         ],
         "Irish": [
             "en": "Irish",
@@ -572,7 +626,9 @@ class CuisineTranslations {
             "id": "Irlandia",
             "ms": "Ireland",
             "fil": "Irish",
-            "hi": "आयरिश"
+            "hi": "आयरिश",
+            "ar": "أيرلندي",
+            "he": "אירי"
         ],
         "Scottish": [
             "en": "Scottish",
@@ -592,7 +648,9 @@ class CuisineTranslations {
             "id": "Skotlandia",
             "ms": "Scotland",
             "fil": "Scottish",
-            "hi": "स्कॉटिश"
+            "hi": "स्कॉटिश",
+            "ar": "اسكتلندي",
+            "he": "סקוטי"
         ],
         "Polish": [
             "en": "Polish",
@@ -612,7 +670,9 @@ class CuisineTranslations {
             "id": "Polandia",
             "ms": "Poland",
             "fil": "Polish",
-            "hi": "पोलिश"
+            "hi": "पोलिश",
+            "ar": "بولندي",
+            "he": "פולני"
         ],
         "Russian": [
             "en": "Russian",
@@ -625,14 +685,16 @@ class CuisineTranslations {
             "pt": "Russa",
             "nl": "Russisch",
             "ru": "Русская",
-            "ja": "ロシア",
-            "ko": "러시아",
-            "th": "รัสเซีย",
-            "vi": "Nga",
+            "ja": "ロシア料理",
+            "ko": "러시아 요리",
+            "th": "อาหารรัสเซีย",
+            "vi": "Ẩm thực Nga",
             "id": "Rusia",
             "ms": "Rusia",
             "fil": "Ruso",
-            "hi": "रूसी"
+            "hi": "रूसी",
+            "ar": "روسي",
+            "he": "רוסי"
         ],
         "Swedish": [
             "en": "Swedish",
@@ -652,7 +714,9 @@ class CuisineTranslations {
             "id": "Swedia",
             "ms": "Sweden",
             "fil": "Swedish",
-            "hi": "स्वीडिश"
+            "hi": "स्वीडिश",
+            "ar": "سويدي",
+            "he": "שוודי"
         ],
         "Norwegian": [
             "en": "Norwegian",
@@ -672,7 +736,9 @@ class CuisineTranslations {
             "id": "Norwegia",
             "ms": "Norway",
             "fil": "Norwegian",
-            "hi": "नॉर्वेजियन"
+            "hi": "नॉर्वेजियन",
+            "ar": "نرويجي",
+            "he": "נורווגי"
         ],
         "Danish": [
             "en": "Danish",
@@ -692,7 +758,9 @@ class CuisineTranslations {
             "id": "Denmark",
             "ms": "Denmark",
             "fil": "Danish",
-            "hi": "डेनिश"
+            "hi": "डेनिश",
+            "ar": "دنماركي",
+            "he": "דני"
         ],
         "Finnish": [
             "en": "Finnish",
@@ -712,7 +780,9 @@ class CuisineTranslations {
             "id": "Finlandia",
             "ms": "Finland",
             "fil": "Finnish",
-            "hi": "फिनिश"
+            "hi": "फिनिश",
+            "ar": "فنلندي",
+            "he": "פיני"
         ],
         "Dutch": [
             "en": "Dutch",
@@ -732,7 +802,9 @@ class CuisineTranslations {
             "id": "Belanda",
             "ms": "Belanda",
             "fil": "Dutch",
-            "hi": "डच"
+            "hi": "डच",
+            "ar": "هولندي",
+            "he": "הולנדי"
         ],
         "Belgian": [
             "en": "Belgian",
@@ -752,7 +824,9 @@ class CuisineTranslations {
             "id": "Belgia",
             "ms": "Belgium",
             "fil": "Belgian",
-            "hi": "बेल्जियन"
+            "hi": "बेल्जियन",
+            "ar": "بلجيكي",
+            "he": "בלגי"
         ],
         "Swiss": [
             "en": "Swiss",
@@ -772,7 +846,9 @@ class CuisineTranslations {
             "id": "Swiss",
             "ms": "Switzerland",
             "fil": "Swiss",
-            "hi": "स्विस"
+            "hi": "स्विस",
+            "ar": "سويسري",
+            "he": "שוויצרי"
         ],
         "Austrian": [
             "en": "Austrian",
@@ -792,7 +868,9 @@ class CuisineTranslations {
             "id": "Austria",
             "ms": "Austria",
             "fil": "Austrian",
-            "hi": "ऑस्ट्रियाई"
+            "hi": "ऑस्ट्रियाई",
+            "ar": "نمساوي",
+            "he": "אוסטרי"
         ],
         "Portuguese": [
             "en": "Portuguese",
@@ -812,7 +890,9 @@ class CuisineTranslations {
             "id": "Portugis",
             "ms": "Portugis",
             "fil": "Portuges",
-            "hi": "पुर्तगाली"
+            "hi": "पुर्तगाली",
+            "ar": "برتغالي",
+            "he": "פורטוגלי"
         ],
         "Czech": [
             "en": "Czech",
@@ -832,7 +912,9 @@ class CuisineTranslations {
             "id": "Ceko",
             "ms": "Czech",
             "fil": "Czech",
-            "hi": "चेक"
+            "hi": "चेक",
+            "ar": "تشيكي",
+            "he": "צ'כי"
         ],
         "Hungarian": [
             "en": "Hungarian",
@@ -852,7 +934,9 @@ class CuisineTranslations {
             "id": "Hungaria",
             "ms": "Hungary",
             "fil": "Hungarian",
-            "hi": "हंगेरियन"
+            "hi": "हंगेरियन",
+            "ar": "مجري",
+            "he": "הונגרי"
         ],
         "Romanian": [
             "en": "Romanian",
@@ -872,7 +956,9 @@ class CuisineTranslations {
             "id": "Rumania",
             "ms": "Romania",
             "fil": "Romanian",
-            "hi": "रोमानियाई"
+            "hi": "रोमानियाई",
+            "ar": "روماني",
+            "he": "רומני"
         ],
         "Bulgarian": [
             "en": "Bulgarian",
@@ -892,7 +978,9 @@ class CuisineTranslations {
             "id": "Bulgaria",
             "ms": "Bulgaria",
             "fil": "Bulgarian",
-            "hi": "बुल्गारियाई"
+            "hi": "बुल्गारियाई",
+            "ar": "بلغاري",
+            "he": "בולגרי"
         ],
         
         // Middle Eastern
@@ -914,7 +1002,9 @@ class CuisineTranslations {
             "id": "Lebanon",
             "ms": "Lubnan",
             "fil": "Lebanese",
-            "hi": "लेबनानी"
+            "hi": "लेबनानी",
+            "ar": "لبناني",
+            "he": "לבנוני"
         ],
         "Israeli": [
             "en": "Israeli",
@@ -934,7 +1024,9 @@ class CuisineTranslations {
             "id": "Israel",
             "ms": "Israel",
             "fil": "Israeli",
-            "hi": "इजराइली"
+            "hi": "इजराइली",
+            "ar": "إسرائيلي",
+            "he": "ישראלי"
         ],
         "Iranian": [
             "en": "Iranian",
@@ -954,7 +1046,9 @@ class CuisineTranslations {
             "id": "Iran",
             "ms": "Iran",
             "fil": "Iranian",
-            "hi": "ईरानी"
+            "hi": "ईरानी",
+            "ar": "إيراني",
+            "he": "איראני"
         ],
         "Iraqi": [
             "en": "Iraqi",
@@ -974,7 +1068,9 @@ class CuisineTranslations {
             "id": "Irak",
             "ms": "Iraq",
             "fil": "Iraqi",
-            "hi": "इराकी"
+            "hi": "इराकी",
+            "ar": "عراقي",
+            "he": "עיראקי"
         ],
         "Syrian": [
             "en": "Syrian",
@@ -994,7 +1090,9 @@ class CuisineTranslations {
             "id": "Suriah",
             "ms": "Syria",
             "fil": "Syrian",
-            "hi": "सीरियाई"
+            "hi": "सीरियाई",
+            "ar": "سوري",
+            "he": "סורי"
         ],
         "Egyptian": [
             "en": "Egyptian",
@@ -1014,7 +1112,9 @@ class CuisineTranslations {
             "id": "Mesir",
             "ms": "Mesir",
             "fil": "Egyptian",
-            "hi": "मिस्र"
+            "hi": "मिस्र",
+            "ar": "مصري",
+            "he": "מצרי"
         ],
         "Moroccan": [
             "en": "Moroccan",
@@ -1034,7 +1134,9 @@ class CuisineTranslations {
             "id": "Maroko",
             "ms": "Maghribi",
             "fil": "Moroccan",
-            "hi": "मोरक्कन"
+            "hi": "मोरक्कन",
+            "ar": "مغربي",
+            "he": "מרוקאי"
         ],
         "Tunisian": [
             "en": "Tunisian",
@@ -1054,7 +1156,9 @@ class CuisineTranslations {
             "id": "Tunisia",
             "ms": "Tunisia",
             "fil": "Tunisian",
-            "hi": "ट्यूनीशियाई"
+            "hi": "ट्यूनीशियाई",
+            "ar": "تونسي",
+            "he": "תוניסאי"
         ],
         "Algerian": [
             "en": "Algerian",
@@ -1074,7 +1178,9 @@ class CuisineTranslations {
             "id": "Aljazair",
             "ms": "Algeria",
             "fil": "Algerian",
-            "hi": "अल्जीरियाई"
+            "hi": "अल्जीरियाई",
+            "ar": "جزائري",
+            "he": "אלג'יראי"
         ],
         "Yemeni": [
             "en": "Yemeni",
@@ -1094,7 +1200,9 @@ class CuisineTranslations {
             "id": "Yaman",
             "ms": "Yaman",
             "fil": "Yemeni",
-            "hi": "यमनी"
+            "hi": "यमनी",
+            "ar": "يمني",
+            "he": "תימני"
         ],
         
         // African
@@ -1116,7 +1224,9 @@ class CuisineTranslations {
             "id": "Etiopia",
             "ms": "Habsyah",
             "fil": "Ethiopian",
-            "hi": "इथियोपियाई"
+            "hi": "इथियोपियाई",
+            "ar": "إثيوبي",
+            "he": "אתיופי"
         ],
         "Nigerian": [
             "en": "Nigerian",
@@ -1136,7 +1246,9 @@ class CuisineTranslations {
             "id": "Nigeria",
             "ms": "Nigeria",
             "fil": "Nigerian",
-            "hi": "नाइजीरियाई"
+            "hi": "नाइजीरियाई",
+            "ar": "نيجيري",
+            "he": "ניגרי"
         ],
         "South African": [
             "en": "South African",
@@ -1156,7 +1268,9 @@ class CuisineTranslations {
             "id": "Afrika Selatan",
             "ms": "Afrika Selatan",
             "fil": "South African",
-            "hi": "दक्षिण अफ्रीकी"
+            "hi": "दक्षिण अफ्रीकी",
+            "ar": "جنوب أفريقي",
+            "he": "דרום אפריקאי"
         ],
         "Ghanaian": [
             "en": "Ghanaian",
@@ -1176,7 +1290,9 @@ class CuisineTranslations {
             "id": "Ghana",
             "ms": "Ghana",
             "fil": "Ghanaian",
-            "hi": "घानाई"
+            "hi": "घानाई",
+            "ar": "غاني",
+            "he": "גאני"
         ],
         "Kenyan": [
             "en": "Kenyan",
@@ -1196,7 +1312,9 @@ class CuisineTranslations {
             "id": "Kenya",
             "ms": "Kenya",
             "fil": "Kenyan",
-            "hi": "केन्याई"
+            "hi": "केन्याई",
+            "ar": "كيني",
+            "he": "קנייתי"
         ],
         "Senegalese": [
             "en": "Senegalese",
@@ -1216,7 +1334,9 @@ class CuisineTranslations {
             "id": "Senegal",
             "ms": "Senegal",
             "fil": "Senegalese",
-            "hi": "सेनेगल"
+            "hi": "सेनेगल",
+            "ar": "سنغالي",
+            "he": "סנגלי"
         ],
         "Tanzanian": [
             "en": "Tanzanian",
@@ -1236,7 +1356,9 @@ class CuisineTranslations {
             "id": "Tanzania",
             "ms": "Tanzania",
             "fil": "Tanzanian",
-            "hi": "तंजानियाई"
+            "hi": "तंजानियाई",
+            "ar": "تنزاني",
+            "he": "טנזני"
         ],
         
         // American
@@ -1258,7 +1380,9 @@ class CuisineTranslations {
             "id": "Amerika",
             "ms": "Amerika",
             "fil": "Amerikano",
-            "hi": "अमेरिकन"
+            "hi": "अमेरिकन",
+            "ar": "أمريكي",
+            "he": "אמריקאי"
         ],
         "Mexican": [
             "en": "Mexican",
@@ -1278,7 +1402,9 @@ class CuisineTranslations {
             "id": "Meksiko",
             "ms": "Mexico",
             "fil": "Mexicano",
-            "hi": "मैक्सिकन"
+            "hi": "मैक्सिकन",
+            "ar": "مكسيكي",
+            "he": "מקסיקני"
         ],
         "Tex-Mex": [
             "en": "Tex-Mex",
@@ -1298,7 +1424,9 @@ class CuisineTranslations {
             "id": "Tex-Mex",
             "ms": "Tex-Mex",
             "fil": "Tex-Mex",
-            "hi": "टेक्स-मेक्स"
+            "hi": "टेक्स-मेक्स",
+            "ar": "تكساس-مكسيكي",
+            "he": "טקס-מקס"
         ],
         "Cuban": [
             "en": "Cuban",
@@ -1318,7 +1446,9 @@ class CuisineTranslations {
             "id": "Kuba",
             "ms": "Cuba",
             "fil": "Cubano",
-            "hi": "क्यूबन"
+            "hi": "क्यूबन",
+            "ar": "كوبي",
+            "he": "קובני"
         ],
         "Brazilian": [
             "en": "Brazilian",
@@ -1338,7 +1468,9 @@ class CuisineTranslations {
             "id": "Brasil",
             "ms": "Brazil",
             "fil": "Brazilian",
-            "hi": "ब्राज़ीलियाई"
+            "hi": "ब्राज़ीलियाई",
+            "ar": "برازيلي",
+            "he": "ברזילאי"
         ],
         "Argentinian": [
             "en": "Argentinian",
@@ -1358,7 +1490,9 @@ class CuisineTranslations {
             "id": "Argentina",
             "ms": "Argentina",
             "fil": "Argentinian",
-            "hi": "अर्जेंटीना"
+            "hi": "अर्जेंटीना",
+            "ar": "أرجنتيني",
+            "he": "ארגנטינאי"
         ],
         "Peruvian": [
             "en": "Peruvian",
@@ -1378,7 +1512,9 @@ class CuisineTranslations {
             "id": "Peru",
             "ms": "Peru",
             "fil": "Peruvian",
-            "hi": "पेरूवियन"
+            "hi": "पेरूवियन",
+            "ar": "بيروفي",
+            "he": "פרואני"
         ],
         "Colombian": [
             "en": "Colombian",
@@ -1398,7 +1534,9 @@ class CuisineTranslations {
             "id": "Kolombia",
             "ms": "Colombia",
             "fil": "Colombian",
-            "hi": "कोलंबियाई"
+            "hi": "कोलंबियाई",
+            "ar": "كولومبي",
+            "he": "קולומביאני"
         ],
         "Chilean": [
             "en": "Chilean",
@@ -1418,7 +1556,9 @@ class CuisineTranslations {
             "id": "Chili",
             "ms": "Chile",
             "fil": "Chilean",
-            "hi": "चिली"
+            "hi": "चिली",
+            "ar": "تشيلي",
+            "he": "צ'יליאני"
         ],
         "Venezuelan": [
             "en": "Venezuelan",
@@ -1438,7 +1578,9 @@ class CuisineTranslations {
             "id": "Venezuela",
             "ms": "Venezuela",
             "fil": "Venezuelan",
-            "hi": "वेनेजुएला"
+            "hi": "वेनेजुएला",
+            "ar": "فنزويلي",
+            "he": "ונצואלי"
         ],
         "Jamaican": [
             "en": "Jamaican",
@@ -1458,7 +1600,9 @@ class CuisineTranslations {
             "id": "Jamaika",
             "ms": "Jamaica",
             "fil": "Jamaican",
-            "hi": "जमैकन"
+            "hi": "जमैकन",
+            "ar": "جامايكي",
+            "he": "ג'מייקני"
         ],
         "Caribbean": [
             "en": "Caribbean",
@@ -1478,7 +1622,9 @@ class CuisineTranslations {
             "id": "Karibia",
             "ms": "Caribbean",
             "fil": "Caribbean",
-            "hi": "कैरिबियन"
+            "hi": "कैरिबियन",
+            "ar": "كاريبي",
+            "he": "קריבי"
         ],
         "Surinam": [
             "en": "Surinam",
@@ -1498,7 +1644,9 @@ class CuisineTranslations {
             "id": "Suriname",
             "ms": "Surinam",
             "fil": "Surinam",
-            "hi": "सूरीनाम"
+            "hi": "सूरीनाम",
+            "ar": "سورينامي",
+            "he": "סורינאמי"
         ],
         
         // Other
@@ -1520,7 +1668,9 @@ class CuisineTranslations {
             "id": "Australia",
             "ms": "Australia",
             "fil": "Australian",
-            "hi": "ऑस्ट्रेलियाई"
+            "hi": "ऑस्ट्रेलियाई",
+            "ar": "أسترالي",
+            "he": "אוסטרלי"
         ],
         "New Zealand": [
             "en": "New Zealand",
@@ -1540,7 +1690,9 @@ class CuisineTranslations {
             "id": "Selandia Baru",
             "ms": "New Zealand",
             "fil": "New Zealand",
-            "hi": "न्यूज़ीलैंड"
+            "hi": "न्यूज़ीलैंड",
+            "ar": "نيوزيلندي",
+            "he": "ניו זילנדי"
         ],
         "Fusion": [
             "en": "Fusion",
@@ -1560,7 +1712,9 @@ class CuisineTranslations {
             "id": "Fusion",
             "ms": "Fusion",
             "fil": "Fusion",
-            "hi": "फ्यूजन"
+            "hi": "फ्यूजन",
+            "ar": "اندماجي",
+            "he": "פיוז'ן"
         ],
         "Mediterranean": [
             "en": "Mediterranean",
@@ -1580,7 +1734,9 @@ class CuisineTranslations {
             "id": "Mediterania",
             "ms": "Mediterranean",
             "fil": "Mediterranean",
-            "hi": "भूमध्यसागरीय"
+            "hi": "भूमध्यसागरीय",
+            "ar": "متوسطي",
+            "he": "ים תיכוני"
         ],
         "Middle Eastern": [
             "en": "Middle Eastern",
@@ -1600,7 +1756,9 @@ class CuisineTranslations {
             "id": "Timur Tengah",
             "ms": "Timur Tengah",
             "fil": "Middle Eastern",
-            "hi": "मध्य पूर्वी"
+            "hi": "मध्य पूर्वी",
+            "ar": "شرق أوسطي",
+            "he": "מזרח תיכוני"
         ],
         "International": [
             "en": "International",
@@ -1620,7 +1778,9 @@ class CuisineTranslations {
             "id": "Internasional",
             "ms": "Antarabangsa",
             "fil": "International",
-            "hi": "अंतर्राष्ट्रीय"
+            "hi": "अंतर्राष्ट्रीय",
+            "ar": "دولي",
+            "he": "בינלאומי"
         ],
         "Vegetarian": [
             "en": "Vegetarian",
@@ -1640,7 +1800,9 @@ class CuisineTranslations {
             "id": "Vegetarian",
             "ms": "Vegetarian",
             "fil": "Vegetarian",
-            "hi": "शाकाहारी"
+            "hi": "शाकाहारी",
+            "ar": "نباتي",
+            "he": "צמחוני"
         ],
         "Vegan": [
             "en": "Vegan",
@@ -1660,7 +1822,9 @@ class CuisineTranslations {
             "id": "Vegan",
             "ms": "Vegan",
             "fil": "Vegan",
-            "hi": "वीगन"
+            "hi": "वीगन",
+            "ar": "نباتي صرف",
+            "he": "טבעוני"
         ],
         "Other": [
             "en": "Other",
@@ -1680,7 +1844,9 @@ class CuisineTranslations {
             "id": "Lainnya",
             "ms": "Lain-lain",
             "fil": "Iba pa",
-            "hi": "अन्य"
+            "hi": "अन्य",
+            "ar": "أخرى",
+            "he": "אחר"
         ]
     ]
     

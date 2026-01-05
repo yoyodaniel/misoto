@@ -10,6 +10,7 @@ import Combine
 import FirebaseCore
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 import AuthenticationServices
 import CryptoKit
 import GoogleSignIn
@@ -21,6 +22,7 @@ class AuthService: ObservableObject {
     @Published var isInitializing = true
     
     private let firestore = FirebaseManager.shared.firestore
+    private let storage = Storage.storage()
     private var currentNonce: String?
     private var authStateListener: AuthStateDidChangeListenerHandle?
     
@@ -133,8 +135,9 @@ class AuthService: ObservableObject {
         let authResult = try await Auth.auth().signIn(with: credential)
         let userID = authResult.user.uid
         
-        // Get user info
-        let displayName = authResult.user.displayName ?? "User"
+        // Get user info - prefer Google profile name, fallback to Firebase Auth displayName
+        let googleProfileName = result.user.profile?.name
+        let displayName = googleProfileName ?? authResult.user.displayName ?? "User"
         let email = authResult.user.email
         
         await createOrUpdateUser(
@@ -175,17 +178,44 @@ class AuthService: ObservableObject {
             let authResult = try await Auth.auth().signIn(with: credential)
             let userID = authResult.user.uid
             
-            // Create or update user document
-            let displayName = [appleIDCredential.fullName?.givenName, appleIDCredential.fullName?.familyName]
+            // Get display name - prefer Apple credential fullName (only available on first sign-in),
+            // fallback to Firebase Auth displayName (set on first sign-in)
+            var displayName = [appleIDCredential.fullName?.givenName, appleIDCredential.fullName?.familyName]
                 .compactMap { $0 }
                 .joined(separator: " ")
             
-            let email = appleIDCredential.email
+            print("🔍 Apple Sign-In - Extracted displayName: '\(displayName)' (givenName: '\(appleIDCredential.fullName?.givenName ?? "nil")', familyName: '\(appleIDCredential.fullName?.familyName ?? "nil")')")
+            
+            // If fullName is available (first sign-in), update Firebase Auth displayName for future use
+            if !displayName.isEmpty && authResult.user.displayName != displayName {
+                print("📝 Updating Firebase Auth displayName to: '\(displayName)'")
+                let changeRequest = authResult.user.createProfileChangeRequest()
+                changeRequest.displayName = displayName
+                try? await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+                    changeRequest.commitChanges { error in
+                        if let error = error {
+                            print("⚠️ Failed to update Firebase Auth displayName: \(error.localizedDescription)")
+                            continuation.resume(throwing: error)
+                        } else {
+                            print("✅ Firebase Auth displayName updated successfully")
+                            continuation.resume()
+                        }
+                    }
+                }
+            }
+            
+            // If fullName is empty (subsequent sign-ins), use Firebase Auth displayName
+            if displayName.isEmpty {
+                displayName = authResult.user.displayName ?? "User"
+                print("🔍 Using Firebase Auth displayName: '\(displayName)'")
+            }
+            
+            let email = appleIDCredential.email ?? authResult.user.email
             
             await createOrUpdateUser(
                 userID: userID,
                 email: email,
-                displayName: displayName.isEmpty ? "User" : displayName
+                displayName: displayName
             )
             
             await checkAuthState()
@@ -196,6 +226,104 @@ class AuthService: ObservableObject {
     }
     
     // MARK: - User Management
+    
+    /// Generate a base username from display name
+    private func generateBaseUsername(from displayName: String) -> String {
+        // Remove leading/trailing whitespace
+        var base = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // If empty, use default
+        if base.isEmpty {
+            base = "user"
+        }
+        
+        // Convert to lowercase
+        base = base.lowercased()
+        
+        // Replace spaces and common separators with underscores
+        base = base.replacingOccurrences(of: " ", with: "_")
+        base = base.replacingOccurrences(of: "-", with: "_")
+        base = base.replacingOccurrences(of: ".", with: "_")
+        
+        // Remove invalid characters (keep only alphanumeric and underscore)
+        let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "_"))
+        base = base.unicodeScalars.filter { allowedCharacters.contains($0) }.map(String.init).joined()
+        
+        // Remove multiple consecutive underscores
+        while base.contains("__") {
+            base = base.replacingOccurrences(of: "__", with: "_")
+        }
+        
+        // Remove leading/trailing underscores
+        base = base.trimmingCharacters(in: CharacterSet(charactersIn: "_"))
+        
+        // Ensure minimum length (pad with random number if too short)
+        if base.count < 4 {
+            let randomSuffix = Int.random(in: 1000...9999)
+            base = "\(base)\(randomSuffix)"
+        }
+        
+        // Truncate to max 15 characters (leave room for suffixes)
+        if base.count > 12 {
+            base = String(base.prefix(12))
+        }
+        
+        // Remove trailing underscore if any
+        base = base.trimmingCharacters(in: CharacterSet(charactersIn: "_"))
+        
+        return base
+    }
+    
+    /// Find a unique username by trying the base and variations
+    private func findUniqueUsername(baseUsername: String, excludingUserID: String? = nil) async -> String {
+        // First try the base username
+        do {
+            let isAvailable = try await isUsernameAvailable(baseUsername, excludingUserID: excludingUserID)
+            if isAvailable {
+                return baseUsername.lowercased()
+            }
+        } catch {
+            print("⚠️ Error checking username availability: \(error.localizedDescription)")
+        }
+        
+        // Try variations with numbers
+        for i in 1...999 {
+            let variation = "\(baseUsername)\(i)"
+            if variation.count > 15 {
+                break
+            }
+            do {
+                let isAvailable = try await isUsernameAvailable(variation, excludingUserID: excludingUserID)
+                if isAvailable {
+                    return variation.lowercased()
+                }
+            } catch {
+                continue
+            }
+        }
+        
+        // Try with underscore and numbers
+        for i in 1...999 {
+            let variation = "\(baseUsername)_\(i)"
+            if variation.count > 15 {
+                break
+            }
+            do {
+                let isAvailable = try await isUsernameAvailable(variation, excludingUserID: excludingUserID)
+                if isAvailable {
+                    return variation.lowercased()
+                }
+            } catch {
+                continue
+            }
+        }
+        
+        // Last resort: add random suffix
+        let randomSuffix = Int.random(in: 1000...9999)
+        let fallback = "\(baseUsername)\(randomSuffix)"
+        let truncated = fallback.count > 15 ? String(fallback.prefix(15)) : fallback
+        return truncated.lowercased()
+    }
     
     private func createOrUpdateUser(userID: String, email: String?, displayName: String) async {
         let userRef = firestore.collection("users").document(userID)
@@ -222,17 +350,25 @@ class AuthService: ObservableObject {
                 // Always update lastLogin
                 try await userRef.updateData(updateData)
             } else {
-                // Create new user with lastLogin set to now
+                // Create new user - generate unique username from displayName
+                print("👤 Creating new user - displayName: '\(displayName)'")
+                let baseUsername = generateBaseUsername(from: displayName)
+                print("🔍 Generated base username: '\(baseUsername)'")
+                let uniqueUsername = await findUniqueUsername(baseUsername: baseUsername, excludingUserID: userID)
+                print("✅ Final unique username: '\(uniqueUsername)'")
+                
                 let newUser = AppUser(
                     id: userID,
                     email: email,
                     displayName: displayName,
+                    username: uniqueUsername,
                     lastLogin: Date()
                 )
                 try userRef.setData(from: newUser)
+                print("✅ Created new user with displayName: '\(displayName)', username: '\(uniqueUsername)'")
             }
         } catch {
-            print("Error creating/updating user: \(error.localizedDescription)")
+            print("⚠️ Error creating/updating user: \(error.localizedDescription)")
         }
     }
     
@@ -244,7 +380,7 @@ class AuthService: ObservableObject {
                 currentUser = user
             }
         } catch {
-            print("Error loading user data: \(error.localizedDescription)")
+            print("⚠️ Error loading user data: \(error.localizedDescription)")
         }
     }
     
@@ -378,34 +514,167 @@ class AuthService: ObservableObject {
             throw AuthError.unauthorized
         }
         
-        let storageService = StorageService()
-        let path = "profile_images/\(userID).jpg"
-        let imageURL = try await storageService.uploadImage(image, path: path)
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            throw AuthError.invalidImage
+        }
         
-        // Update user document with new profile image URL
+        let imageRef = storage.reference().child("profile_images/\(userID).jpg")
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+        
+        _ = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<StorageMetadata, Error>) in
+            imageRef.putData(imageData, metadata: metadata) { metadata, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let metadata = metadata {
+                    continuation.resume(returning: metadata)
+                } else {
+                    continuation.resume(throwing: AuthError.invalidImage)
+                }
+            }
+        }
+        
+        let downloadURL = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<URL, Error>) in
+            imageRef.downloadURL { url, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let url = url {
+                    continuation.resume(returning: url)
+                } else {
+                    continuation.resume(throwing: AuthError.invalidImage)
+                }
+            }
+        }
+        
+        // Update user document with image URL
         let userRef = firestore.collection("users").document(userID)
         try await userRef.updateData([
-            "profileImageURL": imageURL,
+            "profileImageURL": downloadURL.absoluteString,
             "updatedAt": Timestamp(date: Date())
         ])
         
         await reloadUserData()
-        return imageURL
+        return downloadURL.absoluteString
     }
     
-    // MARK: - Sign Out
-    
-    func signOut() throws {
-        try Auth.auth().signOut()
-        currentUser = nil
-        isAuthenticated = false
+    func deleteProfileImage() async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw AuthError.unauthorized
+        }
+        
+        let imageRef = storage.reference().child("profile_images/\(userID).jpg")
+        
+        try await imageRef.delete()
+        
+        // Update user document to remove image URL
+        let userRef = firestore.collection("users").document(userID)
+        try await userRef.updateData([
+            "profileImageURL": FieldValue.delete(),
+            "updatedAt": Timestamp(date: Date())
+        ])
+        
+        await reloadUserData()
     }
     
-    // MARK: - Helper Methods
+    // MARK: - Profile Visibility
     
-    private func randomNonceString(length: Int = 32) -> String {
+    func toggleProfileVisibility(hidden: Bool) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw AuthError.unauthorized
+        }
+        
+        let userRef = firestore.collection("users").document(userID)
+        try await userRef.updateData([
+            "isProfileHidden": hidden,
+            "updatedAt": Timestamp(date: Date())
+        ])
+        
+        await reloadUserData()
+    }
+    
+    func toggleCompletePrivacy(isPrivate: Bool) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw AuthError.unauthorized
+        }
+        
+        let userRef = firestore.collection("users").document(userID)
+        try await userRef.updateData([
+            "isCompletelyPrivate": isPrivate,
+            "updatedAt": Timestamp(date: Date())
+        ])
+        
+        await reloadUserData()
+    }
+    
+    // MARK: - Account Deletion
+    
+    func reAuthenticate(email: String, password: String) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.unauthorized
+        }
+        
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        try await user.reauthenticate(with: credential)
+    }
+    
+    func reAuthenticateWithGoogle(presentingViewController: UIViewController) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.unauthorized
+        }
+        
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            throw AuthError.missingClientID
+        }
+        
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+        
+        let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController)
+        
+        guard let idToken = result.user.idToken?.tokenString else {
+            throw AuthError.invalidToken
+        }
+        
+        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: result.user.accessToken.tokenString)
+        try await user.reauthenticate(with: credential)
+    }
+    
+    func reAuthenticateWithApple(result: Result<ASAuthorization, Error>, nonce: String?) async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.unauthorized
+        }
+        
+        switch result {
+        case .success(let authorization):
+            guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else {
+                throw AuthError.invalidCredential
+            }
+            
+            guard let nonce = nonce ?? currentNonce else {
+                throw AuthError.invalidNonce
+            }
+            
+            guard let appleIDToken = appleIDCredential.identityToken,
+                  let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                throw AuthError.invalidToken
+            }
+            
+            let credential = OAuthProvider.appleCredential(
+                withIDToken: idTokenString,
+                rawNonce: nonce,
+                fullName: appleIDCredential.fullName
+            )
+            try await user.reauthenticate(with: credential)
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    func generateNonce(length: Int = 32) -> String {
         precondition(length > 0)
-        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        let charset: [Character] =
+        Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
         var result = ""
         var remainingLength = length
         
@@ -434,7 +703,7 @@ class AuthService: ObservableObject {
         return result
     }
     
-    private func sha256(_ input: String) -> String {
+    func sha256(_ input: String) -> String {
         let inputData = Data(input.utf8)
         let hashedData = SHA256.hash(data: inputData)
         let hashString = hashedData.compactMap {
@@ -443,19 +712,171 @@ class AuthService: ObservableObject {
         
         return hashString
     }
+    
+    // Extract storage path from Firebase Storage URL
+    private func extractStoragePath(from urlString: String) -> String? {
+        // Firebase Storage URLs look like: https://firebasestorage.googleapis.com/v0/b/PROJECT.appspot.com/o/PATH?alt=media&token=TOKEN
+        guard let url = URL(string: urlString),
+              let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let pathComponent = components.path.components(separatedBy: "/o/").last else {
+            return nil
+        }
+        // Remove query parameters and decode
+        let path = pathComponent.components(separatedBy: "?").first?.removingPercentEncoding
+        return path
+    }
+    
+    func deleteAccount() async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw AuthError.unauthorized
+        }
+        
+        let userRef = firestore.collection("users").document(userID)
+        
+        // 1. Delete user document in Firestore
+        print("🗑️ Deleting user document...")
+        try await userRef.delete()
+        
+        // 2. Delete user's recipes and associated images
+        print("🗑️ Deleting user recipes...")
+        let recipesSnapshot = try await firestore.collection("recipes")
+            .whereField("authorID", isEqualTo: userID)
+            .getDocuments()
+        
+        for recipeDoc in recipesSnapshot.documents {
+            if let recipe = try? recipeDoc.data(as: Recipe.self) {
+                // Delete recipe images (main dish images)
+                for imageURL in recipe.imageURLs {
+                    if let path = extractStoragePath(from: imageURL) {
+                        let imageRef = storage.reference().child(path)
+                        try? await imageRef.delete()
+                        print("🗑️ Deleted recipe image: \(path)")
+                    }
+                }
+                
+                // Delete deprecated single image URL
+                if let imageURL = recipe.imageURL, let path = extractStoragePath(from: imageURL) {
+                    let imageRef = storage.reference().child(path)
+                    try? await imageRef.delete()
+                    print("🗑️ Deleted deprecated recipe image: \(path)")
+                }
+                
+                // Delete source images (images used for extraction)
+                for sourceURL in recipe.sourceImageURLs {
+                    if let path = extractStoragePath(from: sourceURL) {
+                        let imageRef = storage.reference().child(path)
+                        try? await imageRef.delete()
+                        print("🗑️ Deleted source image: \(path)")
+                    }
+                }
+                
+                // Delete deprecated single source image URL
+                if let sourceURL = recipe.sourceImageURL, let path = extractStoragePath(from: sourceURL) {
+                    let imageRef = storage.reference().child(path)
+                    try? await imageRef.delete()
+                    print("🗑️ Deleted deprecated source image: \(path)")
+                }
+                
+                // Delete instruction images and videos
+                for instruction in recipe.instructions {
+                    if let imageURL = instruction.imageURL, let path = extractStoragePath(from: imageURL) {
+                        let imageRef = storage.reference().child(path)
+                        try? await imageRef.delete()
+                        print("🗑️ Deleted instruction image: \(path)")
+                    }
+                    if let videoURL = instruction.videoURL, let path = extractStoragePath(from: videoURL) {
+                        let videoRef = storage.reference().child(path)
+                        try? await videoRef.delete()
+                        print("🗑️ Deleted instruction video: \(path)")
+                    }
+                }
+            }
+            
+            // Delete recipe document
+            try await recipeDoc.reference.delete()
+        }
+        
+        // 3. Delete user's notes
+        print("🗑️ Deleting user notes...")
+        let notesSnapshot = try await firestore.collection("recipeNotes")
+            .whereField("userID", isEqualTo: userID)
+            .getDocuments()
+        
+        for noteDoc in notesSnapshot.documents {
+            try await noteDoc.reference.delete()
+        }
+        
+        // 4. Delete profile image from storage
+        print("🗑️ Deleting profile image...")
+        let profileImageRef = storage.reference().child("profile_images/\(userID).jpg")
+        try? await profileImageRef.delete()
+        
+        // 5. Delete user's favorites
+        print("🗑️ Deleting favorites...")
+        let favoritesSnapshot = try await firestore.collection("favorites")
+            .whereField("userID", isEqualTo: userID)
+            .getDocuments()
+        
+        for favoriteDoc in favoritesSnapshot.documents {
+            try await favoriteDoc.reference.delete()
+        }
+        
+        // 6. Delete follow relationships
+        print("🗑️ Deleting follow relationships...")
+        let followingSnapshot = try await firestore.collection("follows")
+            .whereField("followerID", isEqualTo: userID)
+            .getDocuments()
+        
+        for followDoc in followingSnapshot.documents {
+            try await followDoc.reference.delete()
+        }
+        
+        let followersSnapshot = try await firestore.collection("follows")
+            .whereField("followingID", isEqualTo: userID)
+            .getDocuments()
+        
+        for followDoc in followersSnapshot.documents {
+            try await followDoc.reference.delete()
+        }
+        
+        // 7. Delete Firebase Auth user LAST (after all data is deleted)
+        print("🗑️ Deleting Firebase Auth user...")
+        if let user = Auth.auth().currentUser {
+            try await user.delete()
+        }
+        
+        // Sign out locally
+        try? Auth.auth().signOut()
+        isAuthenticated = false
+        currentUser = nil
+        
+        print("✅ Account deletion completed")
+    }
+    
+    // MARK: - Sign Out
+    
+    func signOut() throws {
+        try Auth.auth().signOut()
+        isAuthenticated = false
+        currentUser = nil
+    }
 }
 
-enum AuthError: LocalizedError, Equatable {
+// MARK: - Auth Error
+
+enum AuthError: LocalizedError {
     case invalidCredential
     case invalidNonce
     case invalidToken
     case missingClientID
     case missingViewController
     case unauthorized
+    case invalidImage
     case usernameTooShort
     case usernameTooLong
-    case usernameTaken
     case invalidUsername
+    case usernameTaken
+    case requiresRecentLogin
     
     var errorDescription: String? {
         switch self {
@@ -471,15 +892,18 @@ enum AuthError: LocalizedError, Equatable {
             return LocalizedString("Missing view controller", comment: "Missing view controller error")
         case .unauthorized:
             return LocalizedString("You are not authorized to perform this action", comment: "Unauthorized error")
+        case .invalidImage:
+            return LocalizedString("Invalid image", comment: "Invalid image error")
         case .usernameTooShort:
             return LocalizedString("Username must be at least 4 characters", comment: "Username too short error")
         case .usernameTooLong:
             return LocalizedString("Username must be no more than 15 characters", comment: "Username too long error")
-        case .usernameTaken:
-            return LocalizedString("This username is already taken", comment: "Username taken error")
         case .invalidUsername:
             return LocalizedString("Username contains invalid characters", comment: "Invalid username error")
+        case .usernameTaken:
+            return LocalizedString("This username is already taken", comment: "Username taken error")
+        case .requiresRecentLogin:
+            return LocalizedString("Requires recent login", comment: "Requires recent login error")
         }
     }
 }
-

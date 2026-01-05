@@ -33,7 +33,6 @@
 "Appearance" = "모양";
 "Language" = "언어";
 "The language selected will be used as the default writing language for recipe extractions." = "선택한 언어는 레시피 추출의 기본 작성 언어로 사용됩니다.";
-"The language selected will be used as the default writing language for recipe extractions." = "선택한 언어는 레시피 추출의 기본 작성 언어로 사용됩니다.";
 "English" = "영어";
 "Chinese, Simplified" = "간체 중국어";
 "Chinese, Traditional" = "번체 중국어";
@@ -179,6 +178,7 @@
 "Time" = "시간";
 "Servings" = "인분";
 "servings" = "인분";
+"Ingredients for %d servings" = "%d인분 재료";
 "Difficulty" = "난이도";
 "Spicy Level" = "매운맛 수준";
 "Add Dish Image" = "요리 이미지 추가";
@@ -275,41 +275,28 @@
 "Cantonese" = "광동";
 "Hunan" = "후난";
 "Shanghainese" = "상하이";
-"Japanese" = "일본";
-"Korean" = "한국";
-"Thai" = "태국";
-"Vietnamese" = "베트남";
 "Indian" = "인도";
-"Indonesian" = "인도네시아";
 "Malaysian" = "말레이시아";
 "Singaporean" = "싱가포르";
-"Filipino" = "필리핀";
 "Burmese" = "미얀마";
 "Cambodian" = "캄보디아";
 "Laotian" = "라오스";
 "Sri Lankan" = "스리랑카";
 "Pakistani" = "파키스탄";
 "Bangladeshi" = "방글라데시";
-"Italian" = "이탈리아";
-"French" = "프랑스";
-"Spanish" = "스페인";
 "Greek" = "그리스";
 "Turkish" = "터키";
-"German" = "독일";
 "British" = "영국";
 "Irish" = "아일랜드";
 "Scottish" = "스코틀랜드";
 "Polish" = "폴란드";
-"Russian" = "러시아";
 "Swedish" = "스웨덴";
 "Norwegian" = "노르웨이";
 "Danish" = "덴마크";
 "Finnish" = "핀란드";
-"Dutch" = "네덜란드";
 "Belgian" = "벨기에";
 "Swiss" = "스위스";
 "Austrian" = "오스트리아";
-"Portuguese" = "포르투갈";
 "Czech" = "체코";
 "Hungarian" = "헝가리";
 "Romanian" = "루마니아";
@@ -354,3 +341,63 @@
 "Vegan" = "비건";
 "Other" = "기타";
 
+
+"For the main ingredients" = "주요 재료용";
+"For the marinade / brine" = "마리네이드 / 염수용";
+"For seasoning during cooking" = "조리 중 양념용";
+"For the dough / batter / filling" = "반죽 / 배터 / 필링용";
+"For the sauce" = "소스용";
+"For the toppings" = "토핑용";
+"To finish / To garnish" = "마무리 / 가니시용";
+"Add ingredient" = "재료 추가";
+
+"Steps" = "단계";
+"Edited" = "수정됨";
+"Start Cooking" = "요리 시작";
+"Edit" = "편집";
+"Save Recipe" = "레시피 저장";
+"Unsave Recipe" = "저장 취소";
+"Report" = "신고";
+"Report Recipe" = "레시피 신고";
+"min" = "분";
+"Select from Photo Library" = "사진 라이브러리에서 선택";
+"Tips" = "팁";
+"Write a Note" = "메모 작성";
+"Write Note" = "메모 작성";
+"Edit Note" = "메모 편집";
+"My Notes" = "내 노트";
+"Edited" = "수정됨";
+"Delete Note" = "메모 삭제";
+"Are you sure you want to delete this note? This action cannot be undone." = "이 메모를 삭제하시겠습니까? 이 작업은 실행 취소할 수 없습니다.";
+"Update Profile" = "프로필 업데이트";
+"Private Account" = "비공개 계정";
+"Hide Profile" = "비공개 계정";
+"Delete Account" = "계정 삭제";
+"Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.
+
+Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "계정을 삭제하시겠습니까? 이 작업은 실행 취소할 수 없으며 모든 데이터가 영구적으로 삭제됩니다.
+
+계정은 30일 후에 삭제됩니다. 삭제를 취소하려면 30일 이내에 다시 로그인하세요.";
+"Privacy & Terms" = "개인정보 및 약관";
+"Privacy Policy" = "개인정보 처리방침";
+"Terms of Service" = "서비스 약관";
+
+// NOTE: Full privacy policy and terms translations needed for ko
+"Hide from Followers" = "팔로워에게 숨기기";
+"Your account is private. Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "귀하의 계정은 비공개입니다. 프로필은 탐색 보기에서 숨겨져 있습니다. 승인된 팔로워만 프로필과 레시피를 볼 수 있습니다.";
+"Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "귀하의 계정은 완전히 비공개입니다. 프로필과 레시피는 팔로워를 포함한 모든 사용자에게 숨겨져 있습니다.";
+"Public" = "공개";
+"Private" = "비공개";
+"Completely Private" = "완전 비공개";
+"Account Privacy" = "계정 개인정보";
+"Your profile is visible to everyone" = "귀하의 프로필은 모든 사람에게 표시됩니다";
+"Your profile is hidden from the explore view. Only your accepted followers can see your profile and recipes." = "귀하의 프로필은 탐색 보기에서 숨겨져 있습니다. 승인된 팔로워만 프로필과 레시피를 볼 수 있습니다.";
+"Your profile and recipes are hidden from all users, including followers." = "귀하의 프로필과 레시피는 팔로워를 포함한 모든 사용자에게 숨겨져 있습니다.";
+"Limited" = "제한됨";
+"Your account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "계정은 30일 후에 삭제됩니다. 삭제를 취소하려면 30일 이내에 다시 로그인하세요.";
+"Are you sure you want to delete your account?" = "계정을 삭제하시겠습니까?";
+"If yes, please enter your username and press delete to confirm the deletion." = "예인 경우 사용자 이름을 입력하고 삭제를 확인하려면 삭제를 누르세요.";
+"Confirm Deletion" = "삭제 확인";
+"Username does not match" = "사용자 이름이 일치하지 않습니다";
+"Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "계정은 30일 이내에 삭제됩니다. 삭제를 취소하려면 다시 로그인하세요.";
+"Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "계정을 삭제하시겠습니까? 계정은 즉시 삭제되며 이 작업은 되돌릴 수 없습니다.";

@@ -66,11 +66,12 @@ struct ModernRecipeCard: View {
                         HStack {
                             Spacer()
                             Button(action: {
+                                HapticFeedback.importantAction()
                                 toggleFavorite()
                             }) {
                                 Image(systemName: isFavorite ? "heart.fill" : "heart")
                                     .font(.system(size: 22))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(isFavorite ? .red : .white)
                                     .padding(10)
                                     .background(Color.black.opacity(0.3))
                                     .clipShape(Circle())

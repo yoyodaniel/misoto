@@ -43,13 +43,28 @@ class WriteNoteViewModel: ObservableObject {
         errorMessage = nil
         
         do {
+            var processedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            // Ensure sentences end with a space for proper spacing
+            // Add space after sentence-ending punctuation if not already present
+            processedContent = processedContent.replacingOccurrences(
+                of: "([.!?])([^\\s])",
+                with: "$1 $2",
+                options: .regularExpression
+            )
+            
+            // Ensure the content ends with proper spacing (add space at the end if needed)
+            if !processedContent.isEmpty && !processedContent.hasSuffix(" ") {
+                processedContent += " "
+            }
+            
             if let existingNote = existingNote {
                 // Update existing note
                 var updatedNote = existingNote
-                updatedNote.content = content.trimmingCharacters(in: .whitespacesAndNewlines)
+                updatedNote.content = processedContent
                 try await noteService.updateNote(updatedNote)
             } else {
-                // Create new note
+                // Create new note - note will be saved to collection with both userID and recipeID
                 let userName = Auth.auth().currentUser?.displayName ?? 
                               Auth.auth().currentUser?.email ?? 
                               "Anonymous"
@@ -58,7 +73,7 @@ class WriteNoteViewModel: ObservableObject {
                     recipeID: recipeID,
                     userID: userID,
                     userName: userName,
-                    content: content.trimmingCharacters(in: .whitespacesAndNewlines)
+                    content: processedContent
                 )
                 try await noteService.createNote(newNote)
             }

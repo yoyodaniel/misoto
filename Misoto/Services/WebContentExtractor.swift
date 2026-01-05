@@ -8,6 +8,7 @@
 import Foundation
 import WebKit
 import UIKit
+import Vision
 
 @MainActor
 class WebContentExtractor {
@@ -74,10 +75,11 @@ class WebContentExtractor {
         return extractedText
     }
     
-    /// Extract the main recipe image from a WKWebView
-    /// Returns the first prominent image found, typically the hero/featured recipe image
-    static func extractRecipeImage(from webView: WKWebView) async throws -> UIImage? {
-        // JavaScript to find and extract the main recipe image
+    /// Extract recipe images from a WKWebView
+    /// Uses Vision framework to identify food images and returns multiple candidates
+    /// Returns an array of image URLs (up to 5) that are likely food/recipe images
+    static func extractRecipeImageURLs(from webView: WKWebView) async throws -> [String] {
+        // JavaScript to extract all candidate images from the page
         let imageExtractScript = """
         (function() {
             // Common selectors for recipe images (in order of preference)
@@ -88,121 +90,154 @@ class WebContentExtractor {
                 '.hero-image img',
                 '.recipe-hero img',
                 '.post-image img',
-                'article img:first-of-type',
-                'main img:first-of-type',
-                '.content img:first-of-type',
-                '[role="main"] img:first-of-type',
-                '.entry-content img:first-of-type',
-                'img:first-of-type'
+                'article img',
+                'main img',
+                '.content img',
+                '[role="main"] img',
+                '.entry-content img',
+                'img'
             ];
             
-            let imageElement = null;
-            let largestImage = null;
-            let largestSize = 0;
+            const imageCandidates = [];
+            const seenURLs = new Set();
             
-            // Try to find the main recipe image
+            // Collect all candidate images
             for (const selector of imageSelectors) {
                 const elements = document.querySelectorAll(selector);
-                if (elements.length > 0) {
-                    // Filter out very small images (likely icons or decorative elements)
-                    for (const img of elements) {
-                        const width = img.naturalWidth || img.width || img.clientWidth || 0;
-                        const height = img.naturalHeight || img.height || img.clientHeight || 0;
-                        const size = width * height;
+                for (const img of elements) {
+                    const width = img.naturalWidth || img.width || img.clientWidth || 0;
+                    const height = img.naturalHeight || img.height || img.clientHeight || 0;
+                    const size = width * height;
+                    
+                    // Only consider images that are at least 200x200 pixels
+                    if (width >= 200 && height >= 200) {
+                        // Get the image source URL - try multiple attributes for lazy-loaded images
+                        let imageUrl = img.src || 
+                                      img.getAttribute('data-src') || 
+                                      img.getAttribute('data-lazy-src') ||
+                                      img.getAttribute('data-original') ||
+                                      (img.getAttribute('data-srcset')?.split(',')[0]?.trim().split(' ')[0]);
                         
-                        // Prefer images that are at least 150x150 pixels (reduced from 200x200)
-                        if (width >= 150 && height >= 150) {
-                            // If we find a good candidate, use it
-                            if (size > largestSize) {
-                                largestImage = img;
-                                largestSize = size;
+                        if (imageUrl) {
+                            // If it's a relative URL, make it absolute
+                            if (!imageUrl.startsWith('http')) {
+                                try {
+                                    imageUrl = new URL(imageUrl, window.location.href).href;
+                                } catch (e) {
+                                    continue;
+                                }
                             }
-                        }
-                    }
-                    // If we found a good image from a high-priority selector, use it
-                    if (largestImage && largestSize > 22500) { // 150x150
-                        imageElement = largestImage;
-                        break;
-                    }
-                }
-            }
-            
-            // If no image found with strict criteria, try with more lenient size requirements
-            if (!imageElement) {
-                for (const selector of imageSelectors) {
-                    const elements = document.querySelectorAll(selector);
-                    if (elements.length > 0) {
-                        for (const img of elements) {
-                            const width = img.naturalWidth || img.width || img.clientWidth || 0;
-                            const height = img.naturalHeight || img.height || img.clientHeight || 0;
-                            const size = width * height;
                             
-                            // More lenient: at least 100x100 pixels
-                            if (width >= 100 && height >= 100 && size > largestSize) {
-                                largestImage = img;
-                                largestSize = size;
+                            // Avoid duplicates
+                            if (!seenURLs.has(imageUrl)) {
+                                seenURLs.add(imageUrl);
+                                imageCandidates.push({
+                                    url: imageUrl,
+                                    width: width,
+                                    height: height,
+                                    size: size
+                                });
                             }
                         }
                     }
                 }
-                imageElement = largestImage;
             }
             
-            if (!imageElement) {
-                return null;
-            }
-            
-            // Get the image source URL - try multiple attributes for lazy-loaded images
-            let imageUrl = imageElement.src || 
-                          imageElement.getAttribute('data-src') || 
-                          imageElement.getAttribute('data-lazy-src') ||
-                          imageElement.getAttribute('data-original') ||
-                          imageElement.getAttribute('data-srcset')?.split(',')[0]?.trim().split(' ')[0];
-            
-            // If it's a relative URL, make it absolute
-            if (imageUrl && !imageUrl.startsWith('http')) {
-                try {
-                    imageUrl = new URL(imageUrl, window.location.href).href;
-                } catch (e) {
-                    return null;
-                }
-            }
-            
-            return imageUrl;
+            // Sort by size (largest first) and return top 10 URLs for Vision classification
+            imageCandidates.sort((a, b) => b.size - a.size);
+            return imageCandidates.slice(0, 10).map(img => img.url);
         })();
         """
         
-        // Execute JavaScript and get image URL
-        guard let imageURLString = try await webView.evaluateJavaScript(imageExtractScript) as? String,
-              !imageURLString.isEmpty,
-              imageURLString != "null",
-              let imageURL = URL(string: imageURLString) else {
-            print("⚠️ Could not extract image URL from webpage")
-            return nil
+        // Execute JavaScript and get candidate image URLs
+        guard let imageURLStrings = try await webView.evaluateJavaScript(imageExtractScript) as? [String],
+              !imageURLStrings.isEmpty else {
+            print("⚠️ Could not extract image URLs from webpage")
+            return []
         }
         
-        // Download the image data with timeout
-        do {
-            var request = URLRequest(url: imageURL)
-            request.timeoutInterval = 10.0
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                print("⚠️ Failed to download image: HTTP \(response)")
-                return nil
+        print("🔍 Found \(imageURLStrings.count) candidate images, classifying with Vision...")
+        
+        // Use Vision framework to classify images and identify food images
+        var foodImageURLs: [String] = []
+        let maxImages = 5
+        
+        for imageURLString in imageURLStrings.prefix(10) { // Limit to 10 candidates for efficiency
+            guard foodImageURLs.count < maxImages else {
+                break
             }
             
-            guard let image = UIImage(data: data) else {
-                print("⚠️ Could not create UIImage from downloaded data")
-                return nil
+            guard let imageURL = URL(string: imageURLString) else {
+                continue
             }
             
-            print("✅ Successfully extracted recipe image: \(imageURLString)")
-            return image
-        } catch {
-            print("⚠️ Error downloading image: \(error.localizedDescription)")
-            return nil
+            do {
+                // Download image with timeout
+                var request = URLRequest(url: imageURL)
+                request.timeoutInterval = 5.0
+                let (data, response) = try await URLSession.shared.data(for: request)
+                
+                guard let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200,
+                      let image = UIImage(data: data) else {
+                    continue
+                }
+                
+                // Use Vision framework to classify the image
+                if await isFoodImage(image) {
+                    foodImageURLs.append(imageURLString)
+                    print("✅ Identified food image: \(imageURLString)")
+                }
+            } catch {
+                print("⚠️ Error processing image \(imageURLString): \(error.localizedDescription)")
+                continue
+            }
+        }
+        
+        print("✅ Extracted \(foodImageURLs.count) food images from webpage")
+        return foodImageURLs
+    }
+    
+    /// Use Vision framework to classify if an image is food-related
+    /// Returns true if the image is likely food/recipe related
+    private static func isFoodImage(_ image: UIImage) async -> Bool {
+        guard let cgImage = image.cgImage else {
+            return false
+        }
+        
+        return await withCheckedContinuation { continuation in
+            // Use Vision's image classification request
+            let request = VNClassifyImageRequest { request, error in
+                guard let observations = request.results as? [VNClassificationObservation],
+                      error == nil else {
+                    continuation.resume(returning: false)
+                    return
+                }
+                
+                // Check for food-related classifications
+                // Food categories typically have high confidence for: food, dish, cuisine, meal, etc.
+                for observation in observations.prefix(5) { // Check top 5 classifications
+                    let identifier = observation.identifier.lowercased()
+                    let confidence = observation.confidence
+                    
+                    // Food-related keywords (using Vision's standard classification identifiers)
+                    let foodKeywords = ["food", "dish", "cuisine", "meal", "recipe", "cooking", "dining", "restaurant", "cuisine", "gastronomy"]
+                    
+                    if foodKeywords.contains(where: { identifier.contains($0) }) && confidence > 0.3 {
+                        continuation.resume(returning: true)
+                        return
+                    }
+                }
+                
+                continuation.resume(returning: false)
+            }
+            
+            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            do {
+                try handler.perform([request])
+            } catch {
+                continuation.resume(returning: false)
+            }
         }
     }
 }

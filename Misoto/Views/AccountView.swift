@@ -148,10 +148,11 @@ struct AccountView: View {
                                 .padding(.top, 4)
                                 
                                 // Stats
-                                HStack(spacing: 40) {
+                                HStack(spacing: 30) {
                                     StatItem(value: "\(user.recipeCount)", label: LocalizedString("Recipes", comment: "Recipes count"))
                                     StatItem(value: "\(user.followerCount)", label: LocalizedString("Followers", comment: "Followers count"))
                                     StatItem(value: "\(user.followingCount)", label: LocalizedString("Following", comment: "Following count"))
+                                    StatItem(value: "\(user.likesCount)", label: LocalizedString("Likes", comment: "Likes count"))
                                 }
                                 .padding(.top, 8)
                             }
