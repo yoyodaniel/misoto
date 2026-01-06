@@ -267,6 +267,115 @@ class EditRecipeViewModel: ObservableObject {
     func updateGarnishIngredientUnit(_ unit: String, at index: Int) { if index < garnishIngredients.count { garnishIngredients[index].unit = unit } }
     func updateGarnishIngredientName(_ name: String, at index: Int) { if index < garnishIngredients.count { garnishIngredients[index].name = name } }
     
+    // MARK: - Ingredient Reordering
+    
+    func moveDishIngredient(from source: Int, to destination: Int) {
+        dishIngredients.move(fromOffsets: IndexSet(integer: source), toOffset: destination)
+    }
+    
+    func moveMarinadeIngredient(from source: Int, to destination: Int) {
+        marinadeIngredients.move(fromOffsets: IndexSet(integer: source), toOffset: destination)
+    }
+    
+    func moveSeasoningIngredient(from source: Int, to destination: Int) {
+        seasoningIngredients.move(fromOffsets: IndexSet(integer: source), toOffset: destination)
+    }
+    
+    func moveDoughBatterFillingIngredient(from source: Int, to destination: Int) {
+        doughBatterFillingIngredients.move(fromOffsets: IndexSet(integer: source), toOffset: destination)
+    }
+    
+    func moveSauceIngredient(from source: Int, to destination: Int) {
+        sauceIngredients.move(fromOffsets: IndexSet(integer: source), toOffset: destination)
+    }
+    
+    func moveToppingIngredient(from source: Int, to destination: Int) {
+        toppingIngredients.move(fromOffsets: IndexSet(integer: source), toOffset: destination)
+    }
+    
+    func moveGarnishIngredient(from source: Int, to destination: Int) {
+        garnishIngredients.move(fromOffsets: IndexSet(integer: source), toOffset: destination)
+    }
+    
+    // MARK: - Cross-Section Ingredient Movement
+    
+    /// Move an ingredient from one section to another
+    func moveIngredient(from sourceCategory: Ingredient.Category, sourceIndex: Int, to destinationCategory: Ingredient.Category, destinationIndex: Int) {
+        // Get source array
+        var sourceArray: [RecipeTextParser.IngredientItem] {
+            switch sourceCategory {
+            case .dish: return dishIngredients
+            case .marinade: return marinadeIngredients
+            case .seasoning: return seasoningIngredients
+            case .batter, .base, .dough, .filling: return doughBatterFillingIngredients
+            case .sauce: return sauceIngredients
+            case .topping: return toppingIngredients
+            case .garnish: return garnishIngredients
+            }
+        }
+        
+        // Get destination array
+        var destinationArray: [RecipeTextParser.IngredientItem] {
+            switch destinationCategory {
+            case .dish: return dishIngredients
+            case .marinade: return marinadeIngredients
+            case .seasoning: return seasoningIngredients
+            case .batter, .base, .dough, .filling: return doughBatterFillingIngredients
+            case .sauce: return sauceIngredients
+            case .topping: return toppingIngredients
+            case .garnish: return garnishIngredients
+            }
+        }
+        
+        guard sourceIndex < sourceArray.count else { return }
+        
+        // Remove from source
+        let ingredient = sourceArray[sourceIndex]
+        
+        switch sourceCategory {
+        case .dish:
+            dishIngredients.remove(at: sourceIndex)
+            if dishIngredients.isEmpty {
+                dishIngredients = [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")]
+            }
+        case .marinade:
+            marinadeIngredients.remove(at: sourceIndex)
+        case .seasoning:
+            seasoningIngredients.remove(at: sourceIndex)
+        case .batter, .base, .dough, .filling:
+            doughBatterFillingIngredients.remove(at: sourceIndex)
+        case .sauce:
+            sauceIngredients.remove(at: sourceIndex)
+        case .topping:
+            toppingIngredients.remove(at: sourceIndex)
+        case .garnish:
+            garnishIngredients.remove(at: sourceIndex)
+        }
+        
+        // Insert into destination - always append to create a new row
+        // This ensures we create a new row instead of updating an existing one
+        switch destinationCategory {
+        case .dish:
+            // Remove empty placeholder if it's the only item, then append
+            if dishIngredients.count == 1 && dishIngredients[0].amount.isEmpty && dishIngredients[0].name.isEmpty && dishIngredients[0].unit.isEmpty {
+                dishIngredients.removeAll()
+            }
+            dishIngredients.append(ingredient)
+        case .marinade:
+            marinadeIngredients.append(ingredient)
+        case .seasoning:
+            seasoningIngredients.append(ingredient)
+        case .batter, .base, .dough, .filling:
+            doughBatterFillingIngredients.append(ingredient)
+        case .sauce:
+            sauceIngredients.append(ingredient)
+        case .topping:
+            toppingIngredients.append(ingredient)
+        case .garnish:
+            garnishIngredients.append(ingredient)
+        }
+    }
+    
     // MARK: - Instruction Management
     
     func addInstruction() {
@@ -554,7 +663,8 @@ class EditRecipeViewModel: ObservableObject {
             let generatedDescription = try await OpenAIService.generateRecipeDescription(
                 title: title,
                 ingredients: allIngredients,
-                instructions: validInstructions
+                instructions: validInstructions,
+                backgroundContext: nil // No background context for recipe editing
             )
             
             if !generatedDescription.isEmpty {

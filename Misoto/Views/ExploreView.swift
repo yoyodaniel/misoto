@@ -18,6 +18,7 @@ struct ExploreView: View {
     // Computed property that updates when language changes
     private var categories: [String] {
         [
+            LocalizedString("What's New", comment: "What's new category"),
             LocalizedString("Today's Special", comment: "Today's special"),
             LocalizedString("Liked", comment: "Liked recipes"),
             LocalizedString("Follow", comment: "Follow") + " " + LocalizedString("(coming soon)", comment: "Coming soon label"),
@@ -38,6 +39,18 @@ struct ExploreView: View {
                         .foregroundColor(.secondary)
                     TextField(LocalizedString("Search ingredients, recipes", comment: "Search placeholder"), text: $searchText)
                         .textFieldStyle(.plain)
+                        .onChange(of: searchText) { _, newValue in
+                            viewModel.searchRecipes(query: newValue)
+                        }
+                    if !searchText.isEmpty {
+                        Button(action: {
+                            searchText = ""
+                            viewModel.searchResults = []
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -65,7 +78,150 @@ struct ExploreView: View {
                 .padding(.vertical, 12)
                 
                 // Recipe List
-                if selectedCategory == 0 {
+                if !searchText.isEmpty {
+                    // Search Results
+                    if viewModel.isSearching {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    } else if viewModel.searchResults.isEmpty {
+                        Spacer()
+                        VStack(spacing: 16) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 60))
+                                .foregroundColor(.secondary)
+                            Text(LocalizedString("No recipes found", comment: "No recipes message"))
+                                .foregroundColor(.secondary)
+                            Text(LocalizedString("Try searching for a different recipe or ingredient", comment: "Search no results hint"))
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 40)
+                        }
+                        Spacer()
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 20) {
+                                // Featured Recipe (first one)
+                                if let featuredRecipe = viewModel.searchResults.first {
+                                    ModernRecipeCard(recipe: featuredRecipe)
+                                        .onTapGesture {
+                                            selectedRecipe = featuredRecipe
+                                        }
+                                    
+                                    // Collections Section
+                                    if viewModel.searchResults.count > 1 {
+                                        CollectionsSection(recipes: Array(viewModel.searchResults.dropFirst()))
+                                    }
+                                    
+                                    // Remaining Recipes
+                                    if viewModel.searchResults.count > 1 {
+                                        ForEach(Array(viewModel.searchResults.dropFirst())) { recipe in
+                                            ModernRecipeCard(recipe: recipe)
+                                                .onTapGesture {
+                                                    selectedRecipe = recipe
+                                                }
+                                        }
+                                    }
+                                } else {
+                                    ForEach(viewModel.searchResults) { recipe in
+                                        ModernRecipeCard(recipe: recipe)
+                                            .onTapGesture {
+                                                selectedRecipe = recipe
+                                            }
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                        }
+                        .onAppear {
+                            scaleRefreshControl()
+                        }
+                    }
+                } else if selectedCategory == 0 {
+                    // What's New
+                    if viewModel.isLoadingWhatsNew {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    } else if viewModel.whatsNew.isEmpty {
+                        Spacer()
+                        VStack(spacing: 16) {
+                            Image(systemName: "fork.knife")
+                                .font(.system(size: 60))
+                                .foregroundColor(.secondary)
+                            Text(LocalizedString("No recipes found", comment: "No recipes message"))
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 20) {
+                                // Featured Recipe (first one)
+                                if let featuredRecipe = viewModel.whatsNew.first {
+                                    ModernRecipeCard(recipe: featuredRecipe)
+                                        .onTapGesture {
+                                            selectedRecipe = featuredRecipe
+                                        }
+                                    
+                                    // Collections Section
+                                    if viewModel.whatsNew.count > 1 {
+                                        CollectionsSection(recipes: Array(viewModel.whatsNew.dropFirst()))
+                                    }
+                                    
+                                    // Remaining Recipes
+                                    if viewModel.whatsNew.count > 1 {
+                                        ForEach(Array(viewModel.whatsNew.dropFirst().enumerated()), id: \.element.id) { index, recipe in
+                                            ModernRecipeCard(recipe: recipe)
+                                                .onTapGesture {
+                                                    selectedRecipe = recipe
+                                                }
+                                                .onAppear {
+                                                    // Load more when we're near the end (3 items before the end)
+                                                    let totalCount = viewModel.whatsNew.dropFirst().count
+                                                    if index == totalCount - 3 && viewModel.hasMoreWhatsNew && !viewModel.isLoadingMoreWhatsNew {
+                                                        Task {
+                                                            await viewModel.loadMoreWhatsNew()
+                                                        }
+                                                    }
+                                                }
+                                        }
+                                    }
+                                } else {
+                                    ForEach(Array(viewModel.whatsNew.enumerated()), id: \.element.id) { index, recipe in
+                                        ModernRecipeCard(recipe: recipe)
+                                            .onTapGesture {
+                                                selectedRecipe = recipe
+                                            }
+                                            .onAppear {
+                                                // Load more when we're near the end (3 items before the end)
+                                                if index == viewModel.whatsNew.count - 3 && viewModel.hasMoreWhatsNew && !viewModel.isLoadingMoreWhatsNew {
+                                                    Task {
+                                                        await viewModel.loadMoreWhatsNew()
+                                                    }
+                                                }
+                                            }
+                                    }
+                                }
+                                
+                                // Loading indicator at the bottom
+                                if viewModel.isLoadingMoreWhatsNew {
+                                    ProgressView()
+                                        .padding()
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                        }
+                        .refreshable {
+                            await viewModel.loadWhatsNew()
+                        }
+                        .onAppear {
+                            scaleRefreshControl()
+                        }
+                    }
+                } else if selectedCategory == 1 {
                     // Today's Special
                     if viewModel.isLoadingTodaysSpecial {
                         Spacer()
@@ -147,7 +303,7 @@ struct ExploreView: View {
                             scaleRefreshControl()
                         }
                     }
-                } else if selectedCategory == 1 {
+                } else if selectedCategory == 2 {
                     // Liked recipes
                     if viewModel.isLoadingLiked {
                         Spacer()
@@ -211,7 +367,7 @@ struct ExploreView: View {
                             scaleRefreshControl()
                         }
                     }
-                } else if selectedCategory == 2 || selectedCategory == 3 || selectedCategory == 4 {
+                } else if selectedCategory == 3 || selectedCategory == 4 || selectedCategory == 5 {
                     // Coming soon categories (Follow, Chef's Choice, Ranking)
                     Spacer()
                     VStack(spacing: 16) {
@@ -296,14 +452,19 @@ struct ExploreView: View {
         }
         .task {
             await viewModel.loadRecipes()
+            await viewModel.loadWhatsNew()
             await viewModel.loadTodaysSpecial()
         }
         .onChange(of: selectedCategory) { _, newCategory in
             if newCategory == 0 {
                 Task {
-                    await viewModel.loadTodaysSpecial()
+                    await viewModel.loadWhatsNew()
                 }
             } else if newCategory == 1 {
+                Task {
+                    await viewModel.loadTodaysSpecial()
+                }
+            } else if newCategory == 2 {
                 Task {
                     await viewModel.loadLikedRecipes()
                 }
@@ -316,7 +477,20 @@ struct ExploreView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeSaved"))) { _ in
             // Refresh recipes when a new recipe is saved
             Task {
-                await viewModel.loadRecipes()
+                // Refresh based on current selected category
+                if selectedCategory == 0 {
+                    // Refresh What's New (new recipes will appear at the top)
+                    await viewModel.loadWhatsNew()
+                } else if selectedCategory == 1 {
+                    // Refresh Today's Special (new recipes posted today will appear)
+                    await viewModel.loadTodaysSpecial()
+                } else if selectedCategory == 2 {
+                    // Liked recipes probably won't change, but refresh anyway
+                    await viewModel.loadLikedRecipes()
+                } else {
+                    // Refresh all recipes for other categories
+                    await viewModel.loadRecipes()
+                }
             }
         }
     }

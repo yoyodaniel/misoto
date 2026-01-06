@@ -51,6 +51,7 @@ struct RecipeDetailOverviewView: View {
     @State private var scrollOffset: CGFloat = 0
     @State private var shareImage: UIImage?
     @State private var isPreparingShare = false
+    @State private var adjustedServings: Int = 1
     
     private var isAuthor: Bool {
         guard let userID = Auth.auth().currentUser?.uid else { return false }
@@ -59,6 +60,7 @@ struct RecipeDetailOverviewView: View {
     
     init(recipe: Recipe) {
         _viewModel = StateObject(wrappedValue: RecipeDetailViewModel(recipe: recipe))
+        _adjustedServings = State(initialValue: recipe.servings)
     }
     
     var body: some View {
@@ -155,7 +157,7 @@ struct RecipeDetailOverviewView: View {
                                                 HStack(spacing: 4) {
                                                     Image(systemName: "person.2")
                                                         .font(.system(size: 14))
-                                                    Text("\(viewModel.recipe.servings)")
+                                                    Text("\(adjustedServings)")
                                                         .font(.system(size: 14))
                                                 }
                                                 
@@ -206,10 +208,46 @@ struct RecipeDetailOverviewView: View {
                             
                             // Ingredients Card (overlaps image more significantly)
                             VStack(alignment: .leading, spacing: 16) {
-                                // Header
-                                Text(String(format: LocalizedString("Ingredients for %d servings", comment: "Ingredients header"), viewModel.recipe.servings))
-                                    .font(.system(size: 20, weight: .bold))
-                                    .foregroundColor(.primary)
+                                // Header with Servings Picker
+                                HStack {
+                                    Text(String(format: LocalizedString("Ingredients for %d servings", comment: "Ingredients header"), adjustedServings))
+                                        .font(.system(size: 20, weight: .bold))
+                                        .foregroundColor(.primary)
+                                    
+                                    Spacer()
+                                    
+                                    // Servings Picker
+                                    Menu {
+                                        ForEach(1...20, id: \.self) { servings in
+                                            Button(action: {
+                                                adjustedServings = servings
+                                            }) {
+                                                HStack {
+                                                    Text("\(servings)")
+                                                    Spacer()
+                                                    if adjustedServings == servings {
+                                                        Image(systemName: "checkmark")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } label: {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "person.2")
+                                                .font(.system(size: 14))
+                                            Text("\(adjustedServings)")
+                                                .font(.system(size: 16, weight: .medium))
+                                            Image(systemName: "chevron.down")
+                                                .font(.system(size: 12))
+                                                .foregroundColor(.secondary)
+                                        }
+                                        .foregroundColor(.primary)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Color(.systemGray6))
+                                        .cornerRadius(8)
+                                    }
+                                }
                                 
                                 // Ingredients List grouped by category
                                 VStack(alignment: .leading, spacing: 20) {
@@ -225,7 +263,7 @@ struct RecipeDetailOverviewView: View {
                                             // Ingredients in this category
                                             VStack(alignment: .leading, spacing: 12) {
                                                 ForEach(Array(ingredients.enumerated()), id: \.offset) { ingredientIndex, ingredient in
-                                                    IngredientRowView(ingredient: ingredient)
+                                                    IngredientRowView(ingredient: adjustedIngredient(ingredient))
                                                 }
                                             }
                                         }
@@ -253,7 +291,7 @@ struct RecipeDetailOverviewView: View {
                                                     .background(Color.accentColor)
                                                     .clipShape(Circle())
                                                 
-                                                Text(instruction.text)
+                                                Text(adjustedInstructionText(instruction))
                                                     .font(.system(size: 16))
                                                     .foregroundColor(.primary)
                                                     .lineSpacing(4)
@@ -289,6 +327,44 @@ struct RecipeDetailOverviewView: View {
                                                             .fixedSize(horizontal: false, vertical: true)
                                                     }
                                                 }
+                                            }
+                                        }
+                                        
+                                        // Dotted Line Separator before Description
+                                        if !viewModel.recipe.description.trimmingCharacters(in: .whitespaces).isEmpty {
+                                            dottedLineSeparator
+                                                .padding(.vertical, 20)
+                                            
+                                            // Description Section
+                                            VStack(alignment: .leading, spacing: 12) {
+                                                Text(LocalizedString("Description", comment: "Description header"))
+                                                    .font(.system(size: 20, weight: .bold))
+                                                    .foregroundColor(.primary)
+                                                
+                                                Text(viewModel.recipe.description)
+                                                    .font(.system(size: 16))
+                                                    .foregroundColor(.primary)
+                                                    .lineSpacing(4)
+                                                    .fixedSize(horizontal: false, vertical: true)
+                                            }
+                                        }
+                                    } else {
+                                        // If no tips, show description directly after instructions
+                                        if !viewModel.recipe.description.trimmingCharacters(in: .whitespaces).isEmpty {
+                                            dottedLineSeparator
+                                                .padding(.vertical, 20)
+                                            
+                                            // Description Section
+                                            VStack(alignment: .leading, spacing: 12) {
+                                                Text(LocalizedString("Description", comment: "Description header"))
+                                                    .font(.system(size: 20, weight: .bold))
+                                                    .foregroundColor(.primary)
+                                                
+                                                Text(viewModel.recipe.description)
+                                                    .font(.system(size: 16))
+                                                    .foregroundColor(.primary)
+                                                    .lineSpacing(4)
+                                                    .fixedSize(horizontal: false, vertical: true)
                                             }
                                         }
                                     }
@@ -664,7 +740,13 @@ struct RecipeDetailOverviewView: View {
             // Refresh recipe when saved notification is received
             Task {
                 await viewModel.refreshRecipe()
+                // Reset adjusted servings to recipe's original servings after refresh
+                adjustedServings = viewModel.recipe.servings
             }
+        }
+        .onChange(of: viewModel.recipe.servings) { newServings in
+            // Reset adjusted servings when recipe servings change
+            adjustedServings = newServings
         }
     }
     
@@ -805,6 +887,244 @@ struct RecipeDetailOverviewView: View {
             let translatedUnit = UnitTranslations.abbreviation(for: ingredient.unit, amount: ingredient.amount)
             return "\(ingredient.amount) \(translatedUnit)"
         }
+    }
+    
+    // MARK: - Servings Adjustment
+    
+    /// Parse ingredient amount string to a numeric value
+    /// Handles whole numbers, decimals, fractions (1/2, 1 1/2), Unicode fractions (½, ¾, etc.), and text amounts (适量, to taste, etc.)
+    private func parseAmount(_ amountString: String) -> Double? {
+        var trimmed = amountString.trimmingCharacters(in: .whitespaces)
+        
+        // Check for text amounts that shouldn't be scaled (适量, to taste, etc.)
+        let textAmounts = ["适量", "to taste", "as needed", "optional", "a pinch", "as desired", "q.s.", "qs"]
+        if textAmounts.contains(where: { trimmed.lowercased().contains($0.lowercased()) }) {
+            return nil // Return nil to indicate this shouldn't be scaled
+        }
+        
+        // Convert Unicode fraction characters to their decimal equivalents
+        // Common Unicode fractions: ½, ⅓, ⅔, ¼, ¾, ⅕, ⅖, ⅗, ⅘, ⅙, ⅚, ⅛, ⅜, ⅝, ⅞
+        let unicodeFractions: [String: Double] = [
+            "½": 0.5,
+            "⅓": 0.333,
+            "⅔": 0.667,
+            "¼": 0.25,
+            "¾": 0.75,
+            "⅕": 0.2,
+            "⅖": 0.4,
+            "⅗": 0.6,
+            "⅘": 0.8,
+            "⅙": 0.167,
+            "⅚": 0.833,
+            "⅛": 0.125,
+            "⅜": 0.375,
+            "⅝": 0.625,
+            "⅞": 0.875
+        ]
+        
+        // Replace Unicode fractions with their decimal equivalents
+        for (unicode, decimal) in unicodeFractions {
+            trimmed = trimmed.replacingOccurrences(of: unicode, with: String(decimal))
+        }
+        
+        // Pattern: mixed number with Unicode fraction already converted "1 0.5" or "1 0.25"
+        // Also handle "1-2 0.333" (range format)
+        let mixedPattern = "^\\s*(\\d+)(?:\\s*-\\s*(\\d+))?\\s+(\\d+(?:\\.\\d+)?)\\s*$"
+        if let regex = try? NSRegularExpression(pattern: mixedPattern, options: []),
+           let match = regex.firstMatch(in: trimmed, options: [], range: NSRange(location: 0, length: trimmed.utf16.count)),
+           match.numberOfRanges >= 3 {
+            
+            if let wholeRange = Range(match.range(at: 1), in: trimmed),
+               let whole = Double(String(trimmed[wholeRange])) {
+                
+                // Check if there's a range (e.g., "2-2 0.333")
+                if match.numberOfRanges >= 4 && match.range(at: 2).location != NSNotFound {
+                    if let secondWholeRange = Range(match.range(at: 2), in: trimmed),
+                       let secondWhole = Double(String(trimmed[secondWholeRange])),
+                       let fractionRange = Range(match.range(at: 3), in: trimmed),
+                       let fraction = Double(String(trimmed[fractionRange])) {
+                        // For ranges, use the higher value
+                        return max(whole + fraction, secondWhole + fraction)
+                    }
+                } else if let fractionRange = Range(match.range(at: 3), in: trimmed),
+                          let fraction = Double(String(trimmed[fractionRange])) {
+                    return whole + fraction
+                }
+            }
+        }
+        
+        // Pattern: mixed number "1 1/2" (after Unicode conversion, this should be rare but keep for compatibility)
+        let mixedPattern2 = "^\\s*(\\d+)\\s+(\\d+)/(\\d+)\\s*$"
+        if let regex = try? NSRegularExpression(pattern: mixedPattern2, options: []),
+           let match = regex.firstMatch(in: trimmed, options: [], range: NSRange(location: 0, length: trimmed.utf16.count)),
+           match.numberOfRanges >= 4,
+           let wholeRange = Range(match.range(at: 1), in: trimmed),
+           let numeratorRange = Range(match.range(at: 2), in: trimmed),
+           let denominatorRange = Range(match.range(at: 3), in: trimmed),
+           let whole = Double(String(trimmed[wholeRange])),
+           let numerator = Double(String(trimmed[numeratorRange])),
+           let denominator = Double(String(trimmed[denominatorRange])),
+           denominator != 0 {
+            return whole + (numerator / denominator)
+        }
+        
+        // Pattern: simple fraction "1/2"
+        let fractionPattern = "^\\s*(\\d+)/(\\d+)\\s*$"
+        if let regex = try? NSRegularExpression(pattern: fractionPattern, options: []),
+           let match = regex.firstMatch(in: trimmed, options: [], range: NSRange(location: 0, length: trimmed.utf16.count)),
+           match.numberOfRanges >= 3,
+           let numeratorRange = Range(match.range(at: 1), in: trimmed),
+           let denominatorRange = Range(match.range(at: 2), in: trimmed),
+           let numerator = Double(String(trimmed[numeratorRange])),
+           let denominator = Double(String(trimmed[denominatorRange])),
+           denominator != 0 {
+            return numerator / denominator
+        }
+        
+        // Pattern: range format "2-2" or "⅛-¼" (after Unicode conversion)
+        let rangePattern = "^\\s*(\\d+(?:\\.\\d+)?)\\s*-\\s*(\\d+(?:\\.\\d+)?)\\s*$"
+        if let regex = try? NSRegularExpression(pattern: rangePattern, options: []),
+           let match = regex.firstMatch(in: trimmed, options: [], range: NSRange(location: 0, length: trimmed.utf16.count)),
+           match.numberOfRanges >= 3,
+           let firstRange = Range(match.range(at: 1), in: trimmed),
+           let secondRange = Range(match.range(at: 2), in: trimmed),
+           let first = Double(String(trimmed[firstRange])),
+           let second = Double(String(trimmed[secondRange])) {
+            // For ranges, use the higher value
+            return max(first, second)
+        }
+        
+        // Try parsing as a decimal number
+        if let value = Double(trimmed) {
+            return value
+        }
+        
+        // If we can't parse it, return nil (don't scale)
+        return nil
+    }
+    
+    /// Format a numeric value to a string, using decimals instead of fractions
+    private func formatAmount(_ value: Double) -> String {
+        // Check for whole numbers
+        let tolerance = 0.001
+        if abs(value.truncatingRemainder(dividingBy: 1)) < tolerance {
+            return String(format: "%.0f", value)
+        }
+        
+        // Format as decimal with up to 2 decimal places, removing trailing zeros
+        var formatted = String(format: "%.2f", value)
+        while formatted.hasSuffix("0") && formatted.contains(".") {
+            formatted = String(formatted.dropLast())
+        }
+        if formatted.hasSuffix(".") {
+            formatted = String(formatted.dropLast())
+        }
+        return formatted
+    }
+    
+    /// Calculate adjusted ingredient amount based on servings ratio
+    private func adjustedIngredientAmount(_ ingredient: Ingredient) -> String {
+        // If servings haven't changed, return original amount
+        if adjustedServings == viewModel.recipe.servings {
+            return ingredient.amount
+        }
+        
+        // Parse the original amount
+        guard let originalValue = parseAmount(ingredient.amount) else {
+            // Can't parse (text amount like "适量"), return original
+            return ingredient.amount
+        }
+        
+        // Calculate ratio
+        let ratio = Double(adjustedServings) / Double(viewModel.recipe.servings)
+        let adjustedValue = originalValue * ratio
+        
+        // Format the adjusted value
+        return formatAmount(adjustedValue)
+    }
+    
+    /// Get adjusted ingredient with recalculated amount
+    private func adjustedIngredient(_ ingredient: Ingredient) -> Ingredient {
+        var adjusted = ingredient
+        adjusted.amount = adjustedIngredientAmount(ingredient)
+        return adjusted
+    }
+    
+    /// Adjust instruction text to recalculate amounts based on servings
+    private func adjustedInstructionText(_ instruction: Instruction) -> String {
+        // If servings haven't changed, return original text
+        if adjustedServings == viewModel.recipe.servings {
+            return instruction.text
+        }
+        
+        var adjustedText = instruction.text
+        let ratio = Double(adjustedServings) / Double(viewModel.recipe.servings)
+        
+        // Pattern to match: amount (number, fraction, or mixed) followed by unit
+        // Examples: "2 cups", "1/2 teaspoon", "1 1/2 tablespoons", "0.5 cup", "3 tablespoons of"
+        // This pattern matches: number/fraction/decimal, space, then unit word(s)
+        let amountUnitPattern = #"(\d+(?:\s+\d+/\d+)?|\d+/\d+|\d+\.\d+)\s+([a-zA-Z]+(?:\s+[a-zA-Z]+)*)"#
+        
+        // Try to match and replace amounts in the instruction text
+        // Match pattern: amount + unit (e.g., "2 cups", "1/2 teaspoon", "1.5 tablespoons")
+        if let regex = try? NSRegularExpression(pattern: amountUnitPattern, options: [.caseInsensitive]) {
+            let matches = regex.matches(in: adjustedText, options: [], range: NSRange(location: 0, length: adjustedText.utf16.count))
+            
+            // Process matches in reverse order to maintain correct string indices
+            for match in matches.reversed() {
+                if match.numberOfRanges >= 3 {
+                    if let amountRange = Range(match.range(at: 1), in: adjustedText),
+                       let unitRange = Range(match.range(at: 2), in: adjustedText) {
+                        
+                        let amountString = String(adjustedText[amountRange])
+                        let unitString = String(adjustedText[unitRange])
+                        
+                        // Check if this unit appears in any ingredient (to ensure it's a cooking unit, not just any word)
+                        // This helps avoid recalculating non-cooking amounts like "2 minutes" or "350 degrees"
+                        let isCookingUnit = viewModel.recipe.ingredients.contains { ingredient in
+                            let ingredientUnit = ingredient.unit.lowercased().trimmingCharacters(in: .whitespaces)
+                            let instructionUnit = unitString.lowercased().trimmingCharacters(in: .whitespaces)
+                            
+                            // Skip if ingredient has no unit
+                            guard !ingredientUnit.isEmpty else { return false }
+                            
+                            // Get unit variations for matching
+                            let ingredientAbbrev = UnitTranslations.abbreviation(for: ingredient.unit, amount: ingredient.amount).lowercased()
+                            let ingredientTranslated = UnitTranslations.translatedName(for: ingredient.unit, amount: ingredient.amount).lowercased()
+                            
+                            // Try multiple matching strategies
+                            return ingredientUnit == instructionUnit ||
+                                ingredientAbbrev == instructionUnit ||
+                                ingredientTranslated == instructionUnit ||
+                                // Handle plural/singular variations (e.g., "cup" vs "cups")
+                                (instructionUnit.hasSuffix("s") && ingredientUnit == String(instructionUnit.dropLast())) ||
+                                (ingredientUnit.hasSuffix("s") && instructionUnit == String(ingredientUnit.dropLast())) ||
+                                // Partial matches for compound units (e.g., "fluid ounce" contains "ounce")
+                                instructionUnit.contains(ingredientUnit) ||
+                                ingredientUnit.contains(instructionUnit)
+                        }
+                        
+                        // Only recalculate if it's a cooking unit (found in ingredients)
+                        // This prevents recalculating time units, temperature, etc.
+                        if isCookingUnit {
+                            // Parse and recalculate amount
+                            if let originalValue = parseAmount(amountString) {
+                                let adjustedValue = originalValue * ratio
+                                let adjustedAmountString = formatAmount(adjustedValue)
+                                
+                                // Replace the amount in the text
+                                if let fullMatchRange = Range(match.range, in: adjustedText) {
+                                    let replacement = "\(adjustedAmountString) \(unitString)"
+                                    adjustedText.replaceSubrange(fullMatchRange, with: replacement)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return adjustedText
     }
     
     private func deleteRecipe() async {

@@ -1053,36 +1053,43 @@ struct ExtractMenuFromImageView: View {
             updateDishIngredientAmount: dishIngredientMethods.updateAmount,
             updateDishIngredientUnit: dishIngredientMethods.updateUnit,
             updateDishIngredientName: dishIngredientMethods.updateName,
+            moveDishIngredient: dishIngredientMethods.move,
             addMarinadeIngredient: marinadeIngredientMethods.add,
             removeMarinadeIngredient: marinadeIngredientMethods.remove,
             updateMarinadeIngredientAmount: marinadeIngredientMethods.updateAmount,
             updateMarinadeIngredientUnit: marinadeIngredientMethods.updateUnit,
             updateMarinadeIngredientName: marinadeIngredientMethods.updateName,
+            moveMarinadeIngredient: marinadeIngredientMethods.move,
             addSeasoningIngredient: seasoningIngredientMethods.add,
             removeSeasoningIngredient: seasoningIngredientMethods.remove,
             updateSeasoningIngredientAmount: seasoningIngredientMethods.updateAmount,
             updateSeasoningIngredientUnit: seasoningIngredientMethods.updateUnit,
             updateSeasoningIngredientName: seasoningIngredientMethods.updateName,
+            moveSeasoningIngredient: seasoningIngredientMethods.move,
             addDoughBatterFillingIngredient: doughBatterFillingIngredientMethods.add,
             removeDoughBatterFillingIngredient: doughBatterFillingIngredientMethods.remove,
             updateDoughBatterFillingIngredientAmount: doughBatterFillingIngredientMethods.updateAmount,
             updateDoughBatterFillingIngredientUnit: doughBatterFillingIngredientMethods.updateUnit,
             updateDoughBatterFillingIngredientName: doughBatterFillingIngredientMethods.updateName,
+            moveDoughBatterFillingIngredient: doughBatterFillingIngredientMethods.move,
             addSauceIngredient: sauceIngredientMethods.add,
             removeSauceIngredient: sauceIngredientMethods.remove,
             updateSauceIngredientAmount: sauceIngredientMethods.updateAmount,
             updateSauceIngredientUnit: sauceIngredientMethods.updateUnit,
             updateSauceIngredientName: sauceIngredientMethods.updateName,
+            moveSauceIngredient: sauceIngredientMethods.move,
             addToppingIngredient: toppingIngredientMethods.add,
             removeToppingIngredient: toppingIngredientMethods.remove,
             updateToppingIngredientAmount: toppingIngredientMethods.updateAmount,
             updateToppingIngredientUnit: toppingIngredientMethods.updateUnit,
             updateToppingIngredientName: toppingIngredientMethods.updateName,
+            moveToppingIngredient: toppingIngredientMethods.move,
             addGarnishIngredient: garnishIngredientMethods.add,
             removeGarnishIngredient: garnishIngredientMethods.remove,
             updateGarnishIngredientAmount: garnishIngredientMethods.updateAmount,
             updateGarnishIngredientUnit: garnishIngredientMethods.updateUnit,
             updateGarnishIngredientName: garnishIngredientMethods.updateName,
+            moveGarnishIngredient: garnishIngredientMethods.move,
             addRecipeImage: { viewModel.addRecipeImage($0) },
             removeRecipeImage: { viewModel.removeRecipeImage(at: $0) },
             generateDescription: { await viewModel.generateDescription() },
@@ -1097,6 +1104,9 @@ struct ExtractMenuFromImageView: View {
             },
             onSelectFromLibrary: {
                 showPhotoPickerForDishImage = true
+            },
+            moveIngredientBetweenCategories: { fromCategory, fromIndex, toCategory, toIndex in
+                viewModel.moveIngredient(from: fromCategory, sourceIndex: fromIndex, to: toCategory, destinationIndex: toIndex)
             },
             instructionsContent: {
                 makeInstructionsContent()
@@ -1113,6 +1123,7 @@ struct ExtractMenuFromImageView: View {
         let updateAmount: (String, Int) -> Void
         let updateUnit: (String, Int) -> Void
         let updateName: (String, Int) -> Void
+        let move: (Int, Int) -> Void
     }
     
     private func makeDishIngredientMethods() -> IngredientMethods {
@@ -1121,7 +1132,8 @@ struct ExtractMenuFromImageView: View {
             remove: { viewModel.removeDishIngredient(at: $0) },
             updateAmount: { viewModel.updateDishIngredientAmount($0, at: $1) },
             updateUnit: { viewModel.updateDishIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateDishIngredientName($0, at: $1) }
+            updateName: { viewModel.updateDishIngredientName($0, at: $1) },
+            move: { _, _ in } // No-op for now
         )
     }
     
@@ -1131,7 +1143,8 @@ struct ExtractMenuFromImageView: View {
             remove: { viewModel.removeMarinadeIngredient(at: $0) },
             updateAmount: { viewModel.updateMarinadeIngredientAmount($0, at: $1) },
             updateUnit: { viewModel.updateMarinadeIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateMarinadeIngredientName($0, at: $1) }
+            updateName: { viewModel.updateMarinadeIngredientName($0, at: $1) },
+            move: { _, _ in } // No-op for now
         )
     }
     
@@ -1141,7 +1154,8 @@ struct ExtractMenuFromImageView: View {
             remove: { viewModel.removeSeasoningIngredient(at: $0) },
             updateAmount: { viewModel.updateSeasoningIngredientAmount($0, at: $1) },
             updateUnit: { viewModel.updateSeasoningIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateSeasoningIngredientName($0, at: $1) }
+            updateName: { viewModel.updateSeasoningIngredientName($0, at: $1) },
+            move: { _, _ in } // No-op for now
         )
     }
     
@@ -1151,7 +1165,8 @@ struct ExtractMenuFromImageView: View {
             remove: { viewModel.removeSauceIngredient(at: $0) },
             updateAmount: { viewModel.updateSauceIngredientAmount($0, at: $1) },
             updateUnit: { viewModel.updateSauceIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateSauceIngredientName($0, at: $1) }
+            updateName: { viewModel.updateSauceIngredientName($0, at: $1) },
+            move: { _, _ in } // No-op for now
         )
     }
     
@@ -1161,7 +1176,8 @@ struct ExtractMenuFromImageView: View {
             remove: { viewModel.removeDoughBatterFillingIngredient(at: $0) },
             updateAmount: { viewModel.updateDoughBatterFillingIngredientAmount($0, at: $1) },
             updateUnit: { viewModel.updateDoughBatterFillingIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateDoughBatterFillingIngredientName($0, at: $1) }
+            updateName: { viewModel.updateDoughBatterFillingIngredientName($0, at: $1) },
+            move: { _, _ in } // No-op for now
         )
     }
     
@@ -1171,7 +1187,8 @@ struct ExtractMenuFromImageView: View {
             remove: { viewModel.removeToppingIngredient(at: $0) },
             updateAmount: { viewModel.updateToppingIngredientAmount($0, at: $1) },
             updateUnit: { viewModel.updateToppingIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateToppingIngredientName($0, at: $1) }
+            updateName: { viewModel.updateToppingIngredientName($0, at: $1) },
+            move: { _, _ in } // No-op for now
         )
     }
     
@@ -1181,7 +1198,8 @@ struct ExtractMenuFromImageView: View {
             remove: { viewModel.removeGarnishIngredient(at: $0) },
             updateAmount: { viewModel.updateGarnishIngredientAmount($0, at: $1) },
             updateUnit: { viewModel.updateGarnishIngredientUnit($0, at: $1) },
-            updateName: { viewModel.updateGarnishIngredientName($0, at: $1) }
+            updateName: { viewModel.updateGarnishIngredientName($0, at: $1) },
+            move: { _, _ in } // No-op for now
         )
     }
     

@@ -132,42 +132,52 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     var updateDishIngredientAmount: (String, Int) -> Void
     var updateDishIngredientUnit: (String, Int) -> Void
     var updateDishIngredientName: (String, Int) -> Void
+    var moveDishIngredient: (Int, Int) -> Void
     
     var addMarinadeIngredient: () -> Void
     var removeMarinadeIngredient: (Int) -> Void
     var updateMarinadeIngredientAmount: (String, Int) -> Void
     var updateMarinadeIngredientUnit: (String, Int) -> Void
     var updateMarinadeIngredientName: (String, Int) -> Void
+    var moveMarinadeIngredient: (Int, Int) -> Void
     
     var addSeasoningIngredient: () -> Void
     var removeSeasoningIngredient: (Int) -> Void
     var updateSeasoningIngredientAmount: (String, Int) -> Void
     var updateSeasoningIngredientUnit: (String, Int) -> Void
     var updateSeasoningIngredientName: (String, Int) -> Void
+    var moveSeasoningIngredient: (Int, Int) -> Void
     
     var addDoughBatterFillingIngredient: () -> Void
     var removeDoughBatterFillingIngredient: (Int) -> Void
     var updateDoughBatterFillingIngredientAmount: (String, Int) -> Void
     var updateDoughBatterFillingIngredientUnit: (String, Int) -> Void
     var updateDoughBatterFillingIngredientName: (String, Int) -> Void
+    var moveDoughBatterFillingIngredient: (Int, Int) -> Void
     
     var addSauceIngredient: () -> Void
     var removeSauceIngredient: (Int) -> Void
     var updateSauceIngredientAmount: (String, Int) -> Void
     var updateSauceIngredientUnit: (String, Int) -> Void
     var updateSauceIngredientName: (String, Int) -> Void
+    var moveSauceIngredient: (Int, Int) -> Void
     
     var addToppingIngredient: () -> Void
     var removeToppingIngredient: (Int) -> Void
     var updateToppingIngredientAmount: (String, Int) -> Void
     var updateToppingIngredientUnit: (String, Int) -> Void
     var updateToppingIngredientName: (String, Int) -> Void
+    var moveToppingIngredient: (Int, Int) -> Void
     
     var addGarnishIngredient: () -> Void
     var removeGarnishIngredient: (Int) -> Void
     var updateGarnishIngredientAmount: (String, Int) -> Void
     var updateGarnishIngredientUnit: (String, Int) -> Void
     var updateGarnishIngredientName: (String, Int) -> Void
+    var moveGarnishIngredient: (Int, Int) -> Void
+    
+    // Optional: Method to move ingredient between categories (for EditRecipeView)
+    var moveIngredientBetweenCategories: ((Ingredient.Category, Int, Ingredient.Category, Int) -> Void)?
     
     var addRecipeImage: (UIImage) -> Void
     var removeRecipeImage: (Int) -> Void
@@ -221,36 +231,43 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         updateDishIngredientAmount: @escaping (String, Int) -> Void,
         updateDishIngredientUnit: @escaping (String, Int) -> Void,
         updateDishIngredientName: @escaping (String, Int) -> Void,
+        moveDishIngredient: @escaping (Int, Int) -> Void,
         addMarinadeIngredient: @escaping () -> Void,
         removeMarinadeIngredient: @escaping (Int) -> Void,
         updateMarinadeIngredientAmount: @escaping (String, Int) -> Void,
         updateMarinadeIngredientUnit: @escaping (String, Int) -> Void,
         updateMarinadeIngredientName: @escaping (String, Int) -> Void,
+        moveMarinadeIngredient: @escaping (Int, Int) -> Void,
         addSeasoningIngredient: @escaping () -> Void,
         removeSeasoningIngredient: @escaping (Int) -> Void,
         updateSeasoningIngredientAmount: @escaping (String, Int) -> Void,
         updateSeasoningIngredientUnit: @escaping (String, Int) -> Void,
         updateSeasoningIngredientName: @escaping (String, Int) -> Void,
+        moveSeasoningIngredient: @escaping (Int, Int) -> Void,
         addDoughBatterFillingIngredient: @escaping () -> Void,
         removeDoughBatterFillingIngredient: @escaping (Int) -> Void,
         updateDoughBatterFillingIngredientAmount: @escaping (String, Int) -> Void,
         updateDoughBatterFillingIngredientUnit: @escaping (String, Int) -> Void,
         updateDoughBatterFillingIngredientName: @escaping (String, Int) -> Void,
+        moveDoughBatterFillingIngredient: @escaping (Int, Int) -> Void,
         addSauceIngredient: @escaping () -> Void,
         removeSauceIngredient: @escaping (Int) -> Void,
         updateSauceIngredientAmount: @escaping (String, Int) -> Void,
         updateSauceIngredientUnit: @escaping (String, Int) -> Void,
         updateSauceIngredientName: @escaping (String, Int) -> Void,
+        moveSauceIngredient: @escaping (Int, Int) -> Void,
         addToppingIngredient: @escaping () -> Void,
         removeToppingIngredient: @escaping (Int) -> Void,
         updateToppingIngredientAmount: @escaping (String, Int) -> Void,
         updateToppingIngredientUnit: @escaping (String, Int) -> Void,
         updateToppingIngredientName: @escaping (String, Int) -> Void,
+        moveToppingIngredient: @escaping (Int, Int) -> Void,
         addGarnishIngredient: @escaping () -> Void,
         removeGarnishIngredient: @escaping (Int) -> Void,
         updateGarnishIngredientAmount: @escaping (String, Int) -> Void,
         updateGarnishIngredientUnit: @escaping (String, Int) -> Void,
         updateGarnishIngredientName: @escaping (String, Int) -> Void,
+        moveGarnishIngredient: @escaping (Int, Int) -> Void,
         addRecipeImage: @escaping (UIImage) -> Void,
         removeRecipeImage: @escaping (Int) -> Void,
         generateDescription: @escaping () async -> Void,
@@ -260,6 +277,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         selectedRecipePhotos: Binding<[PhotosPickerItem]>,
         onTakePicture: (() -> Void)? = nil,
         onSelectFromLibrary: (() -> Void)? = nil,
+        moveIngredientBetweenCategories: ((Ingredient.Category, Int, Ingredient.Category, Int) -> Void)? = nil,
         @ViewBuilder instructionsContent: @escaping () -> InstructionsContent,
         optionalContent: (() -> OptionalContent)? = nil
     ) {
@@ -291,36 +309,44 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         self.updateDishIngredientAmount = updateDishIngredientAmount
         self.updateDishIngredientUnit = updateDishIngredientUnit
         self.updateDishIngredientName = updateDishIngredientName
+        self.moveDishIngredient = moveDishIngredient
         self.addMarinadeIngredient = addMarinadeIngredient
         self.removeMarinadeIngredient = removeMarinadeIngredient
         self.updateMarinadeIngredientAmount = updateMarinadeIngredientAmount
         self.updateMarinadeIngredientUnit = updateMarinadeIngredientUnit
         self.updateMarinadeIngredientName = updateMarinadeIngredientName
+        self.moveMarinadeIngredient = moveMarinadeIngredient
         self.addSeasoningIngredient = addSeasoningIngredient
         self.removeSeasoningIngredient = removeSeasoningIngredient
         self.updateSeasoningIngredientAmount = updateSeasoningIngredientAmount
         self.updateSeasoningIngredientUnit = updateSeasoningIngredientUnit
         self.updateSeasoningIngredientName = updateSeasoningIngredientName
+        self.moveSeasoningIngredient = moveSeasoningIngredient
         self.addDoughBatterFillingIngredient = addDoughBatterFillingIngredient
         self.removeDoughBatterFillingIngredient = removeDoughBatterFillingIngredient
         self.updateDoughBatterFillingIngredientAmount = updateDoughBatterFillingIngredientAmount
         self.updateDoughBatterFillingIngredientUnit = updateDoughBatterFillingIngredientUnit
         self.updateDoughBatterFillingIngredientName = updateDoughBatterFillingIngredientName
+        self.moveDoughBatterFillingIngredient = moveDoughBatterFillingIngredient
         self.addSauceIngredient = addSauceIngredient
         self.removeSauceIngredient = removeSauceIngredient
         self.updateSauceIngredientAmount = updateSauceIngredientAmount
         self.updateSauceIngredientUnit = updateSauceIngredientUnit
         self.updateSauceIngredientName = updateSauceIngredientName
+        self.moveSauceIngredient = moveSauceIngredient
         self.addToppingIngredient = addToppingIngredient
         self.removeToppingIngredient = removeToppingIngredient
         self.updateToppingIngredientAmount = updateToppingIngredientAmount
         self.updateToppingIngredientUnit = updateToppingIngredientUnit
         self.updateToppingIngredientName = updateToppingIngredientName
+        self.moveToppingIngredient = moveToppingIngredient
         self.addGarnishIngredient = addGarnishIngredient
         self.removeGarnishIngredient = removeGarnishIngredient
         self.updateGarnishIngredientAmount = updateGarnishIngredientAmount
         self.updateGarnishIngredientUnit = updateGarnishIngredientUnit
         self.updateGarnishIngredientName = updateGarnishIngredientName
+        self.moveGarnishIngredient = moveGarnishIngredient
+        self.moveIngredientBetweenCategories = moveIngredientBetweenCategories
         self.addRecipeImage = addRecipeImage
         self.removeRecipeImage = removeRecipeImage
         self.generateDescription = generateDescription
@@ -723,6 +749,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                         removeDishIngredient(index)
                     }
                 }
+                .onMove { source, destination in
+                    if let firstIndex = source.first {
+                        moveDishIngredient(firstIndex, destination)
+                    }
+                }
                 
                 Button(action: {
                     addDishIngredient()
@@ -748,6 +779,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 .onDelete { indexSet in
                     for index in indexSet.sorted(by: >) {
                         removeMarinadeIngredient(index)
+                    }
+                }
+                .onMove { source, destination in
+                    if let firstIndex = source.first {
+                        moveMarinadeIngredient(firstIndex, destination)
                     }
                 }
                 
@@ -778,6 +814,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                         removeSeasoningIngredient(index)
                     }
                 }
+                .onMove { source, destination in
+                    if let firstIndex = source.first {
+                        moveSeasoningIngredient(firstIndex, destination)
+                    }
+                }
                 
                 Button(action: {
                     addSeasoningIngredient()
@@ -804,6 +845,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 .onDelete { indexSet in
                     for index in indexSet.sorted(by: >) {
                         removeDoughBatterFillingIngredient(index)
+                    }
+                }
+                .onMove { source, destination in
+                    if let firstIndex = source.first {
+                        moveDoughBatterFillingIngredient(firstIndex, destination)
                     }
                 }
                 
@@ -834,6 +880,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                         removeSauceIngredient(index)
                     }
                 }
+                .onMove { source, destination in
+                    if let firstIndex = source.first {
+                        moveSauceIngredient(firstIndex, destination)
+                    }
+                }
                 
                 Button(action: {
                     addSauceIngredient()
@@ -862,6 +913,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                         removeToppingIngredient(index)
                     }
                 }
+                .onMove { source, destination in
+                    if let firstIndex = source.first {
+                        moveToppingIngredient(firstIndex, destination)
+                    }
+                }
                 
                 Button(action: {
                     addToppingIngredient()
@@ -888,6 +944,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 .onDelete { indexSet in
                     for index in indexSet.sorted(by: >) {
                         removeGarnishIngredient(index)
+                    }
+                }
+                .onMove { source, destination in
+                    if let firstIndex = source.first {
+                        moveGarnishIngredient(firstIndex, destination)
                     }
                 }
                 
@@ -921,7 +982,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 set: { updateDishIngredientName($0, index) }
             ),
             amountIndex: index + 1000,
-            nameIndex: index + 1000
+            nameIndex: index + 1000,
+            currentCategory: .dish,
+            ingredientIndex: index
         )
     }
     
@@ -940,7 +1003,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 set: { updateMarinadeIngredientName($0, index) }
             ),
             amountIndex: index,
-            nameIndex: index
+            nameIndex: index,
+            currentCategory: .marinade,
+            ingredientIndex: index
         )
     }
     
@@ -959,7 +1024,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 set: { updateSeasoningIngredientName($0, index) }
             ),
             amountIndex: index + 500,
-            nameIndex: index + 500
+            nameIndex: index + 500,
+            currentCategory: .seasoning,
+            ingredientIndex: index
         )
     }
     
@@ -978,7 +1045,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 set: { updateSauceIngredientName($0, index) }
             ),
             amountIndex: index + 3000,
-            nameIndex: index + 3000
+            nameIndex: index + 3000,
+            currentCategory: .sauce,
+            ingredientIndex: index
         )
     }
     
@@ -997,7 +1066,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 set: { updateDoughBatterFillingIngredientName($0, index) }
             ),
             amountIndex: index + 2000,
-            nameIndex: index + 2000
+            nameIndex: index + 2000,
+            currentCategory: .dough,
+            ingredientIndex: index
         )
     }
     
@@ -1016,7 +1087,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 set: { updateToppingIngredientName($0, index) }
             ),
             amountIndex: index + 6000,
-            nameIndex: index + 6000
+            nameIndex: index + 6000,
+            currentCategory: .topping,
+            ingredientIndex: index
         )
     }
     
@@ -1035,12 +1108,22 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 set: { updateGarnishIngredientName($0, index) }
             ),
             amountIndex: index + 8000,
-            nameIndex: index + 8000
+            nameIndex: index + 8000,
+            currentCategory: .garnish,
+            ingredientIndex: index
         )
     }
     
     // Reusable ingredient row view
-    private func ingredientRow(amount: Binding<String>, unit: Binding<String>, name: Binding<String>, amountIndex: Int, nameIndex: Int) -> some View {
+    private func ingredientRow(
+        amount: Binding<String>,
+        unit: Binding<String>,
+        name: Binding<String>,
+        amountIndex: Int,
+        nameIndex: Int,
+        currentCategory: Ingredient.Category? = nil,
+        ingredientIndex: Int = 0
+    ) -> some View {
         HStack(spacing: 8) {
             // Amount field - narrower with smaller font, centered
             TextField("0", text: amount)
@@ -1080,6 +1163,81 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
             TextField(LocalizedString("Ingredient", comment: "Ingredient placeholder"), text: name)
                 .autocapitalization(.words)
                 .focused($focusedIngredientNameField, equals: nameIndex)
+            
+            // Category picker button (only show if moveIngredientBetweenCategories is available)
+            if let moveIngredient = moveIngredientBetweenCategories, let category = currentCategory {
+                Menu {
+                    // Header text (non-clickable)
+                    Label {
+                        Text(LocalizedString("Move Ingredient to", comment: "Menu header for moving ingredient"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } icon: {
+                        EmptyView()
+                    }
+                    .disabled(true)
+                    
+                    Divider()
+                    
+                    let allCategories: [Ingredient.Category] = [.dish, .marinade, .seasoning, .dough, .sauce, .topping, .garnish]
+                    ForEach(allCategories, id: \.self) { targetCategory in
+                        if targetCategory != category {
+                            Button(action: {
+                                // Expand the target section if it's collapsed
+                                switch targetCategory {
+                                case .dish:
+                                    isDishExpanded = true
+                                case .marinade:
+                                    isMarinadeExpanded = true
+                                case .seasoning:
+                                    isSeasoningExpanded = true
+                                case .batter, .base, .dough, .filling:
+                                    isDoughBatterFillingExpanded = true
+                                case .sauce:
+                                    isSauceExpanded = true
+                                case .topping:
+                                    isToppingExpanded = true
+                                case .garnish:
+                                    isGarnishExpanded = true
+                                }
+                                
+                                // Move to the end of the target category (index is ignored, always appends)
+                                moveIngredient(category, ingredientIndex, targetCategory, 0)
+                            }) {
+                                HStack {
+                                    Text(sectionName(for: targetCategory))
+                                    Spacer()
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    Image(systemName: "arrow.right.circle")
+                        .font(.system(size: 16))
+                        .foregroundColor(.accentColor)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+    
+    // Helper to get section name for category
+    private func sectionName(for category: Ingredient.Category) -> String {
+        switch category {
+        case .dish:
+            return LocalizedString("For the main ingredients", comment: "Main ingredients section")
+        case .marinade:
+            return LocalizedString("For the marinade", comment: "Marinade section")
+        case .seasoning:
+            return LocalizedString("For the seasoning", comment: "Seasoning section")
+        case .batter, .base, .dough, .filling:
+            return LocalizedString("For the dough/batter/filling", comment: "Dough/batter/filling section")
+        case .sauce:
+            return LocalizedString("For the sauce", comment: "Sauce section")
+        case .topping:
+            return LocalizedString("For the topping", comment: "Topping section")
+        case .garnish:
+            return LocalizedString("For the garnish", comment: "Garnish section")
         }
     }
     
@@ -1162,36 +1320,43 @@ extension RecipeEditForm where OptionalContent == EmptyView {
         updateDishIngredientAmount: @escaping (String, Int) -> Void,
         updateDishIngredientUnit: @escaping (String, Int) -> Void,
         updateDishIngredientName: @escaping (String, Int) -> Void,
+        moveDishIngredient: @escaping (Int, Int) -> Void,
         addMarinadeIngredient: @escaping () -> Void,
         removeMarinadeIngredient: @escaping (Int) -> Void,
         updateMarinadeIngredientAmount: @escaping (String, Int) -> Void,
         updateMarinadeIngredientUnit: @escaping (String, Int) -> Void,
         updateMarinadeIngredientName: @escaping (String, Int) -> Void,
+        moveMarinadeIngredient: @escaping (Int, Int) -> Void,
         addSeasoningIngredient: @escaping () -> Void,
         removeSeasoningIngredient: @escaping (Int) -> Void,
         updateSeasoningIngredientAmount: @escaping (String, Int) -> Void,
         updateSeasoningIngredientUnit: @escaping (String, Int) -> Void,
         updateSeasoningIngredientName: @escaping (String, Int) -> Void,
+        moveSeasoningIngredient: @escaping (Int, Int) -> Void,
         addDoughBatterFillingIngredient: @escaping () -> Void,
         removeDoughBatterFillingIngredient: @escaping (Int) -> Void,
         updateDoughBatterFillingIngredientAmount: @escaping (String, Int) -> Void,
         updateDoughBatterFillingIngredientUnit: @escaping (String, Int) -> Void,
         updateDoughBatterFillingIngredientName: @escaping (String, Int) -> Void,
+        moveDoughBatterFillingIngredient: @escaping (Int, Int) -> Void,
         addSauceIngredient: @escaping () -> Void,
         removeSauceIngredient: @escaping (Int) -> Void,
         updateSauceIngredientAmount: @escaping (String, Int) -> Void,
         updateSauceIngredientUnit: @escaping (String, Int) -> Void,
         updateSauceIngredientName: @escaping (String, Int) -> Void,
+        moveSauceIngredient: @escaping (Int, Int) -> Void,
         addToppingIngredient: @escaping () -> Void,
         removeToppingIngredient: @escaping (Int) -> Void,
         updateToppingIngredientAmount: @escaping (String, Int) -> Void,
         updateToppingIngredientUnit: @escaping (String, Int) -> Void,
         updateToppingIngredientName: @escaping (String, Int) -> Void,
+        moveToppingIngredient: @escaping (Int, Int) -> Void,
         addGarnishIngredient: @escaping () -> Void,
         removeGarnishIngredient: @escaping (Int) -> Void,
         updateGarnishIngredientAmount: @escaping (String, Int) -> Void,
         updateGarnishIngredientUnit: @escaping (String, Int) -> Void,
         updateGarnishIngredientName: @escaping (String, Int) -> Void,
+        moveGarnishIngredient: @escaping (Int, Int) -> Void,
         addRecipeImage: @escaping (UIImage) -> Void,
         removeRecipeImage: @escaping (Int) -> Void,
         generateDescription: @escaping () async -> Void,
@@ -1230,36 +1395,43 @@ extension RecipeEditForm where OptionalContent == EmptyView {
             updateDishIngredientAmount: updateDishIngredientAmount,
             updateDishIngredientUnit: updateDishIngredientUnit,
             updateDishIngredientName: updateDishIngredientName,
+            moveDishIngredient: moveDishIngredient,
             addMarinadeIngredient: addMarinadeIngredient,
             removeMarinadeIngredient: removeMarinadeIngredient,
             updateMarinadeIngredientAmount: updateMarinadeIngredientAmount,
             updateMarinadeIngredientUnit: updateMarinadeIngredientUnit,
             updateMarinadeIngredientName: updateMarinadeIngredientName,
+            moveMarinadeIngredient: moveMarinadeIngredient,
             addSeasoningIngredient: addSeasoningIngredient,
             removeSeasoningIngredient: removeSeasoningIngredient,
             updateSeasoningIngredientAmount: updateSeasoningIngredientAmount,
             updateSeasoningIngredientUnit: updateSeasoningIngredientUnit,
             updateSeasoningIngredientName: updateSeasoningIngredientName,
+            moveSeasoningIngredient: moveSeasoningIngredient,
             addDoughBatterFillingIngredient: addDoughBatterFillingIngredient,
             removeDoughBatterFillingIngredient: removeDoughBatterFillingIngredient,
             updateDoughBatterFillingIngredientAmount: updateDoughBatterFillingIngredientAmount,
             updateDoughBatterFillingIngredientUnit: updateDoughBatterFillingIngredientUnit,
             updateDoughBatterFillingIngredientName: updateDoughBatterFillingIngredientName,
+            moveDoughBatterFillingIngredient: moveDoughBatterFillingIngredient,
             addSauceIngredient: addSauceIngredient,
             removeSauceIngredient: removeSauceIngredient,
             updateSauceIngredientAmount: updateSauceIngredientAmount,
             updateSauceIngredientUnit: updateSauceIngredientUnit,
             updateSauceIngredientName: updateSauceIngredientName,
+            moveSauceIngredient: moveSauceIngredient,
             addToppingIngredient: addToppingIngredient,
             removeToppingIngredient: removeToppingIngredient,
             updateToppingIngredientAmount: updateToppingIngredientAmount,
             updateToppingIngredientUnit: updateToppingIngredientUnit,
             updateToppingIngredientName: updateToppingIngredientName,
+            moveToppingIngredient: moveToppingIngredient,
             addGarnishIngredient: addGarnishIngredient,
             removeGarnishIngredient: removeGarnishIngredient,
             updateGarnishIngredientAmount: updateGarnishIngredientAmount,
             updateGarnishIngredientUnit: updateGarnishIngredientUnit,
             updateGarnishIngredientName: updateGarnishIngredientName,
+            moveGarnishIngredient: moveGarnishIngredient,
             addRecipeImage: addRecipeImage,
             removeRecipeImage: removeRecipeImage,
             generateDescription: generateDescription,

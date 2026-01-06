@@ -61,13 +61,9 @@ class RecipeDetailViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        async let favoriteCheck = checkFavoriteStatus()
-        async let noteCountCheck = loadNoteCount()
-        async let userNotesCheck = loadUserNotes()
-        
-        await favoriteCheck
-        await noteCountCheck
-        await userNotesCheck
+        await checkFavoriteStatus()
+        await loadNoteCount()
+        await loadUserNotes()
         
         isLoading = false
     }

@@ -691,6 +691,71 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
         garnishIngredients[index].name = name
     }
     
+    // MARK: - Cross-Section Ingredient Movement
+    
+    /// Move an ingredient from one section to another
+    func moveIngredient(from sourceCategory: Ingredient.Category, sourceIndex: Int, to destinationCategory: Ingredient.Category, destinationIndex: Int) {
+        // Get source array
+        var sourceArray: [RecipeTextParser.IngredientItem] {
+            switch sourceCategory {
+            case .dish: return dishIngredients
+            case .marinade: return marinadeIngredients
+            case .seasoning: return seasoningIngredients
+            case .batter, .base, .dough, .filling: return doughBatterFillingIngredients
+            case .sauce: return sauceIngredients
+            case .topping: return toppingIngredients
+            case .garnish: return garnishIngredients
+            }
+        }
+        
+        guard sourceIndex < sourceArray.count else { return }
+        
+        // Remove from source
+        let ingredient = sourceArray[sourceIndex]
+        
+        switch sourceCategory {
+        case .dish:
+            dishIngredients.remove(at: sourceIndex)
+            if dishIngredients.isEmpty {
+                dishIngredients = [RecipeTextParser.IngredientItem(amount: "", unit: "", name: "")]
+            }
+        case .marinade:
+            marinadeIngredients.remove(at: sourceIndex)
+        case .seasoning:
+            seasoningIngredients.remove(at: sourceIndex)
+        case .batter, .base, .dough, .filling:
+            doughBatterFillingIngredients.remove(at: sourceIndex)
+        case .sauce:
+            sauceIngredients.remove(at: sourceIndex)
+        case .topping:
+            toppingIngredients.remove(at: sourceIndex)
+        case .garnish:
+            garnishIngredients.remove(at: sourceIndex)
+        }
+        
+        // Insert into destination - always append to create a new row
+        switch destinationCategory {
+        case .dish:
+            // Remove empty placeholder if it's the only item, then append
+            if dishIngredients.count == 1 && dishIngredients[0].amount.isEmpty && dishIngredients[0].name.isEmpty && dishIngredients[0].unit.isEmpty {
+                dishIngredients.removeAll()
+            }
+            dishIngredients.append(ingredient)
+        case .marinade:
+            marinadeIngredients.append(ingredient)
+        case .seasoning:
+            seasoningIngredients.append(ingredient)
+        case .batter, .base, .dough, .filling:
+            doughBatterFillingIngredients.append(ingredient)
+        case .sauce:
+            sauceIngredients.append(ingredient)
+        case .topping:
+            toppingIngredients.append(ingredient)
+        case .garnish:
+            garnishIngredients.append(ingredient)
+        }
+    }
+    
     // MARK: - Recipe Image Management
     
     func addRecipeImage(_ image: UIImage) {
@@ -907,7 +972,8 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             let generatedDescription = try await OpenAIService.generateRecipeDescription(
                 title: title,
                 ingredients: allIngredients,
-                instructions: instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+                instructions: instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
+                backgroundContext: nil // No background context for link extraction (could be enhanced later)
             )
             
             if !generatedDescription.isEmpty {

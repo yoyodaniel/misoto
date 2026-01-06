@@ -172,8 +172,9 @@ class OpenAIService {
           * If a marinade is mentioned (either in the current page or referenced from another page), include its preparation as one of the first steps
           * Follow the natural cooking sequence: prep dependencies → apply dependencies → cook → finish
         - PRESERVE KEY DETAILS: Always preserve important details like temperatures, cooking times, techniques, and methods. Include these in your rewritten steps.
+        - GENERIC INSTRUCTIONS: Write instructions GENERICALLY without mentioning specific ingredient amounts. Instead of "Add 2 cups of flour", write "Add the flour". Instead of "Mix in 1/2 teaspoon of salt", write "Mix in the salt". Reference ingredients by name only, as users will refer to the ingredients list for exact amounts. This makes instructions work for any serving size.
         - COMBINE LOGICALLY: Combine sequential actions that happen in the same phase (e.g., "Heat oil in pan, then add onions and cook until translucent").
-        - REWRITE FOR CLARITY: You may rewrite steps to make them clearer and more actionable, but maintain the original meaning and all critical information.
+        - REWRITE FOR CLARITY: You may rewrite steps to make them clearer and more actionable, but maintain the original meaning and all critical information. Remove all amount references from instructions.
         - GROUP RELATED STEPS: Group preparation steps together, cooking steps together, finishing steps together.
         - MULTI-PAGE RECIPES: When multiple images are provided, they may contain:
           * Main recipe on one page
@@ -211,7 +212,7 @@ class OpenAIService {
         {"title":"Recipe Title","description":"Description","servings":4,"prepTime":30,"cookTime":60,"dishIngredients":[{"amount":"12","unit":"","name":"Item"}],"marinadeIngredients":[],"seasoningIngredients":[],"batterIngredients":[],"sauceIngredients":[],"baseIngredients":[],"doughIngredients":[],"toppingIngredients":[],"fillingIngredients":[],"garnishIngredients":[],"instructions":["Step 1 with full details","Step 2 with full details"],"tips":["Tip 1","Tip 2"]}
         """
         
-        let userPrompt = images.count > 1 ? "Extract recipe from all images. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. Combine information from all pages to create a complete recipe. PRESERVE the original language. Rewrite instructions for better flow and clarity, keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only." : "Extract recipe from image. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. PRESERVE the original language. Rewrite instructions for better flow and clarity, keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only."
+        let userPrompt = images.count > 1 ? "Extract recipe from all images. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. Combine information from all pages to create a complete recipe. PRESERVE the original language. Rewrite instructions GENERICALLY without amounts (e.g., 'Add the flour' instead of 'Add 2 cups of flour'), keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only." : "Extract recipe from image. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. PRESERVE the original language. Rewrite instructions GENERICALLY without amounts (e.g., 'Add the flour' instead of 'Add 2 cups of flour'), keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only."
         
         // Build content array: text prompt first, then all images
         var contentArray: [[String: Any]] = [
@@ -690,7 +691,7 @@ class OpenAIService {
         """
         
         let userPrompt = """
-        Extract recipe from content. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. PRESERVE the original language. Rewrite instructions for better flow and clarity, keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only.
+        Extract recipe from content. Check for cross-page references in ingredients (e.g., 'see page 245'). If a marinade/sauce is referenced from another page, include its preparation steps FIRST, then the steps to apply it. Also look for tips, notes, or helpful information sections and extract them into the tips array. PRESERVE the original language. Rewrite instructions GENERICALLY without amounts (e.g., "Add the flour" instead of "Add 2 cups of flour"), keeping to a maximum of 10 steps. Ensure marinades and preparations are in the first steps, followed by application steps. Return JSON only.
         
         Content:
         \(extractedText)
@@ -944,10 +945,16 @@ class OpenAIService {
     // MARK: - Recipe Description and Cuisine Detection
     
     /// Generate a recipe description using OpenAI based on recipe information
+    /// - Parameters:
+    ///   - title: Recipe title
+    ///   - ingredients: List of ingredients
+    ///   - instructions: List of instructions
+    ///   - backgroundContext: Optional background story or context from website (for website extractions)
     static func generateRecipeDescription(
         title: String,
         ingredients: [String],
-        instructions: [String] = []
+        instructions: [String] = [],
+        backgroundContext: String? = nil
     ) async throws -> String {
         guard !apiKey.isEmpty else {
             throw OpenAIError.apiKeyNotConfigured
@@ -996,19 +1003,30 @@ class OpenAIService {
         }
         
         let systemPrompt = """
-        You are a culinary expert. Generate a brief, appetizing description (2-3 sentences) for a recipe in \(languageName).
-        The description should be engaging, highlight key ingredients or cooking methods, and make the dish sound appealing.
-        Keep it concise and professional. Write the description entirely in \(languageName).
+        You are a food writer who shares recipes in a modern, approachable way. Write a factual, engaging recipe description (3-4 sentences) in \(languageName) that:
+        - Uses modern, everyday language that's easy to understand (avoid overly formal or marketing-speak)
+        - Provides factual information about the dish (what it is, where it comes from, key characteristics)
+        - If background context or story is provided, incorporate it naturally to give the dish context and authenticity
+        - Describes the dish honestly without overselling or using excessive superlatives
+        - Highlights notable ingredients or cooking methods in a straightforward way
+        - Varies sentence structure and avoids repetitive phrasing
+        - Focuses on what makes the dish interesting or unique, not on trying to convince the reader
+        Write in a conversational, modern style - informative and engaging but not overly enthusiastic. Be factual and authentic. Write entirely in \(languageName).
         """
         
-        var userPrompt = "Generate a description for this recipe in \(languageName):\nTitle: \(title)"
+        var userPrompt = "Write a factual, modern description for this recipe in \(languageName) using everyday language:\n\nTitle: \(title)"
         if !ingredientsText.isEmpty {
-            userPrompt += "\nIngredients: \(ingredientsText)"
+            userPrompt += "\n\nKey Ingredients: \(ingredientsText)"
         }
         if !instructionsText.isEmpty {
             // Use first few instructions to understand cooking method
             let firstInstructions = instructions.prefix(3).joined(separator: " ")
-            userPrompt += "\nCooking method: \(firstInstructions)"
+            userPrompt += "\n\nCooking Method: \(firstInstructions)"
+        }
+        if let background = backgroundContext, !background.trimmingCharacters(in: .whitespaces).isEmpty {
+            // Extract relevant background story (limit to avoid token bloat)
+            let limitedBackground = String(background.prefix(500))
+            userPrompt += "\n\nBackground Story/Context from Recipe Source: \(limitedBackground)\n\nUse this background information to provide factual context about the dish's origins, history, or cultural significance. Incorporate it naturally into the description."
         }
         
         let requestBody: [String: Any] = [
@@ -1023,8 +1041,8 @@ class OpenAIService {
                     "content": userPrompt
                 ]
             ],
-            "max_tokens": 150,
-            "temperature": 0.7
+            "max_tokens": 200, // Increased for more engaging descriptions
+            "temperature": 0.8 // Higher temperature for more creative, varied descriptions
         ]
         
         guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {

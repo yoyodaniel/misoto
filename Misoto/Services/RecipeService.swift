@@ -53,7 +53,46 @@ class RecipeService: ObservableObject {
         return filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
     }
     
-    /// Fetch recipes posted today, sorted by favorite count (likes) in descending order
+    /// Fetch latest recipes with pagination, ordered by creation date (newest first)
+    /// - Parameters:
+    ///   - limit: Maximum number of recipes to fetch (default: 10)
+    ///   - startAfter: Document snapshot to start after for pagination (optional)
+    /// - Returns: Tuple containing recipes and the last document for pagination
+    func fetchLatestRecipes(limit: Int = 10, startAfter: DocumentSnapshot? = nil) async throws -> ([Recipe], DocumentSnapshot?) {
+        var query = firestore.collection(recipesCollection)
+            .order(by: "createdAt", descending: true)
+            .limit(to: limit)
+        
+        if let startAfter = startAfter {
+            query = query.start(afterDocument: startAfter)
+        }
+        
+        let snapshot = try await query.getDocuments()
+        
+        var recipes: [Recipe] = []
+        for document in snapshot.documents {
+            do {
+                let recipe = try document.data(as: Recipe.self)
+                recipes.append(recipe)
+            } catch {
+                print("⚠️ Failed to decode recipe \(document.documentID): \(error.localizedDescription)")
+                print("Document data: \(document.data())")
+                // Continue processing other documents instead of failing completely
+            }
+        }
+        
+        // Filter out recipes from banned users and hidden recipes
+        let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: recipes)
+        // Also filter recipes with report count >= 10 (defensive check in case isHidden wasn't set)
+        let finalRecipes = filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
+        
+        // Get the last document for pagination
+        let lastDocument = snapshot.documents.last
+        
+        return (finalRecipes, lastDocument)
+    }
+    
+    /// Fetch recipes posted today, sorted by creation date in descending order (newest first)
     /// - Parameters:
     ///   - limit: Maximum number of recipes to fetch (default: 20)
     ///   - startAfter: Document snapshot to start after for pagination (optional)
@@ -67,8 +106,7 @@ class RecipeService: ObservableObject {
         let startTimestamp = Timestamp(date: startOfToday)
         let endTimestamp = Timestamp(date: endOfToday)
         
-        // Query recipes created today - use createdAt ordering first (no composite index needed)
-        // Then sort by favoriteCount in memory
+        // Query recipes created today - ordered by createdAt (newest first)
         var query = firestore.collection(recipesCollection)
             .whereField("createdAt", isGreaterThanOrEqualTo: startTimestamp)
             .whereField("createdAt", isLessThan: endTimestamp)
@@ -93,8 +131,8 @@ class RecipeService: ObservableObject {
             }
         }
         
-        // Sort by favoriteCount (likes) in descending order
-        recipes.sort { $0.favoriteCount > $1.favoriteCount }
+        // Sort by createdAt (date of creation) in descending order (newest first)
+        recipes.sort { $0.createdAt > $1.createdAt }
         
         // Filter out recipes from banned users and hidden recipes
         let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: recipes)
@@ -110,6 +148,78 @@ class RecipeService: ObservableObject {
     func fetchRecipe(byID recipeID: String) async throws -> Recipe? {
         let document = try await firestore.collection(recipesCollection).document(recipeID).getDocument()
         return try? document.data(as: Recipe.self)
+    }
+    
+    /// Search recipes by query string (searches in title, description, and ingredient names)
+    /// - Parameter query: Search query string
+    /// - Returns: Array of matching recipes
+    func searchRecipes(query: String) async throws -> [Recipe] {
+        guard !query.trimmingCharacters(in: .whitespaces).isEmpty else {
+            return []
+        }
+        
+        // Fetch all recipes (Firestore doesn't support full-text search natively)
+        // For better performance with large datasets, consider using Algolia or similar
+        let snapshot = try await firestore.collection(recipesCollection)
+            .order(by: "createdAt", descending: true)
+            .getDocuments()
+        
+        var recipes: [Recipe] = []
+        for document in snapshot.documents {
+            do {
+                let recipe = try document.data(as: Recipe.self)
+                recipes.append(recipe)
+            } catch {
+                print("⚠️ Failed to decode recipe \(document.documentID): \(error.localizedDescription)")
+                // Continue processing other documents
+            }
+        }
+        
+        // Filter out recipes from banned users and hidden recipes
+        let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: recipes)
+        let visibleRecipes = filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
+        
+        // Perform case-insensitive search with word-based matching
+        let searchQuery = query.lowercased().trimmingCharacters(in: .whitespaces)
+        let searchTerms = searchQuery.components(separatedBy: .whitespaces)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        
+        // If no valid search terms, return empty
+        guard !searchTerms.isEmpty else {
+            return []
+        }
+        
+        return visibleRecipes.filter { recipe in
+            // Helper function to check if text contains all search terms
+            func textContainsAllTerms(_ text: String) -> Bool {
+                let lowercasedText = text.lowercased()
+                // Check if all search terms appear in the text (as substrings)
+                return searchTerms.allSatisfy { term in
+                    lowercasedText.contains(term)
+                }
+            }
+            
+            // Search in title (check all title fields)
+            let titleMatch = textContainsAllTerms(recipe.title) ||
+                           (recipe.titleEnglish.map(textContainsAllTerms) ?? false) ||
+                           (recipe.titleLocal.map(textContainsAllTerms) ?? false) ||
+                           (recipe.titleOriginal.map(textContainsAllTerms) ?? false)
+            
+            // Search in description
+            let descriptionMatch = textContainsAllTerms(recipe.description)
+            
+            // Search in ingredient names (check if any ingredient matches all terms)
+            let ingredientMatch = recipe.ingredients.contains { ingredient in
+                textContainsAllTerms(ingredient.name)
+            }
+            
+            // Search in cuisine
+            let cuisineMatch = (recipe.cuisine.map(textContainsAllTerms) ?? false) ||
+                              (recipe.cuisineEnglish.map(textContainsAllTerms) ?? false)
+            
+            return titleMatch || descriptionMatch || ingredientMatch || cuisineMatch
+        }
     }
     
     func fetchRecipes(byUserID userID: String, includeHidden: Bool = false) async throws -> [Recipe] {
