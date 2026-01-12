@@ -12,6 +12,8 @@ import Combine
 struct RecipeDetailOverviewView: View {
     @StateObject private var viewModel: RecipeDetailViewModel
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @State private var showLoginSheet = false
     
     // TODO: Update this link when Misoto app is available on the App Store
     
@@ -42,8 +44,10 @@ struct RecipeDetailOverviewView: View {
     @State private var showRelatedRecipes = false
     @State private var showMenu = false
     @State private var showDeleteConfirmation = false
+    @State private var showMakePublicConfirmation = false
     @State private var showReportSheet = false
     @State private var showShareSheet = false
+    @State private var showShareWithUsers = false
     @State private var showEditRecipe = false
     @State private var noteToEdit: RecipeNote?
     @State private var noteToDelete: RecipeNote?
@@ -349,7 +353,7 @@ struct RecipeDetailOverviewView: View {
                                             }
                                         }
                                     } else {
-                                        // If no tips, show description directly after instructions
+                                        // If no tips, show description directly after Chef section
                                         if !viewModel.recipe.description.trimmingCharacters(in: .whitespaces).isEmpty {
                                             dottedLineSeparator
                                                 .padding(.vertical, 20)
@@ -367,6 +371,25 @@ struct RecipeDetailOverviewView: View {
                                                     .fixedSize(horizontal: false, vertical: true)
                                             }
                                         }
+                                    }
+                                    
+                                    // Dotted Line Separator before Chef Section
+                                    dottedLineSeparator
+                                        .padding(.vertical, 20)
+                                    
+                                    // Chef Section
+                                    VStack(alignment: .leading, spacing: 16) {
+                                        Text(LocalizedString("Chef", comment: "Chef section header"))
+                                            .font(.system(size: 20, weight: .bold))
+                                            .foregroundColor(.primary)
+                                        
+                                        ChefSectionView(
+                                            creatorID: viewModel.recipe.authorID,
+                                            creatorName: viewModel.recipe.authorName,
+                                            creatorUsername: viewModel.recipe.authorUsername,
+                                            hasNotes: !viewModel.userNotes.isEmpty,
+                                            showLoginSheet: $showLoginSheet
+                                        )
                                     }
                                     
                                     // Dotted Line Separator before User Notes
@@ -486,10 +509,14 @@ struct RecipeDetailOverviewView: View {
                                     }
                                 }
                                 
-                                // Write Note Button
+                                // Write Note Button (requires authentication)
                                 Button(action: {
                                     HapticFeedback.buttonTap()
-                                    showWriteNote = true
+                                    if Auth.auth().currentUser != nil {
+                                        showWriteNote = true
+                                    } else {
+                                        showLoginSheet = true
+                                    }
                                 }) {
                                     Text(LocalizedString("Write a Note", comment: "Write note button"))
                                         .font(.system(size: 16, weight: .semibold))
@@ -549,51 +576,145 @@ struct RecipeDetailOverviewView: View {
                 }
                 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Favorite/Like Button
-                    Button(action: {
-                        HapticFeedback.importantAction()
-                        Task {
-                            await viewModel.toggleFavorite()
+                    // Privacy Button (for own recipes) or Favorite/Like Button (for others)
+                    if isAuthor {
+                        // Show eye button for own recipes to toggle privacy or view sharing
+                        // If shared with users, show person.2.fill and open sharing view instead of toggling
+                        Button(action: {
+                            HapticFeedback.importantAction()
+                            if viewModel.recipe.isPrivate && !viewModel.recipe.sharedWith.isEmpty {
+                                // Recipe is shared - show list of users with access
+                                showShareWithUsers = true
+                            } else if viewModel.recipe.isPrivate {
+                                // Recipe is private (not shared) - show confirmation when making public
+                                showMakePublicConfirmation = true
+                            } else {
+                                // Recipe is public - make private to all (clear sharedWith, only owner can see)
+                                Task {
+                                    await viewModel.togglePrivacy(clearSharedWith: true)
+                                }
+                            }
+                        }) {
+                            Image(systemName: viewModel.recipe.isPrivate 
+                                ? (!viewModel.recipe.sharedWith.isEmpty ? "person.2.fill" : "eye.slash.fill") 
+                                : "eye.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(.white)
+                                .frame(width: 34, height: 34)
+                                .background(Color.black.opacity(0.4))
+                                .clipShape(Circle())
                         }
-                    }) {
-                        Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
-                            .font(.system(size: 16))
-                            .foregroundColor(viewModel.isFavorite ? .red : .white)
-                            .frame(width: 34, height: 34)
-                            .background(Color.black.opacity(0.4))
-                            .clipShape(Circle())
+                    } else {
+                        // Show heart button for other users' recipes
+                        Button(action: {
+                            HapticFeedback.importantAction()
+                            if Auth.auth().currentUser != nil {
+                                Task {
+                                    await viewModel.toggleFavorite()
+                                }
+                            } else {
+                                showLoginSheet = true
+                            }
+                        }) {
+                            Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
+                                .font(.system(size: 16))
+                                .foregroundColor(viewModel.isFavorite ? .red : .white)
+                                .frame(width: 34, height: 34)
+                                .background(Color.black.opacity(0.4))
+                                .clipShape(Circle())
+                        }
                     }
                     
                     // Menu Button
                     Menu {
                         if isAuthor {
-                            // For user's own posts: Edit, Share, Delete
-                            Button(action: {
-                                HapticFeedback.importantAction()
-                                showEditRecipe = true
-                                showMenu = false
-                            }) {
-                                Label(LocalizedString("Edit", comment: "Edit button"), systemImage: "pencil")
-                            }
-                            
-                            Button(action: {
-                                Task {
-                                    await prepareShareContent()
-                                    showShareSheet = true
+                            // For user's own posts: Edit, Privacy Toggle, Private Sharing (all recipes), Share, Delete (all require authentication)
+                            if Auth.auth().currentUser != nil {
+                                Button(action: {
+                                    HapticFeedback.importantAction()
+                                    showEditRecipe = true
+                                    showMenu = false
+                                }) {
+                                    Label(LocalizedString("Edit", comment: "Edit button"), systemImage: "pencil")
                                 }
-                                showMenu = false
-                            }) {
-                                Label(LocalizedString("Share", comment: "Share button"), systemImage: "square.and.arrow.up")
-                            }
-                            
-                            Button(role: .destructive, action: {
-                                showDeleteConfirmation = true
-                                showMenu = false
-                            }) {
-                                Label(LocalizedString("Delete", comment: "Delete button"), systemImage: "trash")
+                                
+                                Button(action: {
+                                    HapticFeedback.importantAction()
+                                    if viewModel.recipe.isPrivate {
+                                        // Show confirmation alert when making public
+                                        showMakePublicConfirmation = true
+                                    } else {
+                                        // Make private to all (clear sharedWith, only owner can see)
+                                        Task {
+                                            await viewModel.togglePrivacy(clearSharedWith: true)
+                                        }
+                                    }
+                                    showMenu = false
+                                }) {
+                                    Label(
+                                        viewModel.recipe.isPrivate ? LocalizedString("Make Public", comment: "Make recipe public") : LocalizedString("Make Private", comment: "Make recipe private"),
+                                        systemImage: viewModel.recipe.isPrivate ? "eye.fill" : "eye.slash.fill"
+                                    )
+                                }
+                                
+                                // Show "Private Sharing" option for all recipes
+                                // If recipe is public, it will be made private when opening private sharing
+                                Button(action: {
+                                    HapticFeedback.importantAction()
+                                    // If recipe is public, make it private first before showing sharing options
+                                    // Preserve sharedWith when making private for sharing (don't clear it)
+                                    if !viewModel.recipe.isPrivate {
+                                        Task {
+                                            // Make private first (preserve sharedWith, don't clear)
+                                            await viewModel.togglePrivacy(clearSharedWith: false)
+                                            // Refresh recipe to get updated state with preserved sharedWith
+                                            await viewModel.refreshRecipe()
+                                            // Small delay to ensure recipe object is fully updated
+                                            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+                                            // Now show sharing - recipe should have preserved sharedWith
+                                            showShareWithUsers = true
+                                        }
+                                    } else {
+                                        // Recipe is already private - ensure we have latest recipe state
+                                        Task {
+                                            await viewModel.refreshRecipe()
+                                            showShareWithUsers = true
+                                        }
+                                    }
+                                    showMenu = false
+                                }) {
+                                    if viewModel.recipe.hasSharedUsers {
+                                        Label(
+                                            String(format: LocalizedString("Private Sharing (%d)", comment: "Private sharing button with count"), viewModel.recipe.effectiveSharedCount),
+                                            systemImage: "person.2.fill"
+                                        )
+                                    } else {
+                                        Label(
+                                            LocalizedString("Private Sharing", comment: "Private sharing button"),
+                                            systemImage: "person.2.fill"
+                                        )
+                                    }
+                                }
+                                
+                                Button(action: {
+                                    Task {
+                                        await prepareShareContent()
+                                        showShareSheet = true
+                                    }
+                                    showMenu = false
+                                }) {
+                                    Label(LocalizedString("Share", comment: "Share button"), systemImage: "square.and.arrow.up")
+                                }
+                                
+                                Button(role: .destructive, action: {
+                                    showDeleteConfirmation = true
+                                    showMenu = false
+                                }) {
+                                    Label(LocalizedString("Delete", comment: "Delete button"), systemImage: "trash")
+                                }
                             }
                         } else {
-                            // For posts not owned by user: Share, Save, Report
+                            // For posts not owned by user: Share (no auth needed), Save, Report (both require auth)
                             Button(action: {
                                 Task {
                                     await prepareShareContent()
@@ -604,24 +725,40 @@ struct RecipeDetailOverviewView: View {
                                 Label(LocalizedString("Share", comment: "Share button"), systemImage: "square.and.arrow.up")
                             }
                             
-                            Button(action: {
-                                HapticFeedback.importantAction()
-                                Task {
-                                    await viewModel.toggleFavorite()
+                            if Auth.auth().currentUser != nil {
+                                Button(action: {
+                                    HapticFeedback.importantAction()
+                                    Task {
+                                        await viewModel.toggleFavorite()
+                                    }
+                                    showMenu = false
+                                }) {
+                                    Label(
+                                        viewModel.isFavorite ? LocalizedString("Unsave Recipe", comment: "Unsave button") : LocalizedString("Save Recipe", comment: "Save button"),
+                                        systemImage: viewModel.isFavorite ? "bookmark.fill" : "bookmark"
+                                    )
                                 }
-                                showMenu = false
-                            }) {
-                                Label(
-                                    viewModel.isFavorite ? LocalizedString("Unsave Recipe", comment: "Unsave button") : LocalizedString("Save Recipe", comment: "Save button"),
-                                    systemImage: viewModel.isFavorite ? "bookmark.fill" : "bookmark"
-                                )
-                            }
-                            
-                            Button(role: .destructive, action: {
-                                showReportSheet = true
-                                showMenu = false
-                            }) {
-                                Label(LocalizedString("Report", comment: "Report button"), systemImage: "exclamationmark.triangle")
+                                
+                                Button(role: .destructive, action: {
+                                    showReportSheet = true
+                                    showMenu = false
+                                }) {
+                                    Label(LocalizedString("Report", comment: "Report button"), systemImage: "exclamationmark.triangle")
+                                }
+                            } else {
+                                Button(action: {
+                                    showLoginSheet = true
+                                    showMenu = false
+                                }) {
+                                    Label(LocalizedString("Save Recipe", comment: "Save recipe button"), systemImage: "bookmark")
+                                }
+                                
+                                Button(action: {
+                                    showLoginSheet = true
+                                    showMenu = false
+                                }) {
+                                    Label(LocalizedString("Report", comment: "Report button"), systemImage: "exclamationmark.triangle")
+                                }
                             }
                         }
                     } label: {
@@ -666,6 +803,20 @@ struct RecipeDetailOverviewView: View {
         .sheet(isPresented: $showRelatedRecipes) {
             RelatedRecipesView(recipe: viewModel.recipe)
         }
+        .sheet(isPresented: $showShareWithUsers) {
+            // Ensure we use the latest recipe state with preserved sharedWith
+            ShareRecipeView(recipe: viewModel.recipe) { sharedUserIDs in
+                Task {
+                    await viewModel.updateSharing(sharedWith: sharedUserIDs)
+                    // Refresh recipe to get updated state
+                    await viewModel.refreshRecipe()
+                }
+            }
+            .onAppear {
+                // Debug: Log the sharedWith array when sheet appears
+                print("📋 ShareRecipeView opened with recipe.sharedWith: \(viewModel.recipe.sharedWith.count) users")
+            }
+        }
         .alert(
             LocalizedString("Delete Recipe", comment: "Delete confirmation title"),
             isPresented: $showDeleteConfirmation
@@ -680,6 +831,21 @@ struct RecipeDetailOverviewView: View {
             }
         } message: {
             Text(LocalizedString("Are you sure you want to delete this recipe? This action cannot be undone.", comment: "Delete confirmation message"))
+        }
+        .alert(
+            LocalizedString("Make Recipe Public", comment: "Make recipe public confirmation title"),
+            isPresented: $showMakePublicConfirmation
+        ) {
+            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
+                showMakePublicConfirmation = false
+            }
+            Button(LocalizedString("Make Public", comment: "Make public button")) {
+                Task {
+                    await viewModel.togglePrivacy()
+                }
+            }
+        } message: {
+            Text(LocalizedString("Are you sure you want to make this recipe public?", comment: "Make recipe public confirmation message"))
         }
         .alert(
             LocalizedString("Delete Note", comment: "Delete note confirmation title"),
@@ -736,6 +902,19 @@ struct RecipeDetailOverviewView: View {
                 }
             }
         }
+        .sheet(isPresented: $showLoginSheet) {
+            LoginView()
+                .environmentObject(authViewModel)
+        }
+        .sheet(isPresented: $showShareWithUsers) {
+            NavigationStack {
+                ShareRecipeView(recipe: viewModel.recipe) { sharedUserIDs in
+                    Task {
+                        await viewModel.updateSharing(sharedWith: sharedUserIDs)
+                    }
+                }
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeSaved"))) { _ in
             // Refresh recipe when saved notification is received
             Task {
@@ -744,7 +923,61 @@ struct RecipeDetailOverviewView: View {
                 adjustedServings = viewModel.recipe.servings
             }
         }
-        .onChange(of: viewModel.recipe.servings) { newServings in
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipePrivacyChanged"))) { notification in
+            // Update recipe detail view when privacy changes (from grid view or detail view)
+            Task {
+                let recipeID = notification.userInfo?["recipeID"] as? String
+                let isPrivate = notification.userInfo?["isPrivate"] as? Bool ?? false
+                let clearSharedWith = notification.userInfo?["clearSharedWith"] as? Bool ?? false
+                
+                if let recipeID = recipeID, recipeID == viewModel.recipe.id {
+                    // Optimistic update: Update UI immediately
+                    let currentSharedWith = viewModel.recipe.sharedWith
+                    viewModel.recipe.isPrivate = isPrivate
+                    
+                    // If making private and clearSharedWith is true: Save current sharedWith to preservedSharedWith, then clear sharedWith
+                    if isPrivate && clearSharedWith {
+                        // Save current sharedWith to preservedSharedWith before clearing (if it has users)
+                        if !currentSharedWith.isEmpty {
+                            viewModel.recipe.preservedSharedWith = currentSharedWith
+                        }
+                        // Always clear sharedWith when making "Private to All" (removes access)
+                        viewModel.recipe.sharedWith = []
+                    }
+                    // When making public: Restore preservedSharedWith to sharedWith if it exists
+                    else if !isPrivate {
+                        // Restore preserved sharedWith list if it exists
+                        if let preserved = viewModel.recipe.preservedSharedWith, !preserved.isEmpty {
+                            viewModel.recipe.sharedWith = preserved
+                            viewModel.recipe.preservedSharedWith = nil // Clear preserved list after restore
+                        }
+                        // If no preserved list, keep current sharedWith as-is
+                    }
+                    
+                    // Refresh recipe from server to ensure consistency
+                    await viewModel.refreshRecipe()
+                    print("✅ RecipeDetailView: Recipe privacy updated - isPrivate: \(isPrivate), sharedWith: \(viewModel.recipe.sharedWith.count) users, preserved: \(viewModel.recipe.preservedSharedWith?.count ?? 0) users")
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeSharingChanged"))) { notification in
+            // Update recipe detail view when sharing changes (from grid view or detail view)
+            Task {
+                let recipeID = notification.userInfo?["recipeID"] as? String
+                let sharedWith = notification.userInfo?["sharedWith"] as? [String] ?? []
+                
+                if let recipeID = recipeID, recipeID == viewModel.recipe.id {
+                    // Optimistic update: Update UI immediately
+                    viewModel.recipe.sharedWith = sharedWith
+                    viewModel.recipe.isPrivate = true // Must be private to share with specific users
+                    
+                    // Refresh recipe from server to ensure consistency
+                    await viewModel.refreshRecipe()
+                    print("✅ RecipeDetailView: Recipe sharing updated - sharedWith: \(sharedWith.count) users")
+                }
+            }
+        }
+        .onChange(of: viewModel.recipe.servings) { oldValue, newServings in
             // Reset adjusted servings when recipe servings change
             adjustedServings = newServings
         }
@@ -1131,8 +1364,15 @@ struct RecipeDetailOverviewView: View {
         guard isAuthor else { return }
         
         do {
-            let recipeService = RecipeService()
-            try await recipeService.deleteRecipe(recipeID: viewModel.recipe.id)
+            let recipeID = viewModel.recipe.id
+            try await RecipeService.shared.deleteRecipe(recipeID: recipeID)
+            
+            // Post notification to refresh feeds/views before dismissing
+            NotificationCenter.default.post(name: NSNotification.Name("RecipeDeleted"), object: nil, userInfo: ["recipeID": recipeID])
+            
+            // Reload user data to update recipe count
+            await authViewModel.reloadUserData()
+            
             dismiss()
         } catch {
             print("❌ Error deleting recipe: \(error.localizedDescription)")

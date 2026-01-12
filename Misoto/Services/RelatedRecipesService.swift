@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 @MainActor
 class RelatedRecipesService {
@@ -75,7 +76,13 @@ class RelatedRecipesService {
         // Filter out recipes from banned users and hidden recipes before returning
         let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: Array(relatedRecipes.prefix(limit)))
         // Also filter recipes with report count >= 10 (defensive check in case isHidden wasn't set)
-        return filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
+        // Filter out ALL private recipes from public related recipes (even if shared with current user)
+        // Shared recipes should only be accessible via direct link/search, not public feeds
+        return filteredRecipes.filter { recipe in
+            !recipe.isHidden &&
+            recipe.reportCount < 10 &&
+            !recipe.isPrivate // Exclude all private recipes (including shared ones) from public feeds
+        }
     }
     
     // MARK: - Helper Methods

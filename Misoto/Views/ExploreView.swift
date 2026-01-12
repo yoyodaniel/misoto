@@ -7,13 +7,19 @@
 
 import SwiftUI
 import UIKit
+import FirebaseAuth
 
 struct ExploreView: View {
+    @Binding var showLoginSheet: Bool
     @StateObject private var viewModel = ExploreViewModel()
     @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var selectedRecipe: Recipe?
     @State private var selectedCategory = 0
     @State private var searchText = ""
+    
+    init(showLoginSheet: Binding<Bool>) {
+        self._showLoginSheet = showLoginSheet
+    }
     
     // Computed property that updates when language changes
     private var categories: [String] {
@@ -104,20 +110,20 @@ struct ExploreView: View {
                             LazyVStack(spacing: 20) {
                                 // Featured Recipe (first one)
                                 if let featuredRecipe = viewModel.searchResults.first {
-                                    ModernRecipeCard(recipe: featuredRecipe)
+                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
                                         .onTapGesture {
                                             selectedRecipe = featuredRecipe
                                         }
                                     
-                                    // Collections Section
+                                    // Cuisines Section
                                     if viewModel.searchResults.count > 1 {
-                                        CollectionsSection(recipes: Array(viewModel.searchResults.dropFirst()))
+                                        CuisinesSection(recipes: Array(viewModel.searchResults.dropFirst()))
                                     }
                                     
                                     // Remaining Recipes
                                     if viewModel.searchResults.count > 1 {
                                         ForEach(Array(viewModel.searchResults.dropFirst())) { recipe in
-                                            ModernRecipeCard(recipe: recipe)
+                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                                 .onTapGesture {
                                                     selectedRecipe = recipe
                                                 }
@@ -125,7 +131,7 @@ struct ExploreView: View {
                                     }
                                 } else {
                                     ForEach(viewModel.searchResults) { recipe in
-                                        ModernRecipeCard(recipe: recipe)
+                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                             .onTapGesture {
                                                 selectedRecipe = recipe
                                             }
@@ -160,20 +166,20 @@ struct ExploreView: View {
                             LazyVStack(spacing: 20) {
                                 // Featured Recipe (first one)
                                 if let featuredRecipe = viewModel.whatsNew.first {
-                                    ModernRecipeCard(recipe: featuredRecipe)
+                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
                                         .onTapGesture {
                                             selectedRecipe = featuredRecipe
                                         }
                                     
-                                    // Collections Section
+                                    // Cuisines Section
                                     if viewModel.whatsNew.count > 1 {
-                                        CollectionsSection(recipes: Array(viewModel.whatsNew.dropFirst()))
+                                        CuisinesSection(recipes: Array(viewModel.whatsNew.dropFirst()))
                                     }
                                     
                                     // Remaining Recipes
                                     if viewModel.whatsNew.count > 1 {
                                         ForEach(Array(viewModel.whatsNew.dropFirst().enumerated()), id: \.element.id) { index, recipe in
-                                            ModernRecipeCard(recipe: recipe)
+                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                                 .onTapGesture {
                                                     selectedRecipe = recipe
                                                 }
@@ -190,7 +196,7 @@ struct ExploreView: View {
                                     }
                                 } else {
                                     ForEach(Array(viewModel.whatsNew.enumerated()), id: \.element.id) { index, recipe in
-                                        ModernRecipeCard(recipe: recipe)
+                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                             .onTapGesture {
                                                 selectedRecipe = recipe
                                             }
@@ -242,20 +248,20 @@ struct ExploreView: View {
                             LazyVStack(spacing: 20) {
                                 // Featured Recipe (first one)
                                 if let featuredRecipe = viewModel.todaysSpecial.first {
-                                    ModernRecipeCard(recipe: featuredRecipe)
+                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
                                         .onTapGesture {
                                             selectedRecipe = featuredRecipe
                                         }
                                     
-                                    // Collections Section
+                                    // Cuisines Section
                                     if viewModel.todaysSpecial.count > 1 {
-                                        CollectionsSection(recipes: Array(viewModel.todaysSpecial.dropFirst()))
+                                        CuisinesSection(recipes: Array(viewModel.todaysSpecial.dropFirst()))
                                     }
                                     
                                     // Remaining Recipes
                                     if viewModel.todaysSpecial.count > 1 {
                                         ForEach(Array(viewModel.todaysSpecial.dropFirst().enumerated()), id: \.element.id) { index, recipe in
-                                            ModernRecipeCard(recipe: recipe)
+                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                                 .onTapGesture {
                                                     selectedRecipe = recipe
                                                 }
@@ -272,7 +278,7 @@ struct ExploreView: View {
                                     }
                                 } else {
                                     ForEach(Array(viewModel.todaysSpecial.enumerated()), id: \.element.id) { index, recipe in
-                                        ModernRecipeCard(recipe: recipe)
+                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                             .onTapGesture {
                                                 selectedRecipe = recipe
                                             }
@@ -329,20 +335,20 @@ struct ExploreView: View {
                             LazyVStack(spacing: 20) {
                                 // Featured Recipe (first one)
                                 if let featuredRecipe = viewModel.likedRecipes.first {
-                                    ModernRecipeCard(recipe: featuredRecipe)
+                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
                                         .onTapGesture {
                                             selectedRecipe = featuredRecipe
                                         }
                                     
-                                    // Collections Section
+                                    // Cuisines Section
                                     if viewModel.likedRecipes.count > 1 {
-                                        CollectionsSection(recipes: Array(viewModel.likedRecipes.dropFirst()))
+                                        CuisinesSection(recipes: Array(viewModel.likedRecipes.dropFirst()))
                                     }
                                     
                                     // Remaining Recipes
                                     if viewModel.likedRecipes.count > 1 {
                                         ForEach(Array(viewModel.likedRecipes.dropFirst())) { recipe in
-                                            ModernRecipeCard(recipe: recipe)
+                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                                 .onTapGesture {
                                                     selectedRecipe = recipe
                                                 }
@@ -350,7 +356,7 @@ struct ExploreView: View {
                                     }
                                 } else {
                                     ForEach(viewModel.likedRecipes) { recipe in
-                                        ModernRecipeCard(recipe: recipe)
+                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                             .onTapGesture {
                                                 selectedRecipe = recipe
                                             }
@@ -406,20 +412,20 @@ struct ExploreView: View {
                             LazyVStack(spacing: 20) {
                                 // Featured Recipe (first one)
                                 if let featuredRecipe = viewModel.recipes.first {
-                                    ModernRecipeCard(recipe: featuredRecipe)
+                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
                                         .onTapGesture {
                                             selectedRecipe = featuredRecipe
                                         }
                                     
-                                    // Collections Section
+                                    // Cuisines Section
                                     if viewModel.recipes.count > 1 {
-                                        CollectionsSection(recipes: Array(viewModel.recipes.dropFirst()))
+                                        CuisinesSection(recipes: Array(viewModel.recipes.dropFirst()))
                                     }
                                     
                                     // Remaining Recipes
                                     if viewModel.recipes.count > 1 {
                                         ForEach(Array(viewModel.recipes.dropFirst())) { recipe in
-                                            ModernRecipeCard(recipe: recipe)
+                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                                 .onTapGesture {
                                                     selectedRecipe = recipe
                                                 }
@@ -427,7 +433,7 @@ struct ExploreView: View {
                                     }
                                 } else {
                                     ForEach(viewModel.recipes) { recipe in
-                                        ModernRecipeCard(recipe: recipe)
+                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
                                             .onTapGesture {
                                                 selectedRecipe = recipe
                                             }
@@ -465,14 +471,27 @@ struct ExploreView: View {
                     await viewModel.loadTodaysSpecial()
                 }
             } else if newCategory == 2 {
-                Task {
-                    await viewModel.loadLikedRecipes()
+                // Liked category requires authentication
+                if Auth.auth().currentUser != nil {
+                    Task {
+                        await viewModel.loadLikedRecipes()
+                    }
+                } else {
+                    showLoginSheet = true
+                    // Reset to previous category
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        selectedCategory = 0
+                    }
                 }
             }
         }
         .onChange(of: localizationManager.currentLanguage) { _, _ in
             // Trigger view update when language changes
             // The computed categories property will automatically update
+        }
+        .onDisappear {
+            // Cancel search task when view disappears
+            viewModel.searchTask?.cancel()
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeSaved"))) { _ in
             // Refresh recipes when a new recipe is saved
@@ -490,6 +509,62 @@ struct ExploreView: View {
                 } else {
                     // Refresh all recipes for other categories
                     await viewModel.loadRecipes()
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeDeleted"))) { notification in
+            // Refresh recipes when a recipe is deleted
+            Task {
+                let recipeID = notification.userInfo?["recipeID"] as? String
+                
+                // Remove deleted recipe optimistically from current arrays
+                if let recipeID = recipeID {
+                    viewModel.recipes.removeAll { $0.id == recipeID }
+                    viewModel.whatsNew.removeAll { $0.id == recipeID }
+                    viewModel.todaysSpecial.removeAll { $0.id == recipeID }
+                    viewModel.likedRecipes.removeAll { $0.id == recipeID }
+                    viewModel.searchResults.removeAll { $0.id == recipeID }
+                }
+                
+                // Refresh based on current selected category
+                if selectedCategory == 0 {
+                    // Refresh What's New
+                    await viewModel.loadWhatsNew()
+                } else if selectedCategory == 1 {
+                    // Refresh Today's Special
+                    await viewModel.loadTodaysSpecial()
+                } else if selectedCategory == 2 {
+                    // Refresh Liked recipes
+                    await viewModel.loadLikedRecipes()
+                } else {
+                    // Refresh all recipes for other categories
+                    await viewModel.loadRecipes()
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipePrivacyChanged"))) { notification in
+            // Refresh public feeds when a recipe's privacy changes
+            Task {
+                let recipeID = notification.userInfo?["recipeID"] as? String
+                let isPrivate = notification.userInfo?["isPrivate"] as? Bool ?? false
+                
+                // Remove private recipe from public feeds immediately
+                if let recipeID = recipeID, isPrivate {
+                    viewModel.whatsNew.removeAll { $0.id == recipeID }
+                    viewModel.todaysSpecial.removeAll { $0.id == recipeID }
+                    viewModel.recipes.removeAll { $0.id == recipeID }
+                    viewModel.searchResults.removeAll { $0.id == recipeID }
+                }
+                
+                // Refresh based on selected category if recipe was made private
+                if isPrivate {
+                    if selectedCategory == 0 {
+                        await viewModel.loadWhatsNew()
+                    } else if selectedCategory == 1 {
+                        await viewModel.loadTodaysSpecial()
+                    } else if selectedCategory != 2 { // Don't refresh liked recipes (they can have private recipes)
+                        await viewModel.loadRecipes()
+                    }
                 }
             }
         }
@@ -535,16 +610,16 @@ struct CategoryTab: View {
     }
 }
 
-// MARK: - Collections Section
+// MARK: - Cuisines Section
 
-struct CollectionsSection: View {
+struct CuisinesSection: View {
     let recipes: [Recipe]
     @State private var selectedRecipe: Recipe?
     @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(LocalizedString("Collections", comment: "Collections section title"))
+            Text(LocalizedString("Cuisines", comment: "Cuisines section title"))
                 .font(.system(size: 20, weight: .bold))
                 .padding(.horizontal, 16)
                 .onChange(of: localizationManager.currentLanguage) { _, _ in
@@ -636,5 +711,5 @@ struct CollectionRecipeCard: View {
 }
 
 #Preview {
-    ExploreView()
+    ExploreView(showLoginSheet: .constant(false))
 }

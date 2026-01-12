@@ -14,9 +14,9 @@ class ImageCache {
     
     private init() {
         // Configure URLCache for better image caching
-        // Increased sizes for better caching when scrolling
-        let memoryCapacity = 100 * 1024 * 1024 // 100 MB (increased from 50 MB)
-        let diskCapacity = 500 * 1024 * 1024 // 500 MB (increased from 200 MB)
+        // Reduced memory capacity to prevent memory issues
+        let memoryCapacity = 50 * 1024 * 1024 // 50 MB
+        let diskCapacity = 300 * 1024 * 1024 // 300 MB
         
         // Create custom cache with larger capacity
         let urlCache = URLCache(

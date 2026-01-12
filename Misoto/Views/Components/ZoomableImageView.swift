@@ -375,6 +375,12 @@ class ZoomableImageViewController: UIViewController {
         bounceBackTimer?.invalidate()
         bounceBackTimer = nil
     }
+    
+    deinit {
+        // Ensure timer is invalidated when view controller is deallocated
+        bounceBackTimer?.invalidate()
+        bounceBackTimer = nil
+    }
 }
 
 extension ZoomableImageViewController: UIScrollViewDelegate {

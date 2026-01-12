@@ -12,6 +12,7 @@ struct EditProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: AccountViewModel
     @ObservedObject var authViewModel: AuthViewModel
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     @State private var displayName: String = ""
     @State private var username: String = ""
@@ -26,7 +27,8 @@ struct EditProfileView: View {
     @State private var usernameCheckTask: Task<Void, Never>?
     
     var body: some View {
-        NavigationView {
+        let _ = localizationManager.currentLanguage // Force view update when language changes
+        return NavigationView {
             Form {
                 Section {
                     // Profile Picture
@@ -248,6 +250,7 @@ struct EditProfileView: View {
                     await checkUsernameAvailability(newValue)
                 }
             }
+            .localized()
         }
     }
     

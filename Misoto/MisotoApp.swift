@@ -30,11 +30,9 @@ struct MisotoApp: App {
                 if authViewModel.isInitializing {
                     // Show loading screen while checking auth state
                     LoadingView()
-                } else if authViewModel.isAuthenticated {
-                    MainTabView()
-                        .environmentObject(authViewModel)
                 } else {
-                    LoginView()
+                    // Always show MainTabView - authentication checks will be handled within views
+                    MainTabView()
                         .environmentObject(authViewModel)
                 }
             }

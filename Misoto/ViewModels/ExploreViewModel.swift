@@ -16,6 +16,8 @@ class ExploreViewModel: ObservableObject {
     @Published var todaysSpecial: [Recipe] = []
     @Published var likedRecipes: [Recipe] = []
     @Published var isLoading = false
+    @Published var isLoadingMoreRecipes = false
+    @Published var hasMoreRecipes = false
     @Published var isLoadingTodaysSpecial = false
     @Published var isLoadingMoreTodaysSpecial = false
     @Published var hasMoreTodaysSpecial = false
@@ -28,24 +30,49 @@ class ExploreViewModel: ObservableObject {
     @Published var isLoadingMoreWhatsNew = false
     @Published var hasMoreWhatsNew = false
     
-    private let recipeService = RecipeService()
+    private let recipeService = RecipeService.shared
+    private var lastRecipesDocument: DocumentSnapshot?
     private var lastTodaysSpecialDocument: DocumentSnapshot?
     private var lastWhatsNewDocument: DocumentSnapshot?
     private let recipesPerPage = 20
     private let whatsNewPerPage = 10
-    private var searchTask: Task<Void, Never>?
+    private(set) var searchTask: Task<Void, Never>?
     
     func loadRecipes() async {
         isLoading = true
         errorMessage = nil
+        recipes = []
+        lastRecipesDocument = nil
         
         do {
-            recipes = try await recipeService.fetchAllRecipes()
+            let (recipesList, lastDoc) = try await recipeService.fetchLatestRecipes(limit: recipesPerPage, startAfter: nil)
+            recipes = recipesList
+            lastRecipesDocument = lastDoc
+            hasMoreRecipes = recipesList.count >= recipesPerPage
         } catch {
             errorMessage = error.localizedDescription
         }
         
         isLoading = false
+    }
+    
+    func loadMoreRecipes() async {
+        guard !isLoadingMoreRecipes, hasMoreRecipes, let lastDoc = lastRecipesDocument else {
+            return
+        }
+        
+        isLoadingMoreRecipes = true
+        
+        do {
+            let (recipesList, lastDoc) = try await recipeService.fetchLatestRecipes(limit: recipesPerPage, startAfter: lastDoc)
+            recipes.append(contentsOf: recipesList)
+            lastRecipesDocument = lastDoc
+            hasMoreRecipes = recipesList.count >= recipesPerPage
+        } catch {
+            print("⚠️ Error loading more recipes: \(error.localizedDescription)")
+        }
+        
+        isLoadingMoreRecipes = false
     }
     
     func loadTodaysSpecial() async {

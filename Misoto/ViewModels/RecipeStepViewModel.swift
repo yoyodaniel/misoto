@@ -16,7 +16,7 @@ class RecipeStepViewModel: ObservableObject {
     @Published var isFavorite: Bool = false
     @Published var errorMessage: String?
     
-    private let recipeService = RecipeService()
+    private let recipeService = RecipeService.shared
     
     init(recipe: Recipe, initialStepIndex: Int = 0) {
         self.recipe = recipe

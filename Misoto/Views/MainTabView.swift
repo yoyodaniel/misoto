@@ -7,8 +7,10 @@
 
 import SwiftUI
 import UIKit
+import FirebaseAuth
 
 struct MainTabView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showUploadRecipe = false
     @State private var showExtractFromImage = false
     @State private var showExtractFromLink = false
@@ -18,19 +20,33 @@ struct MainTabView: View {
     @State private var capturedImage: UIImage?
     @State private var imageForExtraction: UIImage?
     @State private var pendingExtractionImage: UIImage? // Image waiting to be shown in extract view
+    @State private var showLoginSheet = false
+    @State private var selectedTab = 0
     
     var body: some View {
         ZStack {
-            TabView {
-                ExploreView()
+            TabView(selection: $selectedTab) {
+                ExploreView(showLoginSheet: $showLoginSheet)
                     .tabItem {
                         Label(LocalizedString("Explore", comment: "Explore tab"), systemImage: "menucard.fill")
                     }
+                    .tag(0)
                 
-                AccountView()
+                AccountView(showLoginSheet: $showLoginSheet)
                     .tabItem {
                         Label(LocalizedString("Account", comment: "Account tab"), systemImage: "person.fill")
                     }
+                    .tag(1)
+            }
+            .onChange(of: selectedTab) { _, newTab in
+                // If user taps Account tab and is not authenticated, show login sheet
+                if newTab == 1 && !authViewModel.isAuthenticated {
+                    showLoginSheet = true
+                    // Reset to Explore tab after showing login
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        selectedTab = 0
+                    }
+                }
             }
             
             // Floating Upload Button
@@ -40,7 +56,12 @@ struct MainTabView: View {
                     Spacer()
                     Button(action: {
                         HapticFeedback.buttonTap()
-                        showAddMenuOptions = true
+                        // Check authentication before showing add menu options
+                        if Auth.auth().currentUser != nil {
+                            showAddMenuOptions = true
+                        } else {
+                            showLoginSheet = true
+                        }
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 32))
@@ -61,30 +82,54 @@ struct MainTabView: View {
             titleVisibility: .visible
         ) {
             Button(LocalizedString("Manual Entry", comment: "Manual entry option")) {
-                showUploadRecipe = true
+                if Auth.auth().currentUser != nil {
+                    showUploadRecipe = true
+                } else {
+                    showLoginSheet = true
+                }
             }
             
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 Button(LocalizedString("Take Picture", comment: "Take picture option")) {
-                    showCamera = true
+                    if Auth.auth().currentUser != nil {
+                        showCamera = true
+                    } else {
+                        showLoginSheet = true
+                    }
                 }
             }
             
             Button(LocalizedString("Extract from Image", comment: "Extract from image option")) {
-                // Clear any pending image when manually selecting extract from image
-                pendingExtractionImage = nil
-                showExtractFromImage = true
+                if Auth.auth().currentUser != nil {
+                    // Clear any pending image when manually selecting extract from image
+                    pendingExtractionImage = nil
+                    showExtractFromImage = true
+                } else {
+                    showLoginSheet = true
+                }
             }
             
             Button(LocalizedString("Extract from Link", comment: "Extract from link option")) {
-                showExtractFromLink = true
+                if Auth.auth().currentUser != nil {
+                    showExtractFromLink = true
+                } else {
+                    showLoginSheet = true
+                }
             }
             
             Button(LocalizedString("Extract from Website", comment: "Extract from website option")) {
-                showExtractFromWebsite = true
+                if Auth.auth().currentUser != nil {
+                    showExtractFromWebsite = true
+                } else {
+                    showLoginSheet = true
+                }
             }
             
             Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+        }
+        .sheet(isPresented: $showLoginSheet) {
+            LoginView()
+                .environmentObject(authViewModel)
         }
         .sheet(isPresented: $showUploadRecipe) {
             UploadRecipeView()

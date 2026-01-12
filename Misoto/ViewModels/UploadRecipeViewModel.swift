@@ -38,7 +38,7 @@ class UploadRecipeViewModel: ObservableObject {
     @Published var isGeneratingDescription = false
     @Published var isDetectingCuisine = false
     
-    private let recipeService = RecipeService()
+    private let recipeService = RecipeService.shared
     private let storageService = StorageService()
     private let authService = AuthService()
     
@@ -354,12 +354,12 @@ class UploadRecipeViewModel: ObservableObject {
             return
         }
         
-        // Get username from AuthService (ensure user data is loaded)
+        // Get display name from AuthService (ensure user data is loaded)
         await authService.reloadUserData()
         let username = authService.currentUser?.username
         let displayName = authService.currentUser?.displayName ?? Auth.auth().currentUser?.displayName ?? "User"
-        // Use username for authorName if available, otherwise fall back to displayName
-        let authorName = username ?? displayName
+        // Use display name (actual name) for authorName, fall back to username if display name is empty
+        let authorName = displayName.isEmpty ? (username ?? "User") : displayName
         
         // Validate
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {

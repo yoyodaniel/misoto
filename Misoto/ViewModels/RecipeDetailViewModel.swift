@@ -21,7 +21,7 @@ class RecipeDetailViewModel: ObservableObject {
     @Published var isLoadingMoreNotes: Bool = false
     @Published var hasMoreNotes: Bool = false
     
-    private let recipeService = RecipeService()
+    private let recipeService = RecipeService.shared
     private let noteService = RecipeNoteService()
     private let notesPerPage = 5
     private var lastNoteDocument: DocumentSnapshot?
@@ -61,6 +61,15 @@ class RecipeDetailViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
+        // Lazy update: Refresh author info if stale (cost-effective approach)
+        // This only updates the recipe if author info changed, and only when viewed
+        do {
+            recipe = try await recipeService.refreshRecipeAuthorInfoIfNeeded(recipe)
+        } catch {
+            // Log error but don't fail the load
+            print("⚠️ Error refreshing recipe author info: \(error.localizedDescription)")
+        }
+        
         await checkFavoriteStatus()
         await loadNoteCount()
         await loadUserNotes()
@@ -82,17 +91,29 @@ class RecipeDetailViewModel: ObservableObject {
     func toggleFavorite() async {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
+        // Update state optimistically for immediate UI feedback
+        let wasFavorite = isFavorite
+        isFavorite.toggle()
+        if wasFavorite {
+            recipe.favoriteCount = max(0, recipe.favoriteCount - 1)
+        } else {
+            recipe.favoriteCount += 1
+        }
+        
         do {
-            if isFavorite {
+            if wasFavorite {
                 try await recipeService.removeFavorite(recipeID: recipe.id, userID: userID)
-                isFavorite = false
-                recipe.favoriteCount = max(0, recipe.favoriteCount - 1)
             } else {
                 try await recipeService.addFavorite(recipeID: recipe.id, userID: userID)
-                isFavorite = true
-                recipe.favoriteCount += 1
             }
         } catch {
+            // Revert state on error
+            isFavorite = wasFavorite
+            if wasFavorite {
+                recipe.favoriteCount += 1
+            } else {
+                recipe.favoriteCount = max(0, recipe.favoriteCount - 1)
+            }
             errorMessage = error.localizedDescription
             print("⚠️ Error toggling favorite: \(error.localizedDescription)")
         }
@@ -185,12 +206,92 @@ class RecipeDetailViewModel: ObservableObject {
     
     func refreshRecipe() async {
         do {
-            if let updatedRecipe = try await recipeService.fetchRecipe(byID: recipe.id) {
+            if var updatedRecipe = try await recipeService.fetchRecipe(byID: recipe.id) {
+                // Lazy update: Refresh author info if stale (cost-effective approach)
+                updatedRecipe = try await recipeService.refreshRecipeAuthorInfoIfNeeded(updatedRecipe)
                 recipe = updatedRecipe
-                await loadData()
+                // Refresh related data (notes, favorite status) without re-fetching recipe
+                await checkFavoriteStatus()
+                await loadNoteCount()
+                await loadUserNotes()
             }
         } catch {
             errorMessage = error.localizedDescription
+            print("❌ Error refreshing recipe: \(error.localizedDescription)")
+        }
+    }
+    
+    func togglePrivacy(clearSharedWith: Bool = false) async {
+        guard let userID = Auth.auth().currentUser?.uid,
+              recipe.authorID == userID else {
+            return
+        }
+        
+        let newPrivacyStatus = !recipe.isPrivate
+        
+        // Optimistic update: Update UI immediately
+        let currentSharedWith = recipe.sharedWith
+        recipe.isPrivate = newPrivacyStatus
+        
+        // If making private and clearSharedWith is true: Save current sharedWith to preservedSharedWith, then clear sharedWith
+        if newPrivacyStatus && clearSharedWith {
+            // Save current sharedWith to preservedSharedWith before clearing (if it has users)
+            if !currentSharedWith.isEmpty {
+                recipe.preservedSharedWith = currentSharedWith
+            }
+            // Always clear sharedWith when making "Private to All" (removes access)
+            recipe.sharedWith = []
+        }
+        // When making public: Restore preservedSharedWith to sharedWith if it exists
+        else if !newPrivacyStatus {
+            // Restore preserved sharedWith list if it exists
+            if let preserved = recipe.preservedSharedWith, !preserved.isEmpty {
+                recipe.sharedWith = preserved
+                recipe.preservedSharedWith = nil // Clear preserved list after restore
+            }
+            // If no preserved list, keep current sharedWith as-is
+        }
+        // When making private with clearSharedWith=false: Preserve sharedWith (for "Private Sharing" flow)
+        //   No changes needed - sharedWith is already set correctly
+        
+        // Update backend
+        do {
+            try await recipeService.toggleRecipePrivacy(recipeID: recipe.id, isPrivate: newPrivacyStatus, clearSharedWith: clearSharedWith)
+            print("✅ Recipe privacy updated to: \(newPrivacyStatus ? "private" : "public"), sharedWith cleared: \(clearSharedWith)")
+        } catch {
+            // Revert optimistic update on error
+            recipe.isPrivate = !newPrivacyStatus
+            if newPrivacyStatus && clearSharedWith {
+                // Would need to restore original sharedWith, but we'll refresh from server instead
+            }
+            errorMessage = error.localizedDescription
+            print("❌ Error toggling recipe privacy: \(error.localizedDescription)")
+        }
+    }
+    
+    func updateSharing(sharedWith: [String]) async {
+        guard let userID = Auth.auth().currentUser?.uid,
+              recipe.authorID == userID else {
+            return
+        }
+        
+        // Optimistic update: Update UI immediately
+        recipe.sharedWith = sharedWith
+        recipe.isPrivate = true // Must be private to share with specific users
+        recipe.preservedSharedWith = nil // Clear preserved list when user explicitly sets sharing
+        
+        // Update backend
+        do {
+            try await recipeService.updateRecipeSharing(recipeID: recipe.id, sharedWith: sharedWith)
+            print("✅ Recipe sharing updated. Shared with \(sharedWith.count) user(s)")
+        } catch {
+            // Revert optimistic update on error - would need to reload from server
+            errorMessage = error.localizedDescription
+            print("❌ Error updating recipe sharing: \(error.localizedDescription)")
+            // Reload recipe to get correct state
+            if let updatedRecipe = try? await recipeService.fetchRecipe(byID: recipe.id) {
+                recipe = updatedRecipe
+            }
         }
     }
     

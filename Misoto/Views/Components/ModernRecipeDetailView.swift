@@ -11,7 +11,7 @@ import FirebaseAuth
 struct ModernRecipeDetailView: View {
     let recipe: Recipe
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var recipeService = RecipeService()
+    private let recipeService = RecipeService.shared
     @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var isFavorite = false
     @State private var currentStep = 0
@@ -274,17 +274,21 @@ struct ModernRecipeDetailView: View {
     private func toggleFavorite() {
         guard let userID = FirebaseAuth.Auth.auth().currentUser?.uid else { return }
         
+        // Update state optimistically for immediate UI feedback
+        let wasFavorite = isFavorite
+        isFavorite.toggle()
+        
         Task {
             do {
-                if isFavorite {
+                if wasFavorite {
                     try await recipeService.removeFavorite(recipeID: recipe.id, userID: userID)
-                    isFavorite = false
                 } else {
                     try await recipeService.addFavorite(recipeID: recipe.id, userID: userID)
-                    isFavorite = true
                 }
             } catch {
-                // Silently fail
+                // Revert state on error
+                isFavorite = wasFavorite
+                print("⚠️ Error toggling favorite: \(error.localizedDescription)")
             }
         }
     }

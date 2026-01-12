@@ -378,6 +378,7 @@ class AuthService: ObservableObject {
             
             if let user = try? document.data(as: AppUser.self) {
                 currentUser = user
+                print("✅ User data loaded - followerCount: \(user.followerCount), followingCount: \(user.followingCount)")
             }
         } catch {
             print("⚠️ Error loading user data: \(error.localizedDescription)")
@@ -506,6 +507,16 @@ class AuthService: ObservableObject {
         }
         
         try await userRef.updateData(updateData)
+        
+        // Note: We don't batch update all recipes here for cost/performance reasons.
+        // Instead, we use lazy updates:
+        // - Recipe views already fetch fresh user data when displaying (ChefSectionView)
+        // - Recipes will be updated with new author info when they are next viewed/edited
+        // - This approach is more cost-effective and scales better
+        
+        // Post notification that user profile was updated (for views that cache user data)
+        NotificationCenter.default.post(name: NSNotification.Name("UserProfileUpdated"), object: nil, userInfo: ["userID": userID])
+        
         await reloadUserData()
     }
     

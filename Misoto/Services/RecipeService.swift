@@ -12,9 +12,13 @@ import FirebaseAuth
 
 @MainActor
 class RecipeService: ObservableObject {
+    static let shared = RecipeService()
+    
     private let firestore = FirebaseManager.shared.firestore
     private let recipesCollection = "recipes"
     private let favoritesCollection = "favorites"
+    
+    private init() {}
     
     // MARK: - Create Recipe
     
@@ -50,7 +54,13 @@ class RecipeService: ObservableObject {
         // Filter out recipes from banned users and hidden recipes
         let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: recipes)
         // Also filter recipes with report count >= 10 (defensive check in case isHidden wasn't set)
-        return filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
+        // Filter out private recipes from public feeds (unless shared with current user)
+        let currentUserID = Auth.auth().currentUser?.uid
+        return filteredRecipes.filter { recipe in
+            !recipe.isHidden && 
+            recipe.reportCount < 10 &&
+            (!recipe.isPrivate || recipe.authorID == currentUserID || (currentUserID != nil && recipe.sharedWith.contains(currentUserID ?? ""))) // Allow if public, owner, or shared with user
+        }
     }
     
     /// Fetch latest recipes with pagination, ordered by creation date (newest first)
@@ -84,7 +94,13 @@ class RecipeService: ObservableObject {
         // Filter out recipes from banned users and hidden recipes
         let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: recipes)
         // Also filter recipes with report count >= 10 (defensive check in case isHidden wasn't set)
-        let finalRecipes = filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
+        // Filter out ALL private recipes from public feeds (even if shared with current user)
+        // Shared recipes should only be accessible via direct link/search, not public feeds
+        let finalRecipes = filteredRecipes.filter { recipe in
+            !recipe.isHidden &&
+            recipe.reportCount < 10 &&
+            !recipe.isPrivate // Exclude all private recipes (including shared ones) from public feeds
+        }
         
         // Get the last document for pagination
         let lastDocument = snapshot.documents.last
@@ -137,7 +153,13 @@ class RecipeService: ObservableObject {
         // Filter out recipes from banned users and hidden recipes
         let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: recipes)
         // Also filter recipes with report count >= 10 (defensive check in case isHidden wasn't set)
-        let finalRecipes = filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
+        // Filter out ALL private recipes from public feeds (even if shared with current user)
+        // Shared recipes should only be accessible via direct link/search, not public feeds
+        let finalRecipes = filteredRecipes.filter { recipe in
+            !recipe.isHidden &&
+            recipe.reportCount < 10 &&
+            !recipe.isPrivate // Exclude all private recipes (including shared ones) from public feeds
+        }
         
         // Get the last document for pagination
         let lastDocument = snapshot.documents.last
@@ -147,7 +169,23 @@ class RecipeService: ObservableObject {
     
     func fetchRecipe(byID recipeID: String) async throws -> Recipe? {
         let document = try await firestore.collection(recipesCollection).document(recipeID).getDocument()
-        return try? document.data(as: Recipe.self)
+        guard let recipe = try? document.data(as: Recipe.self) else {
+            return nil
+        }
+        
+        // Check if recipe is private and user has access (owner or shared with user)
+        let currentUserID = Auth.auth().currentUser?.uid
+        if recipe.isPrivate {
+            let isOwner = recipe.authorID == currentUserID
+            let isSharedWithUser = currentUserID != nil && recipe.sharedWith.contains(currentUserID!)
+            
+            if !isOwner && !isSharedWithUser {
+                // Private recipe and user doesn't have access - don't return it
+                return nil
+            }
+        }
+        
+        return recipe
     }
     
     /// Search recipes by query string (searches in title, description, and ingredient names)
@@ -177,7 +215,14 @@ class RecipeService: ObservableObject {
         
         // Filter out recipes from banned users and hidden recipes
         let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: recipes)
-        let visibleRecipes = filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
+        // Filter out private recipes from search (unless shared with current user or user is owner)
+        // Shared recipes should be searchable by the users they're shared with
+        let currentUserID = Auth.auth().currentUser?.uid
+        let visibleRecipes = filteredRecipes.filter { recipe in
+            !recipe.isHidden &&
+            recipe.reportCount < 10 &&
+            (!recipe.isPrivate || recipe.authorID == currentUserID || (currentUserID != nil && recipe.sharedWith.contains(currentUserID ?? ""))) // Allow if public, owner, or shared with user
+        }
         
         // Perform case-insensitive search with word-based matching
         let searchQuery = query.lowercased().trimmingCharacters(in: .whitespaces)
@@ -250,6 +295,138 @@ class RecipeService: ObservableObject {
         var updatedRecipe = recipe
         updatedRecipe.updatedAt = Date()
         try recipeRef.setData(from: updatedRecipe, merge: true)
+    }
+    
+    /// Toggle recipe privacy (private recipes are only visible to the owner and shared users)
+    /// - Parameters:
+    ///   - recipeID: The ID of the recipe
+    ///   - isPrivate: The new privacy status
+    ///   - clearSharedWith: If true, clear the sharedWith array when making private (default: false, preserves it)
+    func toggleRecipePrivacy(recipeID: String, isPrivate: Bool, clearSharedWith: Bool = false) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw RecipeError.unauthorized
+        }
+        
+        // Verify ownership - fetch directly from Firestore without client-side filtering
+        let recipeDoc = try await firestore.collection(recipesCollection).document(recipeID).getDocument()
+        guard let recipeData = try? recipeDoc.data(as: Recipe.self),
+              recipeData.authorID == userID else {
+            throw RecipeError.unauthorized
+        }
+        
+        // Get current sharedWith and preservedSharedWith arrays from Firestore
+        let currentSharedWith = recipeData.sharedWith
+        let currentPreservedSharedWith = recipeData.preservedSharedWith
+        
+        // Update privacy status
+        let recipeRef = firestore.collection(recipesCollection).document(recipeID)
+        var updateData: [String: Any] = [
+            "isPrivate": isPrivate,
+            "updatedAt": Timestamp(date: Date())
+        ]
+        
+        // When making private with clearSharedWith=true: Save current sharedWith to preservedSharedWith, then clear sharedWith
+        //   This allows restoring the list when switching back to "Public to All" or opening "Private Sharing"
+        if isPrivate && clearSharedWith {
+            // Save current sharedWith to preservedSharedWith before clearing (if it has users)
+            if !currentSharedWith.isEmpty {
+                updateData["preservedSharedWith"] = currentSharedWith
+            }
+            // Always clear sharedWith when making "Private to All" (removes access)
+            updateData["sharedWith"] = []
+        }
+        // When making public: Restore preservedSharedWith to sharedWith if it exists, then clear preservedSharedWith
+        //   This restores the previous sharing list when switching back to public
+        else if !isPrivate {
+            // Restore preserved sharedWith list if it exists
+            if let preserved = currentPreservedSharedWith, !preserved.isEmpty {
+                updateData["sharedWith"] = preserved
+                updateData["preservedSharedWith"] = FieldValue.delete() // Clear preserved list after restore
+            }
+            // If no preserved list, keep current sharedWith as-is
+        }
+        // When making private with clearSharedWith=false: Preserve sharedWith (for "Private Sharing" flow)
+        //   No changes needed - sharedWith is already set correctly
+        
+        try await recipeRef.updateData(updateData)
+        
+        print("✅ Recipe \(recipeID) privacy set to: \(isPrivate ? "private" : "public"), sharedWith cleared: \(clearSharedWith)")
+        
+        // Post notification to refresh public feeds (ExploreView, etc.)
+        NotificationCenter.default.post(name: NSNotification.Name("RecipePrivacyChanged"), object: nil, userInfo: ["recipeID": recipeID, "isPrivate": isPrivate, "clearSharedWith": clearSharedWith])
+    }
+    
+    /// Update sharedWith array for a recipe (add/remove users who can view the recipe)
+    /// This also clears preservedSharedWith since the user is explicitly setting the sharing list
+    func updateRecipeSharing(recipeID: String, sharedWith: [String]) async throws {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw RecipeError.unauthorized
+        }
+        
+        // Verify ownership
+        let recipeDoc = try await firestore.collection(recipesCollection).document(recipeID).getDocument()
+        guard let recipeData = try? recipeDoc.data(as: Recipe.self),
+              recipeData.authorID == userID else {
+            throw RecipeError.unauthorized
+        }
+        
+        // Ensure recipe is private when sharing (can't share public recipes with specific users)
+        // Clear preservedSharedWith since user is explicitly setting a new sharing list
+        let recipeRef = firestore.collection(recipesCollection).document(recipeID)
+        var updateData: [String: Any] = [
+            "isPrivate": true, // Must be private to share with specific users
+            "sharedWith": sharedWith,
+            "updatedAt": Timestamp(date: Date())
+        ]
+        // Clear preservedSharedWith when user explicitly sets sharing (they're choosing new users)
+        updateData["preservedSharedWith"] = FieldValue.delete()
+        
+        try await recipeRef.updateData(updateData)
+        
+        print("✅ Recipe \(recipeID) sharing updated. Shared with \(sharedWith.count) user(s)")
+        
+        // Post notification to refresh views
+        NotificationCenter.default.post(name: NSNotification.Name("RecipeSharingChanged"), object: nil, userInfo: ["recipeID": recipeID, "sharedWith": sharedWith])
+    }
+    
+    /// Update a recipe's author info if it's stale (lazy update)
+    /// This is called when a recipe is viewed/edited to ensure author info is current
+    /// Returns the updated recipe, or the original recipe if no update was needed
+    func refreshRecipeAuthorInfoIfNeeded(_ recipe: Recipe) async throws -> Recipe {
+        // Fetch current user data
+        guard let userDoc = try? await firestore.collection("users").document(recipe.authorID).getDocument(),
+              let userData = try? userDoc.data(as: AppUser.self) else {
+            return recipe // Can't fetch user data, return original recipe
+        }
+        
+        // Check if author info needs updating
+        let needsUpdate = recipe.authorName != userData.displayName ||
+                         recipe.authorUsername != userData.username
+        
+        guard needsUpdate else {
+            return recipe // Already up to date
+        }
+        
+        // Update only this recipe (lazy update - only when viewed/edited)
+        var updateData: [String: Any] = [
+            "authorName": userData.displayName,
+            "updatedAt": Timestamp(date: Date())
+        ]
+        
+        if let username = userData.username {
+            updateData["authorUsername"] = username
+        }
+        
+        let recipeRef = firestore.collection(recipesCollection).document(recipe.id)
+        try await recipeRef.updateData(updateData)
+        print("✅ Updated author info for recipe \(recipe.id) (lazy update)")
+        
+        // Return updated recipe
+        var updatedRecipe = recipe
+        updatedRecipe.authorName = userData.displayName
+        updatedRecipe.authorUsername = userData.username
+        updatedRecipe.updatedAt = Date()
+        return updatedRecipe
     }
     
     // MARK: - Delete Recipe
@@ -382,7 +559,13 @@ class RecipeService: ObservableObject {
         // Filter out recipes from banned users and hidden recipes
         let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: recipes.sorted { $0.createdAt > $1.createdAt })
         // Also filter recipes with report count >= 10 (defensive check in case isHidden wasn't set)
-        return filteredRecipes.filter { !$0.isHidden && $0.reportCount < 10 }
+        // For favorites, show private recipes if they belong to the current user or are shared with them
+        let currentUserID = Auth.auth().currentUser?.uid
+        return filteredRecipes.filter { recipe in
+            !recipe.isHidden &&
+            recipe.reportCount < 10 &&
+            (!recipe.isPrivate || recipe.authorID == currentUserID || (currentUserID != nil && recipe.sharedWith.contains(currentUserID!))) // Show if public, owner, or shared with user
+        }
     }
     
     // MARK: - Helper Methods
@@ -411,9 +594,16 @@ class RecipeService: ObservableObject {
     // MARK: - Filter Banned Users
     
     /// Filters out recipes from banned users
+    /// Note: This works for both authenticated and unauthenticated users
+    /// If ban check fails, recipes are still returned (err on side of caution)
     private func filterRecipesFromBannedUsers(recipes: [Recipe]) async throws -> [Recipe] {
         // Get unique author IDs
         let authorIDs = Set(recipes.map { $0.authorID })
+        
+        // If no recipes, return early
+        guard !authorIDs.isEmpty else {
+            return recipes
+        }
         
         // Batch check which users are banned
         var bannedUserIDs: Set<String> = []
@@ -429,8 +619,11 @@ class RecipeService: ObservableObject {
                         }
                         return (authorID, false)
                     } catch {
+                        // If error checking ban status (e.g., permission denied for unauthenticated users),
+                        // err on the side of caution and don't filter out the recipe
+                        // This allows recipes to load even if ban check fails
                         print("⚠️ Error checking ban status for user \(authorID): \(error.localizedDescription)")
-                        return (authorID, false) // Err on the side of caution - don't filter if we can't verify
+                        return (authorID, false)
                     }
                 }
             }

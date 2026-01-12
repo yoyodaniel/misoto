@@ -37,6 +37,9 @@ struct Recipe: Identifiable, Codable {
     var favoriteCount: Int
     var reportCount: Int
     var isHidden: Bool
+    var isPrivate: Bool
+    var sharedWith: [String] // Array of user IDs who have access to this recipe when isPrivate is true
+    var preservedSharedWith: [String]? // Preserved sharedWith list when making "Private to All" (allows restore later)
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -67,6 +70,9 @@ struct Recipe: Identifiable, Codable {
         case favoriteCount
         case reportCount
         case isHidden
+        case isPrivate
+        case sharedWith
+        case preservedSharedWith
     }
     
     init(from decoder: Decoder) throws {
@@ -151,6 +157,9 @@ struct Recipe: Identifiable, Codable {
         favoriteCount = try container.decodeIfPresent(Int.self, forKey: .favoriteCount) ?? 0
         reportCount = try container.decodeIfPresent(Int.self, forKey: .reportCount) ?? 0
         isHidden = try container.decodeIfPresent(Bool.self, forKey: .isHidden) ?? false
+        isPrivate = try container.decodeIfPresent(Bool.self, forKey: .isPrivate) ?? false
+        sharedWith = try container.decodeIfPresent([String].self, forKey: .sharedWith) ?? []
+        preservedSharedWith = try container.decodeIfPresent([String].self, forKey: .preservedSharedWith)
         
         // Optional fields
         // Handle cuisine with backward compatibility
@@ -315,7 +324,10 @@ struct Recipe: Identifiable, Codable {
         updatedAt: Date = Date(),
         favoriteCount: Int = 0,
         reportCount: Int = 0,
-        isHidden: Bool = false
+        isHidden: Bool = false,
+        isPrivate: Bool = false,
+        sharedWith: [String] = [],
+        preservedSharedWith: [String]? = nil
     ) {
         self.id = id
         
@@ -397,6 +409,9 @@ struct Recipe: Identifiable, Codable {
         self.favoriteCount = favoriteCount
         self.reportCount = reportCount
         self.isHidden = isHidden
+        self.isPrivate = isPrivate
+        self.sharedWith = sharedWith
+        self.preservedSharedWith = preservedSharedWith
     }
     
     /// Get the appropriate cuisine name based on the current language setting
@@ -406,6 +421,22 @@ struct Recipe: Identifiable, Codable {
             return nil
         }
         return CuisineTranslations.translatedName(for: englishCuisine)
+    }
+    
+    /// Get the effective shared users count (from sharedWith or preservedSharedWith)
+    /// This allows showing the count even when recipe is "Private to All" (sharedWith is empty but preservedSharedWith has users)
+    var effectiveSharedCount: Int {
+        if !sharedWith.isEmpty {
+            return sharedWith.count
+        } else if let preserved = preservedSharedWith, !preserved.isEmpty {
+            return preserved.count
+        }
+        return 0
+    }
+    
+    /// Check if recipe has any shared users (either active or preserved)
+    var hasSharedUsers: Bool {
+        return effectiveSharedCount > 0
     }
 }
 

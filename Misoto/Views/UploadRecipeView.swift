@@ -804,6 +804,10 @@ struct UploadRecipeView: View {
                     }
                 }
             }
+            .onDisappear {
+                // Cancel cuisine detection task when view disappears
+                cuisineDetectionTask?.cancel()
+            }
             .overlay {
                 if viewModel.isLoading {
                     Color.black.opacity(0.3)

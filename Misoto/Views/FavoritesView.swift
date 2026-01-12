@@ -56,6 +56,20 @@ struct FavoritesView: View {
         .fullScreenCover(item: $selectedRecipe) { recipe in
             RecipeDetailOverviewView(recipe: recipe)
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeDeleted"))) { notification in
+            // Refresh favorites when a recipe is deleted
+            Task {
+                let recipeID = notification.userInfo?["recipeID"] as? String
+                
+                // Remove deleted recipe optimistically from favorites
+                if let recipeID = recipeID {
+                    viewModel.favoriteRecipes.removeAll { $0.id == recipeID }
+                }
+                
+                // Reload favorites to ensure consistency
+                await viewModel.loadFavorites()
+            }
+        }
     }
 }
 

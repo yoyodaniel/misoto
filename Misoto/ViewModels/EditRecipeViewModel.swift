@@ -44,13 +44,15 @@ class EditRecipeViewModel: ObservableObject {
     private var imageIndexToURL: [Int: String] = [:]
     // Track which URLs were explicitly deleted (for cleanup from storage)
     private var deletedImageURLs: Set<String> = []
+    // Track image loading tasks for cleanup
+    private var imageLoadingTasks: [Task<Void, Never>] = []
     
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var isGeneratingDescription = false
     @Published var isDetectingCuisine = false
     
-    private let recipeService = RecipeService()
+    private let recipeService = RecipeService.shared
     private let storageService = StorageService()
     
     struct InstructionItem {
@@ -72,6 +74,14 @@ class EditRecipeViewModel: ObservableObject {
     init(recipe: Recipe) {
         self.recipe = recipe
         loadRecipeData()
+    }
+    
+    deinit {
+        // Cancel all image loading tasks when ViewModel is deallocated
+        for task in imageLoadingTasks {
+            task.cancel()
+        }
+        imageLoadingTasks.removeAll()
     }
     
     private func loadRecipeData() {
@@ -166,9 +176,10 @@ class EditRecipeViewModel: ObservableObject {
         // Load existing images from URLs asynchronously and track their indices
         for (index, urlString) in existingURLs.enumerated() {
             imageIndexToURL[index] = urlString
-            Task {
+            let task = Task {
                 await loadImageFromURL(urlString, at: index)
             }
+            imageLoadingTasks.append(task)
         }
         
         // Store source image URLs if available (use array, fallback to single URL for backward compatibility)
@@ -462,7 +473,7 @@ class EditRecipeViewModel: ObservableObject {
     // MARK: - Save Recipe
     
     func updateRecipe() async -> Bool {
-        guard let userID = Auth.auth().currentUser?.uid else {
+        guard Auth.auth().currentUser != nil else {
             errorMessage = LocalizedString("You must be logged in to update a recipe", comment: "Not logged in error")
             return false
         }
@@ -588,7 +599,10 @@ class EditRecipeViewModel: ObservableObject {
             // Save cuisine in English (translations are handled by CuisineTranslations)
             let cuisineEnglish: String? = cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil
             
-            // Create updated recipe
+            // Lazy update: Refresh author info if stale before creating updated recipe (cost-effective approach)
+            let recipeWithFreshAuthor = try await recipeService.refreshRecipeAuthorInfoIfNeeded(recipe)
+            
+            // Create updated recipe with fresh author info
             let updatedRecipe = Recipe(
                 id: recipe.id, // Keep original ID
                 title: primaryTitle, // Use original language as primary
@@ -610,9 +624,9 @@ class EditRecipeViewModel: ObservableObject {
                 imageURLs: finalImageURLs, // Array of all image URLs
                 sourceImageURL: recipe.sourceImageURLs.first ?? recipe.sourceImageURL, // For backward compatibility
                 sourceImageURLs: recipe.sourceImageURLs, // Preserve original source image URLs
-                authorID: recipe.authorID, // Keep original author
-                authorName: recipe.authorName, // Keep original author name
-                authorUsername: recipe.authorUsername, // Keep original author username
+                authorID: recipeWithFreshAuthor.authorID, // Keep original author ID
+                authorName: recipeWithFreshAuthor.authorName, // Use fresh author name
+                authorUsername: recipeWithFreshAuthor.authorUsername, // Use fresh author username
                 createdAt: recipe.createdAt, // Keep original creation date
                 updatedAt: Date(), // Update this
                 favoriteCount: recipe.favoriteCount // Keep original favorite count

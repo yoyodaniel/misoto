@@ -42,7 +42,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
     @Published var mainRecipeImages: [UIImage] = [] // Up to 5 images for the recipe
     private var sourceImage: UIImage? = nil // Source image used for extraction
     
-    private let recipeService = RecipeService()
+    private let recipeService = RecipeService.shared
     private let storageService = StorageService()
     
     // Cost optimization settings
@@ -421,13 +421,13 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             return false
         }
         
-        // Get username from AuthService (ensure user data is loaded)
+        // Get display name from AuthService (ensure user data is loaded)
         let authService = AuthService()
         await authService.reloadUserData()
         let username = authService.currentUser?.username
         let displayName = authService.currentUser?.displayName ?? Auth.auth().currentUser?.displayName ?? "User"
-        // Use username for authorName if available, otherwise fall back to displayName
-        let authorName = username ?? displayName
+        // Use display name (actual name) for authorName, fall back to username if display name is empty
+        let authorName = displayName.isEmpty ? (username ?? "User") : displayName
         
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
             errorMessage = LocalizedString("Title is required", comment: "Title required error")

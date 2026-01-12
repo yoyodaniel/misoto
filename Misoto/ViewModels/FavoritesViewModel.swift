@@ -15,7 +15,7 @@ class FavoritesViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    private let recipeService = RecipeService()
+    private let recipeService = RecipeService.shared
     
     func loadFavorites() async {
         guard let userID = Auth.auth().currentUser?.uid else {

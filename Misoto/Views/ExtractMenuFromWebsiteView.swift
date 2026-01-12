@@ -416,6 +416,10 @@ struct ExtractMenuFromWebsiteView: View {
                 }
             }
         }
+        .onDisappear {
+            // Cancel cuisine detection task when view disappears
+            cuisineDetectionTask?.cancel()
+        }
     }
     
     @ViewBuilder

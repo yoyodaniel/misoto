@@ -10,7 +10,7 @@ import FirebaseAuth
 
 struct RecipeCard: View {
     let recipe: Recipe
-    @StateObject private var recipeService = RecipeService()
+    private let recipeService = RecipeService.shared
     @State private var isFavorite = false
     @State private var isLoadingFavorite = false
     
@@ -65,7 +65,7 @@ struct RecipeCard: View {
                 
                 HStack {
                     Text(recipe.authorName)
-                        .font(.caption)
+                        .font(.system(size: 14))
                         .foregroundColor(.secondary)
                     
                     Spacer()

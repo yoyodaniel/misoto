@@ -24,13 +24,16 @@ struct SettingsView: View {
     @State private var showReAuthenticate = false
     @State private var showPrivacyPolicy = false
     @State private var showTermsOfService = false
+    @State private var showPremium = false
     @State private var deleteAccountError: String?
     @StateObject private var accountViewModel = AccountViewModel()
+    @StateObject private var subscriptionViewModel = SubscriptionViewModel()
     private let authService = AuthService()
     
     // Section expansion states
     @State private var isAppearanceExpanded = true
     @State private var isLanguageExpanded = true
+    @State private var isSubscriptionExpanded = true
     @State private var isShareExpanded = true
     @State private var isFeedbackExpanded = true
     @State private var isPrivacyTermsExpanded = true
@@ -119,6 +122,94 @@ struct SettingsView: View {
                 } footer: {
                     if isLanguageExpanded {
                         Text(LocalizedString("The language selected will be used as the default writing language for recipe extractions.", comment: "Language selection footnote"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                // MARK: - Subscription Section
+                Section {
+                    DisclosureGroup(isExpanded: $isSubscriptionExpanded) {
+                        // Account Type Row
+                        HStack(alignment: .center) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "person.fill")
+                                        .foregroundColor(.blue)
+                                        .font(.system(size: 16))
+                                    Text(LocalizedString("Account Type", comment: "Account type label"))
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                                Text(subscriptionViewModel.hasPremium ? LocalizedString("Premium", comment: "Premium account type") : LocalizedString("Free", comment: "Free account type"))
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                            }
+                            Spacer()
+                            Button(action: {
+                                HapticFeedback.buttonTap()
+                                showPremium = true
+                            }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "crown.fill")
+                                        .font(.system(size: 14))
+                                    Text(LocalizedString("Upgrade Now", comment: "Upgrade now button"))
+                                        .font(.system(size: 14, weight: .semibold))
+                                }
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color.yellow)
+                                .cornerRadius(8)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                        
+                        // Usage Statistics
+                        HStack(spacing: 20) {
+                            // AI Extractions
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "sparkles")
+                                        .foregroundColor(.purple)
+                                        .font(.system(size: 16))
+                                    Text(LocalizedString("AI Extractions", comment: "AI extractions label"))
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                                Text("\(subscriptionViewModel.aiImageExtractionCountThisMonth) / \(FreeTierLimits.maxAIImageExtractionsPerMonth)")
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                            }
+                            
+                            Spacer()
+                            
+                            // Recipes
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "menucard")
+                                        .foregroundColor(.green)
+                                        .font(.system(size: 16))
+                                    Text(LocalizedString("Recipes", comment: "Recipes label"))
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                                HStack {
+                                    Text("\(subscriptionViewModel.recipeCountThisMonth) / \(FreeTierLimits.maxRecipesPerMonth)")
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                    Spacer()
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    } label: {
+                        Text(LocalizedString("Subscription", comment: "Subscription section header"))
+                            .font(.headline)
+                    }
+                } footer: {
+                    if isSubscriptionExpanded {
+                        Text(LocalizedString("AI extractions (from images, links, or websites) share a combined monthly limit.", comment: "AI extractions limit explanation"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -378,8 +469,14 @@ struct SettingsView: View {
             .sheet(isPresented: $showTermsOfService) {
                 TermsOfServiceView()
             }
+            .sheet(isPresented: $showPremium) {
+                PremiumView()
+            }
             .onAppear {
                 accountViewModel.authViewModel = authViewModel
+                Task {
+                    await subscriptionViewModel.loadData()
+                }
             }
         }
     }

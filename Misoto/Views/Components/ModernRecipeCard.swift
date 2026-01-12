@@ -10,7 +10,8 @@ import FirebaseAuth
 
 struct ModernRecipeCard: View {
     let recipe: Recipe
-    @StateObject private var recipeService = RecipeService()
+    var showLoginSheet: Binding<Bool>? = nil
+    private let recipeService = RecipeService.shared
     @State private var isFavorite = false
     
     var body: some View {
@@ -67,7 +68,12 @@ struct ModernRecipeCard: View {
                             Spacer()
                             Button(action: {
                                 HapticFeedback.importantAction()
-                                toggleFavorite()
+                                // Check authentication before toggling favorite
+                                if Auth.auth().currentUser != nil {
+                                    toggleFavorite()
+                                } else {
+                                    showLoginSheet?.wrappedValue = true
+                                }
                             }) {
                                 Image(systemName: isFavorite ? "heart.fill" : "heart")
                                     .font(.system(size: 22))
@@ -110,7 +116,7 @@ struct ModernRecipeCard: View {
                                 Text(LocalizedString("by", comment: "Author by prefix"))
                                     .font(.caption)
                                 Text(recipe.authorName)
-                                    .font(.custom("Caveat", size: 16))
+                                    .font(.custom("Caveat", size: 18))
                                     .fontWeight(.bold)
                             }
                             .foregroundColor(.white.opacity(0.85))
@@ -186,17 +192,21 @@ struct ModernRecipeCard: View {
     private func toggleFavorite() {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
+        // Update state optimistically for immediate UI feedback
+        let wasFavorite = isFavorite
+        isFavorite.toggle()
+        
         Task {
             do {
-                if isFavorite {
+                if wasFavorite {
                     try await recipeService.removeFavorite(recipeID: recipe.id, userID: userID)
-                    isFavorite = false
                 } else {
                     try await recipeService.addFavorite(recipeID: recipe.id, userID: userID)
-                    isFavorite = true
                 }
             } catch {
-                // Silently fail
+                // Revert state on error
+                isFavorite = wasFavorite
+                print("⚠️ Error toggling favorite: \(error.localizedDescription)")
             }
         }
     }
