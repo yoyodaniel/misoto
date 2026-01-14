@@ -150,17 +150,20 @@ struct SettingsView: View {
                                 HapticFeedback.buttonTap()
                                 showPremium = true
                             }) {
-                                HStack(spacing: 4) {
+                                HStack(spacing: 6) {
                                     Image(systemName: "crown.fill")
-                                        .font(.system(size: 14))
-                                    Text(LocalizedString("Upgrade Now", comment: "Upgrade now button"))
                                         .font(.system(size: 14, weight: .semibold))
+                                    Text(LocalizedString("Upgrade Now", comment: "Upgrade now button"))
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .lineLimit(1)
+                                        .fixedSize(horizontal: true, vertical: false)
                                 }
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(Color.yellow)
-                                .cornerRadius(8)
+                                .foregroundColor(.black)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 10)
+                                .background(Color(red: 1.0, green: 0.85, blue: 0.0)) // Bright yellow
+                                .cornerRadius(10)
+                                .shadow(color: Color.yellow.opacity(0.3), radius: 4, x: 0, y: 2)
                             }
                         }
                         .padding(.vertical, 4)
@@ -204,7 +207,7 @@ struct SettingsView: View {
                         }
                         .padding(.vertical, 4)
                     } label: {
-                        Text(LocalizedString("Subscription", comment: "Subscription section header"))
+                        Text(LocalizedString("Premium Subscription", comment: "Premium subscription section header"))
                             .font(.headline)
                     }
                 } footer: {
@@ -410,7 +413,23 @@ struct SettingsView: View {
                     }
                 }
             }
-            .preferredColorScheme(appSettings.isDarkModeEnabled ? .dark : .light)
+        .preferredColorScheme(appSettings.isDarkModeEnabled ? .dark : .light)
+        .task {
+            // Load subscription data and usage counts when view appears
+            await subscriptionViewModel.loadData()
+        }
+        .onAppear {
+            // Refresh usage counts when view appears (in case user created recipes/extractions)
+            Task {
+                await subscriptionViewModel.loadUsageCounts()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeSaved"))) { _ in
+            // Refresh usage counts when a recipe is saved (including extractions)
+            Task {
+                await subscriptionViewModel.loadUsageCounts()
+            }
+        }
             .sheet(isPresented: $showFeedbackSheet) {
                 FeedbackSheet(
                     name: $feedbackName,
@@ -457,7 +476,8 @@ struct SettingsView: View {
             .sheet(isPresented: $showReAuthenticate) {
                 ReAuthenticateView(authService: authService) {
                     // After successful re-authentication, proceed with deletion
-                    Task {
+                    Task { @MainActor in
+                        showReAuthenticate = false
                         await deleteAccount()
                     }
                 }

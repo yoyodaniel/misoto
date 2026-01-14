@@ -11,6 +11,7 @@ import FirebaseAuth
 
 struct MainTabView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
+    @StateObject private var subscriptionViewModel = SubscriptionViewModel()
     @State private var showUploadRecipe = false
     @State private var showExtractFromImage = false
     @State private var showExtractFromLink = false
@@ -22,6 +23,93 @@ struct MainTabView: View {
     @State private var pendingExtractionImage: UIImage? // Image waiting to be shown in extract view
     @State private var showLoginSheet = false
     @State private var selectedTab = 0
+    @State private var showRecipeLimitAlert = false
+    @State private var showAIExtractionLimitAlert = false
+    @State private var showPremium = false
+    
+    private var nextResetDateString: String {
+        let calendar = Calendar.current
+        let today = Date()
+        let nextMonth = calendar.date(byAdding: .month, value: 1, to: today) ?? today
+        var components = calendar.dateComponents([.year, .month], from: nextMonth)
+        components.day = 1
+        let nextMonthFirst = calendar.date(from: components) ?? today
+        
+        let dateFormatter = DateFormatter()
+        
+        // Get locale based on current language setting
+        let currentLanguage = LocalizationManager.shared.currentLanguage
+        let localeIdentifier: String
+        
+        switch currentLanguage {
+        case .english:
+            localeIdentifier = "en_US"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .system:
+            localeIdentifier = Locale.current.identifier
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .spanish:
+            localeIdentifier = "es_ES"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .french:
+            localeIdentifier = "fr_FR"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .german:
+            localeIdentifier = "de_DE"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .italian:
+            localeIdentifier = "it_IT"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .portuguese:
+            localeIdentifier = "pt_PT"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .dutch:
+            localeIdentifier = "nl_NL"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .russian:
+            localeIdentifier = "ru_RU"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .japanese:
+            localeIdentifier = "ja_JP"
+            dateFormatter.dateFormat = "yyyy年M月d日"
+        case .korean:
+            localeIdentifier = "ko_KR"
+            dateFormatter.dateFormat = "yyyy년 M월 d일"
+        case .thai:
+            localeIdentifier = "th_TH"
+            dateFormatter.dateFormat = "d MMM yyyy"
+        case .vietnamese:
+            localeIdentifier = "vi_VN"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .indonesian:
+            localeIdentifier = "id_ID"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .malay:
+            localeIdentifier = "ms_MY"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .filipino:
+            localeIdentifier = "fil_PH"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .hindi:
+            localeIdentifier = "hi_IN"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .chineseSimplified:
+            localeIdentifier = "zh_Hans_CN"
+            dateFormatter.dateFormat = "yyyy年M月d日"
+        case .chineseTraditional:
+            localeIdentifier = "zh_Hant_TW"
+            dateFormatter.dateFormat = "yyyy年M月d日"
+        case .arabic:
+            localeIdentifier = "ar_SA"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        case .hebrew:
+            localeIdentifier = "he_IL"
+            dateFormatter.dateFormat = "dd MMM yyyy"
+        }
+        
+        dateFormatter.locale = Locale(identifier: localeIdentifier)
+        return dateFormatter.string(from: nextMonthFirst)
+    }
     
     var body: some View {
         ZStack {
@@ -77,13 +165,20 @@ struct MainTabView: View {
             }
         }
         .confirmationDialog(
-            LocalizedString("Add Menu", comment: "Add menu dialog title"),
+            LocalizedString("Add Recipe", comment: "Add recipe dialog title"),
             isPresented: $showAddMenuOptions,
             titleVisibility: .visible
         ) {
             Button(LocalizedString("Manual Entry", comment: "Manual entry option")) {
                 if Auth.auth().currentUser != nil {
-                    showUploadRecipe = true
+                    Task {
+                        await subscriptionViewModel.loadUsageCounts()
+                        if !subscriptionViewModel.canCreateRecipe {
+                            showRecipeLimitAlert = true
+                        } else {
+                            showUploadRecipe = true
+                        }
+                    }
                 } else {
                     showLoginSheet = true
                 }
@@ -92,7 +187,17 @@ struct MainTabView: View {
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 Button(LocalizedString("Take Picture", comment: "Take picture option")) {
                     if Auth.auth().currentUser != nil {
-                        showCamera = true
+                        Task {
+                            await subscriptionViewModel.loadUsageCounts()
+                            // Check AI extraction limit for extraction-based methods
+                            if !subscriptionViewModel.canExtractAIImage {
+                                showAIExtractionLimitAlert = true
+                            } else if !subscriptionViewModel.canCreateRecipe {
+                                showRecipeLimitAlert = true
+                            } else {
+                                showCamera = true
+                            }
+                        }
                     } else {
                         showLoginSheet = true
                     }
@@ -101,9 +206,19 @@ struct MainTabView: View {
             
             Button(LocalizedString("Extract from Image", comment: "Extract from image option")) {
                 if Auth.auth().currentUser != nil {
-                    // Clear any pending image when manually selecting extract from image
-                    pendingExtractionImage = nil
-                    showExtractFromImage = true
+                    Task {
+                        await subscriptionViewModel.loadUsageCounts()
+                        // Check AI extraction limit for extraction-based methods
+                        if !subscriptionViewModel.canExtractAIImage {
+                            showAIExtractionLimitAlert = true
+                        } else if !subscriptionViewModel.canCreateRecipe {
+                            showRecipeLimitAlert = true
+                        } else {
+                            // Clear any pending image when manually selecting extract from image
+                            pendingExtractionImage = nil
+                            showExtractFromImage = true
+                        }
+                    }
                 } else {
                     showLoginSheet = true
                 }
@@ -111,7 +226,17 @@ struct MainTabView: View {
             
             Button(LocalizedString("Extract from Link", comment: "Extract from link option")) {
                 if Auth.auth().currentUser != nil {
-                    showExtractFromLink = true
+                    Task {
+                        await subscriptionViewModel.loadUsageCounts()
+                        // Check AI extraction limit for extraction-based methods
+                        if !subscriptionViewModel.canExtractAIImage {
+                            showAIExtractionLimitAlert = true
+                        } else if !subscriptionViewModel.canCreateRecipe {
+                            showRecipeLimitAlert = true
+                        } else {
+                            showExtractFromLink = true
+                        }
+                    }
                 } else {
                     showLoginSheet = true
                 }
@@ -119,13 +244,45 @@ struct MainTabView: View {
             
             Button(LocalizedString("Extract from Website", comment: "Extract from website option")) {
                 if Auth.auth().currentUser != nil {
-                    showExtractFromWebsite = true
+                    Task {
+                        await subscriptionViewModel.loadUsageCounts()
+                        // Check AI extraction limit for extraction-based methods
+                        if !subscriptionViewModel.canExtractAIImage {
+                            showAIExtractionLimitAlert = true
+                        } else if !subscriptionViewModel.canCreateRecipe {
+                            showRecipeLimitAlert = true
+                        } else {
+                            showExtractFromWebsite = true
+                        }
+                    }
                 } else {
                     showLoginSheet = true
                 }
             }
             
             Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+        }
+        .alert(LocalizedString("Recipe Limit Reached", comment: "Recipe limit alert title"), isPresented: $showRecipeLimitAlert) {
+            Button(LocalizedString("OK", comment: "OK button")) {
+                showRecipeLimitAlert = false
+            }
+            Button(LocalizedString("Upgrade Now", comment: "Upgrade now button")) {
+                showRecipeLimitAlert = false
+                showPremium = true
+            }
+        } message: {
+            Text(LocalizedString("You have reached the free tier limit", comment: "Recipe limit error"))
+        }
+        .alert(LocalizedString("AI Extraction Limit Reached", comment: "AI extraction limit alert title"), isPresented: $showAIExtractionLimitAlert) {
+            Button(LocalizedString("OK", comment: "OK button")) {
+                showAIExtractionLimitAlert = false
+            }
+            Button(LocalizedString("Upgrade Now", comment: "Upgrade now button")) {
+                showAIExtractionLimitAlert = false
+                showPremium = true
+            }
+        } message: {
+            Text(LocalizedString("You have reached your free tier limit for AI image extractions", comment: "AI image extraction limit error") + "\n\n" + String(format: LocalizedString("Your free allowance will reset on %@", comment: "Reset date info"), nextResetDateString))
         }
         .sheet(isPresented: $showLoginSheet) {
             LoginView()
@@ -173,6 +330,14 @@ struct MainTabView: View {
                 }
             }
             .ignoresSafeArea(.all)
+        }
+        .sheet(isPresented: $showPremium) {
+            PremiumView()
+                .environmentObject(subscriptionViewModel)
+        }
+        .task {
+            // Load subscription data when view appears
+            await subscriptionViewModel.loadData()
         }
     }
 }

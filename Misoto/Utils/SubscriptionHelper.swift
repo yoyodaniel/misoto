@@ -79,9 +79,15 @@ struct SubscriptionHelper {
         let subscriptionService = SubscriptionService.shared
         await subscriptionService.loadSubscriptionStatus()
         
+        print("🔍 SubscriptionHelper.trackAIImageExtraction() called")
+        print("🔍 User hasPremium: \(subscriptionService.hasPremium)")
+        
         // Only track for free tier users
         if !subscriptionService.hasPremium {
+            print("✅ User is free tier, tracking AI extraction...")
             try await UsageTrackingService.shared.trackAIImageExtraction()
+        } else {
+            print("ℹ️ User is premium, skipping tracking")
         }
     }
 }

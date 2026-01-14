@@ -476,6 +476,10 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             }
             await detectDifficulty()
             
+            // Note: AI extraction tracking happens when user presses "Save", not here
+            // This prevents counting extractions that aren't saved
+            
+            print("✅ ExtractMenuFromLinkViewModel: Extraction completed, showing edit recipe view")
             showEditRecipe = true
             isLoading = false
             isExtractingContent = false
@@ -776,6 +780,18 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             return false
         }
         
+        // Check recipe creation limit for free tier users
+        do {
+            let canCreate = try await SubscriptionHelper.checkRecipeCreationLimit()
+            if !canCreate {
+                errorMessage = LocalizedString("You have reached the free tier limit", comment: "Recipe limit error")
+                return false
+            }
+        } catch {
+            print("⚠️ Error checking recipe limit: \(error.localizedDescription)")
+            // Continue anyway - don't block user if check fails
+        }
+        
         // Get display name from AuthService (ensure user data is loaded)
         let authService = AuthService()
         await authService.reloadUserData()
@@ -919,6 +935,25 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             }
             
             try await recipeService.createRecipe(recipe)
+            
+            // Track recipe creation for free tier users
+            print("🔍 ExtractMenuFromLinkViewModel.saveRecipe(): About to track recipe creation...")
+            do {
+                try await SubscriptionHelper.trackRecipeCreation()
+                print("✅ ExtractMenuFromLinkViewModel.saveRecipe(): Recipe creation tracked successfully")
+            } catch {
+                print("⚠️ ExtractMenuFromLinkViewModel.saveRecipe(): Error tracking recipe creation: \(error.localizedDescription)")
+            }
+            
+            // Track AI image extraction for free tier users (when user presses Save)
+            print("🔍 ExtractMenuFromLinkViewModel.saveRecipe(): About to track AI extraction...")
+            do {
+                try await SubscriptionHelper.trackAIImageExtraction()
+                print("✅ ExtractMenuFromLinkViewModel.saveRecipe(): AI image extraction tracked successfully")
+            } catch {
+                print("⚠️ ExtractMenuFromLinkViewModel.saveRecipe(): Error tracking AI image extraction: \(error.localizedDescription)")
+            }
+            
             isLoading = false
             
             // Post notification to refresh account view

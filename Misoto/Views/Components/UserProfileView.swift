@@ -84,9 +84,18 @@ struct UserProfileView: View {
                                         }
                                 }
                                 
-                                // Name
-                                Text(user.displayName)
-                                    .font(.system(size: 22, weight: .bold))
+                                // Name with Premium Checkmark Badge
+                                ZStack(alignment: .topTrailing) {
+                                    Text(user.displayName)
+                                        .font(.system(size: 22, weight: .bold))
+                                    
+                                    if user.premiumUser {
+                                        Image(systemName: "checkmark.seal.fill")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(.blue)
+                                            .offset(x: 17, y: -2)
+                                    }
+                                }
                                 
                                 // Username
                                 if let username = user.username, !username.isEmpty {
@@ -304,6 +313,7 @@ class UserProfileViewModel: ObservableObject {
     private let recipeService = RecipeService.shared
     private let authService = AuthService()
     private let firestore = FirebaseManager.shared.firestore
+    private var followListener: ListenerRegistration?
     var accountViewModel: AccountViewModel?
     
     init(userID: String) {
@@ -312,6 +322,10 @@ class UserProfileViewModel: ObservableObject {
         if Auth.auth().currentUser?.uid == userID {
             accountViewModel = AccountViewModel()
         }
+    }
+    
+    deinit {
+        followListener?.remove()
     }
     
     func loadUserData() async {
@@ -342,9 +356,37 @@ class UserProfileViewModel: ObservableObject {
         
         do {
             isFollowing = try await friendsService.isFollowing(followerID: currentUserID, followingID: userID)
+            // Set up real-time listener for follow status
+            setupFollowListener(followerID: currentUserID, followingID: userID)
         } catch {
             print("⚠️ Error checking follow status: \(error.localizedDescription)")
             isFollowing = false
+        }
+    }
+    
+    private func setupFollowListener(followerID: String, followingID: String) {
+        // Remove existing listener if any
+        followListener?.remove()
+        
+        // Set up real-time listener for the follow document
+        let query = firestore.collection("follows")
+            .whereField("followerID", isEqualTo: followerID)
+            .whereField("followingID", isEqualTo: followingID)
+            .limit(to: 1)
+        
+        followListener = query.addSnapshotListener { [weak self] snapshot, error in
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    print("⚠️ Error listening to follow status: \(error.localizedDescription)")
+                    return
+                }
+                
+                // Update isFollowing based on whether documents exist
+                self.isFollowing = !(snapshot?.documents.isEmpty ?? true)
+                print("🔄 Follow status updated: \(self.isFollowing)")
+            }
         }
     }
     
@@ -364,11 +406,11 @@ class UserProfileViewModel: ObservableObject {
                 user?.followerCount = (user?.followerCount ?? 0) + 1
             }
             
-            await checkFollowStatus()
             await authService.reloadUserData()
             NotificationCenter.default.post(name: NSNotification.Name("UserDataUpdated"), object: nil)
         } catch {
             print("⚠️ Error toggling follow: \(error.localizedDescription)")
+            // On error, re-check the follow status to ensure UI is in sync
             await checkFollowStatus()
         }
         

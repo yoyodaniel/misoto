@@ -105,9 +105,18 @@ struct AccountView: View {
                                 }
                                 .buttonStyle(PlainButtonStyle())
                                 
-                                // Name
-                                Text(user.displayName)
-                                    .font(.system(size: 22, weight: .bold))
+                                // Name with Premium Checkmark Badge
+                                ZStack(alignment: .topTrailing) {
+                                    Text(user.displayName)
+                                        .font(.system(size: 22, weight: .bold))
+                                    
+                                    if user.premiumUser {
+                                        Image(systemName: "checkmark.seal.fill")
+                                            .font(.system(size: 12))
+                                            .foregroundColor(.blue)
+                                            .offset(x: 17, y: -2)
+                                    }
+                                }
                                 
                                 // Username
                                 if let username = user.username, !username.isEmpty {
@@ -376,7 +385,10 @@ struct AccountView: View {
             // Refresh when a recipe is saved
             Task {
                 await viewModel.loadUserRecipes()
+                // Reload user data to update recipe count
+                await authViewModel.reloadUserData()
                 lastRefreshTime = Date()
+                print("✅ AccountView: User data refreshed after recipe saved - recipe count: \(authViewModel.currentUser?.recipeCount ?? 0)")
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("UserDataUpdated"))) { _ in

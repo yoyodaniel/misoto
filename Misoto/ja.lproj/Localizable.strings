@@ -13,6 +13,9 @@
 "Unknown" = "不明";
 
 /* Authentication */
+"Sign In" = "サインイン";
+"Sign in to your account" = "アカウントにサインイン";
+"Sign in to view your profile, save recipes, and more" = "サインインしてプロフィールを表示し、レシピを保存など";
 "Continue with Google" = "Googleで続行";
 "Invalid credential" = "無効な認証情報";
 "Invalid nonce" = "無効なnonce";
@@ -102,6 +105,7 @@
 "Explore" = "探索";
 "Account" = "アカウント";
 "Add Menu" = "メニューを追加";
+"Add Recipe" = "レシピを追加";
 "Manual Entry" = "手動入力";
 "Take Picture" = "写真を撮る";
 "Extract from Image" = "画像から抽出";
@@ -143,8 +147,8 @@
 "Delete" = "削除";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "このレシピを削除してもよろしいですか？この操作は元に戻せません。";
 "Edit Recipe" = "レシピを編集";
-"Make Private" = "レシピを非公開にする";
-"Make Public" = "レシピを公開する";
+"Make Private" = "すべてに非公開にする";
+"Make Public" = "すべてに公開する";
 "Make Recipe Public" = "レシピを公開する";
 "Are you sure you want to make this recipe public?" = "このレシピを公開してもよろしいですか？";
 "Share Recipe" = "レシピを共有";
@@ -400,6 +404,7 @@
 "Save Recipe" = "レシピを保存";
 "Unsave Recipe" = "保存を解除";
 "OK" = "OK";
+"Error" = "エラー";
 "At least one ingredient is required" = "少なくとも1つの材料が必要です";
 "At least one instruction is required" = "少なくとも1つの手順が必要です";
 "Report" = "報告";
@@ -447,6 +452,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "アカウントは30日以内に削除されます。削除をキャンセルするには、再度ログインしてください。";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "アカウントを削除してもよろしいですか？アカウントは即座に削除され、この操作は元に戻せません。";
 "Subscription" = "プレミアムサブスクリプション";
+"Premium Subscription" = "プレミアムサブスクリプション";
 "Recipe Limit Reached" = "レシピの上限に達しました";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "制限なくレシピを保存し続けましょう！今すぐプレミアムにアップグレードして、無制限のレシピストレージを解除してください。";
 "AI Extraction Limit Reached" = "AI抽出の上限に達しました";
@@ -499,11 +505,12 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Manage subscriptions in Settings" = "設定でサブスクリプションを管理";
 "Unlimited" = "Unlimited";
 "Save 17%" = "17%節約";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"You have reached the free tier limit" = "無料レシピストレージの制限に達しました。今すぐプレミアムサブスクリプションにアップグレードして、無制限のレシピストレージとプレミアム機能を解除してください。";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
+"You have reached your free tier limit for AI image extractions" = "AIレシピ抽出の無料月間制限に達しました。今すぐプレミアムサブスクリプションにアップグレードして、無制限のAI抽出とプレミアム機能を解除してください。";
+"Your free allowance will reset on %@" = "無料割り当ては %@ にリセットされます";
 "Discover more. Cook smarter." = "もっと発見しよう。もっと賢く料理しよう。";
 "Unlimited access to all recipes and AI features" = "すべてのレシピとAI機能への無制限アクセス";
 "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "無制限のレシピとAI機能を解除して、素晴らしい料理を作成、共有、発見しましょう。";

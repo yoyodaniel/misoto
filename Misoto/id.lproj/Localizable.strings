@@ -13,6 +13,9 @@
 "Unknown" = "Tidak diketahui";
 
 /* Authentication */
+"Sign In" = "Masuk";
+"Sign in to your account" = "Masuk ke akun Anda";
+"Sign in to view your profile, save recipes, and more" = "Masuk untuk melihat profil Anda, menyimpan resep, dan lainnya";
 "Continue with Google" = "Lanjutkan dengan Google";
 "Invalid credential" = "Kredensial tidak valid";
 "Invalid nonce" = "Nonce tidak valid";
@@ -20,6 +23,10 @@
 "Missing client ID" = "ID klien tidak ada";
 "Missing view controller" = "Pengontrol tampilan tidak ada";
 "You are not authorized to perform this action" = "Anda tidak berwenang untuk melakukan tindakan ini";
+"By signing in, you agree to our" = "Dengan masuk, Anda menyetujui";
+"Terms & Conditions" = "Syarat & Ketentuan";
+"and" = "dan";
+"Privacy Policy" = "Kebijakan Privasi";
 "Username must be at least 4 characters" = "Nama pengguna harus minimal 4 karakter";
 "Username must be no more than 15 characters" = "Nama pengguna tidak boleh lebih dari 15 karakter";
 "This username is already taken" = "Nama pengguna ini sudah digunakan";
@@ -97,6 +104,7 @@
 "Explore" = "Jelajahi";
 "Account" = "Akun";
 "Add Menu" = "Tambah Menu";
+"Add Recipe" = "Tambah Resep";
 "Manual Entry" = "Entri Manual";
 "Take Picture" = "Ambil Foto";
 "Extract from Image" = "Ekstrak dari Gambar";
@@ -136,6 +144,15 @@
 "Delete" = "Hapus";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "Apakah Anda yakin ingin menghapus resep ini? Tindakan ini tidak dapat dibatalkan.";
 "Edit Recipe" = "Edit Resep";
+"Make Private" = "Buat Privat untuk Semua";
+"Make Public" = "Buat Publik untuk Semua";
+"Make Recipe Public" = "Buat Publik untuk Semua";
+"Are you sure you want to make this recipe public?" = "Apakah Anda yakin ingin membuat resep ini publik?";
+"Share Recipe" = "Bagikan Resep";
+"Limited Share" = "Berbagi Privat";
+"Private Sharing" = "Berbagi Privat";
+"Share With Users" = "Berbagi Privat";
+"Share With Users (%d)" = "Berbagi Privat (%d)";
 
 /* Explore */
 "Today's Recommendations" = "Rekomendasi Hari Ini";
@@ -366,6 +383,7 @@
 "Write Note" = "Tulis catatan";
 "Edit Note" = "Edit catatan";
 "My Notes" = "Catatan saya";
+"Error" = "Kesalahan";
 "Edited" = "Diedit";
 "Delete Note" = "Hapus catatan";
 "Are you sure you want to delete this note? This action cannot be undone." = "Apakah Anda yakin ingin menghapus catatan ini? Tindakan ini tidak dapat dibatalkan.";
@@ -402,6 +420,7 @@ Akun Anda akan dihapus setelah 30 hari. Untuk membatalkan penghapusan, masuk kem
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Akun Anda akan dihapus dalam 30 hari. Untuk membatalkan penghapusan, silakan masuk kembali.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Apakah Anda yakin ingin menghapus akun Anda? Akun Anda akan dihapus segera dan tindakan ini tidak dapat dibatalkan.";
 "Subscription" = "Langganan Premium";
+"Premium Subscription" = "Langganan Premium";
 "Recipe Limit Reached" = "Batas resep tercapai";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "Lanjutkan menyimpan resep tanpa batas! Tingkatkan ke Premium sekarang dan buka penyimpanan resep tak terbatas.";
 "AI Extraction Limit Reached" = "Batas ekstraksi AI tercapai";
@@ -450,20 +469,21 @@ Akun Anda akan dihapus setelah 30 hari. Untuk membatalkan penghapusan, masuk kem
 "Restore Purchases" = "Restore Purchases";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Langganan diperpanjang secara otomatis kecuali dibatalkan setidaknya 24 jam sebelum akhir periode saat ini.";
+"Manage subscriptions in Settings" = "Kelola langganan di Pengaturan";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "Hemat 17%";
+"You have reached the free tier limit" = "Anda telah mencapai batas penyimpanan resep gratis. Tingkatkan ke Langganan Premium sekarang untuk membuka kunci penyimpanan resep tak terbatas dan fitur premium.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "Anda telah mencapai batas bulanan gratis untuk ekstraksi resep AI. Tingkatkan ke Langganan Premium sekarang untuk membuka kunci ekstraksi AI tak terbatas dan fitur premium.";
+"Your free allowance will reset on %@" = "Kuota gratis Anda akan direset pada %@";
+"Discover more. Cook smarter." = "Temukan lebih banyak. Masak lebih pintar.";
+"Unlimited access to all recipes and AI features" = "Akses tak terbatas ke semua resep dan fitur AI";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Buka kunci resep tak terbatas dan fitur bertenaga AI untuk membuat, berbagi, dan menemukan hidangan yang menakjubkan.";
+"Best Value" = "Nilai Terbaik";
+"Monthly" = "Bulanan";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

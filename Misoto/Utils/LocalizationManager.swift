@@ -25,7 +25,15 @@ class LocalizationManager: ObservableObject {
     
     func setLanguage(_ language: AppLanguage) {
         currentLanguage = language
-        UserDefaults.standard.set(language.rawValue, forKey: "selectedLanguage")
+        // Save manual selection to UserDefaults (this overrides device language detection)
+        if language != .system {
+            UserDefaults.standard.set(language.rawValue, forKey: "selectedLanguage")
+            UserDefaults.standard.set(true, forKey: "languageIsManualOverride")
+        } else {
+            // If user selects "System Language", clear the saved preference to always detect device language
+            UserDefaults.standard.removeObject(forKey: "selectedLanguage")
+            UserDefaults.standard.removeObject(forKey: "languageIsManualOverride")
+        }
         updateBundle()
         
         // Force objectWillChange to trigger view updates
@@ -36,16 +44,110 @@ class LocalizationManager: ObservableObject {
     }
     
     private func loadLanguage() {
+        // Always detect device language first
+        let detectedLanguage = detectDeviceLanguage()
+        print("🌍 Detected device language: \(detectedLanguage.rawValue)")
+        
+        // Check if user has manually selected a language (only honor if it's different from device)
+        // But first check if this is a "manual override" flag (set when user explicitly selects in Settings)
+        let isManualOverride = UserDefaults.standard.bool(forKey: "languageIsManualOverride")
+        
         if let languageRawValue = UserDefaults.standard.string(forKey: "selectedLanguage"),
-           let language = AppLanguage(rawValue: languageRawValue) {
-            currentLanguage = language
+           let savedLanguage = AppLanguage(rawValue: languageRawValue),
+           savedLanguage != .system,
+           isManualOverride,
+           savedLanguage != detectedLanguage {
+            // User has explicitly manually selected a language different from device - honor it
+            print("🌍 Using manually selected language: \(savedLanguage.rawValue) (device: \(detectedLanguage.rawValue))")
+            currentLanguage = savedLanguage
         } else {
-            // Default to English on first launch
-            currentLanguage = .english
-            // Save English as default to UserDefaults
-            UserDefaults.standard.set(AppLanguage.english.rawValue, forKey: "selectedLanguage")
+            // Use device language (no manual override, or saved matches device, or old saved preference)
+            print("🌍 Using device language: \(detectedLanguage.rawValue)")
+            currentLanguage = detectedLanguage
+            // Clear old saved preferences that don't have manual override flag
+            if !isManualOverride {
+                UserDefaults.standard.removeObject(forKey: "selectedLanguage")
+                print("🌍 Cleared old saved preference (not a manual override)")
+            }
         }
         updateBundle()
+    }
+    
+    /// Detects the device's preferred language and maps it to an AppLanguage case
+    private func detectDeviceLanguage() -> AppLanguage {
+        guard let preferredLanguage = Locale.preferredLanguages.first else {
+            print("⚠️ No preferred language found, defaulting to English")
+            return .english
+        }
+        
+        print("🌍 Device preferred language: \(preferredLanguage)")
+        
+        // Normalize the language code (handle Chinese variants)
+        let normalizedCode = Self.normalizeChineseLanguageCode(preferredLanguage)
+        print("🌍 Normalized language code: \(normalizedCode)")
+        
+        // Extract base language code (e.g., "es-ES" -> "es", "ja-JP" -> "ja")
+        let baseCode: String
+        if let separatorIndex = normalizedCode.firstIndex(of: "-") {
+            baseCode = String(normalizedCode[..<separatorIndex])
+        } else {
+            baseCode = normalizedCode
+        }
+        
+        print("🌍 Base language code: \(baseCode)")
+        
+        // Map to AppLanguage cases
+        switch baseCode.lowercased() {
+        case "en":
+            return .english
+        case "zh":
+            // Determine Simplified vs Traditional based on normalized code
+            if normalizedCode.lowercased().hasPrefix("zh-hant") || 
+               normalizedCode.lowercased().contains("hant") {
+                print("🌍 Mapping to Chinese Traditional")
+                return .chineseTraditional
+            } else {
+                print("🌍 Mapping to Chinese Simplified")
+                return .chineseSimplified
+            }
+        case "es":
+            return .spanish
+        case "fr":
+            return .french
+        case "de":
+            return .german
+        case "it":
+            return .italian
+        case "pt":
+            return .portuguese
+        case "nl":
+            return .dutch
+        case "ru":
+            return .russian
+        case "ja":
+            return .japanese
+        case "ko":
+            return .korean
+        case "th":
+            return .thai
+        case "vi":
+            return .vietnamese
+        case "id":
+            return .indonesian
+        case "ms":
+            return .malay
+        case "fil", "tl":
+            return .filipino
+        case "hi":
+            return .hindi
+        case "ar":
+            return .arabic
+        case "he":
+            return .hebrew
+        default:
+            // If language is not supported, default to English
+            return .english
+        }
     }
     
     private func updateBundle() {

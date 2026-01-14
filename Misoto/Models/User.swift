@@ -24,6 +24,7 @@ struct AppUser: Identifiable, Codable {
     var lastLogin: Date?
     var isProfileHidden: Bool
     var isCompletelyPrivate: Bool // Hide from all users including followers
+    var premiumUser: Bool // Premium subscription status
     
     enum CodingKeys: String, CodingKey {
         case id, email, displayName, username, profileImageURL, bio
@@ -32,6 +33,7 @@ struct AppUser: Identifiable, Codable {
         case isProfileHidden
         case isCompletelyPrivate
         case isBanned
+        case premiumUser
     }
     
     init(
@@ -50,7 +52,8 @@ struct AppUser: Identifiable, Codable {
         createdAt: Date = Date(),
         lastLogin: Date? = nil,
         isProfileHidden: Bool = false,
-        isCompletelyPrivate: Bool = false
+        isCompletelyPrivate: Bool = false,
+        premiumUser: Bool = false
     ) {
         self.id = id
         self.email = email
@@ -68,6 +71,7 @@ struct AppUser: Identifiable, Codable {
         self.lastLogin = lastLogin
         self.isProfileHidden = isProfileHidden
         self.isCompletelyPrivate = isCompletelyPrivate
+        self.premiumUser = premiumUser
     }
     
     init(from decoder: Decoder) throws {
@@ -88,6 +92,7 @@ struct AppUser: Identifiable, Codable {
         lastLogin = try container.decodeIfPresent(Date.self, forKey: .lastLogin)
         isProfileHidden = try container.decodeIfPresent(Bool.self, forKey: .isProfileHidden) ?? false
         isCompletelyPrivate = try container.decodeIfPresent(Bool.self, forKey: .isCompletelyPrivate) ?? false
+        premiumUser = try container.decodeIfPresent(Bool.self, forKey: .premiumUser) ?? false
     }
 }
 

@@ -169,7 +169,7 @@ struct PremiumView: View {
                     }
                 }
             }
-            .navigationTitle(LocalizedString("Subscription", comment: "Subscription navigation title"))
+            .navigationTitle(LocalizedString("Premium Subscription", comment: "Premium Subscription navigation title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbarBackground(.hidden, for: .navigationBar)

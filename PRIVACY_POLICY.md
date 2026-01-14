@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last Updated: December 30, 2025**
+**Last Updated: January 15, 2026**
 
 ---
 
@@ -53,6 +53,28 @@ When you interact with other users or content, we collect:
 - Users you follow and users who follow you
 - Engagement statistics and activity data
 
+### Subscription and Payment Information
+
+When you purchase a Premium subscription, we collect:
+
+- Subscription tier (Premium Monthly or Premium Yearly)
+- Subscription status and expiration date
+- Transaction identifiers from Apple's StoreKit (for subscription verification)
+- Purchase and renewal dates
+
+**Important:** We do not collect or store your payment information. All payments are processed through Apple's App Store using StoreKit. Apple handles all payment processing, and we only receive transaction confirmations and subscription status information.
+
+### Usage Tracking Information
+
+To enforce free tier limits and provide subscription features, we track:
+
+- Number of recipes created per month
+- Number of AI-powered recipe extractions performed per month
+- Number of AI-generated recipe descriptions created per month
+- Monthly usage reset dates
+
+This information is used solely to enforce subscription limits and is not shared with third parties except as necessary to provide the Service.
+
 ### Technical and Usage Information
 
 We automatically collect certain technical information when you use the App:
@@ -90,6 +112,8 @@ We use the information we collect to provide, maintain, and improve the App. Spe
 - Enable social features like following users, favoriting recipes, and discovering content
 - Respect your privacy preferences and control who can see your profile and recipes
 - Authenticate your account and maintain account security
+- Manage subscriptions, verify subscription status, and enforce free tier usage limits
+- Track usage to provide subscription features and limit enforcement
 - Respond to your questions, feedback, and support requests
 - Detect and prevent security threats, fraud, or misuse of the App
 - Improve the App's features, performance, and user experience
@@ -123,6 +147,15 @@ When you use recipe extraction features, we send images and text content to Open
 - OpenAI's use of your content is governed by their Privacy Policy and Terms of Use
 
 **Important:** You are responsible for ensuring you have the right to extract and use content from the sources you access. We are not responsible for copyright or intellectual property issues related to content you extract.
+
+**Apple (StoreKit)**
+
+When you purchase a Premium subscription, Apple processes your payment through StoreKit:
+
+- Apple handles all payment processing and stores your payment information
+- We receive only transaction confirmations and subscription status from Apple
+- Apple's use of your payment information is governed by Apple's Privacy Policy and Terms of Service
+- Subscription management (cancellation, renewal) is handled through Apple's systems
 
 ### Legal Requirements
 
@@ -178,7 +211,7 @@ You can control your privacy through Settings → Account, including choosing wh
 
 You can manage camera and photo library permissions through your device settings. Revoking permissions may limit App functionality.
 
-To exercise any of these rights, please contact us at support@misoto.app. We will respond to your request within a reasonable timeframe.
+To exercise any of these rights, please contact us at info@game-timer.com. We will respond to your request within a reasonable timeframe.
 
 ---
 
@@ -191,6 +224,8 @@ Retention periods vary depending on the type of information:
 - Account Information - Until you delete your account
 - Recipes and Content - Until you delete your account or remove the content
 - Images and Files - Until you delete your account or remove the associated content
+- Subscription Information - Until you delete your account or as required by law for financial records
+- Usage Tracking Data - Until you delete your account or up to 2 years, whichever comes first
 - Usage Data - Up to 2 years or until account deletion
 - Feedback - Up to 3 years for service improvement
 
@@ -200,11 +235,11 @@ When you delete your account, we will remove your information within 30 days, ex
 
 ## Children's Privacy
 
-The App is not intended for users under 13 years of age. We do not knowingly collect personal information from children under 13.
+The App is not intended for users under 16 years of age. We do not knowingly collect personal information from children under 16.
 
-If you are a parent or guardian and believe your child has provided us with personal information, please contact us at support@misoto.app. If we discover we have collected information from a child under 13, we will delete it promptly.
+If you are a parent or guardian and believe your child has provided us with personal information, please contact us at info@game-timer.com. If we discover we have collected information from a child under 16, we will delete it promptly.
 
-If you are between 13 and 18 years old, please ensure you have permission from a parent or guardian before using the App.
+If you are between 16 and 18 years old, please ensure you have permission from a parent or guardian before using the App.
 
 ---
 
@@ -232,11 +267,11 @@ Your continued use of the App after changes become effective constitutes accepta
 
 If you have questions, concerns, or requests about this Privacy Policy or our data practices, please contact us:
 
-**Email:** support@misoto.app
+**Email:** info@game-timer.com
 
 We will respond to your inquiry as soon as reasonably possible.
 
 ---
 
-**Last Updated:** December 30, 2025
+**Last Updated:** January 15, 2026
 

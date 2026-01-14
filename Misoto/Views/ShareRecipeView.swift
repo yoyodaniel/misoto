@@ -29,7 +29,7 @@ struct ShareRecipeView: View {
             sharedUserIDs = recipe.sharedWith
         }
         print("📋 ShareRecipeView init - recipe.sharedWith: \(recipe.sharedWith.count) users, preservedSharedWith: \(recipe.preservedSharedWith?.count ?? 0) users, using: \(sharedUserIDs.count) users")
-        _viewModel = StateObject(wrappedValue: ShareRecipeViewModel(sharedUserIDs: sharedUserIDs))
+        _viewModel = StateObject(wrappedValue: ShareRecipeViewModel(sharedUserIDs: sharedUserIDs, recipeID: recipe.id))
     }
     
     var body: some View {

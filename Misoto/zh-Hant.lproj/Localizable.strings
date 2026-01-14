@@ -13,6 +13,9 @@
 "Unknown" = "未知";
 
 /* Authentication */
+"Sign In" = "登入";
+"Sign in to your account" = "登入您的帳戶";
+"Sign in to view your profile, save recipes, and more" = "登入以查看您的個人資料、保存食譜等";
 "Continue with Google" = "使用 Google 繼續";
 "Invalid credential" = "憑證無效";
 "Invalid nonce" = "隨機數無效";
@@ -20,6 +23,10 @@
 "Missing client ID" = "缺少客戶端 ID";
 "Missing view controller" = "缺少視圖控制器";
 "You are not authorized to perform this action" = "您無權執行此操作";
+"By signing in, you agree to our" = "登入即表示您同意我們的";
+"Terms & Conditions" = "條款和條件";
+"and" = "和";
+"Privacy Policy" = "隱私政策";
 "Username must be at least 4 characters" = "用戶名必須至少 4 個字符";
 "Username must be no more than 15 characters" = "用戶名不能超過 15 個字符";
 "This username is already taken" = "此用戶名已被使用";
@@ -98,6 +105,7 @@
 "Explore" = "探索";
 "Account" = "帳戶";
 "Add Menu" = "添加菜單";
+"Add Recipe" = "新增食譜";
 "Manual Entry" = "手動輸入";
 "Take Picture" = "拍照";
 "Extract from Image" = "從圖片提取";
@@ -139,6 +147,20 @@
 "Delete" = "刪除";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "您確定要刪除此食譜嗎？此操作無法撤銷。";
 "Edit Recipe" = "編輯食譜";
+"Make Private" = "設為完全私密";
+"Make Public" = "設為完全公開";
+"Make Recipe Public" = "設為完全公開";
+"Are you sure you want to make this recipe public?" = "您確定要將此食譜設為公開嗎？";
+"Share Recipe" = "分享食譜";
+"Limited Share" = "私密分享";
+"Private Sharing" = "私密分享";
+"Share With Users" = "私密分享";
+"Share With Users (%d)" = "私密分享 (%d)";
+"Select from Following" = "從關注中選擇";
+"Select from Followers" = "從粉絲中選擇";
+"Search for users or select from following" = "搜尋用戶或從關注中選擇";
+"Search for users or select from followers" = "搜尋用戶或從粉絲中選擇";
+"Users with Access" = "有權限的用戶";
 
 /* Explore */
 "What's New" = "最新";
@@ -377,6 +399,7 @@
 "Save Recipe" = "儲存食譜";
 "Unsave Recipe" = "取消儲存";
 "OK" = "確定";
+"Error" = "錯誤";
 "At least one ingredient is required" = "至少需要一種食材";
 "At least one instruction is required" = "至少需要一步製作步驟";
 "Report" = "舉報";
@@ -423,6 +446,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "您的帳戶將在30天內被刪除。要取消刪除，請重新登入。";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "您確定要刪除您的帳戶嗎？您的帳戶將立即被刪除，此操作不可逆。";
 "Subscription" = "高級訂閱";
+"Premium Subscription" = "高級訂閱";
 "Recipe Limit Reached" = "已達到食譜限制";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "繼續無限制儲存食譜！立即升級至高級版並解鎖無限食譜儲存空間。";
 "AI Extraction Limit Reached" = "已達到AI提取限制";
@@ -467,24 +491,25 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Extract recipes from photos without limits" = "Extract recipes from photos without limits";
 "All AI Features" = "All AI Features";
 "Auto-detect cuisine, difficulty, and cooking times" = "Auto-detect cuisine, difficulty, and cooking times";
-"Subscribe" = "Subscribe";
-"Restore Purchases" = "Restore Purchases";
+"Subscribe" = "訂閱";
+"Restore Purchases" = "恢復購買";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "除非在當前期間結束前至少24小時取消，否則訂閱將自動續訂。";
+"Manage subscriptions in Settings" = "在設定中管理訂閱";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "節省 17%";
+"You have reached the free tier limit" = "您已達到免費食譜儲存限制。立即升級到高級訂閱，解鎖無限食譜儲存和高級功能。";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "您已達到AI食譜提取的免費月度限制。立即升級到高級訂閱，解鎖無限AI提取和高級功能。";
+"Your free allowance will reset on %@" = "您的免費額度將在 %@ 重置";
+"Discover more. Cook smarter." = "發現更多。\n更聰明地烹飪。";
+"Unlimited access to all recipes and AI features" = "無限訪問所有食譜和AI功能";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "解鎖無限食譜和AI驅動的功能，\n以創建、分享和發現令人驚嘆的菜餚。";
+"Best Value" = "最佳價值";
+"Monthly" = "每月";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

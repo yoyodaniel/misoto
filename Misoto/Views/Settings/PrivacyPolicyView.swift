@@ -88,6 +88,42 @@ struct PrivacyPolicyView: View {
                                 .padding(.leading, 16)
                             }
                             
+                            // Subscription Data
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(LocalizedString("Subscription and Payment Information", comment: "Subscription info subsection"))
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("When you purchase a Premium subscription, we collect:", comment: "Subscription info intro"))
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("• " + LocalizedString("Subscription tier (Premium Monthly or Premium Yearly)", comment: "Subscription tier"))
+                                    Text("• " + LocalizedString("Subscription status and expiration date", comment: "Subscription status"))
+                                    Text("• " + LocalizedString("Transaction identifiers from Apple's StoreKit (for subscription verification)", comment: "Transaction ID"))
+                                    Text("• " + LocalizedString("Purchase and renewal dates", comment: "Purchase dates"))
+                                }
+                                .padding(.leading, 16)
+                                Text(LocalizedString("Important: We do not collect or store your payment information. All payments are processed through Apple's App Store using StoreKit. Apple handles all payment processing, and we only receive transaction confirmations and subscription status information.", comment: "Payment processing disclaimer"))
+                                    .fontWeight(.medium)
+                                    .padding(.top, 4)
+                            }
+                            
+                            // Usage Tracking Data
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(LocalizedString("Usage Tracking Information", comment: "Usage tracking subsection"))
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("To enforce free tier limits and provide subscription features, we track:", comment: "Usage tracking intro"))
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("• " + LocalizedString("Number of recipes created per month", comment: "Recipe count tracking"))
+                                    Text("• " + LocalizedString("Number of AI-powered recipe extractions performed per month", comment: "AI extraction tracking"))
+                                    Text("• " + LocalizedString("Number of AI-generated recipe descriptions created per month", comment: "AI description tracking"))
+                                    Text("• " + LocalizedString("Monthly usage reset dates", comment: "Reset dates"))
+                                }
+                                .padding(.leading, 16)
+                                Text(LocalizedString("This information is used solely to enforce subscription limits and is not shared with third parties except as necessary to provide the Service.", comment: "Usage tracking purpose"))
+                                    .fontWeight(.medium)
+                                    .padding(.top, 4)
+                            }
+                            
                             // Technical Data
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(LocalizedString("Technical and Usage Information", comment: "Technical info subsection"))
@@ -144,6 +180,8 @@ struct PrivacyPolicyView: View {
                                 Text("• " + LocalizedString("Enable social features like following users, favoriting recipes, and discovering content", comment: "Social features"))
                                 Text("• " + LocalizedString("Respect your privacy preferences and control who can see your profile and recipes", comment: "Privacy controls"))
                                 Text("• " + LocalizedString("Authenticate your account and maintain account security", comment: "Security"))
+                                Text("• " + LocalizedString("Manage subscriptions, verify subscription status, and enforce free tier usage limits", comment: "Subscription management"))
+                                Text("• " + LocalizedString("Track usage to provide subscription features and limit enforcement", comment: "Usage tracking"))
                                 Text("• " + LocalizedString("Respond to your questions, feedback, and support requests", comment: "Support"))
                                 Text("• " + LocalizedString("Detect and prevent security threats, fraud, or misuse of the App", comment: "Threat prevention"))
                                 Text("• " + LocalizedString("Improve the App's features, performance, and user experience", comment: "Improvements"))
@@ -188,6 +226,17 @@ struct PrivacyPolicyView: View {
                                 .padding(.leading, 16)
                                 Text(LocalizedString("Important: You are responsible for ensuring you have the right to extract and use content from the sources you access. We are not responsible for copyright or intellectual property issues related to content you extract.", comment: "OpenAI disclaimer"))
                                     .fontWeight(.medium)
+                                
+                                Text(LocalizedString("Apple (StoreKit)", comment: "Apple StoreKit header"))
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("When you purchase a Premium subscription, Apple processes your payment through StoreKit:", comment: "StoreKit intro"))
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("• " + LocalizedString("Apple handles all payment processing and stores your payment information", comment: "Apple payment processing"))
+                                    Text("• " + LocalizedString("We receive only transaction confirmations and subscription status from Apple", comment: "Transaction confirmations"))
+                                    Text("• " + LocalizedString("Apple's use of your payment information is governed by Apple's Privacy Policy and Terms of Service", comment: "Apple terms"))
+                                    Text("• " + LocalizedString("Subscription management (cancellation, renewal) is handled through Apple's systems", comment: "Subscription management"))
+                                }
+                                .padding(.leading, 16)
                             }
                             
                             // Legal Sharing
@@ -273,7 +322,7 @@ struct PrivacyPolicyView: View {
                                 Text(LocalizedString("You can manage camera and photo library permissions through your device settings. Revoking permissions may limit App functionality.", comment: "Permissions explanation"))
                             }
                             
-                            Text(LocalizedString("To exercise any of these rights, please contact us at support@misoto.app. We will respond to your request within a reasonable timeframe.", comment: "Rights contact"))
+                            Text(LocalizedString("To exercise any of these rights, please contact us at info@game-timer.com. We will respond to your request within a reasonable timeframe.", comment: "Rights contact"))
                                 .fontWeight(.medium)
                         }
                         .font(.body)
@@ -288,6 +337,8 @@ struct PrivacyPolicyView: View {
                                 Text("• " + LocalizedString("Account Information - Until you delete your account", comment: "Account retention"))
                                 Text("• " + LocalizedString("Recipes and Content - Until you delete your account or remove the content", comment: "Content retention"))
                                 Text("• " + LocalizedString("Images and Files - Until you delete your account or remove the associated content", comment: "Files retention"))
+                                Text("• " + LocalizedString("Subscription Information - Until you delete your account or as required by law for financial records", comment: "Subscription retention"))
+                                Text("• " + LocalizedString("Usage Tracking Data - Until you delete your account or up to 2 years, whichever comes first", comment: "Usage tracking retention"))
                                 Text("• " + LocalizedString("Usage Data - Up to 2 years or until account deletion", comment: "Usage retention"))
                                 Text("• " + LocalizedString("Feedback - Up to 3 years for service improvement", comment: "Feedback retention"))
                             }
@@ -300,9 +351,9 @@ struct PrivacyPolicyView: View {
                     // Children's Privacy
                     SectionView(title: LocalizedString("Children's Privacy", comment: "Children's privacy section")) {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text(LocalizedString("The App is not intended for users under 13 years of age. We do not knowingly collect personal information from children under 13.", comment: "Children's privacy general"))
-                            Text(LocalizedString("If you are a parent or guardian and believe your child has provided us with personal information, please contact us at support@misoto.app. If we discover we have collected information from a child under 13, we will delete it promptly.", comment: "Children's privacy contact"))
-                            Text(LocalizedString("If you are between 13 and 18 years old, please ensure you have permission from a parent or guardian before using the App.", comment: "Minor permission"))
+                            Text(LocalizedString("The App is not intended for users under 16 years of age. We do not knowingly collect personal information from children under 16.", comment: "Children's privacy general"))
+                            Text(LocalizedString("If you are a parent or guardian and believe your child has provided us with personal information, please contact us at info@game-timer.com. If we discover we have collected information from a child under 16, we will delete it promptly.", comment: "Children's privacy contact"))
+                            Text(LocalizedString("If you are between 16 and 18 years old, please ensure you have permission from a parent or guardian before using the App.", comment: "Minor permission"))
                         }
                         .font(.body)
                     }
@@ -331,9 +382,9 @@ struct PrivacyPolicyView: View {
                     SectionView(title: LocalizedString("Contact Us", comment: "Contact section")) {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(LocalizedString("If you have questions, concerns, or requests about this Privacy Policy or our data practices, please contact us:", comment: "Contact intro"))
-                            Text(LocalizedString("Email", comment: "Email label")) + Text(": support@misoto.app")
+                            Text(LocalizedString("Email", comment: "Email label")) + Text(": info@game-timer.com")
                             Text(LocalizedString("We will respond to your inquiry as soon as reasonably possible.", comment: "Contact response"))
-                            Text(LocalizedString("Last Updated", comment: "Last updated label")) + Text(": " + LocalizedString("December 30, 2025", comment: "Last updated date"))
+                            Text(LocalizedString("Last Updated", comment: "Last updated label")) + Text(": " + LocalizedString("January 15, 2026", comment: "Last updated date"))
                         }
                         .font(.body)
                     }

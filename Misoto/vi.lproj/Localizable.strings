@@ -13,6 +13,9 @@
 "Unknown" = "Không xác định";
 
 /* Authentication */
+"Sign In" = "Đăng nhập";
+"Sign in to your account" = "Đăng nhập vào tài khoản của bạn";
+"Sign in to view your profile, save recipes, and more" = "Đăng nhập để xem hồ sơ của bạn, lưu công thức và hơn thế nữa";
 "Continue with Google" = "Tiếp tục với Google";
 "Invalid credential" = "Thông tin đăng nhập không hợp lệ";
 "Invalid nonce" = "Nonce không hợp lệ";
@@ -20,6 +23,10 @@
 "Missing client ID" = "Thiếu Client ID";
 "Missing view controller" = "Thiếu View Controller";
 "You are not authorized to perform this action" = "Bạn không có quyền thực hiện hành động này";
+"By signing in, you agree to our" = "Bằng cách đăng nhập, bạn đồng ý với";
+"Terms & Conditions" = "Điều khoản và Điều kiện";
+"and" = "và";
+"Privacy Policy" = "Chính sách Bảo mật";
 "Username must be at least 4 characters" = "Tên người dùng phải có ít nhất 4 ký tự";
 "Username must be no more than 15 characters" = "Tên người dùng không được quá 15 ký tự";
 "This username is already taken" = "Tên người dùng này đã được sử dụng";
@@ -98,6 +105,7 @@
 "Explore" = "Khám phá";
 "Account" = "Tài khoản";
 "Add Menu" = "Thêm thực đơn";
+"Add Recipe" = "Thêm công thức";
 "Manual Entry" = "Nhập thủ công";
 "Take Picture" = "Chụp ảnh";
 "Extract from Image" = "Trích xuất từ hình ảnh";
@@ -137,6 +145,15 @@
 "Delete" = "Xóa";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "Bạn có chắc chắn muốn xóa công thức này không? Hành động này không thể hoàn tác.";
 "Edit Recipe" = "Chỉnh sửa công thức";
+"Make Private" = "Đặt Riêng Tư cho Tất Cả";
+"Make Public" = "Đặt Công Khai cho Tất Cả";
+"Make Recipe Public" = "Đặt Công Khai cho Tất Cả";
+"Are you sure you want to make this recipe public?" = "Bạn có chắc chắn muốn đặt công thức này ở chế độ công khai không?";
+"Share Recipe" = "Chia Sẻ Công Thức";
+"Limited Share" = "Chia Sẻ Riêng Tư";
+"Private Sharing" = "Chia Sẻ Riêng Tư";
+"Share With Users" = "Chia Sẻ Riêng Tư";
+"Share With Users (%d)" = "Chia Sẻ Riêng Tư (%d)";
 
 /* Explore */
 "Today's Recommendations" = "Đề xuất hôm nay";
@@ -366,6 +383,7 @@
 "Add ingredient" = "Thêm nguyên liệu";
 
 "Steps" = "Các bước";
+"Error" = "Lỗi";
 "Start Cooking" = "Bắt đầu nấu";
 "Edit" = "Chỉnh sửa";
 "Save Recipe" = "Lưu công thức";
@@ -414,6 +432,7 @@ Tài khoản của bạn sẽ bị xóa sau 30 ngày. Để hủy xóa, vui lòn
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Tài khoản của bạn sẽ bị xóa trong vòng 30 ngày. Để hủy xóa, vui lòng đăng nhập lại.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Bạn có chắc chắn muốn xóa tài khoản của mình không? Tài khoản của bạn sẽ bị xóa ngay lập tức và hành động này không thể hoàn tác.";
 "Subscription" = "Đăng ký Premium";
+"Premium Subscription" = "Đăng ký Premium";
 "Recipe Limit Reached" = "Đạt giới hạn công thức";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "Tiếp tục lưu công thức không giới hạn! Nâng cấp lên Premium ngay bây giờ và mở khóa lưu trữ công thức không giới hạn.";
 "AI Extraction Limit Reached" = "Đạt giới hạn trích xuất AI";
@@ -462,20 +481,21 @@ Tài khoản của bạn sẽ bị xóa sau 30 ngày. Để hủy xóa, vui lòn
 "Restore Purchases" = "Restore Purchases";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Đăng ký sẽ tự động gia hạn trừ khi được hủy ít nhất 24 giờ trước khi kết thúc thời gian hiện tại.";
+"Manage subscriptions in Settings" = "Quản lý đăng ký trong Cài đặt";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "Tiết kiệm 17%";
+"You have reached the free tier limit" = "Bạn đã đạt đến giới hạn lưu trữ công thức miễn phí. Nâng cấp lên Đăng ký Premium ngay bây giờ để mở khóa lưu trữ công thức không giới hạn và các tính năng premium.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "Bạn đã đạt đến giới hạn hàng tháng miễn phí cho việc trích xuất công thức bằng AI. Nâng cấp lên Đăng ký Premium ngay bây giờ để mở khóa trích xuất AI không giới hạn và các tính năng premium.";
+"Your free allowance will reset on %@" = "Hạn mức miễn phí của bạn sẽ được đặt lại vào %@";
+"Discover more. Cook smarter." = "Khám phá thêm. Nấu ăn thông minh hơn.";
+"Unlimited access to all recipes and AI features" = "Truy cập không giới hạn vào tất cả công thức và tính năng AI";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Mở khóa công thức không giới hạn và các tính năng được hỗ trợ bởi AI để tạo, chia sẻ và khám phá những món ăn tuyệt vời.";
+"Best Value" = "Giá Trị Tốt Nhất";
+"Monthly" = "Hàng Tháng";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

@@ -13,6 +13,9 @@
 "Unknown" = "Inconnu";
 
 /* Authentication */
+"Sign In" = "Se connecter";
+"Sign in to your account" = "Connectez-vous à votre compte";
+"Sign in to view your profile, save recipes, and more" = "Connectez-vous pour voir votre profil, enregistrer des recettes et plus encore";
 "Continue with Google" = "Continuer avec Google";
 "Invalid credential" = "Identifiant invalide";
 "Invalid nonce" = "Nonce invalide";
@@ -102,6 +105,7 @@
 "Explore" = "Explorer";
 "Account" = "Compte";
 "Add Menu" = "Ajouter un Menu";
+"Add Recipe" = "Ajouter une Recette";
 "Manual Entry" = "Saisie Manuelle";
 "Take Picture" = "Prendre une Photo";
 "Extract from Image" = "Extraire d'une Image";
@@ -143,8 +147,8 @@
 "Delete" = "Supprimer";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "Êtes-vous sûr de vouloir supprimer cette recette ? Cette action ne peut pas être annulée.";
 "Edit Recipe" = "Modifier la Recette";
-"Make Private" = "Rendre la Recette Privée";
-"Make Public" = "Rendre la Recette Publique";
+"Make Private" = "Rendre Privée pour Tous";
+"Make Public" = "Rendre Publique pour Tous";
 "Make Recipe Public" = "Rendre la Recette Publique";
 "Are you sure you want to make this recipe public?" = "Êtes-vous sûr de vouloir rendre cette recette publique ?";
 "Share Recipe" = "Partager la Recette";
@@ -401,6 +405,7 @@
 "Save Recipe" = "Enregistrer la recette";
 "Unsave Recipe" = "Ne plus enregistrer";
 "OK" = "OK";
+"Error" = "Erreur";
 "At least one ingredient is required" = "Au moins un ingrédient est requis";
 "At least one instruction is required" = "Au moins une instruction est requise";
 "Report" = "Signaler";
@@ -448,6 +453,7 @@ Votre compte sera supprimé après 30 jours. Pour annuler la suppression, reconn
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Votre compte sera supprimé dans 30 jours. Pour annuler la suppression, veuillez vous reconnecter.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Êtes-vous sûr de vouloir supprimer votre compte ? Votre compte sera supprimé immédiatement et cette action est irréversible.";
 "Subscription" = "Abonnement Premium";
+"Premium Subscription" = "Abonnement Premium";
 "Recipe Limit Reached" = "Limite de recettes atteinte";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "Continuez à enregistrer des recettes sans limites ! Passez à Premium maintenant et débloquez un stockage illimité de recettes.";
 "AI Extraction Limit Reached" = "Limite d'extraction IA atteinte";
@@ -500,11 +506,12 @@ Votre compte sera supprimé après 30 jours. Pour annuler la suppression, reconn
 "Manage subscriptions in Settings" = "Gérer les abonnements dans Réglages";
 "Unlimited" = "Unlimited";
 "Save 17%" = "Économisez 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"You have reached the free tier limit" = "Vous avez atteint la limite de stockage de recettes gratuites. Passez maintenant à l'Abonnement Premium pour débloquer un stockage illimité de recettes et des fonctionnalités premium.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
+"You have reached your free tier limit for AI image extractions" = "Vous avez atteint votre limite mensuelle gratuite pour les extractions de recettes avec IA. Passez maintenant à l'Abonnement Premium pour débloquer des extractions IA illimitées et des fonctionnalités premium.";
+"Your free allowance will reset on %@" = "Votre allocation gratuite sera réinitialisée le %@";
 "Discover more. Cook smarter." = "Découvrez plus. Cuisinez plus intelligemment.";
 "Unlimited access to all recipes and AI features" = "Accès illimité à toutes les recettes et fonctionnalités IA";
 "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Débloquez des recettes illimitées et des fonctionnalités alimentées par l'IA pour créer, partager et découvrir des plats incroyables.";

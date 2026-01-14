@@ -21,6 +21,7 @@ class SettingsViewModel: ObservableObject {
     private let feedbackService = FeedbackService()
     private let userDefaults = UserDefaults.standard
     private let appSettings = AppSettings.shared
+    private var cancellables = Set<AnyCancellable>()
     
     // Computed property that syncs with AppSettings
     var isDarkModeEnabled: Bool {
@@ -40,23 +41,35 @@ class SettingsViewModel: ObservableObject {
     
     init() {
         loadSettings()
+        
+        // Observe language changes from LocalizationManager using Combine
+        NotificationCenter.default.publisher(for: NSNotification.Name("LanguageChanged"))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                // Update selectedLanguage to reflect the current language in LocalizationManager
+                self.selectedLanguage = LocalizationManager.shared.currentLanguage
+            }
+            .store(in: &cancellables)
     }
     
     // MARK: - Load Settings
     
     private func loadSettings() {
-        // Load language preference
-        if let languageRawValue = userDefaults.string(forKey: UserDefaultsKeys.selectedLanguage),
-           let language = AppLanguage(rawValue: languageRawValue) {
-            selectedLanguage = language
-        } else {
-            // Default to English instead of system language on first launch
-            selectedLanguage = .english
-            // Save English as default to UserDefaults
-            userDefaults.set(AppLanguage.english.rawValue, forKey: UserDefaultsKeys.selectedLanguage)
+        // Sync with LocalizationManager's current language (which detects device language if no manual override)
+        // This ensures Settings shows the detected device language, not a default English
+        selectedLanguage = LocalizationManager.shared.currentLanguage
+        
+        // Only save to UserDefaults if it's a manual selection (with override flag)
+        // If it's a detected language, don't save it so device changes are reflected
+        let isManualOverride = userDefaults.bool(forKey: "languageIsManualOverride")
+        if !isManualOverride {
+            // Detected language - don't save, but show it in Settings
+            // Remove any old saved preference that's not a manual override
+            if userDefaults.string(forKey: UserDefaultsKeys.selectedLanguage) != nil {
+                userDefaults.removeObject(forKey: UserDefaultsKeys.selectedLanguage)
+            }
         }
-        // Sync with LocalizationManager
-        LocalizationManager.shared.setLanguage(selectedLanguage)
     }
     
     // MARK: - Dark Mode

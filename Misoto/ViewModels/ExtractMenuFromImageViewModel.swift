@@ -250,6 +250,19 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             return
         }
         
+        // Check AI image extraction limit for free tier users
+        do {
+            let canExtract = try await SubscriptionHelper.checkAIImageExtractionLimit()
+            if !canExtract {
+                errorMessage = LocalizedString("You have reached your free tier limit for AI image extractions", comment: "AI image extraction limit error") + "\n" + LocalizedString("Upgrade to Premium for unlimited AI image extractions", comment: "Upgrade prompt")
+                isLoading = false
+                return
+            }
+        } catch {
+            print("⚠️ Error checking AI extraction limit: \(error.localizedDescription)")
+            // Continue anyway - don't block user if check fails
+        }
+        
         // Store source images for later saving
         sourceImages = images
         
@@ -325,6 +338,10 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             }
             await detectDifficulty()
             
+            // Note: AI extraction tracking happens when user presses "Save", not here
+            // This prevents counting extractions that aren't saved
+            
+            print("✅ ExtractMenuFromImageViewModel: Extraction completed, showing edit recipe view")
             showEditRecipe = true
             isLoading = false
         } catch {
@@ -341,6 +358,18 @@ class ExtractMenuFromImageViewModel: ObservableObject {
         guard let userID = Auth.auth().currentUser?.uid else {
             errorMessage = LocalizedString("You must be logged in to save a recipe", comment: "Not logged in error")
             return false
+        }
+        
+        // Check recipe creation limit for free tier users
+        do {
+            let canCreate = try await SubscriptionHelper.checkRecipeCreationLimit()
+            if !canCreate {
+                errorMessage = LocalizedString("You have reached the free tier limit", comment: "Recipe limit error")
+                return false
+            }
+        } catch {
+            print("⚠️ Error checking recipe limit: \(error.localizedDescription)")
+            // Continue anyway - don't block user if check fails
         }
         
         // Get display name from AuthService (ensure user data is loaded)
@@ -523,6 +552,25 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             print("📝 Recipe created with sourceImageURLs count: \(recipe.sourceImageURLs.count)")
             try await recipeService.createRecipe(recipe)
             print("✅ Recipe saved to Firestore with sourceImageURLs: \(recipe.sourceImageURLs)")
+            
+            // Track recipe creation for free tier users
+            print("🔍 ExtractMenuFromImageViewModel.saveRecipe(): About to track recipe creation...")
+            do {
+                try await SubscriptionHelper.trackRecipeCreation()
+                print("✅ ExtractMenuFromImageViewModel.saveRecipe(): Recipe creation tracked successfully")
+            } catch {
+                print("⚠️ ExtractMenuFromImageViewModel.saveRecipe(): Error tracking recipe creation: \(error.localizedDescription)")
+            }
+            
+            // Track AI image extraction for free tier users (when user presses Save)
+            print("🔍 ExtractMenuFromImageViewModel.saveRecipe(): About to track AI extraction...")
+            do {
+                try await SubscriptionHelper.trackAIImageExtraction()
+                print("✅ ExtractMenuFromImageViewModel.saveRecipe(): AI image extraction tracked successfully")
+            } catch {
+                print("⚠️ ExtractMenuFromImageViewModel.saveRecipe(): Error tracking AI image extraction: \(error.localizedDescription)")
+            }
+            
             isLoading = false
             
             // Post notification to refresh account view

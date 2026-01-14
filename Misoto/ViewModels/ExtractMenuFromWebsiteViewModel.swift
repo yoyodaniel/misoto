@@ -734,6 +734,18 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
             return false
         }
         
+        // Check recipe creation limit for free tier users
+        do {
+            let canCreate = try await SubscriptionHelper.checkRecipeCreationLimit()
+            if !canCreate {
+                errorMessage = LocalizedString("You have reached the free tier limit", comment: "Recipe limit error")
+                return false
+            }
+        } catch {
+            print("⚠️ Error checking recipe limit: \(error.localizedDescription)")
+            // Continue anyway - don't block user if check fails
+        }
+        
         // Get display name from AuthService (ensure user data is loaded)
         let authService = AuthService()
         await authService.reloadUserData()
@@ -877,6 +889,25 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
             }
             
             try await recipeService.createRecipe(recipe)
+            
+            // Track recipe creation for free tier users
+            print("🔍 ExtractMenuFromWebsiteViewModel.saveRecipe(): About to track recipe creation...")
+            do {
+                try await SubscriptionHelper.trackRecipeCreation()
+                print("✅ ExtractMenuFromWebsiteViewModel.saveRecipe(): Recipe creation tracked successfully")
+            } catch {
+                print("⚠️ ExtractMenuFromWebsiteViewModel.saveRecipe(): Error tracking recipe creation: \(error.localizedDescription)")
+            }
+            
+            // Track AI image extraction for free tier users (when user presses Save)
+            print("🔍 ExtractMenuFromWebsiteViewModel.saveRecipe(): About to track AI extraction...")
+            do {
+                try await SubscriptionHelper.trackAIImageExtraction()
+                print("✅ ExtractMenuFromWebsiteViewModel.saveRecipe(): AI image extraction tracked successfully")
+            } catch {
+                print("⚠️ ExtractMenuFromWebsiteViewModel.saveRecipe(): Error tracking AI image extraction: \(error.localizedDescription)")
+            }
+            
             isLoading = false
             
             // Post notification to refresh account view

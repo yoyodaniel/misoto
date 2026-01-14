@@ -1,6 +1,6 @@
 # Terms of Service
 
-**Last Updated: December 30, 2025**
+**Last Updated: January 15, 2026**
 
 ---
 
@@ -23,6 +23,12 @@ Misoto is a mobile application that enables users to:
 - Share recipes and culinary discoveries with a community of users
 - Follow other users and discover new recipes based on interests
 - Save favorite recipes and add personal notes
+
+The App offers both free and premium subscription tiers:
+
+**Free Tier:** Users can create up to 15 recipes per month and perform up to 5 AI-powered recipe extractions per month. Additional features may have usage limits.
+
+**Premium Subscription:** For a monthly or yearly fee, Premium subscribers receive unlimited recipe creation, unlimited AI-powered recipe extractions, and access to all premium features.
 
 The App is designed to help you manage your recipes and connect with others who share your passion for cooking. We continuously work to improve the Service and may add, modify, or remove features from time to time.
 
@@ -102,12 +108,62 @@ Subject to your compliance with these Terms, we grant you a limited, non-exclusi
 
 ---
 
+## Premium Subscriptions and Payments
+
+### Subscription Plans
+
+Misoto offers Premium subscriptions with the following options:
+
+- **Premium Monthly:** $4.99 USD per month (or equivalent in your local currency)
+- **Premium Yearly:** $49.99 USD per year (or equivalent in your local currency)
+
+Subscription prices may vary by region and are subject to change. Current pricing is displayed in the App at the time of purchase.
+
+### Free Tier Limitations
+
+Users on the free tier are subject to the following usage limits:
+
+- Maximum of 15 recipes created per month
+- Maximum of 5 AI-powered recipe extractions per month
+- Additional features may have usage limits as described in the App
+
+These limits reset monthly. Premium subscribers have unlimited access to all features.
+
+### Payment Processing
+
+All subscription payments are processed through Apple's App Store using StoreKit. By purchasing a subscription, you agree to:
+
+- Apple's Terms of Service and Privacy Policy
+- Payment of the subscription fee at the time of purchase
+- Automatic renewal of your subscription unless cancelled
+
+We do not process, store, or have access to your payment information. All payment transactions are handled by Apple.
+
+### Subscription Terms
+
+**Auto-Renewal:** Subscriptions automatically renew at the end of each subscription period (monthly or yearly) unless you cancel at least 24 hours before the end of the current period.
+
+**Cancellation:** You can cancel your subscription at any time through your Apple ID account settings or through the App Store. Cancellation will take effect at the end of the current billing period. You will continue to have access to Premium features until the end of the period you have paid for.
+
+**Refunds:** Refund requests are handled by Apple in accordance with Apple's refund policy. We do not process refunds directly. If you believe you are entitled to a refund, please contact Apple Support or use the refund request feature in the App Store.
+
+**Price Changes:** We reserve the right to change subscription prices at any time. Price changes will not affect your current subscription period but will apply to subsequent renewal periods. We will notify you of any price changes before they take effect.
+
+**Subscription Status:** Your subscription status is verified through Apple's StoreKit. If there is a discrepancy between your subscription status in the App and your actual subscription, please contact us at info@game-timer.com.
+
+**Free Trial:** We may offer free trial periods for Premium subscriptions from time to time. Free trials are subject to the same terms as paid subscriptions and will automatically convert to a paid subscription unless cancelled before the trial period ends.
+
+### Account Termination and Subscriptions
+
+If you delete your account, your subscription will not be automatically cancelled. You must cancel your subscription separately through Apple's systems. Deleting your account will result in the loss of all your data, but you will continue to be charged for your subscription until it is cancelled.
+
 ## Third-Party Services and Technologies
 
 The App integrates with third-party services and technologies to provide certain features:
 
-- Firebase (Google) - For user authentication, data storage, and file hosting
-- OpenAI - For AI-powered recipe extraction and content processing
+- **Firebase (Google)** - For user authentication, data storage, and file hosting
+- **OpenAI** - For AI-powered recipe extraction and content processing
+- **Apple StoreKit** - For subscription payment processing and management
 
 These services are subject to their own terms of service and privacy policies. Your use of these services is also governed by their respective terms. We are not responsible for the practices, policies, or content of these third-party services.
 
@@ -189,11 +245,11 @@ Our failure to enforce any right or provision of these Terms shall not constitut
 
 If you have any questions about these Terms, please contact us:
 
-**Email:** support@misoto.app
+**Email:** info@game-timer.com
 
 We will make our best effort to respond to your inquiries in a timely manner.
 
 ---
 
-**Last Updated:** December 30, 2025
+**Last Updated:** January 15, 2026
 

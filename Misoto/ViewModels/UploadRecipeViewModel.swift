@@ -354,6 +354,18 @@ class UploadRecipeViewModel: ObservableObject {
             return
         }
         
+        // Check recipe creation limit for free tier users
+        do {
+            let canCreate = try await SubscriptionHelper.checkRecipeCreationLimit()
+            if !canCreate {
+                errorMessage = LocalizedString("You have reached the free tier limit", comment: "Recipe limit error")
+                return
+            }
+        } catch {
+            print("⚠️ Error checking recipe limit: \(error.localizedDescription)")
+            // Continue anyway - don't block user if check fails
+        }
+        
         // Get display name from AuthService (ensure user data is loaded)
         await authService.reloadUserData()
         let username = authService.currentUser?.username
@@ -513,6 +525,10 @@ class UploadRecipeViewModel: ObservableObject {
             print("✅ Profanity check passed")
             
             try await recipeService.createRecipe(recipe)
+            
+            // Track recipe creation for free tier users
+            try? await SubscriptionHelper.trackRecipeCreation()
+            
             isSuccess = true
             resetForm()
             

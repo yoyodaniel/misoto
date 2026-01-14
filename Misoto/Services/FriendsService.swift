@@ -30,15 +30,20 @@ class FriendsService: ObservableObject {
         // Check if already following
         let isAlreadyFollowing = try await isFollowing(followerID: followerID, followingID: followingID)
         if isAlreadyFollowing {
+            print("✅ Already following user \(followingID)")
             return // Already following
         }
         
+        print("🔄 Following user \(followingID)...")
         let follow = Follow(followerID: followerID, followingID: followingID)
-        try firestore.collection(followsCollection).document(follow.id).setData(from: follow)
+        try await firestore.collection(followsCollection).document(follow.id).setData(from: follow)
+        print("✅ Follow document created: \(follow.id)")
         
         // Update follower count
         try await updateFollowerCount(userID: followingID, increment: 1)
+        print("✅ Follower count updated for user \(followingID)")
         try await updateFollowingCount(userID: followerID, increment: 1)
+        print("✅ Following count updated for user \(followerID)")
     }
     
     // MARK: - Unfollow User
@@ -48,6 +53,7 @@ class FriendsService: ObservableObject {
             throw FriendsError.unauthorized
         }
         
+        print("🔄 Unfollowing user \(followingID)...")
         // Find the Follow document
         let snapshot = try await firestore.collection(followsCollection)
             .whereField("followerID", isEqualTo: followerID)
@@ -57,10 +63,15 @@ class FriendsService: ObservableObject {
         
         if let document = snapshot.documents.first {
             try await document.reference.delete()
+            print("✅ Follow document deleted: \(document.documentID)")
             
             // Update follower count
             try await updateFollowerCount(userID: followingID, increment: -1)
+            print("✅ Follower count updated for user \(followingID)")
             try await updateFollowingCount(userID: followerID, increment: -1)
+            print("✅ Following count updated for user \(followerID)")
+        } else {
+            print("⚠️ No follow document found to delete")
         }
     }
     

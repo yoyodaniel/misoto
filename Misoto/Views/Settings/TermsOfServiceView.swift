@@ -36,7 +36,21 @@ struct TermsOfServiceView: View {
                                 Text("• " + LocalizedString("Save favorite recipes and add personal notes", comment: "Feature 5"))
                             }
                             .padding(.leading, 16)
+                            Text(LocalizedString("The App offers both free and premium subscription tiers:", comment: "Subscription tiers intro"))
+                                .fontWeight(.semibold)
+                                .padding(.top, 8)
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(LocalizedString("Free Tier:", comment: "Free tier label"))
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("Users can create up to 15 recipes per month and perform up to 5 AI-powered recipe extractions per month. Additional features may have usage limits.", comment: "Free tier description"))
+                                Text(LocalizedString("Premium Subscription:", comment: "Premium tier label"))
+                                    .fontWeight(.semibold)
+                                    .padding(.top, 4)
+                                Text(LocalizedString("For a monthly or yearly fee, Premium subscribers receive unlimited recipe creation, unlimited AI-powered recipe extractions, and access to all premium features.", comment: "Premium tier description"))
+                            }
+                            .padding(.leading, 16)
                             Text(LocalizedString("The App is designed to help you manage your recipes and connect with others who share your passion for cooking. We continuously work to improve the Service and may add, modify, or remove features from time to time.", comment: "Service description continuation"))
+                                .padding(.top, 8)
                         }
                         .font(.body)
                     }
@@ -125,6 +139,97 @@ struct TermsOfServiceView: View {
                         .font(.body)
                     }
                     
+                    // Premium Subscriptions
+                    SectionView(title: LocalizedString("Premium Subscriptions and Payments", comment: "Subscriptions section")) {
+                        VStack(alignment: .leading, spacing: 16) {
+                            // Subscription Plans
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(LocalizedString("Subscription Plans", comment: "Subscription plans subsection"))
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("Misoto offers Premium subscriptions with the following options:", comment: "Subscription options intro"))
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("• " + LocalizedString("Premium Monthly: $4.99 USD per month (or equivalent in your local currency)", comment: "Monthly subscription"))
+                                    Text("• " + LocalizedString("Premium Yearly: $49.99 USD per year (or equivalent in your local currency)", comment: "Yearly subscription"))
+                                }
+                                .padding(.leading, 16)
+                                Text(LocalizedString("Subscription prices may vary by region and are subject to change. Current pricing is displayed in the App at the time of purchase.", comment: "Pricing note"))
+                                    .fontWeight(.medium)
+                            }
+                            
+                            // Free Tier
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(LocalizedString("Free Tier Limitations", comment: "Free tier subsection"))
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("Users on the free tier are subject to the following usage limits:", comment: "Free tier intro"))
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("• " + LocalizedString("Maximum of 15 recipes created per month", comment: "Recipe limit"))
+                                    Text("• " + LocalizedString("Maximum of 5 AI-powered recipe extractions per month", comment: "AI extraction limit"))
+                                    Text("• " + LocalizedString("Additional features may have usage limits as described in the App", comment: "Additional limits"))
+                                }
+                                .padding(.leading, 16)
+                                Text(LocalizedString("These limits reset monthly. Premium subscribers have unlimited access to all features.", comment: "Limit reset note"))
+                                    .fontWeight(.medium)
+                            }
+                            
+                            // Payment Processing
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(LocalizedString("Payment Processing", comment: "Payment processing subsection"))
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("All subscription payments are processed through Apple's App Store using StoreKit. By purchasing a subscription, you agree to:", comment: "Payment processing intro"))
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("• " + LocalizedString("Apple's Terms of Service and Privacy Policy", comment: "Apple terms agreement"))
+                                    Text("• " + LocalizedString("Payment of the subscription fee at the time of purchase", comment: "Payment at purchase"))
+                                    Text("• " + LocalizedString("Automatic renewal of your subscription unless cancelled", comment: "Auto-renewal"))
+                                }
+                                .padding(.leading, 16)
+                                Text(LocalizedString("We do not process, store, or have access to your payment information. All payment transactions are handled by Apple.", comment: "Payment processing disclaimer"))
+                                    .fontWeight(.medium)
+                            }
+                            
+                            // Subscription Terms
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(LocalizedString("Subscription Terms", comment: "Subscription terms subsection"))
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("Auto-Renewal:", comment: "Auto-renewal label"))
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("Subscriptions automatically renew at the end of each subscription period (monthly or yearly) unless you cancel at least 24 hours before the end of the current period.", comment: "Auto-renewal description"))
+                                Text(LocalizedString("Cancellation:", comment: "Cancellation label"))
+                                    .fontWeight(.semibold)
+                                    .padding(.top, 4)
+                                Text(LocalizedString("You can cancel your subscription at any time through your Apple ID account settings or through the App Store. Cancellation will take effect at the end of the current billing period. You will continue to have access to Premium features until the end of the period you have paid for.", comment: "Cancellation description"))
+                                Text(LocalizedString("Refunds:", comment: "Refunds label"))
+                                    .fontWeight(.semibold)
+                                    .padding(.top, 4)
+                                Text(LocalizedString("Refund requests are handled by Apple in accordance with Apple's refund policy. We do not process refunds directly. If you believe you are entitled to a refund, please contact Apple Support or use the refund request feature in the App Store.", comment: "Refunds description"))
+                                Text(LocalizedString("Price Changes:", comment: "Price changes label"))
+                                    .fontWeight(.semibold)
+                                    .padding(.top, 4)
+                                Text(LocalizedString("We reserve the right to change subscription prices at any time. Price changes will not affect your current subscription period but will apply to subsequent renewal periods. We will notify you of any price changes before they take effect.", comment: "Price changes description"))
+                                Text(LocalizedString("Subscription Status:", comment: "Subscription status label"))
+                                    .fontWeight(.semibold)
+                                    .padding(.top, 4)
+                                Text(LocalizedString("Your subscription status is verified through Apple's StoreKit. If there is a discrepancy between your subscription status in the App and your actual subscription, please contact us at info@game-timer.com.", comment: "Subscription status description"))
+                                Text(LocalizedString("Free Trial:", comment: "Free trial label"))
+                                    .fontWeight(.semibold)
+                                    .padding(.top, 4)
+                                Text(LocalizedString("We may offer free trial periods for Premium subscriptions from time to time. Free trials are subject to the same terms as paid subscriptions and will automatically convert to a paid subscription unless cancelled before the trial period ends.", comment: "Free trial description"))
+                            }
+                            
+                            // Account Termination and Subscriptions
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(LocalizedString("Account Termination and Subscriptions", comment: "Account termination subsection"))
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                Text(LocalizedString("If you delete your account, your subscription will not be automatically cancelled. You must cancel your subscription separately through Apple's systems. Deleting your account will result in the loss of all your data, but you will continue to be charged for your subscription until it is cancelled.", comment: "Account termination subscription note"))
+                            }
+                        }
+                        .font(.body)
+                    }
+                    
                     // Third-Party Services
                     SectionView(title: LocalizedString("Third-Party Services and Technologies", comment: "Third-party section")) {
                         VStack(alignment: .leading, spacing: 12) {
@@ -132,6 +237,7 @@ struct TermsOfServiceView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("• " + LocalizedString("Firebase (Google) - For user authentication, data storage, and file hosting", comment: "Firebase service"))
                                 Text("• " + LocalizedString("OpenAI - For AI-powered recipe extraction and content processing", comment: "OpenAI service"))
+                                Text("• " + LocalizedString("Apple StoreKit - For subscription payment processing and management", comment: "StoreKit service"))
                             }
                             .padding(.leading, 16)
                             Text(LocalizedString("These services are subject to their own terms of service and privacy policies. Your use of these services is also governed by their respective terms. We are not responsible for the practices, policies, or content of these third-party services.", comment: "Third-party terms"))
@@ -217,9 +323,9 @@ struct TermsOfServiceView: View {
                     SectionView(title: LocalizedString("Questions or Concerns", comment: "Contact section")) {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(LocalizedString("If you have any questions about these Terms, please contact us:", comment: "Contact intro"))
-                            Text(LocalizedString("Email", comment: "Email label")) + Text(": support@misoto.app")
+                            Text(LocalizedString("Email", comment: "Email label")) + Text(": info@game-timer.com")
                             Text(LocalizedString("We will make our best effort to respond to your inquiries in a timely manner.", comment: "Contact response"))
-                            Text(LocalizedString("Last Updated", comment: "Last updated label")) + Text(": " + LocalizedString("December 30, 2025", comment: "Last updated date"))
+                            Text(LocalizedString("Last Updated", comment: "Last updated label")) + Text(": " + LocalizedString("January 15, 2026", comment: "Last updated date"))
                         }
                         .font(.body)
                     }

@@ -13,6 +13,9 @@
 "Unknown" = "अज्ञात";
 
 /* Authentication */
+"Sign In" = "साइन इन करें";
+"Sign in to your account" = "अपने खाते में साइन इन करें";
+"Sign in to view your profile, save recipes, and more" = "अपना प्रोफ़ाइल देखने, रेसिपी सहेजने और अधिक के लिए साइन इन करें";
 "Continue with Google" = "Google के साथ जारी रखें";
 "Invalid credential" = "अमान्य क्रेडेंशियल";
 "Invalid nonce" = "अमान्य nonce";
@@ -20,6 +23,10 @@
 "Missing client ID" = "क्लाइंट ID गायब है";
 "Missing view controller" = "व्यू कंट्रोलर गायब है";
 "You are not authorized to perform this action" = "आपको इस कार्रवाई को करने की अनुमति नहीं है";
+"By signing in, you agree to our" = "साइन इन करके, आप हमारे से सहमत हैं";
+"Terms & Conditions" = "नियम और शर्तें";
+"and" = "और";
+"Privacy Policy" = "गोपनीयता नीति";
 "Username must be at least 4 characters" = "उपयोगकर्ता नाम कम से कम 4 वर्ण का होना चाहिए";
 "Username must be no more than 15 characters" = "उपयोगकर्ता नाम 15 वर्ण से अधिक नहीं होना चाहिए";
 "This username is already taken" = "यह उपयोगकर्ता नाम पहले से लिया गया है";
@@ -98,6 +105,7 @@
 "Explore" = "अन्वेषण करें";
 "Account" = "खाता";
 "Add Menu" = "मेनू जोड़ें";
+"Add Recipe" = "व्यंजन जोड़ें";
 "Manual Entry" = "मैन्युअल प्रविष्टि";
 "Take Picture" = "तस्वीर लें";
 "Extract from Image" = "छवि से निकालें";
@@ -137,6 +145,15 @@
 "Delete" = "हटाएं";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "क्या आप वाकई इस व्यंजन को हटाना चाहते हैं? इस कार्रवाई को पूर्ववत नहीं किया जा सकता।";
 "Edit Recipe" = "व्यंजन संपादित करें";
+"Make Private" = "सभी के लिए निजी बनाएं";
+"Make Public" = "सभी के लिए सार्वजनिक बनाएं";
+"Make Recipe Public" = "सभी के लिए सार्वजनिक बनाएं";
+"Are you sure you want to make this recipe public?" = "क्या आप वाकई इस व्यंजन को सार्वजनिक बनाना चाहते हैं?";
+"Share Recipe" = "व्यंजन साझा करें";
+"Limited Share" = "निजी साझाकरण";
+"Private Sharing" = "निजी साझाकरण";
+"Share With Users" = "निजी साझाकरण";
+"Share With Users (%d)" = "निजी साझाकरण (%d)";
 
 /* Explore */
 "Today's Recommendations" = "आज की सिफारिशें";
@@ -366,6 +383,7 @@
 "Add ingredient" = "सामग्री जोड़ें";
 
 "Steps" = "चरण";
+"Error" = "त्रुटि";
 "Edited" = "संपादित";
 "Start Cooking" = "खाना बनाना शुरू करें";
 "Edit" = "संपादित करें";
@@ -416,6 +434,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "आपका खाता 30 दिनों में हटा दिया जाएगा। हटाना रद्द करने के लिए, कृपया वापस लॉग इन करें।";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "क्या आप वाकई अपना खाता हटाना चाहते हैं? आपका खाता तुरंत हटा दिया जाएगा और यह कार्रवाई प्रतिवर्ती नहीं है।";
 "Subscription" = "प्रीमियम सदस्यता";
+"Premium Subscription" = "प्रीमियम सदस्यता";
 "Recipe Limit Reached" = "रेसिपी सीमा पहुँच गई";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "सीमा के बिना रेसिपी सहेजना जारी रखें! अब प्रीमियम में अपग्रेड करें और असीमित रेसिपी भंडारण अनलॉक करें।";
 "AI Extraction Limit Reached" = "AI निष्कर्षण सीमा पहुँच गई";
@@ -464,20 +483,21 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Restore Purchases" = "Restore Purchases";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "वर्तमान अवधि समाप्त होने से कम से कम 24 घंटे पहले रद्द नहीं किए जाने तक सदस्यताएं स्वचालित रूप से नवीनीकृत होती हैं।";
+"Manage subscriptions in Settings" = "सेटिंग्स में सदस्यताएं प्रबंधित करें";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "17% बचाएं";
+"You have reached the free tier limit" = "आपने मुफ्त रेसिपी स्टोरेज सीमा पहुँच ली है। अब प्रीमियम सदस्यता में अपग्रेड करें और असीमित रेसिपी स्टोरेज और प्रीमियम सुविधाएँ अनलॉक करें।";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "आपने AI रेसिपी निष्कर्षण के लिए अपनी मुफ्त मासिक सीमा पहुँच ली है। अब प्रीमियम सदस्यता में अपग्रेड करें और असीमित AI निष्कर्षण और प्रीमियम सुविधाएँ अनलॉक करें।";
+"Your free allowance will reset on %@" = "आपका मुफ्त भत्ता %@ को रीसेट होगा";
+"Discover more. Cook smarter." = "अधिक खोजें। अधिक चतुराई से खाना बनाएं।";
+"Unlimited access to all recipes and AI features" = "सभी रेसिपी और AI सुविधाओं तक असीमित पहुंच";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "असीमित रेसिपी और AI-संचालित सुविधाओं को अनलॉक करें ताकि अद्भुत व्यंजन बना, साझा और खोज सकें।";
+"Best Value" = "सर्वोत्तम मूल्य";
+"Monthly" = "मासिक";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

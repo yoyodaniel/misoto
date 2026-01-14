@@ -131,10 +131,10 @@ struct ReAuthenticateView: View {
         errorMessage = nil
         
         do {
-            try await authService.signInWithGoogle(presentingViewController: rootViewController)
+            try await authService.reAuthenticateWithGoogle(presentingViewController: rootViewController)
             isAuthenticating = false
-            dismiss()
             onSuccess()
+            dismiss()
         } catch {
             errorMessage = error.localizedDescription
             isAuthenticating = false
@@ -150,11 +150,11 @@ struct ReAuthenticateView: View {
             guard let nonce = currentNonce else {
                 throw AuthError.invalidNonce
             }
-            try await authService.handleAppleSignInResult(result, nonce: nonce)
+            try await authService.reAuthenticateWithApple(result: result, nonce: nonce)
             currentNonce = nil
             isAuthenticating = false
-            dismiss()
             onSuccess()
+            dismiss()
         } catch {
             errorMessage = error.localizedDescription
             currentNonce = nil

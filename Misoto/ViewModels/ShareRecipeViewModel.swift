@@ -21,27 +21,48 @@ class ShareRecipeViewModel: ObservableObject {
     
     private let friendsService = FriendsService()
     private let firestore = FirebaseManager.shared.firestore
+    private let shareService = RecipeShareService.shared
     private var initialSharedUserIDs: [String] = []
+    private var recipeID: String?
     
-    init(sharedUserIDs: [String] = []) {
+    init(sharedUserIDs: [String] = [], recipeID: String? = nil) {
         self.initialSharedUserIDs = sharedUserIDs
+        self.recipeID = recipeID
     }
     
     func loadExistingSharedUsers() async {
-        guard !initialSharedUserIDs.isEmpty else { return }
-        
         isLoading = true
+        
+        // Load from new scalable system first
+        var allSharedUserIDs = Set(initialSharedUserIDs)
+        
+        if let recipeID = recipeID {
+            do {
+                let shares = try await shareService.getShares(for: recipeID)
+                let sharedUserIDs = shares.map { $0.userID }
+                allSharedUserIDs.formUnion(sharedUserIDs)
+                print("✅ Loaded \(shares.count) shares from recipeShares collection")
+            } catch {
+                print("⚠️ Error loading shares from recipeShares: \(error.localizedDescription)")
+            }
+        }
+        
+        // Load user details for all shared user IDs
+        guard !allSharedUserIDs.isEmpty else {
+            isLoading = false
+            return
+        }
         
         do {
             var loadedUsers: [AppUser] = []
-            for userID in initialSharedUserIDs {
+            for userID in allSharedUserIDs {
                 let userDoc = try await firestore.collection("users").document(userID).getDocument()
                 if let user = try? userDoc.data(as: AppUser.self) {
                     loadedUsers.append(user)
                 }
             }
             existingSharedUsers = loadedUsers
-            print("✅ Loaded \(loadedUsers.count) existing shared users")
+            print("✅ Loaded \(loadedUsers.count) existing shared users (from both old and new systems)")
         } catch {
             print("⚠️ Error loading shared users: \(error.localizedDescription)")
         }

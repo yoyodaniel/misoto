@@ -1078,6 +1078,136 @@ class OpenAIService {
         return content.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
+    /// Generate search keywords for a recipe using OpenAI
+    /// - Parameters:
+    ///   - title: Recipe title
+    ///   - ingredients: List of ingredients (as Ingredient objects)
+    ///   - authorName: Author display name
+    ///   - authorUsername: Author username (optional)
+    ///   - cuisine: Cuisine type (optional)
+    /// - Returns: Array of search keywords
+    static func generateSearchKeywords(
+        title: String,
+        ingredients: [Ingredient],
+        authorName: String,
+        authorUsername: String?,
+        cuisine: String?
+    ) async throws -> [String] {
+        guard !apiKey.isEmpty else {
+            throw OpenAIError.apiKeyNotConfigured
+        }
+        
+        guard !title.isEmpty else {
+            return []
+        }
+        
+        // Create the request
+        guard let url = URL(string: "\(baseURL)/chat/completions") else {
+            throw OpenAIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Build ingredient names list
+        let ingredientNames = ingredients.map { $0.name }.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        let ingredientsText = ingredientNames.joined(separator: ", ")
+        
+        // Build author information
+        var authorInfo = authorName
+        if let username = authorUsername, !username.isEmpty {
+            authorInfo += " \(username)"
+        }
+        
+        let systemPrompt = """
+        You are a search optimization expert. Generate a list of search keywords for a recipe to improve search functionality.
+        The keywords should help users find recipes by:
+        - Ingredients (include all major ingredients)
+        - Author name (display name and username if available)
+        - Cuisine type (if provided)
+        - Recipe title variations and related terms
+        
+        Return ONLY a JSON object with a "keywords" array of strings (comma-separated or JSON array format).
+        Each keyword should be lowercase and trimmed of whitespace.
+        Include 10-20 relevant keywords maximum.
+        Focus on searchable terms that users might type in a search bar.
+        """
+        
+        var userPrompt = "Generate search keywords for this recipe:\n\nTitle: \(title)"
+        if !ingredientsText.isEmpty {
+            userPrompt += "\n\nIngredients: \(ingredientsText)"
+        }
+        if !authorInfo.isEmpty {
+            userPrompt += "\n\nAuthor: \(authorInfo)"
+        }
+        if let cuisine = cuisine, !cuisine.isEmpty {
+            userPrompt += "\n\nCuisine: \(cuisine)"
+        }
+        userPrompt += "\n\nReturn JSON only: {\"keywords\": [\"keyword1\", \"keyword2\", ...]}"
+        
+        let requestBody: [String: Any] = [
+            "model": "gpt-3.5-turbo", // Cheaper text-only model
+            "messages": [
+                [
+                    "role": "system",
+                    "content": systemPrompt
+                ],
+                [
+                    "role": "user",
+                    "content": userPrompt
+                ]
+            ],
+            "response_format": ["type": "json_object"],
+            "max_tokens": 200,
+            "temperature": 0.3
+        ]
+        
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
+            throw OpenAIError.requestSerializationFailed
+        }
+        request.httpBody = httpBody
+        
+        // Make the request
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let error = errorData["error"] as? [String: Any],
+               let message = error["message"] as? String {
+                throw OpenAIError.apiError(message)
+            }
+            throw OpenAIError.httpError(httpResponse.statusCode)
+        }
+        
+        // Parse the response
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let message = firstChoice["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        // Extract JSON from the response (it might be wrapped in markdown code blocks)
+        let jsonString = extractJSON(from: content)
+        
+        // Parse the keywords
+        guard let jsonData = jsonString.data(using: .utf8),
+              let parsedJson = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any],
+              let keywords = parsedJson["keywords"] as? [String] else {
+            throw OpenAIError.jsonParsingFailed
+        }
+        
+        // Return lowercase, trimmed keywords
+        return keywords.map { $0.lowercased().trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+    }
+    
     /// Detect the most suitable cuisine type for a recipe using OpenAI
     static func detectCuisine(
         title: String,

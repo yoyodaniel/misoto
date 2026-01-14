@@ -13,6 +13,9 @@
 "Unknown" = "غير معروف";
 
 /* Authentication */
+"Sign In" = "تسجيل الدخول";
+"Sign in to your account" = "قم بتسجيل الدخول إلى حسابك";
+"Sign in to view your profile, save recipes, and more" = "قم بتسجيل الدخول لعرض ملفك الشخصي وحفظ الوصفات والمزيد";
 "Continue with Google" = "المتابعة مع Google";
 "Invalid credential" = "بيانات اعتماد غير صالحة";
 "Invalid nonce" = "Nonce غير صالح";
@@ -20,6 +23,10 @@
 "Missing client ID" = "معرف العميل مفقود";
 "Missing view controller" = "وحدة تحكم العرض مفقودة";
 "You are not authorized to perform this action" = "غير مصرح لك بتنفيذ هذا الإجراء";
+"By signing in, you agree to our" = "بتسجيل الدخول، أنت توافق على";
+"Terms & Conditions" = "الشروط والأحكام";
+"and" = "و";
+"Privacy Policy" = "سياسة الخصوصية";
 "Username must be at least 4 characters" = "يجب أن يكون اسم المستخدم 4 أحرف على الأقل";
 "Username must be no more than 15 characters" = "يجب ألا يزيد اسم المستخدم عن 15 حرفاً";
 "This username is already taken" = "اسم المستخدم هذا مستخدم بالفعل";
@@ -98,6 +105,7 @@
 "Explore" = "استكشف";
 "Account" = "الحساب";
 "Add Menu" = "إضافة قائمة";
+"Add Recipe" = "إضافة وصفة";
 "Manual Entry" = "إدخال يدوي";
 "Take Picture" = "التقاط صورة";
 "Extract from Image" = "استخراج من الصورة";
@@ -137,6 +145,15 @@
 "Delete" = "حذف";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "هل أنت متأكد من حذف هذه الوصفة؟ لا يمكن التراجع عن هذا الإجراء.";
 "Edit Recipe" = "تعديل الوصفة";
+"Make Private" = "جعل خاص للجميع";
+"Make Public" = "جعل عام للجميع";
+"Make Recipe Public" = "جعل عام للجميع";
+"Are you sure you want to make this recipe public?" = "هل أنت متأكد أنك تريد جعل هذه الوصفة عامة؟";
+"Share Recipe" = "مشاركة الوصفة";
+"Limited Share" = "مشاركة خاصة";
+"Private Sharing" = "مشاركة خاصة";
+"Share With Users" = "مشاركة خاصة";
+"Share With Users (%d)" = "مشاركة خاصة (%d)";
 
 /* Explore */
 "Today's Recommendations" = "توصيات اليوم";
@@ -366,6 +383,7 @@
 
 "Steps" = "الخطوات";
 "Start Cooking" = "ابدأ الطهي";
+"Error" = "خطأ";
 "Edit" = "تعديل";
 "Save Recipe" = "حفظ الوصفة";
 "Unsave Recipe" = "إلغاء حفظ الوصفة";
@@ -414,6 +432,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "سيتم حذف حسابك خلال 30 يوماً. لإلغاء الحذف، يرجى تسجيل الدخول مرة أخرى.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "هل أنت متأكد أنك تريد حذف حسابك؟ سيتم حذف حسابك على الفور ولا يمكن التراجع عن هذا الإجراء.";
 "Subscription" = "اشتراك مميز";
+"Premium Subscription" = "اشتراك مميز";
 "Recipe Limit Reached" = "تم الوصول إلى حد الوصفات";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "استمر في حفظ الوصفات بدون حدود! قم بالترقية إلى المميز الآن وافتح تخزين وصفات غير محدود.";
 "AI Extraction Limit Reached" = "تم الوصول إلى حد استخراج الذكاء الاصطناعي";
@@ -462,20 +481,21 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Restore Purchases" = "Restore Purchases";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "تتجدد الاشتراكات تلقائياً ما لم يتم إلغاؤها قبل 24 ساعة على الأقل من نهاية الفترة الحالية.";
+"Manage subscriptions in Settings" = "إدارة الاشتراكات في الإعدادات";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "وفر 17%";
+"You have reached the free tier limit" = "لقد وصلت إلى حد تخزين الوصفات المجاني. قم بالترقية إلى الاشتراك المميز الآن لإلغاء قفل التخزين غير المحدود للوصفات والميزات المميزة.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "لقد وصلت إلى حدك الشهري المجاني لاستخراج الوصفات بالذكاء الاصطناعي. قم بالترقية إلى الاشتراك المميز الآن لإلغاء قفل الاستخراج غير المحدود بالذكاء الاصطناعي والميزات المميزة.";
+"Your free allowance will reset on %@" = "سيتم إعادة تعيين البدل المجاني الخاص بك في %@";
+"Discover more. Cook smarter." = "اكتشف المزيد. اطبخ بذكاء أكبر.";
+"Unlimited access to all recipes and AI features" = "وصول غير محدود لجميع الوصفات وميزات الذكاء الاصطناعي";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "افتح الوصفات غير المحدودة والميزات المدعومة بالذكاء الاصطناعي لإنشاء ومشاركة واكتشاف أطباق مذهلة.";
+"Best Value" = "أفضل قيمة";
+"Monthly" = "شهري";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

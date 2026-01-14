@@ -60,8 +60,17 @@ struct ChefSectionView: View {
                         
                         // Name and Username
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(viewModel.creator?.displayName ?? creatorName)
-                                .font(.headline)
+                            ZStack(alignment: .topTrailing) {
+                                Text(viewModel.creator?.displayName ?? creatorName)
+                                    .font(.headline)
+                                
+                                if let creator = viewModel.creator, creator.premiumUser {
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .font(.system(size: 10))
+                                        .foregroundColor(.blue)
+                                        .offset(x: 16, y: -1)
+                                }
+                            }
                             
                             if let username = viewModel.creator?.username ?? creatorUsername {
                                 Text("@\(username)")
@@ -162,9 +171,14 @@ class ChefSectionViewModel: ObservableObject {
     private let friendsService = FriendsService()
     private let authService = AuthService()
     private let firestore = FirebaseManager.shared.firestore
+    private var followListener: ListenerRegistration?
     
     init(creatorID: String) {
         self.creatorID = creatorID
+    }
+    
+    deinit {
+        followListener?.remove()
     }
     
     func loadCreatorData() async {
@@ -184,9 +198,37 @@ class ChefSectionViewModel: ObservableObject {
         
         do {
             isFollowing = try await friendsService.isFollowing(followerID: currentUserID, followingID: creatorID)
+            // Set up real-time listener for follow status
+            setupFollowListener(followerID: currentUserID, followingID: creatorID)
         } catch {
             print("⚠️ Error checking follow status: \(error.localizedDescription)")
             isFollowing = false
+        }
+    }
+    
+    private func setupFollowListener(followerID: String, followingID: String) {
+        // Remove existing listener if any
+        followListener?.remove()
+        
+        // Set up real-time listener for the follow document
+        let query = firestore.collection("follows")
+            .whereField("followerID", isEqualTo: followerID)
+            .whereField("followingID", isEqualTo: followingID)
+            .limit(to: 1)
+        
+        followListener = query.addSnapshotListener { [weak self] snapshot, error in
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    print("⚠️ Error listening to follow status: \(error.localizedDescription)")
+                    return
+                }
+                
+                // Update isFollowing based on whether documents exist
+                self.isFollowing = !(snapshot?.documents.isEmpty ?? true)
+                print("🔄 Follow status updated: \(self.isFollowing)")
+            }
         }
     }
     
@@ -207,9 +249,6 @@ class ChefSectionViewModel: ObservableObject {
                 // Update local follower count
                 creator?.followerCount = (creator?.followerCount ?? 0) + 1
             }
-            
-            // Re-check follow status to ensure UI is in sync with Firebase
-            await checkFollowStatus()
             
             // Reload current user data to update followingCount in profile
             // The real-time listener in AccountViewModel will also pick this up, but this ensures immediate update

@@ -25,9 +25,15 @@ class RecipeDetailViewModel: ObservableObject {
     private let noteService = RecipeNoteService()
     private let notesPerPage = 5
     private var lastNoteDocument: DocumentSnapshot?
+    private let firestore = FirebaseManager.shared.firestore
+    private var favoriteListener: ListenerRegistration?
     
     init(recipe: Recipe) {
         self.recipe = recipe
+    }
+    
+    deinit {
+        favoriteListener?.remove()
     }
     
     // MARK: - Computed Properties
@@ -82,38 +88,52 @@ class RecipeDetailViewModel: ObservableObject {
         
         do {
             isFavorite = try await recipeService.isFavorite(recipeID: recipe.id, userID: userID)
+            // Set up real-time listener for favorite status
+            setupFavoriteListener(userID: userID, recipeID: recipe.id)
         } catch {
             // Silently fail
             print("⚠️ Error checking favorite status: \(error.localizedDescription)")
         }
     }
     
+    private func setupFavoriteListener(userID: String, recipeID: String) {
+        // Remove existing listener if any
+        favoriteListener?.remove()
+        
+        // Set up real-time listener for the favorite document
+        let query = firestore.collection("favorites")
+            .whereField("userID", isEqualTo: userID)
+            .whereField("recipeID", isEqualTo: recipeID)
+            .limit(to: 1)
+        
+        favoriteListener = query.addSnapshotListener { [weak self] snapshot, error in
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    print("⚠️ Error listening to favorite status: \(error.localizedDescription)")
+                    return
+                }
+                
+                // Update isFavorite based on whether documents exist
+                self.isFavorite = !(snapshot?.documents.isEmpty ?? true)
+                print("🔄 Favorite status updated: \(self.isFavorite)")
+            }
+        }
+    }
+    
     func toggleFavorite() async {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
-        // Update state optimistically for immediate UI feedback
-        let wasFavorite = isFavorite
-        isFavorite.toggle()
-        if wasFavorite {
-            recipe.favoriteCount = max(0, recipe.favoriteCount - 1)
-        } else {
-            recipe.favoriteCount += 1
-        }
-        
         do {
-            if wasFavorite {
+            if isFavorite {
                 try await recipeService.removeFavorite(recipeID: recipe.id, userID: userID)
+                recipe.favoriteCount = max(0, recipe.favoriteCount - 1)
             } else {
                 try await recipeService.addFavorite(recipeID: recipe.id, userID: userID)
+                recipe.favoriteCount += 1
             }
         } catch {
-            // Revert state on error
-            isFavorite = wasFavorite
-            if wasFavorite {
-                recipe.favoriteCount += 1
-            } else {
-                recipe.favoriteCount = max(0, recipe.favoriteCount - 1)
-            }
             errorMessage = error.localizedDescription
             print("⚠️ Error toggling favorite: \(error.localizedDescription)")
         }

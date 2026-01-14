@@ -13,6 +13,9 @@
 "Unknown" = "לא ידוע";
 
 /* Authentication */
+"Sign In" = "התחבר";
+"Sign in to your account" = "התחבר לחשבון שלך";
+"Sign in to view your profile, save recipes, and more" = "התחבר כדי לראות את הפרופיל שלך, לשמור מתכונים ועוד";
 "Continue with Google" = "המשך עם Google";
 "Invalid credential" = "פרטי התחברות לא תקינים";
 "Invalid nonce" = "Nonce לא תקין";
@@ -20,6 +23,10 @@
 "Missing client ID" = "חסר מזהה לקוח";
 "Missing view controller" = "חסר בקר תצוגה";
 "You are not authorized to perform this action" = "אין לך הרשאה לבצע פעולה זו";
+"By signing in, you agree to our" = "על ידי התחברות, אתה מסכים ל";
+"Terms & Conditions" = "תנאים והגבלות";
+"and" = "ו";
+"Privacy Policy" = "מדיניות פרטיות";
 "Username must be at least 4 characters" = "שם המשתמש חייב להכיל לפחות 4 תווים";
 "Username must be no more than 15 characters" = "שם המשתמש לא יכול להכיל יותר מ-15 תווים";
 "This username is already taken" = "שם המשתמש הזה כבר תפוס";
@@ -97,6 +104,7 @@
 "Explore" = "גלה";
 "Account" = "חשבון";
 "Add Menu" = "הוסף תפריט";
+"Add Recipe" = "הוסף מתכון";
 "Manual Entry" = "הזנה ידנית";
 "Take Picture" = "צלם תמונה";
 "Extract from Image" = "חלץ מתמונה";
@@ -136,6 +144,15 @@
 "Delete" = "מחק";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "האם אתה בטוח שברצונך למחוק את המתכון הזה? פעולה זו לא ניתנת לביטול.";
 "Edit Recipe" = "ערוך מתכון";
+"Make Private" = "הפוך לפרטי לכולם";
+"Make Public" = "הפוך לציבורי לכולם";
+"Make Recipe Public" = "הפוך לציבורי לכולם";
+"Are you sure you want to make this recipe public?" = "האם אתה בטוח שברצונך להפוך את המתכון הזה לציבורי?";
+"Share Recipe" = "שתף מתכון";
+"Limited Share" = "שיתוף פרטי";
+"Private Sharing" = "שיתוף פרטי";
+"Share With Users" = "שיתוף פרטי";
+"Share With Users (%d)" = "שיתוף פרטי (%d)";
 
 /* Explore */
 "Today's Recommendations" = "המלצות היום";
@@ -366,6 +383,7 @@
 "Edit Note" = "ערוך הערה";
 "My Notes" = "ההערות שלי";
 "Edited" = "נערך";
+"Error" = "שגיאה";
 "Delete Note" = "מחק הערה";
 "Are you sure you want to delete this note? This action cannot be undone." = "האם אתה בטוח שברצונך למחוק הערה זו? פעולה זו לא ניתנת לביטול.";
 "Update Profile" = "עדכן פרופיל";
@@ -401,6 +419,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "החשבון שלך ימחק תוך 30 יום. כדי לבטל את המחיקה, אנא היכנס שוב.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "האם אתה בטוח שברצונך למחוק את החשבון שלך? החשבון שלך יימחק מיד ופעולה זו בלתי הפיכה.";
 "Subscription" = "מנוי פרימיום";
+"Premium Subscription" = "מנוי פרימיום";
 "Recipe Limit Reached" = "הושג גבול המתכונים";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "המשך לשמור מתכונים ללא הגבלה! שדרג לפרימיום כעת ופתח אחסון מתכונים ללא הגבלה.";
 "AI Extraction Limit Reached" = "הושג גבול חילוץ AI";
@@ -445,24 +464,25 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Extract recipes from photos without limits" = "Extract recipes from photos without limits";
 "All AI Features" = "All AI Features";
 "Auto-detect cuisine, difficulty, and cooking times" = "Auto-detect cuisine, difficulty, and cooking times";
-"Subscribe" = "Subscribe";
-"Restore Purchases" = "Restore Purchases";
+"Subscribe" = "הירשם";
+"Restore Purchases" = "שחזר רכישות";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "מנויים מתחדשים אוטומטית אלא אם כן בוטלו לפחות 24 שעות לפני סיום התקופה הנוכחית.";
+"Manage subscriptions in Settings" = "נהל מנויים בהגדרות";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "חסוך 17%";
+"You have reached the free tier limit" = "הגעת למגבלת האחסון של המתכונים החינמיים. שדרג עכשיו למנוי פרימיום כדי לפתוח אחסון מתכונים ללא הגבלה ותכונות פרימיום.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "הגעת למגבלה החודשית החינמית שלך לחילוץ מתכונים עם AI. שדרג עכשיו למנוי פרימיום כדי לפתוח חילוץ AI ללא הגבלה ותכונות פרימיום.";
+"Your free allowance will reset on %@" = "המכסה החינמית שלך תתאפס ב-%@";
+"Discover more. Cook smarter." = "גלה יותר. בושל חכם יותר.";
+"Unlimited access to all recipes and AI features" = "גישה בלתי מוגבלת לכל המתכונים והתכונות של AI";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "פתח מתכונים בלתי מוגבלים ותכונות מונעות AI כדי ליצור, לשתף ולגלות מנות מדהימות.";
+"Best Value" = "הערך הטוב ביותר";
+"Monthly" = "חודשי";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

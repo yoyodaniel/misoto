@@ -13,6 +13,9 @@
 "Unknown" = "ไม่ทราบ";
 
 /* Authentication */
+"Sign In" = "เข้าสู่ระบบ";
+"Sign in to your account" = "เข้าสู่ระบบบัญชีของคุณ";
+"Sign in to view your profile, save recipes, and more" = "เข้าสู่ระบบเพื่อดูโปรไฟล์ บันทึกสูตรอาหาร และอื่นๆ";
 "Continue with Google" = "ดำเนินการต่อด้วย Google";
 "Invalid credential" = "ข้อมูลประจำตัวไม่ถูกต้อง";
 "Invalid nonce" = "Nonce ไม่ถูกต้อง";
@@ -20,6 +23,10 @@
 "Missing client ID" = "ไม่มี Client ID";
 "Missing view controller" = "ไม่มี View Controller";
 "You are not authorized to perform this action" = "คุณไม่มีสิทธิ์ในการดำเนินการนี้";
+"By signing in, you agree to our" = "เมื่อเข้าสู่ระบบ คุณยอมรับ";
+"Terms & Conditions" = "ข้อกำหนดและเงื่อนไข";
+"and" = "และ";
+"Privacy Policy" = "นโยบายความเป็นส่วนตัว";
 "Username must be at least 4 characters" = "ชื่อผู้ใช้ต้องมีอย่างน้อย 4 ตัวอักษร";
 "Username must be no more than 15 characters" = "ชื่อผู้ใช้ต้องไม่เกิน 15 ตัวอักษร";
 "This username is already taken" = "ชื่อผู้ใช้นี้ถูกใช้แล้ว";
@@ -98,6 +105,7 @@
 "Explore" = "สำรวจ";
 "Account" = "บัญชี";
 "Add Menu" = "เพิ่มเมนู";
+"Add Recipe" = "เพิ่มสูตรอาหาร";
 "Manual Entry" = "ป้อนด้วยตนเอง";
 "Take Picture" = "ถ่ายรูป";
 "Extract from Image" = "แยกจากรูปภาพ";
@@ -137,6 +145,15 @@
 "Delete" = "ลบ";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "คุณแน่ใจหรือไม่ว่าต้องการลบสูตรอาหารนี้? การกระทำนี้ไม่สามารถยกเลิกได้";
 "Edit Recipe" = "แก้ไขสูตรอาหาร";
+"Make Private" = "ทำให้เป็นส่วนตัวสำหรับทุกคน";
+"Make Public" = "ทำให้เป็นสาธารณะสำหรับทุกคน";
+"Make Recipe Public" = "ทำให้เป็นสาธารณะสำหรับทุกคน";
+"Are you sure you want to make this recipe public?" = "คุณแน่ใจหรือไม่ว่าต้องการทำให้สูตรอาหารนี้เป็นสาธารณะ?";
+"Share Recipe" = "แชร์สูตรอาหาร";
+"Limited Share" = "การแชร์ส่วนตัว";
+"Private Sharing" = "การแชร์ส่วนตัว";
+"Share With Users" = "การแชร์ส่วนตัว";
+"Share With Users (%d)" = "การแชร์ส่วนตัว (%d)";
 
 /* Explore */
 "Today's Recommendations" = "คำแนะนำวันนี้";
@@ -366,6 +383,7 @@
 "Add ingredient" = "เพิ่มส่วนผสม";
 
 "Steps" = "ขั้นตอน";
+"Error" = "ข้อผิดพลาด";
 "Start Cooking" = "เริ่มทำอาหาร";
 "Edit" = "แก้ไข";
 "Save Recipe" = "บันทึกสูตรอาหาร";
@@ -414,6 +432,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "บัญชีของคุณจะถูกลบภายใน 30 วัน หากต้องการยกเลิกการลบ กรุณาเข้าสู่ระบบอีกครั้ง";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีของคุณ? บัญชีของคุณจะถูกลบทันทีและการดำเนินการนี้ไม่สามารถยกเลิกได้";
 "Subscription" = "การสมัครสมาชิกระดับพรีเมียม";
+"Premium Subscription" = "การสมัครสมาชิกระดับพรีเมียม";
 "Recipe Limit Reached" = "ถึงขีดจำกัดสูตรอาหาร";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "บันทึกสูตรอาหารต่อไปโดยไม่จำกัด! อัพเกรดเป็นพรีเมียมตอนนี้และปลดล็อกพื้นที่เก็บสูตรอาหารไม่จำกัด";
 "AI Extraction Limit Reached" = "ถึงขีดจำกัดการดึงข้อมูล AI";
@@ -462,20 +481,21 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Restore Purchases" = "Restore Purchases";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "การสมัครสมาชิกจะต่ออายุอัตโนมัติเว้นแต่จะยกเลิกอย่างน้อย 24 ชั่วโมงก่อนสิ้นสุดระยะเวลาปัจจุบัน";
+"Manage subscriptions in Settings" = "จัดการการสมัครสมาชิกในการตั้งค่า";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "ประหยัด 17%";
+"You have reached the free tier limit" = "คุณถึงขีดจำกัดการจัดเก็บสูตรอาหารฟรีแล้ว อัปเกรดเป็นสมาชิกพรีเมียมตอนนี้เพื่อปลดล็อกการจัดเก็บสูตรอาหารไม่จำกัดและฟีเจอร์พรีเมียม";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "คุณถึงขีดจำกัดรายเดือนฟรีสำหรับการดึงสูตรอาหารด้วย AI แล้ว อัปเกรดเป็นสมาชิกพรีเมียมตอนนี้เพื่อปลดล็อกการดึง AI ไม่จำกัดและฟีเจอร์พรีเมียม";
+"Your free allowance will reset on %@" = "โควตาฟรีของคุณจะรีเซ็ตในวันที่ %@";
+"Discover more. Cook smarter." = "ค้นพบมากขึ้น ทำอาหารอย่างชาญฉลาด";
+"Unlimited access to all recipes and AI features" = "เข้าถึงสูตรอาหารและฟีเจอร์ AI ทั้งหมดได้ไม่จำกัด";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "ปลดล็อกสูตรอาหารไม่จำกัดและฟีเจอร์ที่ขับเคลื่อนด้วย AI เพื่อสร้าง แชร์ และค้นพบอาหารที่น่าทึ่ง";
+"Best Value" = "คุ้มค่าที่สุด";
+"Monthly" = "รายเดือน";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

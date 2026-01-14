@@ -45,11 +45,11 @@ struct LoginView: View {
                 // App Name and Tagline
                 VStack(spacing: 8) {
                     Text(LocalizedString("Misoto", comment: "App name"))
-                        .font(.system(size: 48, weight: .bold))
+                        .font(.system(size: 64, weight: .bold))
                         .foregroundColor(.white)
                     
                     Text(LocalizedString("Share and discover amazing recipes", comment: "App tagline"))
-                        .font(.system(size: 16))
+                        .font(.system(size: 20))
                         .foregroundColor(.white.opacity(0.95))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
@@ -60,10 +60,14 @@ struct LoginView: View {
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.white)
-                        .padding()
+                        .font(.system(size: 15))
+                        .multilineTextAlignment(.center)
+                        .padding(.vertical, 14)
+                        .padding(.horizontal, 20)
                         .background(Color.red.opacity(0.8))
-                        .cornerRadius(8)
+                        .cornerRadius(12)
                         .padding(.horizontal, 40)
+                        .padding(.bottom, 8)
                 }
                 
                 VStack(spacing: 16) {
@@ -128,6 +132,7 @@ struct LoginView: View {
                     .disabled(viewModel.isLoading)
                     .padding(.horizontal, 40)
                 }
+                .padding(.top, 8)
                 
                 if viewModel.isLoading {
                     ProgressView()

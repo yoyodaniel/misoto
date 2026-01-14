@@ -33,8 +33,17 @@ struct UserRow: View {
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(user.displayName)
-                    .font(.headline)
+                ZStack(alignment: .topTrailing) {
+                    Text(user.displayName)
+                        .font(.headline)
+                    
+                    if user.premiumUser {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.system(size: 10))
+                            .foregroundColor(.blue)
+                            .offset(x: 16, y: -1)
+                    }
+                }
                 
                 if let bio = user.bio {
                     Text(bio)

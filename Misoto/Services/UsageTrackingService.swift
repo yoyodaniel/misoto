@@ -25,11 +25,12 @@ class UsageTrackingService {
             throw UsageTrackingError.unauthorized
         }
         
-        let monthKey = getCurrentMonthKey()
-        let usageRef = firestore.collection(usageCollection).document(userID)
+        // Only update users/{userId}/recipeCount (total count)
+        // No monthly tracking for recipes - just use total recipeCount
+        let userRef = firestore.collection("users").document(userID)
         
-        try await usageRef.setData([
-            "recipeCount.\(monthKey)": FieldValue.increment(Int64(1)),
+        try await userRef.setData([
+            "recipeCount": FieldValue.increment(Int64(1)),
             "updatedAt": Timestamp(date: Date())
         ], merge: true)
     }
@@ -39,14 +40,35 @@ class UsageTrackingService {
             throw UsageTrackingError.unauthorized
         }
         
+        // Get recipe count from user document (as specified by user)
+        let userRef = firestore.collection("users").document(userID)
+        let userDocument = try await userRef.getDocument()
+        
+        if let userData = userDocument.data() {
+            // Try Int first
+            if let recipeCount = userData["recipeCount"] as? Int {
+                return recipeCount
+            }
+            // Try NSNumber (Firestore can return numbers as NSNumber)
+            if let recipeCount = userData["recipeCount"] as? NSNumber {
+                return recipeCount.intValue
+            }
+        }
+        
+        // Fallback: Try to get from usage collection (monthly tracking)
         let monthKey = getCurrentMonthKey()
         let usageRef = firestore.collection(usageCollection).document(userID)
         
-        let document = try await usageRef.getDocument()
-        if let data = document.data(),
-           let recipeCount = data["recipeCount"] as? [String: Int],
-           let count = recipeCount[monthKey] {
-            return count
+        let usageDocument = try await usageRef.getDocument()
+        if let usageData = usageDocument.data(),
+           let recipeCountDict = usageData["recipeCount"] as? [String: Any] {
+            if let monthData = recipeCountDict[monthKey] {
+                if let intValue = monthData as? Int {
+                    return intValue
+                } else if let numberValue = monthData as? NSNumber {
+                    return numberValue.intValue
+                }
+            }
         }
         
         return 0
@@ -60,10 +82,11 @@ class UsageTrackingService {
         }
         
         let monthKey = getCurrentMonthKey()
-        let usageRef = firestore.collection(usageCollection).document(userID)
+        // Structure: users/{userId}/usage/aiDescriptionCount/{monthKey}
+        let userRef = firestore.collection("users").document(userID)
         
-        try await usageRef.setData([
-            "aiDescriptionCount.\(monthKey)": FieldValue.increment(Int64(1)),
+        try await userRef.setData([
+            "usage.aiDescriptionCount.\(monthKey)": FieldValue.increment(Int64(1)),
             "updatedAt": Timestamp(date: Date())
         ], merge: true)
     }
@@ -74,13 +97,24 @@ class UsageTrackingService {
         }
         
         let monthKey = getCurrentMonthKey()
-        let usageRef = firestore.collection(usageCollection).document(userID)
+        // Structure: users/{userId}/usage/aiDescriptionCount/{monthKey}
+        let userRef = firestore.collection("users").document(userID)
         
-        let document = try await usageRef.getDocument()
-        if let data = document.data(),
-           let count = data["aiDescriptionCount"] as? [String: Int],
-           let aiCount = count[monthKey] {
-            return aiCount
+        let document = try await userRef.getDocument()
+        guard let data = document.data() else {
+            return 0
+        }
+        
+        // Navigate: data -> usage -> aiDescriptionCount -> {monthKey}
+        if let usage = data["usage"] as? [String: Any],
+           let aiDescriptionCount = usage["aiDescriptionCount"] as? [String: Any] {
+            if let monthData = aiDescriptionCount[monthKey] {
+                if let intValue = monthData as? Int {
+                    return intValue
+                } else if let numberValue = monthData as? NSNumber {
+                    return numberValue.intValue
+                }
+            }
         }
         
         return 0
@@ -94,12 +128,40 @@ class UsageTrackingService {
         }
         
         let monthKey = getCurrentMonthKey()
-        let usageRef = firestore.collection(usageCollection).document(userID)
+        // Structure: users/{userId}/usage/aiImageExtractionCount/{monthKey}
+        let userRef = firestore.collection("users").document(userID)
         
-        try await usageRef.setData([
-            "aiImageExtractionCount.\(monthKey)": FieldValue.increment(Int64(1)),
+        print("📊 Tracking AI image extraction for user \(userID), month: \(monthKey)")
+        print("📊 Using nested path: usage.aiImageExtractionCount.\(monthKey)")
+        
+        // Try updateData first (works better with FieldValue.increment() for nested paths)
+        // If document doesn't exist, fall back to setData with merge
+        do {
+            try await userRef.updateData([
+                "usage.aiImageExtractionCount.\(monthKey)": FieldValue.increment(Int64(1)),
+                "updatedAt": Timestamp(date: Date())
+            ])
+        } catch {
+            // If updateData fails (e.g., document doesn't exist), use setData with merge
+            print("⚠️ updateData failed, trying setData with merge: \(error.localizedDescription)")
+            try await userRef.setData([
+                "usage.aiImageExtractionCount.\(monthKey)": FieldValue.increment(Int64(1)),
             "updatedAt": Timestamp(date: Date())
         ], merge: true)
+        }
+        
+        print("✅ Successfully incremented AI image extraction count in Firestore")
+        
+        // Verify the update by reading it back
+        let document = try await userRef.getDocument()
+        if let data = document.data(),
+           let usage = data["usage"] as? [String: Any],
+           let aiImageExtractionCount = usage["aiImageExtractionCount"] as? [String: Any],
+           let count = aiImageExtractionCount[monthKey] {
+            print("✅ Verified: usage.aiImageExtractionCount.\(monthKey) = \(count)")
+        } else {
+            print("⚠️ Warning: Could not verify the update")
+        }
     }
     
     func getAIImageExtractionCountThisMonth() async throws -> Int {
@@ -108,13 +170,29 @@ class UsageTrackingService {
         }
         
         let monthKey = getCurrentMonthKey()
-        let usageRef = firestore.collection(usageCollection).document(userID)
+        // Structure: users/{userId}/usage/aiImageExtractionCount/{monthKey}
+        // Example: users/{userId}/usage/aiImageExtractionCount/2026-01 = 4
+        let userRef = firestore.collection("users").document(userID)
         
-        let document = try await usageRef.getDocument()
-        if let data = document.data(),
-           let count = data["aiImageExtractionCount"] as? [String: Int],
-           let extractionCount = count[monthKey] {
-            return extractionCount
+        let document = try await userRef.getDocument()
+        guard let data = document.data() else {
+            return 0
+        }
+        
+        // Navigate: data -> usage -> aiImageExtractionCount -> {monthKey}
+        if let usage = data["usage"] as? [String: Any],
+           let aiImageExtractionCount = usage["aiImageExtractionCount"] as? [String: Any] {
+            // Check if the value is an Int or NSNumber (Firestore can return either)
+            if let monthData = aiImageExtractionCount[monthKey] {
+                if let intValue = monthData as? Int {
+                    return intValue
+                } else if let numberValue = monthData as? NSNumber {
+                    return numberValue.intValue
+                } else if let stringValue = monthData as? String,
+                          let intValue = Int(stringValue) {
+                    return intValue
+                }
+            }
         }
         
         return 0

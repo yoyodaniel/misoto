@@ -125,14 +125,21 @@ class SubscriptionService: ObservableObject {
                 // Create free subscription if none exists
                 subscription = Subscription(id: userID, tier: .free)
                 try await saveSubscription(subscription!)
+                // Ensure user premium status is false
+                await updateUserPremiumStatus(userID: userID, isPremium: false)
             }
             
             // Also verify with StoreKit
             await verifyStoreKitSubscription()
+            
+            // Sync premium status based on current subscription
+            let isPremium = subscription?.hasPremium ?? false
+            await updateUserPremiumStatus(userID: userID, isPremium: isPremium)
         } catch {
             print("⚠️ Error loading subscription: \(error.localizedDescription)")
             // Default to free tier
             subscription = Subscription(id: userID, tier: .free)
+            await updateUserPremiumStatus(userID: userID, isPremium: false)
         }
     }
     
@@ -237,6 +244,10 @@ class SubscriptionService: ObservableObject {
         do {
             try await saveSubscription(sub)
             subscription = sub
+            
+            // Update premiumUser field in user document
+            await updateUserPremiumStatus(userID: userID, isPremium: true)
+            
             print("✅ Subscription updated: Premium until \(expiresAt)")
         } catch {
             print("❌ Error updating subscription: \(error.localizedDescription)")
@@ -246,6 +257,18 @@ class SubscriptionService: ObservableObject {
     private func saveSubscription(_ subscription: Subscription) async throws {
         let document = firestore.collection(subscriptionsCollection).document(subscription.id)
         try document.setData(from: subscription)
+    }
+    
+    // MARK: - Update User Premium Status
+    
+    private func updateUserPremiumStatus(userID: String, isPremium: Bool) async {
+        let userRef = firestore.collection("users").document(userID)
+        do {
+            try await userRef.updateData(["premiumUser": isPremium])
+            print("✅ User premium status updated: \(isPremium)")
+        } catch {
+            print("⚠️ Error updating user premium status: \(error.localizedDescription)")
+        }
     }
 }
 

@@ -378,7 +378,7 @@ class AuthService: ObservableObject {
             
             if let user = try? document.data(as: AppUser.self) {
                 currentUser = user
-                print("✅ User data loaded - followerCount: \(user.followerCount), followingCount: \(user.followingCount)")
+                print("✅ User data loaded - recipeCount: \(user.recipeCount), followerCount: \(user.followerCount), followingCount: \(user.followingCount), likesCount: \(user.likesCount)")
             }
         } catch {
             print("⚠️ Error loading user data: \(error.localizedDescription)")
@@ -755,50 +755,153 @@ class AuthService: ObservableObject {
             .getDocuments()
         
         for recipeDoc in recipesSnapshot.documents {
+            // Try to decode recipe to get all image URLs
             if let recipe = try? recipeDoc.data(as: Recipe.self) {
-                // Delete recipe images (main dish images)
+                // Delete recipe images (main dish images) from imageURLs array
                 for imageURL in recipe.imageURLs {
-                    if let path = extractStoragePath(from: imageURL) {
-                        let imageRef = storage.reference().child(path)
-                        try? await imageRef.delete()
-                        print("🗑️ Deleted recipe image: \(path)")
+                    if !imageURL.isEmpty {
+                        if let path = extractStoragePath(from: imageURL) {
+                            do {
+                                let imageRef = storage.reference().child(path)
+                                try await imageRef.delete()
+                                print("🗑️ Deleted recipe image: \(path)")
+                            } catch {
+                                print("⚠️ Error deleting recipe image \(path): \(error.localizedDescription)")
+                            }
+                        }
                     }
                 }
                 
-                // Delete deprecated single image URL
-                if let imageURL = recipe.imageURL, let path = extractStoragePath(from: imageURL) {
-                    let imageRef = storage.reference().child(path)
-                    try? await imageRef.delete()
-                    print("🗑️ Deleted deprecated recipe image: \(path)")
+                // Delete deprecated single image URL (if different from imageURLs)
+                if let imageURL = recipe.imageURL, !imageURL.isEmpty {
+                    // Only delete if not already in imageURLs array
+                    if !recipe.imageURLs.contains(imageURL) {
+                        if let path = extractStoragePath(from: imageURL) {
+                            do {
+                                let imageRef = storage.reference().child(path)
+                                try await imageRef.delete()
+                                print("🗑️ Deleted deprecated recipe image: \(path)")
+                            } catch {
+                                print("⚠️ Error deleting deprecated recipe image \(path): \(error.localizedDescription)")
+                            }
+                        }
+                    }
                 }
                 
-                // Delete source images (images used for extraction)
+                // Delete source images (images used for extraction) from sourceImageURLs array
                 for sourceURL in recipe.sourceImageURLs {
-                    if let path = extractStoragePath(from: sourceURL) {
-                        let imageRef = storage.reference().child(path)
-                        try? await imageRef.delete()
-                        print("🗑️ Deleted source image: \(path)")
+                    if !sourceURL.isEmpty {
+                        if let path = extractStoragePath(from: sourceURL) {
+                            do {
+                                let imageRef = storage.reference().child(path)
+                                try await imageRef.delete()
+                                print("🗑️ Deleted source image: \(path)")
+                            } catch {
+                                print("⚠️ Error deleting source image \(path): \(error.localizedDescription)")
+                            }
+                        }
                     }
                 }
                 
-                // Delete deprecated single source image URL
-                if let sourceURL = recipe.sourceImageURL, let path = extractStoragePath(from: sourceURL) {
-                    let imageRef = storage.reference().child(path)
-                    try? await imageRef.delete()
-                    print("🗑️ Deleted deprecated source image: \(path)")
+                // Delete deprecated single source image URL (if different from sourceImageURLs)
+                if let sourceURL = recipe.sourceImageURL, !sourceURL.isEmpty {
+                    // Only delete if not already in sourceImageURLs array
+                    if !recipe.sourceImageURLs.contains(sourceURL) {
+                        if let path = extractStoragePath(from: sourceURL) {
+                            do {
+                                let imageRef = storage.reference().child(path)
+                                try await imageRef.delete()
+                                print("🗑️ Deleted deprecated source image: \(path)")
+                            } catch {
+                                print("⚠️ Error deleting deprecated source image \(path): \(error.localizedDescription)")
+                            }
+                        }
+                    }
                 }
                 
                 // Delete instruction images and videos
                 for instruction in recipe.instructions {
-                    if let imageURL = instruction.imageURL, let path = extractStoragePath(from: imageURL) {
-                        let imageRef = storage.reference().child(path)
-                        try? await imageRef.delete()
-                        print("🗑️ Deleted instruction image: \(path)")
+                    if let imageURL = instruction.imageURL, !imageURL.isEmpty {
+                        if let path = extractStoragePath(from: imageURL) {
+                            do {
+                                let imageRef = storage.reference().child(path)
+                                try await imageRef.delete()
+                                print("🗑️ Deleted instruction image: \(path)")
+                            } catch {
+                                print("⚠️ Error deleting instruction image \(path): \(error.localizedDescription)")
+                            }
+                        }
                     }
-                    if let videoURL = instruction.videoURL, let path = extractStoragePath(from: videoURL) {
-                        let videoRef = storage.reference().child(path)
-                        try? await videoRef.delete()
-                        print("🗑️ Deleted instruction video: \(path)")
+                    if let videoURL = instruction.videoURL, !videoURL.isEmpty {
+                        if let path = extractStoragePath(from: videoURL) {
+                            do {
+                                let videoRef = storage.reference().child(path)
+                                try await videoRef.delete()
+                                print("🗑️ Deleted instruction video: \(path)")
+                            } catch {
+                                print("⚠️ Error deleting instruction video \(path): \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                }
+            } else {
+                // If recipe decoding fails, try to extract image URLs from raw document data
+                print("⚠️ Could not decode recipe document, attempting to extract image URLs from raw data...")
+                let data = recipeDoc.data()
+                
+                // Try to get imageURLs array
+                if let imageURLs = data["imageURLs"] as? [String] {
+                    for imageURL in imageURLs where !imageURL.isEmpty {
+                        if let path = extractStoragePath(from: imageURL) {
+                            do {
+                                let imageRef = storage.reference().child(path)
+                                try await imageRef.delete()
+                                print("🗑️ Deleted recipe image (from raw data): \(path)")
+                            } catch {
+                                print("⚠️ Error deleting recipe image \(path): \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                }
+                
+                // Try to get deprecated imageURL
+                if let imageURL = data["imageURL"] as? String, !imageURL.isEmpty {
+                    if let path = extractStoragePath(from: imageURL) {
+                        do {
+                            let imageRef = storage.reference().child(path)
+                            try await imageRef.delete()
+                            print("🗑️ Deleted recipe image (deprecated, from raw data): \(path)")
+                        } catch {
+                            print("⚠️ Error deleting deprecated recipe image \(path): \(error.localizedDescription)")
+                        }
+                    }
+                }
+                
+                // Try to get sourceImageURLs array
+                if let sourceImageURLs = data["sourceImages"] as? [String] {
+                    for sourceURL in sourceImageURLs where !sourceURL.isEmpty {
+                        if let path = extractStoragePath(from: sourceURL) {
+                            do {
+                                let imageRef = storage.reference().child(path)
+                                try await imageRef.delete()
+                                print("🗑️ Deleted source image (from raw data): \(path)")
+                            } catch {
+                                print("⚠️ Error deleting source image \(path): \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                }
+                
+                // Try to get deprecated sourceImageURL
+                if let sourceImageURL = data["sourceImageURL"] as? String, !sourceImageURL.isEmpty {
+                    if let path = extractStoragePath(from: sourceImageURL) {
+                        do {
+                            let imageRef = storage.reference().child(path)
+                            try await imageRef.delete()
+                            print("🗑️ Deleted source image (deprecated, from raw data): \(path)")
+                        } catch {
+                            print("⚠️ Error deleting deprecated source image \(path): \(error.localizedDescription)")
+                        }
                     }
                 }
             }
@@ -850,7 +953,12 @@ class AuthService: ObservableObject {
             try await followDoc.reference.delete()
         }
         
-        // 7. Delete Firebase Auth user LAST (after all data is deleted)
+        // 7. Delete user's subscription
+        print("🗑️ Deleting subscription...")
+        let subscriptionRef = firestore.collection("subscriptions").document(userID)
+        try? await subscriptionRef.delete()
+        
+        // 8. Delete Firebase Auth user LAST (after all data is deleted)
         print("🗑️ Deleting Firebase Auth user...")
         if let user = Auth.auth().currentUser {
             try await user.delete()

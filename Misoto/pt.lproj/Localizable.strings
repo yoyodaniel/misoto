@@ -13,6 +13,9 @@
 "Unknown" = "Desconhecido";
 
 /* Authentication */
+"Sign In" = "Entrar";
+"Sign in to your account" = "Entre na sua conta";
+"Sign in to view your profile, save recipes, and more" = "Entre para ver seu perfil, salvar receitas e muito mais";
 "Continue with Google" = "Continuar com Google";
 "Invalid credential" = "Credencial inválida";
 "Invalid nonce" = "Nonce inválido";
@@ -102,6 +105,7 @@
 "Explore" = "Explorar";
 "Account" = "Conta";
 "Add Menu" = "Adicionar Menu";
+"Add Recipe" = "Adicionar Receita";
 "Manual Entry" = "Entrada Manual";
 "Take Picture" = "Tirar Foto";
 "Extract from Image" = "Extrair de Imagem";
@@ -142,8 +146,8 @@
 "Delete" = "Excluir";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "Tem certeza de que deseja excluir esta receita? Esta ação não pode ser desfeita.";
 "Edit Recipe" = "Editar Receita";
-"Make Private" = "Tornar Receita Privada";
-"Make Public" = "Tornar Receita Pública";
+"Make Private" = "Tornar Privada para Todos";
+"Make Public" = "Tornar Pública para Todos";
 "Make Recipe Public" = "Tornar Receita Pública";
 "Are you sure you want to make this recipe public?" = "Tem certeza de que deseja tornar esta receita pública?";
 "Share Recipe" = "Compartilhar Receita";
@@ -382,6 +386,7 @@
 "Vegetarian" = "Vegetariano";
 "Vegan" = "Vegano";
 "Other" = "Outro";
+"Error" = "Erro";
 
 
 "For the main ingredients" = "Para os ingredientes principais";
@@ -444,6 +449,7 @@ Sua conta será excluída após 30 dias. Para cancelar a exclusão, faça login 
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Sua conta será excluída em 30 dias. Para cancelar a exclusão, faça login novamente.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Tem certeza de que deseja excluir sua conta? Sua conta será excluída imediatamente e esta ação é irreversível.";
 "Subscription" = "Assinatura Premium";
+"Premium Subscription" = "Assinatura Premium";
 "Recipe Limit Reached" = "Limite de receitas atingido";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "Continue salvando receitas sem limites! Atualize para Premium agora e desbloqueie armazenamento ilimitado de receitas.";
 "AI Extraction Limit Reached" = "Limite de extração IA atingido";
@@ -496,11 +502,12 @@ Sua conta será excluída após 30 dias. Para cancelar a exclusão, faça login 
 "Manage subscriptions in Settings" = "Gerenciar assinaturas em Configurações";
 "Unlimited" = "Unlimited";
 "Save 17%" = "Economize 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"You have reached the free tier limit" = "Você atingiu o limite de armazenamento de receitas gratuito. Atualize agora para Assinatura Premium para desbloquear armazenamento ilimitado de receitas e recursos premium.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
+"You have reached your free tier limit for AI image extractions" = "Você atingiu seu limite mensal gratuito para extrações de receitas com IA. Atualize agora para Assinatura Premium para desbloquear extrações de IA ilimitadas e recursos premium.";
+"Your free allowance will reset on %@" = "Sua cota gratuita será redefinida em %@";
 "Discover more. Cook smarter." = "Descubra mais. Cozinhe de forma mais inteligente.";
 "Unlimited access to all recipes and AI features" = "Acesso ilimitado a todas as receitas e recursos de IA";
 "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Desbloqueie receitas ilimitadas e recursos alimentados por IA para criar, compartilhar e descobrir pratos incríveis.";

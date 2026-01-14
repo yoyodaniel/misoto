@@ -13,6 +13,9 @@
 "Unknown" = "Неизвестно";
 
 /* Authentication */
+"Sign In" = "Войти";
+"Sign in to your account" = "Войдите в свой аккаунт";
+"Sign in to view your profile, save recipes, and more" = "Войдите, чтобы просмотреть свой профиль, сохранять рецепты и многое другое";
 "Continue with Google" = "Продолжить с Google";
 "Invalid credential" = "Неверные учетные данные";
 "Invalid nonce" = "Неверный nonce";
@@ -20,6 +23,10 @@
 "Missing client ID" = "Отсутствует ID клиента";
 "Missing view controller" = "Отсутствует контроллер представления";
 "You are not authorized to perform this action" = "Вы не авторизованы для выполнения этого действия";
+"By signing in, you agree to our" = "Входя в систему, вы соглашаетесь с нашими";
+"Terms & Conditions" = "Условия использования";
+"and" = "и";
+"Privacy Policy" = "Политика конфиденциальности";
 "Username must be at least 4 characters" = "Имя пользователя должно содержать не менее 4 символов";
 "Username must be no more than 15 characters" = "Имя пользователя не должно превышать 15 символов";
 "This username is already taken" = "Это имя пользователя уже занято";
@@ -98,6 +105,7 @@
 "Explore" = "Исследовать";
 "Account" = "Аккаунт";
 "Add Menu" = "Добавить меню";
+"Add Recipe" = "Добавить рецепт";
 "Manual Entry" = "Ручной ввод";
 "Take Picture" = "Сделать фото";
 "Extract from Image" = "Извлечь из изображения";
@@ -137,6 +145,15 @@
 "Delete" = "Удалить";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "Вы уверены, что хотите удалить этот рецепт? Это действие нельзя отменить.";
 "Edit Recipe" = "Редактировать рецепт";
+"Make Private" = "Сделать Приватным для Всех";
+"Make Public" = "Сделать Публичным для Всех";
+"Make Recipe Public" = "Сделать Публичным для Всех";
+"Are you sure you want to make this recipe public?" = "Вы уверены, что хотите сделать этот рецепт публичным?";
+"Share Recipe" = "Поделиться Рецептом";
+"Limited Share" = "Приватный Обмен";
+"Private Sharing" = "Приватный Обмен";
+"Share With Users" = "Приватный Обмен";
+"Share With Users (%d)" = "Приватный Обмен (%d)";
 
 /* Explore */
 "Today's Recommendations" = "Рекомендации на сегодня";
@@ -366,6 +383,7 @@
 "Add ingredient" = "Добавить ингредиент";
 
 "Steps" = "Шаги";
+"Error" = "Ошибка";
 "Start Cooking" = "Начать готовить";
 "Edit" = "Редактировать";
 "Save Recipe" = "Сохранить рецепт";
@@ -414,6 +432,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Ваш аккаунт будет удален в течение 30 дней. Чтобы отменить удаление, войдите снова.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Вы уверены, что хотите удалить свою учетную запись? Ваша учетная запись будет немедленно удалена, и это действие необратимо.";
 "Subscription" = "Премиум подписка";
+"Premium Subscription" = "Премиум подписка";
 "Recipe Limit Reached" = "Достигнут лимит рецептов";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "Продолжайте сохранять рецепты без ограничений! Обновитесь до Premium прямо сейчас и получите неограниченное хранилище рецептов.";
 "AI Extraction Limit Reached" = "Достигнут лимит извлечения с ИИ";
@@ -462,20 +481,21 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Restore Purchases" = "Restore Purchases";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Подписки автоматически продлеваются, если не отменены как минимум за 24 часа до окончания текущего периода.";
+"Manage subscriptions in Settings" = "Управлять подписками в Настройках";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "Сэкономьте 17%";
+"You have reached the free tier limit" = "Вы достигли лимита бесплатного хранилища рецептов. Обновитесь до Премиум подписки сейчас, чтобы разблокировать неограниченное хранилище рецептов и премиум-функции.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "Вы достигли вашего бесплатного месячного лимита для извлечения рецептов с ИИ. Обновитесь до Премиум подписки сейчас, чтобы разблокировать неограниченные извлечения с ИИ и премиум-функции.";
+"Your free allowance will reset on %@" = "Ваша бесплатная квота будет сброшена %@";
+"Discover more. Cook smarter." = "Откройте больше. Готовьте умнее.";
+"Unlimited access to all recipes and AI features" = "Неограниченный доступ ко всем рецептам и функциям ИИ";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Разблокируйте неограниченные рецепты и функции на основе ИИ, чтобы создавать, делиться и открывать удивительные блюда.";
+"Best Value" = "Лучшая Цена";
+"Monthly" = "Ежемесячно";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

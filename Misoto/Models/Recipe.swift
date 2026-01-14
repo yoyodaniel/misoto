@@ -40,6 +40,7 @@ struct Recipe: Identifiable, Codable {
     var isPrivate: Bool
     var sharedWith: [String] // Array of user IDs who have access to this recipe when isPrivate is true
     var preservedSharedWith: [String]? // Preserved sharedWith list when making "Private to All" (allows restore later)
+    var searchKeywords: [String] // Array of search keywords for improved search functionality
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -73,6 +74,7 @@ struct Recipe: Identifiable, Codable {
         case isPrivate
         case sharedWith
         case preservedSharedWith
+        case searchKeywords
     }
     
     init(from decoder: Decoder) throws {
@@ -160,6 +162,7 @@ struct Recipe: Identifiable, Codable {
         isPrivate = try container.decodeIfPresent(Bool.self, forKey: .isPrivate) ?? false
         sharedWith = try container.decodeIfPresent([String].self, forKey: .sharedWith) ?? []
         preservedSharedWith = try container.decodeIfPresent([String].self, forKey: .preservedSharedWith)
+        searchKeywords = try container.decodeIfPresent([String].self, forKey: .searchKeywords) ?? []
         
         // Optional fields
         // Handle cuisine with backward compatibility
@@ -327,7 +330,8 @@ struct Recipe: Identifiable, Codable {
         isHidden: Bool = false,
         isPrivate: Bool = false,
         sharedWith: [String] = [],
-        preservedSharedWith: [String]? = nil
+        preservedSharedWith: [String]? = nil,
+        searchKeywords: [String] = []
     ) {
         self.id = id
         
@@ -412,6 +416,7 @@ struct Recipe: Identifiable, Codable {
         self.isPrivate = isPrivate
         self.sharedWith = sharedWith
         self.preservedSharedWith = preservedSharedWith
+        self.searchKeywords = searchKeywords
     }
     
     /// Get the appropriate cuisine name based on the current language setting

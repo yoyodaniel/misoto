@@ -13,6 +13,9 @@
 "Unknown" = "Onbekend";
 
 /* Authentication */
+"Sign In" = "Inloggen";
+"Sign in to your account" = "Log in op uw account";
+"Sign in to view your profile, save recipes, and more" = "Log in om uw profiel te bekijken, recepten op te slaan en meer";
 "Continue with Google" = "Doorgaan met Google";
 "Invalid credential" = "Ongeldige inloggegevens";
 "Invalid nonce" = "Ongeldige nonce";
@@ -20,6 +23,10 @@
 "Missing client ID" = "Client-ID ontbreekt";
 "Missing view controller" = "Weergavecontroller ontbreekt";
 "You are not authorized to perform this action" = "U bent niet gemachtigd om deze actie uit te voeren";
+"By signing in, you agree to our" = "Door in te loggen, gaat u akkoord met onze";
+"Terms & Conditions" = "Algemene Voorwaarden";
+"and" = "en";
+"Privacy Policy" = "Privacybeleid";
 "Username must be at least 4 characters" = "Gebruikersnaam moet minimaal 4 tekens bevatten";
 "Username must be no more than 15 characters" = "Gebruikersnaam mag niet meer dan 15 tekens bevatten";
 "This username is already taken" = "Deze gebruikersnaam is al in gebruik";
@@ -98,6 +105,7 @@
 "Explore" = "Ontdekken";
 "Account" = "Account";
 "Add Menu" = "Menu Toevoegen";
+"Add Recipe" = "Recept Toevoegen";
 "Manual Entry" = "Handmatige Invoer";
 "Take Picture" = "Foto Maken";
 "Extract from Image" = "Extraheren uit Afbeelding";
@@ -137,6 +145,15 @@
 "Delete" = "Verwijderen";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "Weet u zeker dat u dit recept wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.";
 "Edit Recipe" = "Recept Bewerken";
+"Make Private" = "Privé Maken voor Iedereen";
+"Make Public" = "Openbaar Maken voor Iedereen";
+"Make Recipe Public" = "Openbaar Maken voor Iedereen";
+"Are you sure you want to make this recipe public?" = "Weet je zeker dat je dit recept openbaar wilt maken?";
+"Share Recipe" = "Recept Delen";
+"Limited Share" = "Privé Delen";
+"Private Sharing" = "Privé Delen";
+"Share With Users" = "Privé Delen";
+"Share With Users (%d)" = "Privé Delen (%d)";
 
 /* Explore */
 "Today's Recommendations" = "Aanbevelingen van Vandaag";
@@ -366,6 +383,7 @@
 "Add ingredient" = "Ingrediënt toevoegen";
 
 "Steps" = "Stappen";
+"Error" = "Fout";
 "Edited" = "Bewerkt";
 "Start Cooking" = "Beginnen met koken";
 "Edit" = "Bewerken";
@@ -416,6 +434,7 @@ Uw account wordt na 30 dagen verwijderd. Om de verwijdering te annuleren, log bi
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Uw account wordt binnen 30 dagen verwijderd. Om de verwijdering te annuleren, log opnieuw in.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Weet u zeker dat u uw account wilt verwijderen? Uw account wordt onmiddellijk verwijderd en deze actie kan niet ongedaan worden gemaakt.";
 "Subscription" = "Premium Abonnement";
+"Premium Subscription" = "Premium Abonnement";
 "Recipe Limit Reached" = "Receptlimiet bereikt";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "Blijf recepten zonder limiet opslaan! Upgrade nu naar Premium en ontgrendel onbeperkte receptopslag.";
 "AI Extraction Limit Reached" = "AI-extractielimiet bereikt";
@@ -464,20 +483,21 @@ Uw account wordt na 30 dagen verwijderd. Om de verwijdering te annuleren, log bi
 "Restore Purchases" = "Restore Purchases";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Abonnementen worden automatisch verlengd tenzij ze minstens 24 uur voor het einde van de huidige periode worden geannuleerd.";
+"Manage subscriptions in Settings" = "Abonnementen beheren in Instellingen";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "Bespaar 17%";
+"You have reached the free tier limit" = "Je hebt de gratis receptopslaglimiet bereikt. Upgrade nu naar Premium Abonnement om onbeperkte receptopslag en premiumfuncties te ontgrendelen.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "Je hebt je gratis maandelijkse limiet voor AI-receptextracties bereikt. Upgrade nu naar Premium Abonnement om onbeperkte AI-extracties en premiumfuncties te ontgrendelen.";
+"Your free allowance will reset on %@" = "Je gratis toewijzing wordt op %@ gereset";
+"Discover more. Cook smarter." = "Ontdek meer. Kook slimmer.";
+"Unlimited access to all recipes and AI features" = "Onbeperkte toegang tot alle recepten en AI-functies";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Ontgrendel onbeperkte recepten en AI-aangedreven functies om geweldige gerechten te creëren, delen en ontdekken.";
+"Best Value" = "Beste Waarde";
+"Monthly" = "Maandelijks";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

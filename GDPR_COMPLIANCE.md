@@ -11,7 +11,7 @@
   - User rights (access, rectification, erasure, portability, objection, withdrawal)
   - Data retention (30 days after account deletion)
   - Data security measures
-  - Children's privacy (13+)
+  - Children's privacy (16+)
   - Contact information
 
 ### 2. Terms of Service (EULA)
@@ -101,7 +101,7 @@
 - ✅ Privacy Policy URL (can be in-app or web)
 - ✅ Terms of Service URL (can be in-app or web)
 - ✅ Data collection disclosure in App Store Connect
-- ✅ Age rating (13+ based on children's privacy section)
+- ✅ Age rating (16+ based on children's privacy section)
 
 ### For EU Users (GDPR)
 - ✅ Privacy policy accessible
@@ -140,9 +140,9 @@
 
 ## 📧 Contact Information
 
-- **Support Email**: support@misoto.app (update as needed)
-- **Privacy Inquiries**: support@misoto.app
-- **Data Protection**: support@misoto.app
+- **Support Email**: info@game-timer.com
+- **Privacy Inquiries**: info@game-timer.com
+- **Data Protection**: info@game-timer.com
 
 ## 📅 Last Updated
 

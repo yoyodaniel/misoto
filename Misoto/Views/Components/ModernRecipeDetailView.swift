@@ -274,20 +274,16 @@ struct ModernRecipeDetailView: View {
     private func toggleFavorite() {
         guard let userID = FirebaseAuth.Auth.auth().currentUser?.uid else { return }
         
-        // Update state optimistically for immediate UI feedback
-        let wasFavorite = isFavorite
-        isFavorite.toggle()
-        
         Task {
             do {
-                if wasFavorite {
+                if isFavorite {
                     try await recipeService.removeFavorite(recipeID: recipe.id, userID: userID)
                 } else {
                     try await recipeService.addFavorite(recipeID: recipe.id, userID: userID)
                 }
+                // Re-check status after service call completes
+                await checkFavoriteStatus()
             } catch {
-                // Revert state on error
-                isFavorite = wasFavorite
                 print("⚠️ Error toggling favorite: \(error.localizedDescription)")
             }
         }

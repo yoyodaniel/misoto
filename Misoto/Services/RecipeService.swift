@@ -17,6 +17,7 @@ class RecipeService: ObservableObject {
     private let firestore = FirebaseManager.shared.firestore
     private let recipesCollection = "recipes"
     private let favoritesCollection = "favorites"
+    private let shareService = RecipeShareService.shared
     
     private init() {}
     
@@ -169,22 +170,70 @@ class RecipeService: ObservableObject {
     
     func fetchRecipe(byID recipeID: String) async throws -> Recipe? {
         let document = try await firestore.collection(recipesCollection).document(recipeID).getDocument()
+        
+        // Check if document exists
+        guard document.exists else {
+            print("⚠️ Recipe \(recipeID) does not exist")
+            return nil
+        }
+        
+        // Try to decode recipe
         guard let recipe = try? document.data(as: Recipe.self) else {
+            print("⚠️ Failed to decode recipe \(recipeID)")
             return nil
         }
         
         // Check if recipe is private and user has access (owner or shared with user)
         let currentUserID = Auth.auth().currentUser?.uid
+        print("🔍 fetchRecipe(byID: \(recipeID)) - Current user: \(currentUserID ?? "nil"), Recipe isPrivate: \(recipe.isPrivate), Author: \(recipe.authorID)")
+        
         if recipe.isPrivate {
             let isOwner = recipe.authorID == currentUserID
-            let isSharedWithUser = currentUserID != nil && recipe.sharedWith.contains(currentUserID!)
+            
+            // Check new scalable sharing system first
+            var isSharedWithUser = false
+            if let userID = currentUserID {
+                do {
+                    print("🔍 Checking recipeShares collection for recipeID: \(recipeID), userID: \(userID)")
+                    isSharedWithUser = try await shareService.isRecipeShared(recipeID: recipeID, with: userID)
+                    print("🔍 RecipeShares check result: \(isSharedWithUser)")
+                } catch {
+                    print("❌ Error checking recipe share: \(error.localizedDescription)")
+                    print("❌ Error details: \(error)")
+                }
+            } else {
+                print("⚠️ No authenticated user - cannot check shares")
+            }
+            
+            // Backward compatibility: Also check old sharedWith array if new system doesn't have a share
+            if !isSharedWithUser, let userID = currentUserID, !recipe.sharedWith.isEmpty {
+                print("🔍 Checking old sharedWith array: \(recipe.sharedWith)")
+                isSharedWithUser = recipe.sharedWith.contains(userID)
+                print("🔍 Old sharedWith check result: \(isSharedWithUser)")
+                // If found in old system, migrate to new system
+                if isSharedWithUser {
+                    print("🔄 Migrating old sharedWith to new recipeShares collection")
+                    do {
+                        _ = try await shareService.shareRecipe(recipeID: recipeID, with: [userID])
+                        print("✅ Migration successful")
+                    } catch {
+                        print("❌ Error migrating share: \(error.localizedDescription)")
+                    }
+                }
+            }
+            
+            print("🔍 Recipe \(recipeID) access check - isPrivate: \(recipe.isPrivate), isOwner: \(isOwner), isSharedWithUser: \(isSharedWithUser)")
+            print("🔍 Current user ID: \(currentUserID ?? "nil"), Recipe author: \(recipe.authorID)")
             
             if !isOwner && !isSharedWithUser {
                 // Private recipe and user doesn't have access - don't return it
+                print("❌ Access denied: User \(currentUserID ?? "nil") cannot access private recipe \(recipeID)")
+                print("❌ Recipe author: \(recipe.authorID), isOwner: \(isOwner), isSharedWithUser: \(isSharedWithUser)")
                 return nil
             }
         }
         
+        print("✅ Recipe \(recipeID) fetched successfully - isPrivate: \(recipe.isPrivate)")
         return recipe
     }
     
@@ -591,11 +640,11 @@ class RecipeService: ObservableObject {
         ])
     }
     
-    // MARK: - Filter Banned Users
+    // MARK: - Filter Banned Users and Private Accounts
     
-    /// Filters out recipes from banned users
+    /// Filters out recipes from banned users and users with private accounts (isProfileHidden or isCompletelyPrivate)
     /// Note: This works for both authenticated and unauthenticated users
-    /// If ban check fails, recipes are still returned (err on side of caution)
+    /// If check fails, recipes are still returned (err on side of caution)
     private func filterRecipesFromBannedUsers(recipes: [Recipe]) async throws -> [Recipe] {
         // Get unique author IDs
         let authorIDs = Set(recipes.map { $0.authorID })
@@ -605,38 +654,72 @@ class RecipeService: ObservableObject {
             return recipes
         }
         
-        // Batch check which users are banned
-        var bannedUserIDs: Set<String> = []
+        // Batch check which users are banned or have private accounts
+        var filteredUserIDs: Set<String> = []
         
-        await withTaskGroup(of: (String, Bool).self) { group in
+        await withTaskGroup(of: (String, Bool, Bool, Bool).self) { group in
             for authorID in authorIDs {
                 group.addTask {
                     do {
                         let userDoc = try await self.firestore.collection("users").document(authorID).getDocument()
                         if userDoc.exists, let userData = userDoc.data() {
                             let isBanned = (userData["isBanned"] as? Bool) ?? false
-                            return (authorID, isBanned)
+                            let isProfileHidden = (userData["isProfileHidden"] as? Bool) ?? false
+                            let isCompletelyPrivate = (userData["isCompletelyPrivate"] as? Bool) ?? false
+                            
+                            // Debug logging
+                            if isProfileHidden || isCompletelyPrivate {
+                                print("🔍 Found private account - authorID: \(authorID), isProfileHidden: \(isProfileHidden), isCompletelyPrivate: \(isCompletelyPrivate)")
+                            }
+                            
+                            return (authorID, isBanned, isProfileHidden, isCompletelyPrivate)
                         }
-                        return (authorID, false)
+                        // If document doesn't exist, don't filter (err on side of caution)
+                        print("⚠️ User document not found for authorID: \(authorID)")
+                        return (authorID, false, false, false)
                     } catch {
-                        // If error checking ban status (e.g., permission denied for unauthenticated users),
+                        // If error checking user status (e.g., permission denied for unauthenticated users),
                         // err on the side of caution and don't filter out the recipe
-                        // This allows recipes to load even if ban check fails
-                        print("⚠️ Error checking ban status for user \(authorID): \(error.localizedDescription)")
-                        return (authorID, false)
+                        // This allows recipes to load even if check fails
+                        // IMPORTANT: We return false for all privacy flags, meaning we WON'T filter this recipe
+                        print("⚠️ Error checking user status for authorID \(authorID): \(error.localizedDescription)")
+                        print("⚠️ Error type: \(type(of: error))")
+                        print("⚠️ NOT filtering recipe from \(authorID) due to error - showing recipe to be safe")
+                        // Don't filter if we can't check - show the recipe (err on side of caution)
+                        return (authorID, false, false, false)
                     }
                 }
             }
             
-            for await (userID, isBanned) in group {
-                if isBanned {
-                    bannedUserIDs.insert(userID)
+            for await (userID, isBanned, isProfileHidden, isCompletelyPrivate) in group {
+                // Filter out if banned, profile hidden, or completely private
+                // IMPORTANT: We filter based on the RECIPE AUTHOR's privacy settings, not the current user's
+                // This means: if Recipe Author A has isProfileHidden=true, their recipes are hidden from everyone
+                // NOT: if Current User B has isProfileHidden=true, then User B can't see anyone's recipes
+                if isBanned || isProfileHidden || isCompletelyPrivate {
+                    filteredUserIDs.insert(userID)
+                    if isProfileHidden || isCompletelyPrivate {
+                        print("🔒 Filtering recipes from private account: \(userID) (isProfileHidden: \(isProfileHidden), isCompletelyPrivate: \(isCompletelyPrivate))")
+                    }
                 }
             }
         }
         
-        // Filter out recipes from banned users
-        return recipes.filter { !bannedUserIDs.contains($0.authorID) }
+        if !filteredUserIDs.isEmpty {
+            print("🔍 Filtered out recipes from \(filteredUserIDs.count) private/banned users: \(Array(filteredUserIDs))")
+        }
+        
+        // Filter out recipes from banned users and private accounts
+        let filteredRecipes = recipes.filter { !filteredUserIDs.contains($0.authorID) }
+        
+        // Debug: Log filtering results
+        let filteredCount = recipes.count - filteredRecipes.count
+        if filteredCount > 0 {
+            print("🔍 Filtered out \(filteredCount) recipe(s) from private/banned accounts")
+        }
+        print("🔍 Returning \(filteredRecipes.count) recipe(s) out of \(recipes.count) total")
+        
+        return filteredRecipes
     }
 }
 

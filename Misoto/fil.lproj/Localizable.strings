@@ -13,6 +13,9 @@
 "Unknown" = "Hindi kilala";
 
 /* Authentication */
+"Sign In" = "Mag-sign in";
+"Sign in to your account" = "Mag-sign in sa iyong account";
+"Sign in to view your profile, save recipes, and more" = "Mag-sign in para makita ang iyong profile, mag-save ng recipe, at marami pa";
 "Continue with Google" = "Magpatuloy sa Google";
 "Invalid credential" = "Hindi wasto na kredensyal";
 "Invalid nonce" = "Hindi wasto na nonce";
@@ -20,6 +23,10 @@
 "Missing client ID" = "Nawawalang client ID";
 "Missing view controller" = "Nawawalang view controller";
 "You are not authorized to perform this action" = "Wala kang pahintulot na gawin ang aksyon na ito";
+"By signing in, you agree to our" = "Sa pamamagitan ng pag-sign in, sumasang-ayon ka sa aming";
+"Terms & Conditions" = "Mga Tuntunin at Kundisyon";
+"and" = "at";
+"Privacy Policy" = "Patakaran sa Privacy";
 "Username must be at least 4 characters" = "Ang username ay dapat na hindi bababa sa 4 na karakter";
 "Username must be no more than 15 characters" = "Ang username ay hindi dapat lumampas sa 15 na karakter";
 "This username is already taken" = "Ang username na ito ay ginagamit na";
@@ -98,6 +105,7 @@
 "Explore" = "Tuklasin";
 "Account" = "Account";
 "Add Menu" = "Magdagdag ng Menu";
+"Add Recipe" = "Magdagdag ng Recipe";
 "Manual Entry" = "Manwal na Entry";
 "Take Picture" = "Kumuha ng Larawan";
 "Extract from Image" = "Kunin mula sa Larawan";
@@ -137,6 +145,15 @@
 "Delete" = "Tanggalin";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "Sigurado ka bang gusto mong tanggalin ang recipe na ito? Ang aksyon na ito ay hindi na mababalik.";
 "Edit Recipe" = "I-edit ang Recipe";
+"Make Private" = "Gawing Pribado para sa Lahat";
+"Make Public" = "Gawing Pampubliko para sa Lahat";
+"Make Recipe Public" = "Gawing Pampubliko para sa Lahat";
+"Are you sure you want to make this recipe public?" = "Sigurado ka bang gusto mong gawing pampubliko ang recipe na ito?";
+"Share Recipe" = "Ibahagi ang Recipe";
+"Limited Share" = "Pribadong Pagbabahagi";
+"Private Sharing" = "Pribadong Pagbabahagi";
+"Share With Users" = "Pribadong Pagbabahagi";
+"Share With Users (%d)" = "Pribadong Pagbabahagi (%d)";
 
 /* Explore */
 "Today's Recommendations" = "Mga Rekomendasyon Ngayon";
@@ -366,6 +383,7 @@
 "Add ingredient" = "Magdagdag ng sangkap";
 
 "Steps" = "Mga hakbang";
+"Error" = "Error";
 "Start Cooking" = "Simulan ang pagluluto";
 "Edit" = "I-edit";
 "Save Recipe" = "I-save ang recipe";
@@ -415,6 +433,7 @@ Ang iyong account ay tatanggalin pagkatapos ng 30 araw. Upang kanselahin ang pag
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Ang iyong account ay tatanggalin sa loob ng 30 araw. Upang kanselahin ang pagtanggal, mangyaring mag-log in ulit.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "Sigurado ka bang gusto mong tanggalin ang iyong account? Ang iyong account ay tatanggalin kaagad at ang pagkilos na ito ay hindi maibabalik.";
 "Subscription" = "Premium Subscription";
+"Premium Subscription" = "Premium Subscription";
 "Recipe Limit Reached" = "Naabot na ang Limitasyon ng Recipe";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "Magpatuloy sa pag-save ng mga recipe nang walang limitasyon! Mag-upgrade sa Premium ngayon at i-unlock ang walang limitasyong recipe storage.";
 "AI Extraction Limit Reached" = "Naabot na ang Limitasyon ng AI Extraction";
@@ -463,20 +482,21 @@ Ang iyong account ay tatanggalin pagkatapos ng 30 araw. Upang kanselahin ang pag
 "Restore Purchases" = "Restore Purchases";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Ang mga subscription ay awtomatikong na-renew maliban kung nakansela ng hindi bababa sa 24 na oras bago matapos ang kasalukuyang panahon.";
+"Manage subscriptions in Settings" = "Pamahalaan ang mga subscription sa Settings";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "Makatipid ng 17%";
+"You have reached the free tier limit" = "Naabot mo na ang limitasyon ng libreng recipe storage. Mag-upgrade sa Premium Subscription ngayon para ma-unlock ang unlimited recipe storage at premium features.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "Naabot mo na ang libreng buwanang limitasyon para sa AI recipe extractions. Mag-upgrade sa Premium Subscription ngayon para ma-unlock ang unlimited AI extractions at premium features.";
+"Your free allowance will reset on %@" = "Ang iyong libreng allowance ay ma-reset sa %@";
+"Discover more. Cook smarter." = "Tuklasin pa. Magluto nang mas matalino.";
+"Unlimited access to all recipes and AI features" = "Walang limitasyong access sa lahat ng recipe at AI features";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "I-unlock ang walang limitasyong recipe at AI-powered features para makagawa, magbahagi, at matuklasan ang mga kamangha-manghang ulam.";
+"Best Value" = "Pinakamahusay na Halaga";
+"Monthly" = "Buwanan";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";

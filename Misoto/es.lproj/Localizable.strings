@@ -13,6 +13,9 @@
 "Unknown" = "Desconocido";
 
 /* Authentication */
+"Sign In" = "Iniciar sesión";
+"Sign in to your account" = "Inicia sesión en tu cuenta";
+"Sign in to view your profile, save recipes, and more" = "Inicia sesión para ver tu perfil, guardar recetas y más";
 "Continue with Google" = "Continuar con Google";
 "Invalid credential" = "Credencial inválida";
 "Invalid nonce" = "Nonce inválido";
@@ -101,6 +104,7 @@
 "Explore" = "Explorar";
 "Account" = "Cuenta";
 "Add Menu" = "Agregar Menú";
+"Add Recipe" = "Agregar Receta";
 "Manual Entry" = "Entrada Manual";
 "Take Picture" = "Tomar Foto";
 "Extract from Image" = "Extraer de Imagen";
@@ -142,8 +146,8 @@
 "Delete" = "Eliminar";
 "Are you sure you want to delete this recipe? This action cannot be undone." = "¿Estás seguro de que quieres eliminar esta receta? Esta acción no se puede deshacer.";
 "Edit Recipe" = "Editar Receta";
-"Make Private" = "Hacer Receta Privada";
-"Make Public" = "Hacer Receta Pública";
+"Make Private" = "Hacer Privada para Todos";
+"Make Public" = "Hacer Pública para Todos";
 "Make Recipe Public" = "Hacer Receta Pública";
 "Are you sure you want to make this recipe public?" = "¿Estás seguro de que quieres hacer pública esta receta?";
 "Share Recipe" = "Compartir Receta";
@@ -386,6 +390,7 @@
 "Save Recipe" = "Guardar receta";
 "Unsave Recipe" = "Quitar receta guardada";
 "OK" = "Aceptar";
+"Error" = "Error";
 "At least one ingredient is required" = "Se requiere al menos un ingrediente";
 "At least one instruction is required" = "Se requiere al menos una instrucción";
 "Report" = "Reportar";
@@ -433,6 +438,7 @@ Su cuenta se eliminará después de 30 días. Para cancelar la eliminación, ini
 "Your account will be deleted in 30 days. To cancel the deletion, please log back in." = "Su cuenta se eliminará en 30 días. Para cancelar la eliminación, inicie sesión nuevamente.";
 "Are you sure you want to delete your account? Your account will be deleted immediately and this action is not reversible." = "¿Está seguro de que desea eliminar su cuenta? Su cuenta se eliminará de inmediato y esta acción no se puede revertir.";
 "Subscription" = "Suscripción Premium";
+"Premium Subscription" = "Suscripción Premium";
 "Recipe Limit Reached" = "Límite de recetas alcanzado";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "¡Continúa guardando recetas sin límites! Actualiza a Premium ahora y desbloquea almacenamiento ilimitado de recetas.";
 "AI Extraction Limit Reached" = "Límite de extracción con IA alcanzado";
@@ -477,24 +483,25 @@ Su cuenta se eliminará después de 30 días. Para cancelar la eliminación, ini
 "Extract recipes from photos without limits" = "Extract recipes from photos without limits";
 "All AI Features" = "All AI Features";
 "Auto-detect cuisine, difficulty, and cooking times" = "Auto-detect cuisine, difficulty, and cooking times";
-"Subscribe" = "Subscribe";
-"Restore Purchases" = "Restore Purchases";
+"Subscribe" = "Suscribirse";
+"Restore Purchases" = "Restaurar Compras";
 "Purchases restored successfully!" = "Purchases restored successfully!";
 "No purchases found to restore" = "No purchases found to restore";
-"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.";
-"Manage subscriptions in Settings" = "Manage subscriptions in Settings";
+"Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period." = "Las suscripciones se renuevan automáticamente a menos que se cancelen al menos 24 horas antes del final del período actual.";
+"Manage subscriptions in Settings" = "Administrar suscripciones en Configuración";
 "Unlimited" = "Unlimited";
-"Save 17%" = "Save 17%";
-"You have reached the free tier limit" = "You have reached the free tier limit";
+"Save 17%" = "Ahorra 17%";
+"You have reached the free tier limit" = "Has alcanzado el límite de almacenamiento de recetas gratuito. Actualiza ahora a Suscripción Premium para desbloquear almacenamiento ilimitado de recetas y funciones premium.";
 "Upgrade to Premium to create unlimited recipes" = "Upgrade to Premium to create unlimited recipes";
 "You have reached your free tier limit for AI descriptions" = "You have reached your free tier limit for AI descriptions";
 "Upgrade to Premium for unlimited AI descriptions" = "Upgrade to Premium for unlimited AI descriptions";
-"You have reached your free tier limit for AI image extractions" = "You have reached your free tier limit for AI image extractions";
-"Discover more. Cook smarter." = "Discover more. Cook smarter.";
-"Unlimited access to all recipes and AI features" = "Unlimited access to all recipes and AI features";
-"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes.";
-"Best Value" = "Best Value";
-"Monthly" = "Monthly";
+"You have reached your free tier limit for AI image extractions" = "Has alcanzado tu límite mensual gratuito para extracciones de recetas con IA. Actualiza ahora a Suscripción Premium para desbloquear extracciones ilimitadas de IA y funciones premium.";
+"Your free allowance will reset on %@" = "Tu asignación gratuita se restablecerá el %@";
+"Discover more. Cook smarter." = "Descubre más. Cocina más inteligente.";
+"Unlimited access to all recipes and AI features" = "Acceso ilimitado a todas las recetas y funciones de IA";
+"Unlock unlimited recipes and AI-powered features to create, share, and discover amazing dishes." = "Desbloquea recetas ilimitadas y funciones impulsadas por IA para crear, compartir y descubrir platos increíbles.";
+"Best Value" = "Mejor Valor";
+"Monthly" = "Mensual";
 "Upgrade to Premium for unlimited AI image extractions" = "Upgrade to Premium for unlimited AI image extractions";
 "You must be signed in to purchase a subscription" = "You must be signed in to purchase a subscription";
 "Purchase was cancelled" = "Purchase was cancelled";
@@ -502,3 +509,87 @@ Su cuenta se eliminará después de 30 días. Para cancelar la eliminación, ini
 "Transaction could not be verified" = "Transaction could not be verified";
 "An unknown error occurred" = "An unknown error occurred";
 "You must be signed in to track usage" = "You must be signed in to track usage";
+
+/* Privacy Policy - Subscription and Payment */
+"Subscription and Payment Information" = "Información de Suscripción y Pago";
+"When you purchase a Premium subscription, we collect:" = "Cuando compras una suscripción Premium, recopilamos:";
+"Subscription tier (Premium Monthly or Premium Yearly)" = "Nivel de suscripción (Premium Mensual o Premium Anual)";
+"Subscription status and expiration date" = "Estado de la suscripción y fecha de vencimiento";
+"Transaction identifiers from Apple's StoreKit (for subscription verification)" = "Identificadores de transacción de StoreKit de Apple (para verificación de suscripción)";
+"Purchase and renewal dates" = "Fechas de compra y renovación";
+"Important: We do not collect or store your payment information. All payments are processed through Apple's App Store using StoreKit. Apple handles all payment processing, and we only receive transaction confirmations and subscription status information." = "Importante: No recopilamos ni almacenamos su información de pago. Todos los pagos se procesan a través de la App Store de Apple utilizando StoreKit. Apple maneja todo el procesamiento de pagos, y solo recibimos confirmaciones de transacciones e información del estado de la suscripción.";
+
+/* Privacy Policy - Usage Tracking */
+"Usage Tracking Information" = "Información de Seguimiento de Uso";
+"To enforce free tier limits and provide subscription features, we track:" = "Para hacer cumplir los límites del nivel gratuito y proporcionar funciones de suscripción, realizamos un seguimiento de:";
+"Number of recipes created per month" = "Número de recetas creadas por mes";
+"Number of AI-powered recipe extractions performed per month" = "Número de extracciones de recetas con IA realizadas por mes";
+"Number of AI-generated recipe descriptions created per month" = "Número de descripciones de recetas generadas por IA creadas por mes";
+"Monthly usage reset dates" = "Fechas de reinicio de uso mensual";
+"This information is used solely to enforce subscription limits and is not shared with third parties except as necessary to provide the Service." = "Esta información se utiliza únicamente para hacer cumplir los límites de suscripción y no se comparte con terceros, excepto cuando sea necesario para proporcionar el Servicio.";
+
+/* Privacy Policy - How We Use Information */
+"Manage subscriptions, verify subscription status, and enforce free tier usage limits" = "Gestionar suscripciones, verificar el estado de la suscripción y hacer cumplir los límites de uso del nivel gratuito";
+"Track usage to provide subscription features and limit enforcement" = "Realizar un seguimiento del uso para proporcionar funciones de suscripción y hacer cumplir los límites";
+
+/* Privacy Policy - Service Providers */
+"Apple (StoreKit)" = "Apple (StoreKit)";
+"When you purchase a Premium subscription, Apple processes your payment through StoreKit:" = "Cuando compras una suscripción Premium, Apple procesa tu pago a través de StoreKit:";
+"Apple handles all payment processing and stores your payment information" = "Apple maneja todo el procesamiento de pagos y almacena su información de pago";
+"We receive only transaction confirmations and subscription status from Apple" = "Solo recibimos confirmaciones de transacciones y estado de suscripción de Apple";
+"Apple's use of your payment information is governed by Apple's Privacy Policy and Terms of Service" = "El uso que Apple hace de su información de pago se rige por la Política de Privacidad y los Términos de Servicio de Apple";
+"Subscription management (cancellation, renewal) is handled through Apple's systems" = "La gestión de suscripciones (cancelación, renovación) se maneja a través de los sistemas de Apple";
+
+/* Privacy Policy - Data Retention */
+"Subscription Information - Until you delete your account or as required by law for financial records" = "Información de Suscripción - Hasta que elimines tu cuenta o según lo requiera la ley para registros financieros";
+"Usage Tracking Data - Until you delete your account or up to 2 years, whichever comes first" = "Datos de Seguimiento de Uso - Hasta que elimines tu cuenta o hasta 2 años, lo que ocurra primero";
+
+/* Privacy Policy - Last Updated */
+"January 15, 2026" = "15 de enero de 2026";
+
+/* Terms of Service - About Misoto */
+"The App offers both free and premium subscription tiers:" = "La aplicación ofrece niveles de suscripción gratuitos y premium:";
+"Free Tier:" = "Nivel Gratuito:";
+"Users can create up to 15 recipes per month and perform up to 5 AI-powered recipe extractions per month. Additional features may have usage limits." = "Los usuarios pueden crear hasta 15 recetas por mes y realizar hasta 5 extracciones de recetas con IA por mes. Las funciones adicionales pueden tener límites de uso.";
+"Premium Subscription:" = "Suscripción Premium:";
+"For a monthly or yearly fee, Premium subscribers receive unlimited recipe creation, unlimited AI-powered recipe extractions, and access to all premium features." = "Por una tarifa mensual o anual, los suscriptores Premium reciben creación ilimitada de recetas, extracciones ilimitadas de recetas con IA y acceso a todas las funciones premium.";
+
+/* Terms of Service - Premium Subscriptions */
+"Premium Subscriptions and Payments" = "Suscripciones Premium y Pagos";
+"Subscription Plans" = "Planes de Suscripción";
+"Misoto offers Premium subscriptions with the following options:" = "Misoto ofrece suscripciones Premium con las siguientes opciones:";
+"Premium Monthly: $4.99 USD per month (or equivalent in your local currency)" = "Premium Mensual: $4.99 USD por mes (o equivalente en su moneda local)";
+"Premium Yearly: $49.99 USD per year (or equivalent in your local currency)" = "Premium Anual: $49.99 USD por año (o equivalente en su moneda local)";
+"Subscription prices may vary by region and are subject to change. Current pricing is displayed in the App at the time of purchase." = "Los precios de suscripción pueden variar según la región y están sujetos a cambios. El precio actual se muestra en la aplicación en el momento de la compra.";
+"Free Tier Limitations" = "Limitaciones del Nivel Gratuito";
+"Users on the free tier are subject to the following usage limits:" = "Los usuarios del nivel gratuito están sujetos a los siguientes límites de uso:";
+"Maximum of 15 recipes created per month" = "Máximo de 15 recetas creadas por mes";
+"Maximum of 5 AI-powered recipe extractions per month" = "Máximo de 5 extracciones de recetas con IA por mes";
+"Additional features may have usage limits as described in the App" = "Las funciones adicionales pueden tener límites de uso como se describe en la aplicación";
+"These limits reset monthly. Premium subscribers have unlimited access to all features." = "Estos límites se restablecen mensualmente. Los suscriptores Premium tienen acceso ilimitado a todas las funciones.";
+"Payment Processing" = "Procesamiento de Pagos";
+"All subscription payments are processed through Apple's App Store using StoreKit. By purchasing a subscription, you agree to:" = "Todos los pagos de suscripción se procesan a través de la App Store de Apple utilizando StoreKit. Al comprar una suscripción, aceptas:";
+"Apple's Terms of Service and Privacy Policy" = "Términos de Servicio y Política de Privacidad de Apple";
+"Payment of the subscription fee at the time of purchase" = "Pago de la tarifa de suscripción en el momento de la compra";
+"Automatic renewal of your subscription unless cancelled" = "Renovación automática de tu suscripción a menos que se cancele";
+"We do not process, store, or have access to your payment information. All payment transactions are handled by Apple." = "No procesamos, almacenamos ni tenemos acceso a su información de pago. Todas las transacciones de pago son manejadas por Apple.";
+"Subscription Terms" = "Términos de Suscripción";
+"Auto-Renewal:" = "Renovación Automática:";
+"Subscriptions automatically renew at the end of each subscription period (monthly or yearly) unless you cancel at least 24 hours before the end of the current period." = "Las suscripciones se renuevan automáticamente al final de cada período de suscripción (mensual o anual) a menos que canceles al menos 24 horas antes del final del período actual.";
+"Cancellation:" = "Cancelación:";
+"You can cancel your subscription at any time through your Apple ID account settings or through the App Store. Cancellation will take effect at the end of the current billing period. You will continue to have access to Premium features until the end of the period you have paid for." = "Puedes cancelar tu suscripción en cualquier momento a través de la configuración de tu cuenta de Apple ID o a través de la App Store. La cancelación tendrá efecto al final del período de facturación actual. Continuarás teniendo acceso a las funciones Premium hasta el final del período por el que has pagado.";
+"Refunds:" = "Reembolsos:";
+"Refund requests are handled by Apple in accordance with Apple's refund policy. We do not process refunds directly. If you believe you are entitled to a refund, please contact Apple Support or use the refund request feature in the App Store." = "Las solicitudes de reembolso son manejadas por Apple de acuerdo con la política de reembolso de Apple. No procesamos reembolsos directamente. Si crees que tienes derecho a un reembolso, comunícate con el Soporte de Apple o utiliza la función de solicitud de reembolso en la App Store.";
+"Price Changes:" = "Cambios de Precio:";
+"We reserve the right to change subscription prices at any time. Price changes will not affect your current subscription period but will apply to subsequent renewal periods. We will notify you of any price changes before they take effect." = "Nos reservamos el derecho de cambiar los precios de suscripción en cualquier momento. Los cambios de precio no afectarán tu período de suscripción actual, pero se aplicarán a los períodos de renovación posteriores. Te notificaremos de cualquier cambio de precio antes de que entre en vigor.";
+"Subscription Status:" = "Estado de la Suscripción:";
+"Your subscription status is verified through Apple's StoreKit. If there is a discrepancy between your subscription status in the App and your actual subscription, please contact us at info@game-timer.com." = "El estado de tu suscripción se verifica a través de StoreKit de Apple. Si hay una discrepancia entre el estado de tu suscripción en la aplicación y tu suscripción real, contáctanos en info@game-timer.com.";
+"Free Trial:" = "Período de Prueba Gratuito:";
+"We may offer free trial periods for Premium subscriptions from time to time. Free trials are subject to the same terms as paid subscriptions and will automatically convert to a paid subscription unless cancelled before the trial period ends." = "Podemos ofrecer períodos de prueba gratuitos para suscripciones Premium de vez en cuando. Las pruebas gratuitas están sujetas a los mismos términos que las suscripciones de pago y se convertirán automáticamente en una suscripción de pago a menos que se cancelen antes de que finalice el período de prueba.";
+"Account Termination and Subscriptions" = "Terminación de Cuenta y Suscripciones";
+"If you delete your account, your subscription will not be automatically cancelled. You must cancel your subscription separately through Apple's systems. Deleting your account will result in the loss of all your data, but you will continue to be charged for your subscription until it is cancelled." = "Si eliminas tu cuenta, tu suscripción no se cancelará automáticamente. Debes cancelar tu suscripción por separado a través de los sistemas de Apple. Eliminar tu cuenta resultará en la pérdida de todos tus datos, pero continuarás siendo cobrado por tu suscripción hasta que se cancele.";
+
+/* Terms of Service - Third-Party Services */
+"Apple StoreKit - For subscription payment processing and management" = "Apple StoreKit - Para el procesamiento y gestión de pagos de suscripción";
+
+/* Terms of Service - Last Updated */
