@@ -14,8 +14,8 @@ class ImageCache {
     
     private init() {
         // Configure URLCache for better image caching
-        // Memory capacity kept low to prevent memory issues
-        let memoryCapacity = 50 * 1024 * 1024 // 50 MB
+        // Memory capacity reduced to prevent memory issues and app termination
+        let memoryCapacity = 20 * 1024 * 1024 // 20 MB (reduced from 50MB)
         // Disk capacity increased for recipe sharing app with multiple images per recipe
         // Calculation: 20 recipes/page × 5 images max × 500KB = ~50MB/page
         // 10 pages = ~500MB, plus Today's Special, What's New, search results, profiles

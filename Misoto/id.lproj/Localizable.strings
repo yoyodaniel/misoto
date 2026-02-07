@@ -491,3 +491,5 @@ Akun Anda akan dihapus setelah 30 hari. Untuk membatalkan penghapusan, masuk kem
 "Transaction could not be verified" = "Transaction could not be verified";
 "An unknown error occurred" = "An unknown error occurred";
 "You must be signed in to track usage" = "You must be signed in to track usage";
+"Deleting your account..." = "Menghapus akun Anda...";
+"This may take a few moments. Please don't close the app." = "Ini mungkin memakan waktu beberapa saat. Harap jangan tutup aplikasi.";

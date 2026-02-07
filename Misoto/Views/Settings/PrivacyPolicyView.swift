@@ -322,7 +322,7 @@ struct PrivacyPolicyView: View {
                                 Text(LocalizedString("You can manage camera and photo library permissions through your device settings. Revoking permissions may limit App functionality.", comment: "Permissions explanation"))
                             }
                             
-                            Text(LocalizedString("To exercise any of these rights, please contact us at info@game-timer.com. We will respond to your request within a reasonable timeframe.", comment: "Rights contact"))
+                            Text(LocalizedString("To exercise any of these rights, please contact us at support@misoto.app. We will respond to your request within a reasonable timeframe.", comment: "Rights contact"))
                                 .fontWeight(.medium)
                         }
                         .font(.body)
@@ -352,7 +352,7 @@ struct PrivacyPolicyView: View {
                     SectionView(title: LocalizedString("Children's Privacy", comment: "Children's privacy section")) {
                         VStack(alignment: .leading, spacing: 12) {
                             Text(LocalizedString("The App is not intended for users under 16 years of age. We do not knowingly collect personal information from children under 16.", comment: "Children's privacy general"))
-                            Text(LocalizedString("If you are a parent or guardian and believe your child has provided us with personal information, please contact us at info@game-timer.com. If we discover we have collected information from a child under 16, we will delete it promptly.", comment: "Children's privacy contact"))
+                            Text(LocalizedString("If you are a parent or guardian and believe your child has provided us with personal information, please contact us at support@misoto.app. If we discover we have collected information from a child under 16, we will delete it promptly.", comment: "Children's privacy contact"))
                             Text(LocalizedString("If you are between 16 and 18 years old, please ensure you have permission from a parent or guardian before using the App.", comment: "Minor permission"))
                         }
                         .font(.body)
@@ -382,7 +382,7 @@ struct PrivacyPolicyView: View {
                     SectionView(title: LocalizedString("Contact Us", comment: "Contact section")) {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(LocalizedString("If you have questions, concerns, or requests about this Privacy Policy or our data practices, please contact us:", comment: "Contact intro"))
-                            Text(LocalizedString("Email", comment: "Email label")) + Text(": info@game-timer.com")
+                            Text(LocalizedString("Email", comment: "Email label")) + Text(": support@misoto.app")
                             Text(LocalizedString("We will respond to your inquiry as soon as reasonably possible.", comment: "Contact response"))
                             Text(LocalizedString("Last Updated", comment: "Last updated label")) + Text(": " + LocalizedString("January 15, 2026", comment: "Last updated date"))
                         }

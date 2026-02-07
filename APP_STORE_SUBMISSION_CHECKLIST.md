@@ -144,7 +144,7 @@
 
 ### Privacy Policy
 - [x] ✅ Privacy Policy created and updated
-- [x] ✅ Contact email: info@game-timer.com
+- [x] ✅ Contact email: support@misoto.app
 - [x] ✅ Minimum age: 16
 - [ ] **URL**: Host Privacy Policy on your website
 - [ ] **Link**: Add Privacy Policy URL to App Store Connect
@@ -152,7 +152,7 @@
 
 ### Terms of Service
 - [x] ✅ Terms of Service created and updated
-- [x] ✅ Contact email: info@game-timer.com
+- [x] ✅ Contact email: support@misoto.app
 - [x] ✅ Minimum age: 16
 - [ ] **URL**: Host Terms of Service on your website
 - [ ] **Link**: Add Terms of Service URL to App Store Connect
@@ -266,7 +266,7 @@
 - [ ] **Contact Information**: 
   - [ ] First Name, Last Name
   - [ ] Phone Number
-  - [ ] Email: info@game-timer.com
+  - [ ] Email: support@misoto.app
 - [ ] **Demo Account**: 
   - [ ] Create test account for reviewers
   - [ ] Provide credentials (if login required)
@@ -313,7 +313,7 @@
 ### Legal Verification
 - [ ] **Privacy Policy**: Accessible, includes all required info
 - [ ] **Terms of Service**: Accessible, includes subscription terms
-- [ ] **Contact Email**: info@game-timer.com (consistent everywhere)
+- [ ] **Contact Email**: support@misoto.app (consistent everywhere)
 - [ ] **Age Rating**: Appropriate for content
 
 ---
@@ -342,7 +342,7 @@
 - **Build**: 1
 - **Category**: Food & Drink
 - **Price**: Free (with in-app purchases)
-- **Contact**: info@game-timer.com
+- **Contact**: support@misoto.app
 - **Minimum Age**: 16
 
 ### Product IDs (Must Match Exactly)

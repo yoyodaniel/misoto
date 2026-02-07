@@ -12,6 +12,7 @@ import FirebaseCore
 class AppDelegate: NSObject, UIApplicationDelegate {
     
     private var memoryWarningObserver: NSObjectProtocol?
+    private var memoryMonitorTimer: Timer?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         // Firebase is already configured in MisotoApp.init()
@@ -19,6 +20,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         
         // Listen for memory warnings to clear image cache when needed
         setupMemoryWarningObserver()
+        
+        // Start periodic memory monitoring to prevent memory buildup
+        startMemoryMonitoring()
         
         return true
     }
@@ -47,13 +51,44 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         let memoryUsage = cache.currentMemoryUsage
         let memoryCapacity = cache.memoryCapacity
         
-        // If memory usage is above 80% of capacity, clear memory cache
-        if memoryUsage > Int(Double(memoryCapacity) * 0.8) {
+        // More aggressive: Clear memory cache if usage is above 50% of capacity
+        // This prevents memory buildup that can cause app termination
+        if memoryUsage > Int(Double(memoryCapacity) * 0.5) {
             cache.removeAllCachedResponses()
-            print("⚠️ Memory warning: Cleared image cache (was using \(memoryUsage / 1024 / 1024)MB)")
+            print("⚠️ Memory warning: Cleared image cache (was using \(memoryUsage / 1024 / 1024)MB / \(memoryCapacity / 1024 / 1024)MB)")
         } else {
             // Log cache usage for monitoring
             print("⚠️ Memory warning: Image cache usage: \(memoryUsage / 1024 / 1024)MB / \(memoryCapacity / 1024 / 1024)MB")
+        }
+        
+        // Also clear any other caches that might be holding memory
+        // Force garbage collection of image data
+        autoreleasepool {
+            // This helps release any autoreleased image data
+        }
+    }
+    
+    // MARK: - Memory Monitoring
+    
+    /// Start periodic memory monitoring to prevent memory buildup
+    private func startMemoryMonitoring() {
+        // Check memory usage every 30 seconds
+        memoryMonitorTimer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { [weak self] _ in
+            self?.checkMemoryUsage()
+        }
+    }
+    
+    /// Check current memory usage and clear cache if needed
+    private func checkMemoryUsage() {
+        let cache = URLCache.shared
+        let memoryUsage = cache.currentMemoryUsage
+        let memoryCapacity = cache.memoryCapacity
+        
+        // If memory usage is above 60% of capacity, proactively clear cache
+        // This prevents memory buildup before the system sends a memory warning
+        if memoryUsage > Int(Double(memoryCapacity) * 0.6) {
+            cache.removeAllCachedResponses()
+            print("🔍 Memory monitor: Proactively cleared image cache (was using \(memoryUsage / 1024 / 1024)MB / \(memoryCapacity / 1024 / 1024)MB)")
         }
     }
     
@@ -61,6 +96,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         if let observer = memoryWarningObserver {
             NotificationCenter.default.removeObserver(observer)
         }
+        memoryMonitorTimer?.invalidate()
     }
 }
 

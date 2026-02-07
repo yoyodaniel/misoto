@@ -21,18 +21,9 @@ class UsageTrackingService {
     // MARK: - Track Recipe Creation
     
     func trackRecipeCreation() async throws {
-        guard let userID = Auth.auth().currentUser?.uid else {
-            throw UsageTrackingError.unauthorized
-        }
-        
-        // Only update users/{userId}/recipeCount (total count)
-        // No monthly tracking for recipes - just use total recipeCount
-        let userRef = firestore.collection("users").document(userID)
-        
-        try await userRef.setData([
-            "recipeCount": FieldValue.increment(Int64(1)),
-            "updatedAt": Timestamp(date: Date())
-        ], merge: true)
+        // No-op: recipeCount is already incremented by RecipeService.createRecipe()
+        // This method exists only for API compatibility with SubscriptionHelper.
+        // Do NOT add a FieldValue.increment here — it would cause double-counting.
     }
     
     func getRecipeCountThisMonth() async throws -> Int {

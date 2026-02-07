@@ -13,14 +13,14 @@ struct RecipeActionButtons: View {
     let onWriteNoteTapped: () -> Void
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: UIDevice.current.userInterfaceIdiom == .pad ? 16 : 12) {
             // Favorite Button
             Button(action: onFavoriteTapped) {
                 Text(LocalizedString("Collect", comment: "Favorite button"))
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 18 : 16, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 50)
+                    .frame(height: UIDevice.current.userInterfaceIdiom == .pad ? 56 : 50)
                     .background(isFavorite ? Color.red : Color.blue)
                     .cornerRadius(12)
             }
@@ -28,10 +28,10 @@ struct RecipeActionButtons: View {
             // Write Note Button
             Button(action: onWriteNoteTapped) {
                 Text(LocalizedString("Write Note", comment: "Write note button"))
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 18 : 16, weight: .semibold))
                     .foregroundColor(.primary)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 50)
+                    .frame(height: UIDevice.current.userInterfaceIdiom == .pad ? 56 : 50)
                     .background(Color(.systemGray5))
                     .cornerRadius(12)
             }

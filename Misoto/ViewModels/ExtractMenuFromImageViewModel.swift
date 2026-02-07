@@ -17,6 +17,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var showEditRecipe = false
+    @Published var showRegionalRestrictionAlert = false
     @Published var isGeneratingDescription = false
     @Published var isDetectingCuisine = false
     @Published var isExtractingTime = false
@@ -36,6 +37,45 @@ class ExtractMenuFromImageViewModel: ObservableObject {
     }
     
     private let costOptimizedExtractor = CostOptimizedRecipeExtractor()
+    
+    /// Check if an error is due to regional restrictions (OpenAI not available in region)
+    private func isRegionalRestrictionError(_ error: Error) -> Bool {
+        // Check for HTTP 403 (Forbidden) - typical for regional restrictions
+        if let openAIError = error as? OpenAIError {
+            switch openAIError {
+            case .httpError(let statusCode):
+                // HTTP 403 Forbidden typically indicates regional restrictions
+                if statusCode == 403 {
+                    return true
+                }
+            case .apiError(let message):
+                // Check error message for regional restriction keywords
+                let lowerMessage = message.lowercased()
+                if lowerMessage.contains("region") || 
+                   lowerMessage.contains("country") || 
+                   lowerMessage.contains("not available") ||
+                   lowerMessage.contains("forbidden") ||
+                   lowerMessage.contains("blocked") ||
+                   lowerMessage.contains("access denied") ||
+                   lowerMessage.contains("not supported") ||
+                   lowerMessage.contains("unavailable") {
+                    return true
+                }
+            default:
+                break
+            }
+        }
+        
+        // Check error message for regional restriction keywords (general error)
+        let errorMessage = error.localizedDescription.lowercased()
+        return errorMessage.contains("region") || 
+               errorMessage.contains("country") || 
+               errorMessage.contains("not available in your region") ||
+               errorMessage.contains("forbidden") ||
+               errorMessage.contains("403") ||
+               errorMessage.contains("access denied") ||
+               errorMessage.contains("not supported in your region")
+    }
     
     // Recipe fields for editing
     @Published var title = ""
@@ -346,10 +386,16 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             isLoading = false
         } catch {
             isLoading = false
-            if let openAIError = error as? OpenAIError {
-                errorMessage = openAIError.localizedDescription
+            // Check if error is due to regional restrictions
+            if isRegionalRestrictionError(error) {
+                showRegionalRestrictionAlert = true
+                errorMessage = nil
             } else {
-                errorMessage = error.localizedDescription
+                if let openAIError = error as? OpenAIError {
+                    errorMessage = openAIError.localizedDescription
+                } else {
+                    errorMessage = error.localizedDescription
+                }
             }
         }
     }

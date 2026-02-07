@@ -15,8 +15,6 @@ struct RecipeDetailOverviewView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showLoginSheet = false
     
-    // TODO: Update this link when Misoto app is available on the App Store
-    
     // MARK: - Helper Functions
     
     /// Get spicy level description
@@ -36,7 +34,7 @@ struct RecipeDetailOverviewView: View {
             return LocalizedString("Insane", comment: "Insane spice level")
         }
     }
-    private let misotoAppStoreURL = "https://apps.apple.com/app/game-timer/id6746631584"
+    private let misotoAppStoreURL = "https://apps.apple.com/app/misoto/id6757369965"
     
     @State private var showWriteNote = false
     @State private var showNotesList = false
@@ -547,9 +545,9 @@ struct RecipeDetailOverviewView: View {
                                 */
                             }
                             .frame(width: geometry.size.width)
-                            .padding(.horizontal, 20)
-                            .padding(.top, 20)
-                            .padding(.bottom, 40)
+                            .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 20)
+                            .padding(.top, UIDevice.current.userInterfaceIdiom == .pad ? 24 : 20)
+                            .padding(.bottom, UIDevice.current.userInterfaceIdiom == .pad ? 48 : 40)
                         }
                         .frame(width: geometry.size.width)
                     }
@@ -1482,6 +1480,8 @@ struct RecipeDetailOverviewView: View {
         text += "\n\n"
         text += LocalizedString("Create your own recipe with", comment: "App store link prefix")
         text += " 🍽️ Misoto App"
+        text += "\n"
+        text += LocalizedString("AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!", comment: "Promotional text for sharing app")
         text += "\n"
         text += misotoAppStoreURL
         

@@ -211,7 +211,7 @@ You can control your privacy through Settings → Account, including choosing wh
 
 You can manage camera and photo library permissions through your device settings. Revoking permissions may limit App functionality.
 
-To exercise any of these rights, please contact us at info@game-timer.com. We will respond to your request within a reasonable timeframe.
+To exercise any of these rights, please contact us at support@misoto.app. We will respond to your request within a reasonable timeframe.
 
 ---
 
@@ -237,7 +237,7 @@ When you delete your account, we will remove your information within 30 days, ex
 
 The App is not intended for users under 16 years of age. We do not knowingly collect personal information from children under 16.
 
-If you are a parent or guardian and believe your child has provided us with personal information, please contact us at info@game-timer.com. If we discover we have collected information from a child under 16, we will delete it promptly.
+If you are a parent or guardian and believe your child has provided us with personal information, please contact us at support@misoto.app. If we discover we have collected information from a child under 16, we will delete it promptly.
 
 If you are between 16 and 18 years old, please ensure you have permission from a parent or guardian before using the App.
 
@@ -267,7 +267,7 @@ Your continued use of the App after changes become effective constitutes accepta
 
 If you have questions, concerns, or requests about this Privacy Policy or our data practices, please contact us:
 
-**Email:** info@game-timer.com
+**Email:** support@misoto.app
 
 We will respond to your inquiry as soon as reasonably possible.
 

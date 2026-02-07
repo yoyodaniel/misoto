@@ -149,7 +149,7 @@ We do not process, store, or have access to your payment information. All paymen
 
 **Price Changes:** We reserve the right to change subscription prices at any time. Price changes will not affect your current subscription period but will apply to subsequent renewal periods. We will notify you of any price changes before they take effect.
 
-**Subscription Status:** Your subscription status is verified through Apple's StoreKit. If there is a discrepancy between your subscription status in the App and your actual subscription, please contact us at info@game-timer.com.
+**Subscription Status:** Your subscription status is verified through Apple's StoreKit. If there is a discrepancy between your subscription status in the App and your actual subscription, please contact us at support@misoto.app.
 
 **Free Trial:** We may offer free trial periods for Premium subscriptions from time to time. Free trials are subject to the same terms as paid subscriptions and will automatically convert to a paid subscription unless cancelled before the trial period ends.
 
@@ -245,7 +245,7 @@ Our failure to enforce any right or provision of these Terms shall not constitut
 
 If you have any questions about these Terms, please contact us:
 
-**Email:** info@game-timer.com
+**Email:** support@misoto.app
 
 We will make our best effort to respond to your inquiries in a timely manner.
 

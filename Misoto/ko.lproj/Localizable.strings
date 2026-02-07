@@ -510,3 +510,5 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Transaction could not be verified" = "Transaction could not be verified";
 "An unknown error occurred" = "An unknown error occurred";
 "You must be signed in to track usage" = "You must be signed in to track usage";
+"Deleting your account..." = "계정 삭제 중...";
+"This may take a few moments. Please don't close the app." = "잠시 시간이 걸릴 수 있습니다. 앱을 닫지 마세요.";

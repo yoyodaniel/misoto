@@ -198,6 +198,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     // Instructions content builder
     let instructionsContent: () -> InstructionsContent
     
+    // Optional AI Editor for instructions
+    let onEditInstructionsWithAI: (() async -> Void)?
+    let isEditingInstructions: Bool
+    let hasNonEmptyInstructions: Bool
+    
     // Optional additional content (e.g., source section for extraction views)
     let optionalContent: (() -> OptionalContent)?
     
@@ -278,6 +283,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         onTakePicture: (() -> Void)? = nil,
         onSelectFromLibrary: (() -> Void)? = nil,
         moveIngredientBetweenCategories: ((Ingredient.Category, Int, Ingredient.Category, Int) -> Void)? = nil,
+        onEditInstructionsWithAI: (() async -> Void)? = nil,
+        isEditingInstructions: Bool = false,
+        hasNonEmptyInstructions: Bool = false,
         @ViewBuilder instructionsContent: @escaping () -> InstructionsContent,
         optionalContent: (() -> OptionalContent)? = nil
     ) {
@@ -356,6 +364,9 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         _selectedRecipePhotos = selectedRecipePhotos
         self.onTakePicture = onTakePicture
         self.onSelectFromLibrary = onSelectFromLibrary
+        self.onEditInstructionsWithAI = onEditInstructionsWithAI
+        self.isEditingInstructions = isEditingInstructions
+        self.hasNonEmptyInstructions = hasNonEmptyInstructions
         self.instructionsContent = instructionsContent
         self.optionalContent = optionalContent
     }
@@ -508,33 +519,47 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     private var descriptionSection: some View {
         Section {
             DisclosureGroup(isExpanded: $isDescriptionExpanded) {
-                VStack(alignment: .leading, spacing: 8) {
-                    TextField(LocalizedString("Description", comment: "Description placeholder"), text: $description, axis: .vertical)
-                        .lineLimit(1...)
-                        .focused($isDescriptionFocused)
+                TextField(LocalizedString("Description", comment: "Description placeholder"), text: $description, axis: .vertical)
+                    .lineLimit(1...)
+                    .focused($isDescriptionFocused)
+            } label: {
+                HStack {
+                    Text(LocalizedString("Description", comment: "Description section"))
+                        .font(.headline)
+                    
+                    Spacer()
                     
                     Button(action: {
+                        HapticFeedback.importantAction()
                         Task {
                             await generateDescription()
                         }
                     }) {
-                        HStack {
+                        HStack(spacing: 4) {
                             if isGeneratingDescription {
                                 ProgressView()
-                                    .scaleEffect(0.8)
+                                    .controlSize(.small)
+                                    .tint(.purple)
                             } else {
                                 Image(systemName: "sparkles")
                             }
-                            Text(LocalizedString("Regenerate Description", comment: "Regenerate description button"))
+                            Text(LocalizedString("AI", comment: "AI button for description"))
+                                .font(.subheadline.bold())
                         }
-                        .font(.caption)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.blue, .purple],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(LavaLampBackground())
                     }
                     .disabled(isGeneratingDescription || title.isEmpty)
-                    .foregroundColor(isGeneratingDescription || title.isEmpty ? .secondary : .accentColor)
+                    .opacity((isGeneratingDescription || title.isEmpty) ? 0.4 : 1.0)
                 }
-            } label: {
-                Text(LocalizedString("Description", comment: "Description section"))
-                    .font(.headline)
             }
         }
     }
@@ -1265,8 +1290,45 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                 DisclosureGroup(isExpanded: $isInstructionsExpanded) {
                     instructionsContent()
                 } label: {
-                    Text(LocalizedString("Instructions", comment: "Instructions section"))
-                        .font(.headline)
+                    HStack {
+                        Text(LocalizedString("Instructions", comment: "Instructions section"))
+                            .font(.headline)
+                        
+                        if let onEditInstructionsWithAI = onEditInstructionsWithAI {
+                            Spacer()
+                            
+                            Button(action: {
+                                HapticFeedback.importantAction()
+                                Task {
+                                    await onEditInstructionsWithAI()
+                                }
+                            }) {
+                                HStack(spacing: 4) {
+                                    if isEditingInstructions {
+                                        ProgressView()
+                                            .controlSize(.small)
+                                            .tint(.purple)
+                                    } else {
+                                        Image(systemName: "sparkles")
+                                    }
+                                    Text(LocalizedString("AI", comment: "AI button for instructions"))
+                                        .font(.subheadline.bold())
+                                }
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.blue, .purple],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(LavaLampBackground())
+                            }
+                            .disabled(isEditingInstructions || !hasNonEmptyInstructions)
+                            .opacity((isEditingInstructions || !hasNonEmptyInstructions) ? 0.4 : 1.0)
+                        }
+                    }
                 }
             }
             
@@ -1441,9 +1503,140 @@ extension RecipeEditForm where OptionalContent == EmptyView {
             selectedRecipePhotos: selectedRecipePhotos,
             onTakePicture: nil,
             onSelectFromLibrary: nil,
+            onEditInstructionsWithAI: nil,
+            isEditingInstructions: false,
+            hasNonEmptyInstructions: false,
             instructionsContent: instructionsContent,
             optionalContent: nil
         )
     }
 }
 
+
+// MARK: - Lava Lamp AI Button Background
+
+struct LavaLampBackground: View {
+    @State private var animate = false
+
+    // Randomised direction multipliers for each blob (-1 or 1)
+    @State private var blob1DirX: CGFloat = 1
+    @State private var blob1DirY: CGFloat = 1
+    @State private var blob2DirX: CGFloat = 1
+    @State private var blob2DirY: CGFloat = 1
+    @State private var blob3DirX: CGFloat = 1
+    @State private var blob3DirY: CGFloat = 1
+
+    // Randomised magnitude jitter (0.8...1.2) so distances vary
+    @State private var blob1Jitter: CGFloat = 1
+    @State private var blob2Jitter: CGFloat = 1
+    @State private var blob3Jitter: CGFloat = 1
+
+    // Randomised opacity multipliers (0.8...1.2 of base opacity)
+    @State private var blob1Opacity: CGFloat = 1
+    @State private var blob2Opacity: CGFloat = 1
+    @State private var blob3Opacity: CGFloat = 1
+
+    // Randomised size multipliers (0.8...1.2 of base size)
+    @State private var blob1Size: CGFloat = 1
+    @State private var blob2Size: CGFloat = 1
+    @State private var blob3Size: CGFloat = 1
+
+    // Randomised animation duration (0.8...1.2 of base 6s)
+    @State private var animationDuration: Double = 6.0
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                // Base gradient fill
+                LinearGradient(
+                    colors: [.blue.opacity(0.10), .purple.opacity(0.10)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+
+                // Blob 1 - large, slow
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [.blue.opacity(0.35 * blob1Opacity), .blue.opacity(0.0)],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: geo.size.width * 0.4 * blob1Size
+                        )
+                    )
+                    .frame(width: geo.size.width * 0.7 * blob1Size, height: geo.size.height * 1.6 * blob1Size)
+                    .offset(
+                        x: animate ? geo.size.width * 0.15 * blob1DirX * blob1Jitter : -geo.size.width * 0.25 * blob1DirX * blob1Jitter,
+                        y: animate ? -geo.size.height * 0.1 * blob1DirY * blob1Jitter : geo.size.height * 0.1 * blob1DirY * blob1Jitter
+                    )
+
+                // Blob 2 - medium, opposite direction
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [.purple.opacity(0.4 * blob2Opacity), .purple.opacity(0.0)],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: geo.size.width * 0.35 * blob2Size
+                        )
+                    )
+                    .frame(width: geo.size.width * 0.6 * blob2Size, height: geo.size.height * 1.4 * blob2Size)
+                    .offset(
+                        x: animate ? -geo.size.width * 0.15 * blob2DirX * blob2Jitter : geo.size.width * 0.2 * blob2DirX * blob2Jitter,
+                        y: animate ? geo.size.height * 0.15 * blob2DirY * blob2Jitter : -geo.size.height * 0.1 * blob2DirY * blob2Jitter
+                    )
+
+                // Blob 3 - small accent
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [.indigo.opacity(0.3 * blob3Opacity), .indigo.opacity(0.0)],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: geo.size.width * 0.25 * blob3Size
+                        )
+                    )
+                    .frame(width: geo.size.width * 0.45 * blob3Size, height: geo.size.height * 1.2 * blob3Size)
+                    .offset(
+                        x: animate ? geo.size.width * 0.1 * blob3DirX * blob3Jitter : -geo.size.width * 0.1 * blob3DirX * blob3Jitter,
+                        y: animate ? geo.size.height * 0.05 * blob3DirY * blob3Jitter : -geo.size.height * 0.15 * blob3DirY * blob3Jitter
+                    )
+            }
+        }
+        .clipShape(Capsule())
+        .onAppear {
+            // Randomise direction for each blob axis
+            blob1DirX = Bool.random() ? 1 : -1
+            blob1DirY = Bool.random() ? 1 : -1
+            blob2DirX = Bool.random() ? 1 : -1
+            blob2DirY = Bool.random() ? 1 : -1
+            blob3DirX = Bool.random() ? 1 : -1
+            blob3DirY = Bool.random() ? 1 : -1
+
+            // Randomise magnitude slightly so each instance looks different
+            blob1Jitter = CGFloat.random(in: 0.8...1.2)
+            blob2Jitter = CGFloat.random(in: 0.8...1.2)
+            blob3Jitter = CGFloat.random(in: 0.8...1.2)
+
+            // Randomise opacity (+/- 20% of base)
+            blob1Opacity = CGFloat.random(in: 0.8...1.2)
+            blob2Opacity = CGFloat.random(in: 0.8...1.2)
+            blob3Opacity = CGFloat.random(in: 0.8...1.2)
+
+            // Randomise size (+/- 20% of base)
+            blob1Size = CGFloat.random(in: 0.8...1.2)
+            blob2Size = CGFloat.random(in: 0.8...1.2)
+            blob3Size = CGFloat.random(in: 0.8...1.2)
+
+            // Randomise speed (+/- 20% of base 6s)
+            animationDuration = Double.random(in: 4.8...7.2)
+
+            withAnimation(
+                .easeInOut(duration: animationDuration)
+                .repeatForever(autoreverses: true)
+            ) {
+                animate = true
+            }
+        }
+    }
+}

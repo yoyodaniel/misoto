@@ -520,3 +520,5 @@ Sua conta será excluída após 30 dias. Para cancelar a exclusão, faça login 
 "Transaction could not be verified" = "Transaction could not be verified";
 "An unknown error occurred" = "An unknown error occurred";
 "You must be signed in to track usage" = "You must be signed in to track usage";
+"Deleting your account..." = "Excluindo sua conta...";
+"This may take a few moments. Please don't close the app." = "Isso pode levar alguns momentos. Por favor, não feche o aplicativo.";

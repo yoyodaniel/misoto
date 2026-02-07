@@ -26,6 +26,7 @@ struct SettingsView: View {
     @State private var showTermsOfService = false
     @State private var showPremium = false
     @State private var deleteAccountError: String?
+    @State private var isDeletingAccount = false
     @StateObject private var accountViewModel = AccountViewModel()
     @StateObject private var subscriptionViewModel = SubscriptionViewModel()
     private let authService = AuthService()
@@ -37,6 +38,7 @@ struct SettingsView: View {
     @State private var isShareExpanded = true
     @State private var isFeedbackExpanded = true
     @State private var isPrivacyTermsExpanded = true
+    @State private var isExploreMoreAppsExpanded = true
     @State private var isAccountExpanded = false // Collapsed by default
     
     var body: some View {
@@ -303,6 +305,179 @@ struct SettingsView: View {
                     }
                 }
                 
+                // MARK: - Explore More Apps Section
+                Section {
+                    DisclosureGroup(isExpanded: $isExploreMoreAppsExpanded) {
+                        // Game Timer
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            if let url = URL(string: "https://apps.apple.com/app/game-timer/id6746631584") {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image("gametimer_logo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 44, height: 44)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+                                    )
+                                    .shadow(color: .black.opacity(0.08), radius: 3, x: 0, y: 1)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Game Timer")
+                                        .font(.body.weight(.medium))
+                                    Text(LocalizedString("The #1 game timer for boardgames", comment: "Game Timer app caption"))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .foregroundColor(.primary)
+                        
+                        // Khala
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            if let url = URL(string: "https://apps.apple.com/app/khala-dish-discovery/id6478046025") {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image("khala_logo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 44, height: 44)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+                                    )
+                                    .shadow(color: .black.opacity(0.08), radius: 3, x: 0, y: 1)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Khala")
+                                        .font(.body.weight(.medium))
+                                    Text(LocalizedString("Share & save great food finds", comment: "Khala app caption"))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .foregroundColor(.primary)
+                        
+                        // Dayly
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            if let url = URL(string: "https://apps.apple.com/us/app/dayly-app/id6747013419") {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image("dayly_logo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 44, height: 44)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+                                    )
+                                    .shadow(color: .black.opacity(0.08), radius: 3, x: 0, y: 1)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Dayly")
+                                        .font(.body.weight(.medium))
+                                    Text(LocalizedString("The easy date calculator", comment: "Dayly app caption"))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .foregroundColor(.primary)
+                        
+                        // Tipped
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            if let url = URL(string: "https://apps.apple.com/us/app/tipped/id1643338903") {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image("tip_logo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 44, height: 44)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+                                    )
+                                    .shadow(color: .black.opacity(0.08), radius: 3, x: 0, y: 1)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Tipped")
+                                        .font(.body.weight(.medium))
+                                    Text(LocalizedString("Tipping made easier", comment: "Tipped app caption"))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .foregroundColor(.primary)
+                        
+                        // TrialTrack
+                        Button(action: {
+                            HapticFeedback.buttonTap()
+                            if let url = URL(string: "https://apps.apple.com/app/trialtrack/id6470159968") {
+                                UIApplication.shared.open(url)
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image("trialtrack_logo")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 44, height: 44)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
+                                    )
+                                    .shadow(color: .black.opacity(0.08), radius: 3, x: 0, y: 1)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("TrialTrack")
+                                        .font(.body.weight(.medium))
+                                    Text(LocalizedString("Track your clinical trials", comment: "TrialTrack app caption"))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    } label: {
+                        Text(LocalizedString("Explore More Apps", comment: "Explore more apps section header"))
+                            .font(.headline)
+                    }
+                }
+                
                 // MARK: - Account Section
                 Section {
                     DisclosureGroup(isExpanded: $isAccountExpanded) {
@@ -478,10 +653,42 @@ struct SettingsView: View {
                     // After successful re-authentication, proceed with deletion
                     Task { @MainActor in
                         showReAuthenticate = false
+                        // Small delay to allow sheet to dismiss smoothly
+                        try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
                         await deleteAccount()
                     }
                 }
                 .presentationDetents([.fraction(0.4)])
+            }
+            .overlay {
+                // Full-screen loading overlay during account deletion
+                if isDeletingAccount {
+                    ZStack {
+                        Color.black.opacity(0.5)
+                            .ignoresSafeArea()
+                        
+                        VStack(spacing: 20) {
+                            ProgressView()
+                                .scaleEffect(1.5)
+                                .tint(.primary)
+                            
+                            Text(LocalizedString("Deleting your account...", comment: "Account deletion loading message"))
+                                .foregroundColor(.primary)
+                                .font(.headline)
+                                .multilineTextAlignment(.center)
+                            
+                            Text(LocalizedString("This may take a few moments. Please don't close the app.", comment: "Account deletion wait message"))
+                                .foregroundColor(.secondary)
+                                .font(.subheadline)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 40)
+                        }
+                        .padding(40)
+                        .background(Color(.systemBackground))
+                        .cornerRadius(20)
+                        .shadow(radius: 20)
+                    }
+                }
             }
             .sheet(isPresented: $showPrivacyPolicy) {
                 PrivacyPolicyView()
@@ -515,13 +722,17 @@ struct SettingsView: View {
     
     private func deleteAccount() async {
         deleteAccountError = nil
+        isDeletingAccount = true // Show loading spinner
+        
         do {
             try await accountViewModel.deleteAccount()
             // Sign out after account deletion
             authViewModel.signOut()
+            isDeletingAccount = false
             dismiss()
         } catch {
             deleteAccountError = error.localizedDescription
+            isDeletingAccount = false
             print("⚠️ Error deleting account: \(error.localizedDescription)")
         }
     }
@@ -530,8 +741,9 @@ struct SettingsView: View {
     
     private func shareAppText() -> String {
         let appName = LocalizedString("Misoto", comment: "App name")
-        let appStoreURL = "https://apps.apple.com/app/misoto" // Update with actual App Store URL
-        return String(format: LocalizedString("Check out %@! %@", comment: "Share app text"), appName, appStoreURL)
+        let appStoreURL = "https://apps.apple.com/app/misoto/id6757369965"
+        let promotionalText = LocalizedString("AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!", comment: "Promotional text for sharing app")
+        return "\(promotionalText)\n\n\(appStoreURL)"
     }
 }
 

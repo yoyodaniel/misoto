@@ -440,8 +440,8 @@ struct ExploreView: View {
                                     }
                                 }
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
+                            .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 16)
+                            .padding(.vertical, UIDevice.current.userInterfaceIdiom == .pad ? 20 : 12)
                         }
                         .refreshable {
                             await viewModel.loadRecipes()

@@ -146,6 +146,13 @@ struct ExtractMenuWithAIView: View {
                 selectedImage = initialImage
             }
         }
+        .alert(LocalizedString("OpenAI Service Not Available", comment: "Regional restriction alert title"), isPresented: $viewModel.showRegionalRestrictionAlert) {
+            Button(LocalizedString("OK", comment: "OK button")) {
+                viewModel.showRegionalRestrictionAlert = false
+            }
+        } message: {
+            Text(LocalizedString("Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead.", comment: "Regional restriction alert message"))
+        }
     }
     
     private var recipeEditView: some View {

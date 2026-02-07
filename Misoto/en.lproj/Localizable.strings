@@ -659,19 +659,33 @@
 "Price Changes:" = "Price Changes:";
 "We reserve the right to change subscription prices at any time. Price changes will not affect your current subscription period but will apply to subsequent renewal periods. We will notify you of any price changes before they take effect." = "We reserve the right to change subscription prices at any time. Price changes will not affect your current subscription period but will apply to subsequent renewal periods. We will notify you of any price changes before they take effect.";
 "Subscription Status:" = "Subscription Status:";
-"Your subscription status is verified through Apple's StoreKit. If there is a discrepancy between your subscription status in the App and your actual subscription, please contact us at info@game-timer.com." = "Your subscription status is verified through Apple's StoreKit. If there is a discrepancy between your subscription status in the App and your actual subscription, please contact us at info@game-timer.com.";
+"Your subscription status is verified through Apple's StoreKit. If there is a discrepancy between your subscription status in the App and your actual subscription, please contact us at support@misoto.app." = "Your subscription status is verified through Apple's StoreKit. If there is a discrepancy between your subscription status in the App and your actual subscription, please contact us at support@misoto.app.";
 "Free Trial:" = "Free Trial:";
 "We may offer free trial periods for Premium subscriptions from time to time. Free trials are subject to the same terms as paid subscriptions and will automatically convert to a paid subscription unless cancelled before the trial period ends." = "We may offer free trial periods for Premium subscriptions from time to time. Free trials are subject to the same terms as paid subscriptions and will automatically convert to a paid subscription unless cancelled before the trial period ends.";
 "Account Termination and Subscriptions" = "Account Termination and Subscriptions";
 "If you delete your account, your subscription will not be automatically cancelled. You must cancel your subscription separately through Apple's systems. Deleting your account will result in the loss of all your data, but you will continue to be charged for your subscription until it is cancelled." = "If you delete your account, your subscription will not be automatically cancelled. You must cancel your subscription separately through Apple's systems. Deleting your account will result in the loss of all your data, but you will continue to be charged for your subscription until it is cancelled.";
+"Deleting your account..." = "Deleting your account...";
+"This may take a few moments. Please don't close the app." = "This may take a few moments. Please don't close the app.";
 
 /* Terms of Service - Third-Party Services */
 "Apple StoreKit - For subscription payment processing and management" = "Apple StoreKit - For subscription payment processing and management";
 
 /* Privacy Policy - Contact Email */
-"To exercise any of these rights, please contact us at info@game-timer.com. We will respond to your request within a reasonable timeframe." = "To exercise any of these rights, please contact us at info@game-timer.com. We will respond to your request within a reasonable timeframe.";
+"To exercise any of these rights, please contact us at support@misoto.app. We will respond to your request within a reasonable timeframe." = "To exercise any of these rights, please contact us at support@misoto.app. We will respond to your request within a reasonable timeframe.";
 "The App is not intended for users under 16 years of age. We do not knowingly collect personal information from children under 16." = "The App is not intended for users under 16 years of age. We do not knowingly collect personal information from children under 16.";
-"If you are a parent or guardian and believe your child has provided us with personal information, please contact us at info@game-timer.com. If we discover we have collected information from a child under 16, we will delete it promptly." = "If you are a parent or guardian and believe your child has provided us with personal information, please contact us at info@game-timer.com. If we discover we have collected information from a child under 16, we will delete it promptly.";
+"If you are a parent or guardian and believe your child has provided us with personal information, please contact us at support@misoto.app. If we discover we have collected information from a child under 16, we will delete it promptly." = "If you are a parent or guardian and believe your child has provided us with personal information, please contact us at support@misoto.app. If we discover we have collected information from a child under 16, we will delete it promptly.";
 "If you are between 16 and 18 years old, please ensure you have permission from a parent or guardian before using the App." = "If you are between 16 and 18 years old, please ensure you have permission from a parent or guardian before using the App.";
 
+/* Premium Subscription View - Required Information Labels */
+"Subscription:" = "Subscription:";
+"Duration:" = "Duration:";
+"Price:" = "Price:";
+"Price per month:" = "Price per month:";
+"Terms of Use" = "Terms of Use";
+
 /* Terms of Service - Last Updated */
+"OpenAI Service Not Available" = "OpenAI Service Not Available";
+"Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead." = "Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead.";
+"OpenAI Service Not Available" = "OpenAI Service Not Available";
+"Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead." = "Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead.";
+"AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!";

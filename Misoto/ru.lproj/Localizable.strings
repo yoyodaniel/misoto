@@ -503,3 +503,5 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Transaction could not be verified" = "Transaction could not be verified";
 "An unknown error occurred" = "An unknown error occurred";
 "You must be signed in to track usage" = "You must be signed in to track usage";
+"Deleting your account..." = "Удаление вашей учетной записи...";
+"This may take a few moments. Please don't close the app." = "Это может занять несколько мгновений. Пожалуйста, не закрывайте приложение.";

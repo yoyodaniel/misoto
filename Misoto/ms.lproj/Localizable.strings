@@ -505,3 +505,5 @@ Akaun anda akan dipadam selepas 30 hari. Untuk membatalkan pemadaman, log masuk 
 "Transaction could not be verified" = "Transaction could not be verified";
 "An unknown error occurred" = "An unknown error occurred";
 "You must be signed in to track usage" = "You must be signed in to track usage";
+"Deleting your account..." = "Memadamkan akaun anda...";
+"This may take a few moments. Please don't close the app." = "Ini mungkin mengambil masa beberapa saat. Sila jangan tutup aplikasi.";

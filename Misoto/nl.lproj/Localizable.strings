@@ -505,3 +505,5 @@ Uw account wordt na 30 dagen verwijderd. Om de verwijdering te annuleren, log bi
 "Transaction could not be verified" = "Transaction could not be verified";
 "An unknown error occurred" = "An unknown error occurred";
 "You must be signed in to track usage" = "You must be signed in to track usage";
+"Deleting your account..." = "Uw account wordt verwijderd...";
+"This may take a few moments. Please don't close the app." = "Dit kan even duren. Sluit de app alstublieft niet.";

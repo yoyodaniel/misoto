@@ -522,3 +522,5 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Transaction could not be verified" = "Transaction could not be verified";
 "An unknown error occurred" = "An unknown error occurred";
 "You must be signed in to track usage" = "You must be signed in to track usage";
+"Deleting your account..." = "正在删除您的账户...";
+"This may take a few moments. Please don't close the app." = "这可能需要一些时间。请不要关闭应用程序。";

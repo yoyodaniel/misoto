@@ -140,9 +140,9 @@
 
 ## 📧 Contact Information
 
-- **Support Email**: info@game-timer.com
-- **Privacy Inquiries**: info@game-timer.com
-- **Data Protection**: info@game-timer.com
+- **Support Email**: support@misoto.app
+- **Privacy Inquiries**: support@misoto.app
+- **Data Protection**: support@misoto.app
 
 ## 📅 Last Updated
 

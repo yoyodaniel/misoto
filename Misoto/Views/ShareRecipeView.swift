@@ -45,8 +45,8 @@ struct ShareRecipeView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 24 : 16)
+                        .padding(.vertical, UIDevice.current.userInterfaceIdiom == .pad ? 16 : 12)
                     }
                     .background(Color(.systemGray6))
                     

@@ -12,15 +12,7 @@ import NaturalLanguage
 @MainActor
 class OpenAIService {
     private static var apiKey: String {
-        // Read from environment variable or Info.plist
-        if let key = ProcessInfo.processInfo.environment["OPENAI_API_KEY"], !key.isEmpty {
-            return key
-        }
-        // Fallback to Info.plist if environment variable is not set
-        if let key = Bundle.main.object(forInfoDictionaryKey: "OPENAI_API_KEY") as? String, !key.isEmpty {
-            return key
-        }
-        return ""
+        APIKeyProvider.openAIKey
     }
     private static let baseURL = "https://api.openai.com/v1"
     
@@ -1076,6 +1068,243 @@ class OpenAIService {
         }
         
         return content.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    /// Review and edit recipe instructions for spelling and grammar using OpenAI
+    /// - Parameter instructions: Array of instruction strings to review
+    /// - Returns: Array of corrected instruction strings (same order and count)
+    static func editInstructions(_ instructions: [String]) async throws -> [String] {
+        guard !apiKey.isEmpty else {
+            throw OpenAIError.apiKeyNotConfigured
+        }
+        
+        let validInstructions = instructions.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        guard !validInstructions.isEmpty else {
+            return instructions
+        }
+        
+        // Create the request
+        guard let url = URL(string: "\(baseURL)/chat/completions") else {
+            throw OpenAIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Detect the language of the instructions to preserve it
+        let combinedText = validInstructions.joined(separator: " ")
+        let recognizer = NLLanguageRecognizer()
+        recognizer.processString(combinedText)
+        let detectedCode = recognizer.dominantLanguage?.rawValue ?? "en"
+        let languageName = getLanguageName(for: detectedCode)
+        
+        // Build numbered instruction list for the prompt
+        let numberedInstructions = validInstructions.enumerated().map { index, text in
+            "\(index + 1). \(text)"
+        }.joined(separator: "\n")
+        
+        let systemPrompt = """
+        You are a professional recipe editor. Review and correct the following recipe instructions for spelling and grammar errors. 
+        Rules:
+        - Fix spelling mistakes, grammar errors, and punctuation
+        - Keep the same meaning, tone, and cooking terminology
+        - Do NOT add, remove, or reorder steps
+        - Do NOT change cooking times, temperatures, or quantities
+        - Preserve the original language (\(languageName)) — do NOT translate
+        - Keep instructions concise and clear
+        - Return ONLY a JSON object with a "instructions" array of strings, maintaining the same order and count
+        """
+        
+        let userPrompt = """
+        Review and fix spelling/grammar in these recipe instructions (keep in \(languageName)):
+        
+        \(numberedInstructions)
+        """
+        
+        let requestBody: [String: Any] = [
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                [
+                    "role": "system",
+                    "content": systemPrompt
+                ],
+                [
+                    "role": "user",
+                    "content": userPrompt
+                ]
+            ],
+            "response_format": ["type": "json_object"],
+            "max_tokens": 2000,
+            "temperature": 0.1
+        ]
+        
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
+            throw OpenAIError.requestSerializationFailed
+        }
+        request.httpBody = httpBody
+        
+        // Make the request
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let error = errorData["error"] as? [String: Any],
+               let message = error["message"] as? String {
+                throw OpenAIError.apiError(message)
+            }
+            throw OpenAIError.httpError(httpResponse.statusCode)
+        }
+        
+        // Parse the response
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let message = firstChoice["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        // Parse the JSON response to extract instructions array
+        guard let contentData = content.data(using: .utf8),
+              let contentJSON = try? JSONSerialization.jsonObject(with: contentData) as? [String: Any],
+              let editedInstructions = contentJSON["instructions"] as? [String] else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        // Ensure we return the same number of instructions
+        guard editedInstructions.count == validInstructions.count else {
+            // If count mismatch, return original to avoid data loss
+            print("⚠️ AI returned \(editedInstructions.count) instructions but expected \(validInstructions.count). Returning originals.")
+            return instructions
+        }
+        
+        // Map edited instructions back to the original array (preserving empty entries)
+        var result = instructions
+        var editedIndex = 0
+        for i in 0..<result.count {
+            if !result[i].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                if editedIndex < editedInstructions.count {
+                    result[i] = editedInstructions[editedIndex]
+                    editedIndex += 1
+                }
+            }
+        }
+        
+        return result
+    }
+    
+    /// Generate recipe instructions from a title and ingredients using OpenAI
+    /// - Parameters:
+    ///   - title: Recipe title/dish name
+    ///   - ingredients: Array of ingredient strings
+    /// - Returns: Array of instruction step strings
+    static func generateInstructions(title: String, ingredients: [String]) async throws -> [String] {
+        guard !apiKey.isEmpty else {
+            throw OpenAIError.apiKeyNotConfigured
+        }
+        
+        guard !title.isEmpty else {
+            return []
+        }
+        
+        // Create the request
+        guard let url = URL(string: "\(baseURL)/chat/completions") else {
+            throw OpenAIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Detect language from title and ingredients to preserve it
+        let combinedText = title + " " + ingredients.joined(separator: " ")
+        let recognizer = NLLanguageRecognizer()
+        recognizer.processString(combinedText)
+        let detectedCode = recognizer.dominantLanguage?.rawValue ?? "en"
+        let languageName = getLanguageName(for: detectedCode)
+        
+        let ingredientsText = ingredients.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+            .joined(separator: ", ")
+        
+        let systemPrompt = """
+        You are a professional chef and recipe writer. Generate clear, step-by-step cooking instructions for a recipe based on the dish name and ingredients provided.
+        Rules:
+        - Write concise, actionable steps that a home cook can follow
+        - Include prep steps (washing, cutting, marinating) before cooking steps
+        - Mention specific cooking times and temperatures where appropriate
+        - Keep to a maximum of 10 steps
+        - Do NOT include specific amounts or units (e.g. "200g", "2 tbsp", "1 cup") in the instructions — refer to ingredients by name only (e.g. "the flour", "the garlic", "the soy sauce"). Amounts are managed separately in the ingredients list and will scale with servings.
+        - Write entirely in \(languageName) — do NOT translate to another language
+        - Return ONLY a JSON object with an "instructions" array of strings
+        """
+        
+        var userPrompt = "Generate cooking instructions for this recipe in \(languageName):\n\nDish: \(title)"
+        if !ingredientsText.isEmpty {
+            userPrompt += "\n\nIngredients: \(ingredientsText)"
+        }
+        
+        let requestBody: [String: Any] = [
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                [
+                    "role": "system",
+                    "content": systemPrompt
+                ],
+                [
+                    "role": "user",
+                    "content": userPrompt
+                ]
+            ],
+            "response_format": ["type": "json_object"],
+            "max_tokens": 2000,
+            "temperature": 0.7
+        ]
+        
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
+            throw OpenAIError.requestSerializationFailed
+        }
+        request.httpBody = httpBody
+        
+        // Make the request
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let error = errorData["error"] as? [String: Any],
+               let message = error["message"] as? String {
+                throw OpenAIError.apiError(message)
+            }
+            throw OpenAIError.httpError(httpResponse.statusCode)
+        }
+        
+        // Parse the response
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let message = firstChoice["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        // Parse the JSON response to extract instructions array
+        guard let contentData = content.data(using: .utf8),
+              let contentJSON = try? JSONSerialization.jsonObject(with: contentData) as? [String: Any],
+              let generatedInstructions = contentJSON["instructions"] as? [String] else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        return generatedInstructions
     }
     
     /// Generate search keywords for a recipe using OpenAI

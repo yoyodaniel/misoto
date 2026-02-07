@@ -1000,6 +1000,11 @@ struct UploadRecipeView: View {
             moveIngredientBetweenCategories: { fromCategory, fromIndex, toCategory, toIndex in
                 viewModel.moveIngredient(from: fromCategory, sourceIndex: fromIndex, to: toCategory, destinationIndex: toIndex)
             },
+            onEditInstructionsWithAI: {
+                await viewModel.editInstructionsWithAI()
+            },
+            isEditingInstructions: viewModel.isEditingInstructions,
+            hasNonEmptyInstructions: viewModel.instructions.contains { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty } || !viewModel.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
             instructionsContent: {
                 makeInstructionsContent()
             },

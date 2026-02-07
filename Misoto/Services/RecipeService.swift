@@ -553,7 +553,7 @@ class RecipeService: ObservableObject {
         try await incrementFavoriteCount(recipeID: recipeID, increment: 1)
         
         // Increment recipe AUTHOR's total likes count (not the liker's)
-        try await incrementUserLikesCount(userID: authorID, increment: 1)
+            try await incrementUserLikesCount(userID: authorID, increment: 1)
     }
     
     func removeFavorite(recipeID: String, userID: String) async throws {
@@ -576,7 +576,7 @@ class RecipeService: ObservableObject {
         try await incrementFavoriteCount(recipeID: recipeID, increment: -1)
         
         // Decrement recipe AUTHOR's total likes count (not the liker's)
-        try await incrementUserLikesCount(userID: authorID, increment: -1)
+            try await incrementUserLikesCount(userID: authorID, increment: -1)
     }
     
     func fetchFavorites(userID: String) async throws -> [Favorite] {
@@ -700,9 +700,9 @@ class RecipeService: ObservableObject {
                     filteredUserIDs.insert(userID)
                     if isProfileHidden || isCompletelyPrivate {
                         print("🔒 Filtering recipes from private account: \(userID) (isProfileHidden: \(isProfileHidden), isCompletelyPrivate: \(isCompletelyPrivate))")
-                    }
                 }
             }
+        }
         }
         
         if !filteredUserIDs.isEmpty {

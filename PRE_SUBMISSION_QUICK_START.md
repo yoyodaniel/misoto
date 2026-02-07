@@ -87,6 +87,6 @@ For complete details, see: `APP_STORE_SUBMISSION_CHECKLIST.md`
 
 ## 📞 Support
 
-- **Contact Email**: info@game-timer.com
+- **Contact Email**: support@misoto.app
 - **App Store Connect**: https://appstoreconnect.apple.com
 - **Apple Developer Support**: https://developer.apple.com/support/

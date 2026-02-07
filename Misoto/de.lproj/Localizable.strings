@@ -510,3 +510,5 @@ Ihr Konto wird nach 30 Tagen gelöscht. Um die Löschung abzubrechen, melden Sie
 "Transaction could not be verified" = "Transaction could not be verified";
 "An unknown error occurred" = "An unknown error occurred";
 "You must be signed in to track usage" = "You must be signed in to track usage";
+"Deleting your account..." = "Ihr Konto wird gelöscht...";
+"This may take a few moments. Please don't close the app." = "Dies kann einige Momente dauern. Bitte schließen Sie die App nicht.";
