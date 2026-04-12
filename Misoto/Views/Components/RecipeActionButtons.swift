@@ -27,7 +27,7 @@ struct RecipeActionButtons: View {
             
             // Write Note Button
             Button(action: onWriteNoteTapped) {
-                Text(LocalizedString("Write Note", comment: "Write note button"))
+                Text(LocalizedString("Write a Note to Self", comment: "Write note button"))
                     .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 18 : 16, weight: .semibold))
                     .foregroundColor(.primary)
                     .frame(maxWidth: .infinity)

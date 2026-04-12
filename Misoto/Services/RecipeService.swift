@@ -24,8 +24,27 @@ class RecipeService: ObservableObject {
     // MARK: - Create Recipe
     
     func createRecipe(_ recipe: Recipe) async throws {
-        let recipeRef = firestore.collection(recipesCollection).document(recipe.id)
-        try recipeRef.setData(from: recipe)
+        var recipeToSave = recipe
+        
+        // Enrich ingredients with canonical IDs and food categories (on-device, free)
+        recipeToSave.ingredients = IngredientDatabase.shared.enrich(recipeToSave.ingredients)
+        
+        // Estimate nutrition per serving (best-effort, don't block save on failure)
+        if !recipe.ingredients.isEmpty {
+            do {
+                let nutrition = try await OpenAIService.estimateNutrition(
+                    title: recipe.title,
+                    ingredients: recipe.ingredients,
+                    servings: recipe.servings
+                )
+                recipeToSave.nutritionInfo = nutrition
+            } catch {
+                print("⚠️ Nutrition estimation failed (recipe will save without it): \(error.localizedDescription)")
+            }
+        }
+        
+        let recipeRef = firestore.collection(recipesCollection).document(recipeToSave.id)
+        try recipeRef.setData(from: recipeToSave)
         
         // Update user's recipe count
         if let userID = Auth.auth().currentUser?.uid {
@@ -240,6 +259,34 @@ class RecipeService: ObservableObject {
     /// Search recipes by query string (searches in title, description, and ingredient names)
     /// - Parameter query: Search query string
     /// - Returns: Array of matching recipes
+    func fetchRecipesByCuisine(cuisine: String) async throws -> [Recipe] {
+        // Query by cuisineEnglish field for exact match
+        let snapshot = try await firestore.collection(recipesCollection)
+            .whereField("cuisineEnglish", isEqualTo: cuisine)
+            .order(by: "createdAt", descending: true)
+            .limit(to: 50)
+            .getDocuments()
+        
+        var recipes: [Recipe] = []
+        for document in snapshot.documents {
+            do {
+                let recipe = try document.data(as: Recipe.self)
+                recipes.append(recipe)
+            } catch {
+                print("⚠️ Failed to decode recipe \(document.documentID): \(error.localizedDescription)")
+            }
+        }
+        
+        // Filter out banned/hidden/private
+        let filteredRecipes = try await filterRecipesFromBannedUsers(recipes: recipes)
+        let currentUserID = Auth.auth().currentUser?.uid
+        return filteredRecipes.filter { recipe in
+            !recipe.isHidden &&
+            recipe.reportCount < 10 &&
+            (!recipe.isPrivate || recipe.authorID == currentUserID)
+        }
+    }
+    
     func searchRecipes(query: String) async throws -> [Recipe] {
         guard !query.trimmingCharacters(in: .whitespaces).isEmpty else {
             return []
@@ -343,6 +390,24 @@ class RecipeService: ObservableObject {
         let recipeRef = firestore.collection(recipesCollection).document(recipe.id)
         var updatedRecipe = recipe
         updatedRecipe.updatedAt = Date()
+        
+        // Enrich ingredients with canonical IDs and food categories (on-device, free)
+        updatedRecipe.ingredients = IngredientDatabase.shared.enrich(updatedRecipe.ingredients)
+        
+        // Re-estimate nutrition per serving (best-effort, don't block save on failure)
+        if !recipe.ingredients.isEmpty {
+            do {
+                let nutrition = try await OpenAIService.estimateNutrition(
+                    title: recipe.title,
+                    ingredients: recipe.ingredients,
+                    servings: recipe.servings
+                )
+                updatedRecipe.nutritionInfo = nutrition
+            } catch {
+                print("⚠️ Nutrition re-estimation failed (recipe will save with old values): \(error.localizedDescription)")
+            }
+        }
+        
         try recipeRef.setData(from: updatedRecipe, merge: true)
     }
     
@@ -529,6 +594,18 @@ class RecipeService: ObservableObject {
         
         // Update user's recipe count
         try await updateUserRecipeCount(userID: userID, increment: -1)
+    }
+    
+    // MARK: - Nutrition
+    
+    /// Persist nutrition info to an existing recipe without re-saving the entire document
+    func saveNutritionInfo(recipeID: String, nutritionInfo: NutritionInfo) async throws {
+        let recipeRef = firestore.collection(recipesCollection).document(recipeID)
+        let encoded = try Firestore.Encoder().encode(nutritionInfo)
+        try await recipeRef.updateData([
+            "nutritionInfo": encoded,
+            "updatedAt": Timestamp(date: Date())
+        ])
     }
     
     // MARK: - Favorites

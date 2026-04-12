@@ -26,6 +26,7 @@ struct MainTabView: View {
     @State private var showRecipeLimitAlert = false
     @State private var showAIExtractionLimitAlert = false
     @State private var showPremium = false
+    @State private var showWhatsNew = false
     
     private var nextResetDateString: String {
         let calendar = Calendar.current
@@ -109,6 +110,31 @@ struct MainTabView: View {
         
         dateFormatter.locale = Locale(identifier: localeIdentifier)
         return dateFormatter.string(from: nextMonthFirst)
+    }
+
+    private var currentAppVersion: String {
+        let short = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+        return "\(short) (\(build))"
+    }
+
+    private func checkAndPresentWhatsNewIfNeeded() {
+        let defaults = UserDefaults.standard
+        let disabledKey = "disableWhatsNewPopup"
+
+        // Legacy compatibility: keep this key updated if it existed before.
+        defaults.set(currentAppVersion, forKey: "lastSeenWhatsNewVersion")
+
+        let isDisabled = defaults.bool(forKey: disabledKey)
+        if !isDisabled {
+            showWhatsNew = true
+        }
+    }
+
+    private func disableWhatsNewPopup() {
+        let defaults = UserDefaults.standard
+        defaults.set(true, forKey: "disableWhatsNewPopup")
+        defaults.set(currentAppVersion, forKey: "lastSeenWhatsNewVersion")
     }
     
     var body: some View {
@@ -335,9 +361,24 @@ struct MainTabView: View {
             PremiumView()
                 .environmentObject(subscriptionViewModel)
         }
+        .sheet(isPresented: $showWhatsNew) {
+            WhatsNewView(
+                versionLabel: currentAppVersion,
+                onDismiss: {
+                    showWhatsNew = false
+                },
+                onDontShowAgain: {
+                    disableWhatsNewPopup()
+                    showWhatsNew = false
+                }
+            )
+            .presentationDetents([.fraction(0.5)])
+            .presentationDragIndicator(.visible)
+        }
         .task {
             // Load subscription data when view appears
             await subscriptionViewModel.loadData()
+            checkAndPresentWhatsNewIfNeeded()
         }
     }
 }

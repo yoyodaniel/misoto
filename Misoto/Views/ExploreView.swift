@@ -83,374 +83,8 @@ struct ExploreView: View {
                 }
                 .padding(.vertical, 12)
                 
-                // Recipe List
-                if !searchText.isEmpty {
-                    // Search Results
-                    if viewModel.isSearching {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    } else if viewModel.searchResults.isEmpty {
-                        Spacer()
-                        VStack(spacing: 16) {
-                            Image(systemName: "magnifyingglass")
-                                .font(.system(size: 60))
-                                .foregroundColor(.secondary)
-                            Text(LocalizedString("No recipes found", comment: "No recipes message"))
-                                .foregroundColor(.secondary)
-                            Text(LocalizedString("Try searching for a different recipe or ingredient", comment: "Search no results hint"))
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 40)
-                        }
-                        Spacer()
-                    } else {
-                        ScrollView {
-                            LazyVStack(spacing: 20) {
-                                // Featured Recipe (first one)
-                                if let featuredRecipe = viewModel.searchResults.first {
-                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
-                                        .onTapGesture {
-                                            selectedRecipe = featuredRecipe
-                                        }
-                                    
-                                    // Cuisines Section
-                                    if viewModel.searchResults.count > 1 {
-                                        CuisinesSection(recipes: Array(viewModel.searchResults.dropFirst()))
-                                    }
-                                    
-                                    // Remaining Recipes
-                                    if viewModel.searchResults.count > 1 {
-                                        ForEach(Array(viewModel.searchResults.dropFirst())) { recipe in
-                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                                .onTapGesture {
-                                                    selectedRecipe = recipe
-                                                }
-                                        }
-                                    }
-                                } else {
-                                    ForEach(viewModel.searchResults) { recipe in
-                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                            .onTapGesture {
-                                                selectedRecipe = recipe
-                                            }
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                        }
-                        .onAppear {
-                            scaleRefreshControl()
-                        }
-                    }
-                } else if selectedCategory == 0 {
-                    // What's New
-                    if viewModel.isLoadingWhatsNew {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    } else if viewModel.whatsNew.isEmpty {
-                        Spacer()
-                        VStack(spacing: 16) {
-                            Image(systemName: "fork.knife")
-                                .font(.system(size: 60))
-                                .foregroundColor(.secondary)
-                            Text(LocalizedString("No recipes found", comment: "No recipes message"))
-                                .foregroundColor(.secondary)
-                        }
-                        Spacer()
-                    } else {
-                        ScrollView {
-                            LazyVStack(spacing: 20) {
-                                // Featured Recipe (first one)
-                                if let featuredRecipe = viewModel.whatsNew.first {
-                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
-                                        .onTapGesture {
-                                            selectedRecipe = featuredRecipe
-                                        }
-                                    
-                                    // Cuisines Section
-                                    if viewModel.whatsNew.count > 1 {
-                                        CuisinesSection(recipes: Array(viewModel.whatsNew.dropFirst()))
-                                    }
-                                    
-                                    // Remaining Recipes
-                                    if viewModel.whatsNew.count > 1 {
-                                        ForEach(Array(viewModel.whatsNew.dropFirst().enumerated()), id: \.element.id) { index, recipe in
-                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                                .onTapGesture {
-                                                    selectedRecipe = recipe
-                                                }
-                                                .onAppear {
-                                                    // Load more when we're near the end (3 items before the end)
-                                                    let totalCount = viewModel.whatsNew.dropFirst().count
-                                                    if index == totalCount - 3 && viewModel.hasMoreWhatsNew && !viewModel.isLoadingMoreWhatsNew {
-                                                        Task {
-                                                            await viewModel.loadMoreWhatsNew()
-                                                        }
-                                                    }
-                                                }
-                                        }
-                                    }
-                                } else {
-                                    ForEach(Array(viewModel.whatsNew.enumerated()), id: \.element.id) { index, recipe in
-                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                            .onTapGesture {
-                                                selectedRecipe = recipe
-                                            }
-                                            .onAppear {
-                                                // Load more when we're near the end (3 items before the end)
-                                                if index == viewModel.whatsNew.count - 3 && viewModel.hasMoreWhatsNew && !viewModel.isLoadingMoreWhatsNew {
-                                                    Task {
-                                                        await viewModel.loadMoreWhatsNew()
-                                                    }
-                                                }
-                                            }
-                                    }
-                                }
-                                
-                                // Loading indicator at the bottom
-                                if viewModel.isLoadingMoreWhatsNew {
-                                    ProgressView()
-                                        .padding()
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                        }
-                        .refreshable {
-                            await viewModel.loadWhatsNew()
-                        }
-                        .onAppear {
-                            scaleRefreshControl()
-                        }
-                    }
-                } else if selectedCategory == 1 {
-                    // Today's Special
-                    if viewModel.isLoadingTodaysSpecial {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    } else if viewModel.todaysSpecial.isEmpty {
-                        Spacer()
-                        VStack(spacing: 16) {
-                            Image(systemName: "fork.knife")
-                                .font(.system(size: 60))
-                                .foregroundColor(.secondary)
-                            Text(LocalizedString("No recipes found", comment: "No recipes message"))
-                                .foregroundColor(.secondary)
-                        }
-                        Spacer()
-                    } else {
-                        ScrollView {
-                            LazyVStack(spacing: 20) {
-                                // Featured Recipe (first one)
-                                if let featuredRecipe = viewModel.todaysSpecial.first {
-                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
-                                        .onTapGesture {
-                                            selectedRecipe = featuredRecipe
-                                        }
-                                    
-                                    // Cuisines Section
-                                    if viewModel.todaysSpecial.count > 1 {
-                                        CuisinesSection(recipes: Array(viewModel.todaysSpecial.dropFirst()))
-                                    }
-                                    
-                                    // Remaining Recipes
-                                    if viewModel.todaysSpecial.count > 1 {
-                                        ForEach(Array(viewModel.todaysSpecial.dropFirst().enumerated()), id: \.element.id) { index, recipe in
-                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                                .onTapGesture {
-                                                    selectedRecipe = recipe
-                                                }
-                                                .onAppear {
-                                                    // Load more when we're near the end (3 items before the end)
-                                                    let totalCount = viewModel.todaysSpecial.dropFirst().count
-                                                    if index == totalCount - 3 && viewModel.hasMoreTodaysSpecial && !viewModel.isLoadingMoreTodaysSpecial {
-                                                        Task {
-                                                            await viewModel.loadMoreTodaysSpecial()
-                                                        }
-                                                    }
-                                                }
-                                        }
-                                    }
-                                } else {
-                                    ForEach(Array(viewModel.todaysSpecial.enumerated()), id: \.element.id) { index, recipe in
-                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                            .onTapGesture {
-                                                selectedRecipe = recipe
-                                            }
-                                            .onAppear {
-                                                // Load more when we're near the end (3 items before the end)
-                                                if index == viewModel.todaysSpecial.count - 3 && viewModel.hasMoreTodaysSpecial && !viewModel.isLoadingMoreTodaysSpecial {
-                                                    Task {
-                                                        await viewModel.loadMoreTodaysSpecial()
-                                                    }
-                                                }
-                                            }
-                                    }
-                                }
-                                
-                                // Loading indicator at the bottom
-                                if viewModel.isLoadingMoreTodaysSpecial {
-                                    ProgressView()
-                                        .padding()
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                        }
-                        .refreshable {
-                            await viewModel.loadTodaysSpecial()
-                        }
-                        .onAppear {
-                            scaleRefreshControl()
-                        }
-                    }
-                } else if selectedCategory == 2 {
-                    // Liked recipes
-                    if viewModel.isLoadingLiked {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    } else if viewModel.likedRecipes.isEmpty {
-                        Spacer()
-                        VStack(spacing: 16) {
-                            Image(systemName: "heart.slash")
-                                .font(.system(size: 60))
-                                .foregroundColor(.secondary)
-                            Text(LocalizedString("No liked recipes yet", comment: "No liked recipes message"))
-                                .foregroundColor(.secondary)
-                            Text(LocalizedString("Start exploring and like your favorite recipes!", comment: "Liked recipes hint"))
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal, 40)
-                        }
-                        Spacer()
-                    } else {
-                        ScrollView {
-                            LazyVStack(spacing: 20) {
-                                // Featured Recipe (first one)
-                                if let featuredRecipe = viewModel.likedRecipes.first {
-                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
-                                        .onTapGesture {
-                                            selectedRecipe = featuredRecipe
-                                        }
-                                    
-                                    // Cuisines Section
-                                    if viewModel.likedRecipes.count > 1 {
-                                        CuisinesSection(recipes: Array(viewModel.likedRecipes.dropFirst()))
-                                    }
-                                    
-                                    // Remaining Recipes
-                                    if viewModel.likedRecipes.count > 1 {
-                                        ForEach(Array(viewModel.likedRecipes.dropFirst())) { recipe in
-                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                                .onTapGesture {
-                                                    selectedRecipe = recipe
-                                                }
-                                        }
-                                    }
-                                } else {
-                                    ForEach(viewModel.likedRecipes) { recipe in
-                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                            .onTapGesture {
-                                                selectedRecipe = recipe
-                                            }
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                        }
-                        .refreshable {
-                            await viewModel.loadLikedRecipes()
-                        }
-                        .onAppear {
-                            scaleRefreshControl()
-                        }
-                    }
-                } else if selectedCategory == 3 || selectedCategory == 4 || selectedCategory == 5 {
-                    // Coming soon categories (Follow, Chef's Choice, Ranking)
-                    Spacer()
-                    VStack(spacing: 16) {
-                        Image(systemName: "clock.badge.questionmark")
-                            .font(.system(size: 60))
-                            .foregroundColor(.secondary)
-                        Text(LocalizedString("Coming Soon", comment: "Coming soon title"))
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-                        Text(LocalizedString("This feature is under development and will be available soon!", comment: "Coming soon message"))
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 40)
-                    }
-                    Spacer()
-                } else {
-                    // Other categories (default behavior)
-                    if viewModel.isLoading {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    } else if viewModel.recipes.isEmpty {
-                        Spacer()
-                        VStack(spacing: 16) {
-                            Image(systemName: "fork.knife")
-                                .font(.system(size: 60))
-                                .foregroundColor(.secondary)
-                            Text(LocalizedString("No recipes found", comment: "No recipes message"))
-                                .foregroundColor(.secondary)
-                        }
-                        Spacer()
-                    } else {
-                        ScrollView {
-                            LazyVStack(spacing: 20) {
-                                // Featured Recipe (first one)
-                                if let featuredRecipe = viewModel.recipes.first {
-                                    ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
-                                        .onTapGesture {
-                                            selectedRecipe = featuredRecipe
-                                        }
-                                    
-                                    // Cuisines Section
-                                    if viewModel.recipes.count > 1 {
-                                        CuisinesSection(recipes: Array(viewModel.recipes.dropFirst()))
-                                    }
-                                    
-                                    // Remaining Recipes
-                                    if viewModel.recipes.count > 1 {
-                                        ForEach(Array(viewModel.recipes.dropFirst())) { recipe in
-                                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                                .onTapGesture {
-                                                    selectedRecipe = recipe
-                                                }
-                                        }
-                                    }
-                                } else {
-                                    ForEach(viewModel.recipes) { recipe in
-                                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
-                                            .onTapGesture {
-                                                selectedRecipe = recipe
-                                            }
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 16)
-                            .padding(.vertical, UIDevice.current.userInterfaceIdiom == .pad ? 20 : 12)
-                        }
-                        .refreshable {
-                            await viewModel.loadRecipes()
-                        }
-                        .onAppear {
-                            scaleRefreshControl()
-                        }
-                    }
-                }
+                // Recipe List — extracted into sub-views to help the compiler
+                contentView
             }
         }
         .fullScreenCover(item: $selectedRecipe) { recipe in
@@ -570,6 +204,266 @@ struct ExploreView: View {
         }
     }
     
+    // MARK: - Extracted Sub-Views
+    
+    @ViewBuilder
+    private var contentView: some View {
+        if !searchText.isEmpty {
+            searchResultsView
+        } else if selectedCategory == 0 {
+            whatsNewView
+        } else if selectedCategory == 1 {
+            todaysSpecialView
+        } else if selectedCategory == 2 {
+            likedRecipesView
+        } else if selectedCategory == 3 || selectedCategory == 4 || selectedCategory == 5 {
+            comingSoonView
+        } else {
+            defaultRecipesView
+        }
+    }
+    
+    @ViewBuilder
+    private var searchResultsView: some View {
+        if viewModel.isSearching {
+            Spacer()
+            ProgressView()
+            Spacer()
+        } else if viewModel.searchResults.isEmpty {
+            Spacer()
+            VStack(spacing: 16) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 60))
+                    .foregroundColor(.secondary)
+                Text(LocalizedString("No recipes found", comment: "No recipes message"))
+                    .foregroundColor(.secondary)
+                Text(LocalizedString("Try searching for a different recipe or ingredient", comment: "Search no results hint"))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+            Spacer()
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(viewModel.searchResults) { recipe in
+                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
+                            .onTapGesture { selectedRecipe = recipe }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            .refreshable { viewModel.searchRecipes(query: searchText) }
+            .onAppear { scaleRefreshControl() }
+        }
+    }
+    
+    @ViewBuilder
+    private var whatsNewView: some View {
+        if viewModel.isLoadingWhatsNew {
+            Spacer()
+            ProgressView()
+            Spacer()
+        } else if viewModel.whatsNew.isEmpty {
+            Spacer()
+            VStack(spacing: 16) {
+                Image(systemName: "fork.knife")
+                    .font(.system(size: 60))
+                    .foregroundColor(.secondary)
+                Text(LocalizedString("No recipes found", comment: "No recipes message"))
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    if let featuredRecipe = viewModel.whatsNew.first {
+                        ModernRecipeCard(recipe: featuredRecipe, showLoginSheet: $showLoginSheet)
+                            .onTapGesture { selectedRecipe = featuredRecipe }
+                        
+                        // Cuisines Section — dynamic from recent posts
+                        if !viewModel.trendingCuisines.isEmpty {
+                            CuisinesSection(
+                                cuisines: viewModel.trendingCuisines,
+                                onCuisineTapped: { cuisineEnglish in
+                                    searchText = CuisineTranslations.translatedName(for: cuisineEnglish)
+                                    viewModel.searchByCuisine(cuisineEnglish)
+                                }
+                            )
+                        }
+                        
+                        // Remaining Recipes
+                        if viewModel.whatsNew.count > 1 {
+                            ForEach(Array(viewModel.whatsNew.dropFirst().enumerated()), id: \.element.id) { index, recipe in
+                                ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
+                                    .onTapGesture { selectedRecipe = recipe }
+                                    .onAppear {
+                                        let totalCount = viewModel.whatsNew.dropFirst().count
+                                        if index == totalCount - 3 && viewModel.hasMoreWhatsNew && !viewModel.isLoadingMoreWhatsNew {
+                                            Task { await viewModel.loadMoreWhatsNew() }
+                                        }
+                                    }
+                            }
+                        }
+                    } else {
+                        ForEach(Array(viewModel.whatsNew.enumerated()), id: \.element.id) { index, recipe in
+                            ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
+                                .onTapGesture { selectedRecipe = recipe }
+                                .onAppear {
+                                    if index == viewModel.whatsNew.count - 3 && viewModel.hasMoreWhatsNew && !viewModel.isLoadingMoreWhatsNew {
+                                        Task { await viewModel.loadMoreWhatsNew() }
+                                    }
+                                }
+                        }
+                    }
+                    
+                    if viewModel.isLoadingMoreWhatsNew {
+                        ProgressView().padding()
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            .refreshable { await viewModel.loadWhatsNew() }
+            .onAppear { scaleRefreshControl() }
+        }
+    }
+    
+    @ViewBuilder
+    private var todaysSpecialView: some View {
+        if viewModel.isLoadingTodaysSpecial {
+            Spacer()
+            ProgressView()
+            Spacer()
+        } else if viewModel.todaysSpecial.isEmpty {
+            Spacer()
+            VStack(spacing: 16) {
+                Image(systemName: "fork.knife")
+                    .font(.system(size: 60))
+                    .foregroundColor(.secondary)
+                Text(LocalizedString("No recipes found", comment: "No recipes message"))
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(Array(viewModel.todaysSpecial.enumerated()), id: \.element.id) { index, recipe in
+                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
+                            .onTapGesture { selectedRecipe = recipe }
+                            .onAppear {
+                                if index == viewModel.todaysSpecial.count - 3 && viewModel.hasMoreTodaysSpecial && !viewModel.isLoadingMoreTodaysSpecial {
+                                    Task { await viewModel.loadMoreTodaysSpecial() }
+                                }
+                            }
+                    }
+                    
+                    if viewModel.isLoadingMoreTodaysSpecial {
+                        ProgressView().padding()
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            .refreshable { await viewModel.loadTodaysSpecial() }
+            .onAppear { scaleRefreshControl() }
+        }
+    }
+    
+    @ViewBuilder
+    private var likedRecipesView: some View {
+        if viewModel.isLoadingLiked {
+            Spacer()
+            ProgressView()
+            Spacer()
+        } else if viewModel.likedRecipes.isEmpty {
+            Spacer()
+            VStack(spacing: 16) {
+                Image(systemName: "heart.slash")
+                    .font(.system(size: 60))
+                    .foregroundColor(.secondary)
+                Text(LocalizedString("No liked recipes yet", comment: "No liked recipes message"))
+                    .foregroundColor(.secondary)
+                Text(LocalizedString("Start exploring and like your favorite recipes!", comment: "Liked recipes hint"))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+            Spacer()
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(viewModel.likedRecipes) { recipe in
+                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
+                            .onTapGesture { selectedRecipe = recipe }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+            }
+            .refreshable { await viewModel.loadLikedRecipes() }
+            .onAppear { scaleRefreshControl() }
+        }
+    }
+    
+    private var comingSoonView: some View {
+        VStack {
+            Spacer()
+            VStack(spacing: 16) {
+                Image(systemName: "clock.badge.questionmark")
+                    .font(.system(size: 60))
+                    .foregroundColor(.secondary)
+                Text(LocalizedString("Coming Soon", comment: "Coming soon title"))
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                Text(LocalizedString("This feature is under development and will be available soon!", comment: "Coming soon message"))
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+            }
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder
+    private var defaultRecipesView: some View {
+        if viewModel.isLoading {
+            Spacer()
+            ProgressView()
+            Spacer()
+        } else if viewModel.recipes.isEmpty {
+            Spacer()
+            VStack(spacing: 16) {
+                Image(systemName: "fork.knife")
+                    .font(.system(size: 60))
+                    .foregroundColor(.secondary)
+                Text(LocalizedString("No recipes found", comment: "No recipes message"))
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    ForEach(viewModel.recipes) { recipe in
+                        ModernRecipeCard(recipe: recipe, showLoginSheet: $showLoginSheet)
+                            .onTapGesture { selectedRecipe = recipe }
+                    }
+                }
+                .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 40 : 16)
+                .padding(.vertical, UIDevice.current.userInterfaceIdiom == .pad ? 20 : 12)
+            }
+            .refreshable { await viewModel.loadRecipes() }
+            .onAppear { scaleRefreshControl() }
+        }
+    }
+    
+    // MARK: - Helper Functions
+    
     private func scaleRefreshControl() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -613,8 +507,8 @@ struct CategoryTab: View {
 // MARK: - Cuisines Section
 
 struct CuisinesSection: View {
-    let recipes: [Recipe]
-    @State private var selectedRecipe: Recipe?
+    let cuisines: [ExploreViewModel.CuisineEntry]
+    let onCuisineTapped: (String) -> Void
     @ObservedObject private var localizationManager = LocalizationManager.shared
     
     var body: some View {
@@ -622,51 +516,46 @@ struct CuisinesSection: View {
             Text(LocalizedString("Cuisines", comment: "Cuisines section title"))
                 .font(.system(size: 20, weight: .bold))
                 .padding(.horizontal, 16)
-                .onChange(of: localizationManager.currentLanguage) { _, _ in
-                    // Trigger view update when language changes
-                }
+                .onChange(of: localizationManager.currentLanguage) { _, _ in }
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(Array(recipes.prefix(6).enumerated()), id: \.element.id) { index, recipe in
-                        CollectionRecipeCard(recipe: recipe)
+                    ForEach(cuisines) { cuisine in
+                        CuisineCard(entry: cuisine)
                             .onTapGesture {
-                                selectedRecipe = recipe
+                                onCuisineTapped(cuisine.english)
                             }
                     }
                 }
-                .padding(.leading, 16) // Leading padding to align first card with featured card
-                .padding(.bottom, 8) // Add bottom padding to prevent shadow cropping
+                .padding(.horizontal, 16)
+                .padding(.bottom, 4)
             }
-            .padding(.leading, -16) // Negative padding to extend ScrollView to screen edge
-            .padding(.trailing, -16) // Negative padding to extend ScrollView to screen edge
         }
-        .padding(.vertical, 16)
-        .fullScreenCover(item: $selectedRecipe) { recipe in
-            RecipeDetailOverviewView(recipe: recipe)
-        }
+        .padding(.vertical, 12)
     }
 }
 
-struct CollectionRecipeCard: View {
-    let recipe: Recipe
-    @ObservedObject private var localizationManager = LocalizationManager.shared
+/// A card showing a representative dish image with the cuisine name overlaid
+struct CuisineCard: View {
+    let entry: ExploreViewModel.CuisineEntry
+    
+    private var imageURL: String? {
+        entry.representativeRecipe.imageURLs.first ?? entry.representativeRecipe.imageURL
+    }
     
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
-            // Rounded Square Image at Top
-            if let imageURL = recipe.imageURL, let url = URL(string: imageURL) {
+            // Dish image
+            if let urlString = imageURL, let url = URL(string: urlString) {
                 AsyncImage(url: url) { image in
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                 } placeholder: {
                     Rectangle()
-                        .fill(Color.gray.opacity(0.3))
+                        .fill(Color.gray.opacity(0.2))
                         .overlay {
-                            Image(systemName: "photo")
-                                .font(.system(size: 30))
-                                .foregroundColor(.secondary)
+                            ProgressView()
                         }
                 }
                 .frame(width: 140, height: 140)
@@ -674,37 +563,25 @@ struct CollectionRecipeCard: View {
                 .cornerRadius(12, corners: [.topLeft, .topRight])
             } else {
                 Rectangle()
-                    .fill(Color.gray.opacity(0.3))
+                    .fill(Color.gray.opacity(0.2))
                     .frame(width: 140, height: 140)
                     .overlay {
-                        Image(systemName: "photo")
+                        Image(systemName: "fork.knife")
                             .font(.system(size: 30))
                             .foregroundColor(.secondary)
                     }
                     .cornerRadius(12, corners: [.topLeft, .topRight])
             }
             
-            // White Bar at Bottom with Cuisine (Centered)
-            VStack(alignment: .center, spacing: 0) {
-                if let cuisine = recipe.displayCuisine, !cuisine.isEmpty {
-                    Text(cuisine)
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(.black)
-                        .lineLimit(1)
-                } else {
-                    Text(LocalizedString("Other", comment: "Other cuisine"))
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(.black)
-                        .lineLimit(1)
-                }
-            }
-            .frame(width: 140)
-            .frame(minHeight: 40)
-            .background(Color.white)
+            // Cuisine label bar
+            Text(CuisineTranslations.translatedName(for: entry.english))
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.primary)
+                .lineLimit(1)
+                .frame(width: 140)
+                .padding(.vertical, 10)
+            .background(Color(.systemBackground))
             .cornerRadius(12, corners: [.bottomLeft, .bottomRight])
-            .onChange(of: localizationManager.currentLanguage) { _, _ in
-                // Trigger view update when language changes
-            }
         }
         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
     }

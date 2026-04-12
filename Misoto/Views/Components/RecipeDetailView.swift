@@ -68,8 +68,8 @@ struct RecipeDetailView: View {
                         
                         // Stats
                         HStack(spacing: 20) {
-                            Label("\(recipe.prepTime) \(LocalizedString("min", comment: "Minutes abbreviation"))", systemImage: "timer")
-                            Label("\(recipe.cookTime) \(LocalizedString("min", comment: "Minutes abbreviation"))", systemImage: "flame")
+                            Label(formatDuration(recipe.prepTime), systemImage: "timer")
+                            Label(formatDuration(recipe.cookTime), systemImage: "flame")
                             Label("\(recipe.servings)", systemImage: "person.2")
                             Label(recipe.difficulty.rawValue, systemImage: "chart.bar")
                         }

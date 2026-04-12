@@ -140,10 +140,28 @@ class RelatedRecipesService {
     }
     
     private func calculateIngredientSimilarity(_ ingredients1: [Ingredient], _ ingredients2: [Ingredient]) -> Int {
-        let names1 = Set(ingredients1.map { $0.name.lowercased() })
-        let names2 = Set(ingredients2.map { $0.name.lowercased() })
+        let db = IngredientDatabase.shared
         
-        let intersection = names1.intersection(names2)
+        // Use canonical IDs when available for more accurate matching
+        // Fall back to lowercased name matching for un-enriched ingredients
+        func identifiers(for ingredients: [Ingredient]) -> Set<String> {
+            return Set(ingredients.map { ingredient in
+                if let canonicalId = ingredient.canonicalId {
+                    return canonicalId
+                }
+                // Try on-the-fly matching
+                if let match = db.match(ingredient.name) {
+                    return match.canonicalId
+                }
+                // Fall back to lowercased name
+                return ingredient.name.lowercased()
+            })
+        }
+        
+        let ids1 = identifiers(for: ingredients1)
+        let ids2 = identifiers(for: ingredients2)
+        
+        let intersection = ids1.intersection(ids2)
         return intersection.count
     }
 }

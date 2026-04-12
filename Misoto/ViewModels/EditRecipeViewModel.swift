@@ -51,9 +51,33 @@ class EditRecipeViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isGeneratingDescription = false
     @Published var isDetectingCuisine = false
+    @Published var nutritionInfo: NutritionInfo?
+    @Published var isEstimatingNutrition = false
+    @Published var isEditingInstructions = false
+    @Published private(set) var canUndoLastInstructionAIEdit = false
+    @Published private(set) var canRedoLastInstructionAIEdit = false
+    @Published private(set) var canUndoDescriptionAIEdit = false
+    @Published private(set) var canRedoDescriptionAIEdit = false
+    @Published var isTipsAILoading = false
+    @Published private(set) var canUndoTipsAIEdit = false
+    @Published private(set) var canRedoTipsAIEdit = false
     
     private let recipeService = RecipeService.shared
     private let storageService = StorageService()
+    
+    /// Snapshots of instructions before each successful AI polish or auto-generate (most recent last). Undo pops one level at a time.
+    private var instructionAIUndoStack: [[InstructionItem]] = []
+    /// States cancelled by undo; redo restores most recent first. Cleared when a new AI edit is applied.
+    private var instructionAIRedoStack: [[InstructionItem]] = []
+    private let maxInstructionAIUndoDepth = 30
+    
+    private var descriptionAIUndoStack: [String] = []
+    private var descriptionAIRedoStack: [String] = []
+    private let maxDescriptionAIUndoDepth = 30
+    
+    private var tipsAIUndoStack: [[String]] = []
+    private var tipsAIRedoStack: [[String]] = []
+    private let maxTipsAIUndoDepth = 30
     
     struct InstructionItem {
         var text: String
@@ -71,12 +95,31 @@ class EditRecipeViewModel: ObservableObject {
         }
     }
     
+    private var cancellables = Set<AnyCancellable>()
+    private let debouncedEditUndoDelayNanoseconds: UInt64 = 2_000_000_000
+    
+    private var descriptionUndoDebounceTask: Task<Void, Never>?
+    private var descriptionCommitted: String = ""
+    private var suppressDescriptionUndoScheduling = false
+    
+    private var tipsUndoDebounceTask: Task<Void, Never>?
+    private var tipsCommitted: [String] = []
+    private var suppressTipsUndoScheduling = false
+    
+    private var instructionsUndoDebounceTask: Task<Void, Never>?
+    private var instructionsCommitted: [InstructionItem] = []
+    private var suppressInstructionsUndoScheduling = false
+    
     init(recipe: Recipe) {
         self.recipe = recipe
         loadRecipeData()
+        setupDebouncedEditUndoSubscriptions()
     }
     
     deinit {
+        descriptionUndoDebounceTask?.cancel()
+        tipsUndoDebounceTask?.cancel()
+        instructionsUndoDebounceTask?.cancel()
         // Cancel all image loading tasks when ViewModel is deallocated
         for task in imageLoadingTasks {
             task.cancel()
@@ -107,6 +150,7 @@ class EditRecipeViewModel: ObservableObject {
         spicyLevel = recipe.spicyLevel
         tips = recipe.tips
         cuisine = recipe.cuisine
+        nutritionInfo = recipe.nutritionInfo
         
         // Convert ingredients to IngredientItem format
         dishIngredients = []
@@ -188,6 +232,136 @@ class EditRecipeViewModel: ObservableObject {
         } else if let sourceImageURL = recipe.sourceImageURL {
             sourceImageURLs = [sourceImageURL]
         }
+        
+        resetDebouncedUndoRedoStateAfterRecipeLoad()
+    }
+    
+    // MARK: - Debounced undo / redo (description, tips, instructions)
+    
+    private func setupDebouncedEditUndoSubscriptions() {
+        syncDescriptionCommittedFromCurrent()
+        syncTipsCommittedFromCurrent()
+        syncInstructionsCommittedFromCurrent()
+        
+        $description
+            .sink { [weak self] _ in
+                guard let self, !self.suppressDescriptionUndoScheduling else { return }
+                self.scheduleDescriptionUndoCheckpoint()
+            }
+            .store(in: &cancellables)
+        
+        $tips
+            .sink { [weak self] _ in
+                guard let self, !self.suppressTipsUndoScheduling else { return }
+                self.scheduleTipsUndoCheckpoint()
+            }
+            .store(in: &cancellables)
+        
+        $instructions
+            .sink { [weak self] _ in
+                guard let self, !self.suppressInstructionsUndoScheduling else { return }
+                self.scheduleInstructionsUndoCheckpoint()
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func resetDebouncedUndoRedoStateAfterRecipeLoad() {
+        descriptionUndoDebounceTask?.cancel()
+        tipsUndoDebounceTask?.cancel()
+        instructionsUndoDebounceTask?.cancel()
+        descriptionAIUndoStack.removeAll()
+        descriptionAIRedoStack.removeAll()
+        tipsAIUndoStack.removeAll()
+        tipsAIRedoStack.removeAll()
+        instructionAIUndoStack.removeAll()
+        instructionAIRedoStack.removeAll()
+        canUndoDescriptionAIEdit = false
+        canRedoDescriptionAIEdit = false
+        canUndoTipsAIEdit = false
+        canRedoTipsAIEdit = false
+        canUndoLastInstructionAIEdit = false
+        canRedoLastInstructionAIEdit = false
+        syncDescriptionCommittedFromCurrent()
+        syncTipsCommittedFromCurrent()
+        syncInstructionsCommittedFromCurrent()
+    }
+    
+    private func syncDescriptionCommittedFromCurrent() {
+        descriptionCommitted = description
+    }
+    
+    private func syncTipsCommittedFromCurrent() {
+        tipsCommitted = copyTipsForUndo(tips)
+    }
+    
+    private func syncInstructionsCommittedFromCurrent() {
+        instructionsCommitted = copyInstructionsForUndo(instructions)
+    }
+    
+    private func scheduleDescriptionUndoCheckpoint() {
+        descriptionUndoDebounceTask?.cancel()
+        descriptionUndoDebounceTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            try? await Task.sleep(nanoseconds: self.debouncedEditUndoDelayNanoseconds)
+            guard !Task.isCancelled else { return }
+            self.flushDescriptionUndoCheckpointIfNeeded()
+        }
+    }
+    
+    private func flushDescriptionUndoCheckpointIfNeeded() {
+        guard !suppressDescriptionUndoScheduling else { return }
+        guard description != descriptionCommitted else { return }
+        descriptionAIRedoStack.removeAll()
+        canRedoDescriptionAIEdit = false
+        pushDescriptionUndo(descriptionCommitted)
+        descriptionCommitted = description
+        canUndoDescriptionAIEdit = !descriptionAIUndoStack.isEmpty
+    }
+    
+    private func scheduleTipsUndoCheckpoint() {
+        tipsUndoDebounceTask?.cancel()
+        tipsUndoDebounceTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            try? await Task.sleep(nanoseconds: self.debouncedEditUndoDelayNanoseconds)
+            guard !Task.isCancelled else { return }
+            self.flushTipsUndoCheckpointIfNeeded()
+        }
+    }
+    
+    private func flushTipsUndoCheckpointIfNeeded() {
+        guard !suppressTipsUndoScheduling else { return }
+        guard tips != tipsCommitted else { return }
+        tipsAIRedoStack.removeAll()
+        canRedoTipsAIEdit = false
+        pushTipsUndo(tipsCommitted)
+        tipsCommitted = copyTipsForUndo(tips)
+        canUndoTipsAIEdit = !tipsAIUndoStack.isEmpty
+    }
+    
+    private func scheduleInstructionsUndoCheckpoint() {
+        instructionsUndoDebounceTask?.cancel()
+        instructionsUndoDebounceTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            try? await Task.sleep(nanoseconds: self.debouncedEditUndoDelayNanoseconds)
+            guard !Task.isCancelled else { return }
+            self.flushInstructionsUndoCheckpointIfNeeded()
+        }
+    }
+    
+    private func instructionItemsTextuallyEqual(_ a: [InstructionItem], _ b: [InstructionItem]) -> Bool {
+        guard a.count == b.count else { return false }
+        return zip(a, b).allSatisfy { $0.text == $1.text }
+    }
+    
+    private func flushInstructionsUndoCheckpointIfNeeded() {
+        guard !suppressInstructionsUndoScheduling else { return }
+        let current = copyInstructionsForUndo(instructions)
+        guard !instructionItemsTextuallyEqual(current, instructionsCommitted) else { return }
+        instructionAIRedoStack.removeAll()
+        canRedoLastInstructionAIEdit = false
+        pushToUndoStack(copyInstructionsForUndo(instructionsCommitted))
+        instructionsCommitted = current
+        canUndoLastInstructionAIEdit = !instructionAIUndoStack.isEmpty
     }
     
     // MARK: - Image Loading
@@ -629,7 +803,8 @@ class EditRecipeViewModel: ObservableObject {
                 authorUsername: recipeWithFreshAuthor.authorUsername, // Use fresh author username
                 createdAt: recipe.createdAt, // Keep original creation date
                 updatedAt: Date(), // Update this
-                favoriteCount: recipe.favoriteCount // Keep original favorite count
+                favoriteCount: recipe.favoriteCount, // Keep original favorite count
+                nutritionInfo: nutritionInfo // Carry forward or newly estimated nutrition
             )
             
             try await recipeService.updateRecipe(updatedRecipe)
@@ -648,47 +823,391 @@ class EditRecipeViewModel: ObservableObject {
     
     // MARK: - AI Generation Methods
     
+    private let nutritionCalculator = NutritionCalculator()
+    
+    /// Estimate nutrition using USDA database (primary) with AI fallback
+    func estimateNutrition() async {
+        guard !isEstimatingNutrition else { return }
+        
+        // Collect all valid ingredients as Ingredient objects
+        let allIngredientItems = dishIngredients + marinadeIngredients + seasoningIngredients + doughBatterFillingIngredients + sauceIngredients + toppingIngredients + garnishIngredients
+        let validItems = allIngredientItems.filter { !$0.name.trimmingCharacters(in: .whitespaces).isEmpty }
+        guard !validItems.isEmpty else { return }
+        
+        let ingredientObjects = validItems.map {
+            Ingredient(
+                amount: $0.amount,
+                unit: $0.unit,
+                name: $0.name
+            )
+        }
+        
+        isEstimatingNutrition = true
+        
+        // 1. Try USDA-based calculation (accurate, database-backed)
+        if let usdaInfo = await nutritionCalculator.calculateNutrition(
+            title: title,
+            ingredients: ingredientObjects,
+            servings: servings
+        ) {
+            print("✅ Nutrition calculated via USDA database")
+            nutritionInfo = usdaInfo
+            isEstimatingNutrition = false
+            return
+        }
+        
+        // 2. Fallback: AI estimation
+        print("ℹ️ Falling back to AI nutrition estimation")
+        do {
+            let info = try await OpenAIService.estimateNutrition(
+                title: title,
+                ingredients: ingredientObjects,
+                servings: servings
+            )
+            nutritionInfo = info
+        } catch {
+            print("⚠️ Error estimating nutrition: \(error.localizedDescription)")
+        }
+        
+        isEstimatingNutrition = false
+    }
+    
+    /// Improves instruction wording (Foundation Models when available, else OpenAI).
+    func improveInstructionsWithAI() async {
+        let hasStep = instructions.contains { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        guard hasStep else {
+            errorMessage = LocalizedString("Add at least one instruction step to polish.", comment: "Need instruction text for polish action")
+            return
+        }
+        
+        instructionsUndoDebounceTask?.cancel()
+        isEditingInstructions = true
+        errorMessage = nil
+        
+        do {
+            let texts = instructions.map(\.text)
+            let edited = try await RecipeInstructionAI.improveInstructionStrings(texts)
+            captureInstructionsSnapshotForUndo()
+            suppressInstructionsUndoScheduling = true
+            defer { suppressInstructionsUndoScheduling = false }
+            for i in 0..<min(instructions.count, edited.count) {
+                instructions[i].text = edited[i]
+            }
+            instructionsCommitted = copyInstructionsForUndo(instructions)
+        } catch {
+            errorMessage = String(format: LocalizedString("Failed to polish instructions: %@", comment: "AI instruction polish error"), error.localizedDescription)
+        }
+        
+        isEditingInstructions = false
+    }
+    
+    /// Generates new instruction steps from title + ingredients (OpenAI).
+    func generateInstructionsWithOpenAI() async {
+        guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            errorMessage = LocalizedString("Please enter a recipe title first", comment: "Title required for AI instructions")
+            return
+        }
+        
+        instructionsUndoDebounceTask?.cancel()
+        isEditingInstructions = true
+        errorMessage = nil
+        
+        do {
+            let allIngredients = ingredientStringsForAI()
+            let generated = try await RecipeInstructionAI.generateInstructionStrings(title: title, ingredients: allIngredients)
+            captureInstructionsSnapshotForUndo()
+            instructions = generated.map { InstructionItem(text: $0) }
+            instructionsCommitted = copyInstructionsForUndo(instructions)
+        } catch {
+            errorMessage = LocalizedString("Failed to generate instructions: \(error.localizedDescription)", comment: "AI instruction generation error")
+        }
+        
+        isEditingInstructions = false
+    }
+    
+    /// Restores instructions to the state before the most recent successful AI polish or auto-generate. Call again to step further back.
+    func undoLastInstructionAIEdit() {
+        instructionsUndoDebounceTask?.cancel()
+        guard let older = instructionAIUndoStack.popLast() else { return }
+        pushToRedoStack(copyInstructionsForUndo(instructions))
+        suppressInstructionsUndoScheduling = true
+        instructions = copyInstructionsForUndo(older)
+        instructionsCommitted = copyInstructionsForUndo(instructions)
+        suppressInstructionsUndoScheduling = false
+        canUndoLastInstructionAIEdit = !instructionAIUndoStack.isEmpty
+        canRedoLastInstructionAIEdit = !instructionAIRedoStack.isEmpty
+    }
+    
+    /// Re-applies instructions after an undo (same order as undone).
+    func redoLastInstructionAIEdit() {
+        instructionsUndoDebounceTask?.cancel()
+        guard let newer = instructionAIRedoStack.popLast() else { return }
+        pushToUndoStack(copyInstructionsForUndo(instructions))
+        suppressInstructionsUndoScheduling = true
+        instructions = copyInstructionsForUndo(newer)
+        instructionsCommitted = copyInstructionsForUndo(instructions)
+        suppressInstructionsUndoScheduling = false
+        canUndoLastInstructionAIEdit = !instructionAIUndoStack.isEmpty
+        canRedoLastInstructionAIEdit = !instructionAIRedoStack.isEmpty
+    }
+    
+    private func captureInstructionsSnapshotForUndo() {
+        instructionsUndoDebounceTask?.cancel()
+        instructionAIRedoStack.removeAll()
+        canRedoLastInstructionAIEdit = false
+        pushToUndoStack(copyInstructionsForUndo(instructions))
+        canUndoLastInstructionAIEdit = true
+    }
+    
+    private func pushToUndoStack(_ snapshot: [InstructionItem]) {
+        instructionAIUndoStack.append(snapshot)
+        if instructionAIUndoStack.count > maxInstructionAIUndoDepth {
+            instructionAIUndoStack.removeFirst(instructionAIUndoStack.count - maxInstructionAIUndoDepth)
+        }
+    }
+    
+    private func pushToRedoStack(_ snapshot: [InstructionItem]) {
+        instructionAIRedoStack.append(snapshot)
+        if instructionAIRedoStack.count > maxInstructionAIUndoDepth {
+            instructionAIRedoStack.removeFirst(instructionAIRedoStack.count - maxInstructionAIUndoDepth)
+        }
+    }
+    
+    private func copyInstructionsForUndo(_ items: [InstructionItem]) -> [InstructionItem] {
+        items.map { item in
+            InstructionItem(
+                text: item.text,
+                image: item.image,
+                videoURL: item.videoURL,
+                existingImageURL: item.existingImageURL,
+                existingVideoURL: item.existingVideoURL
+            )
+        }
+    }
+    
+    private func ingredientStringsForAI() -> [String] {
+        (dishIngredients + marinadeIngredients + seasoningIngredients + doughBatterFillingIngredients + sauceIngredients + toppingIngredients + garnishIngredients)
+            .map { item in
+                var parts: [String] = []
+                if !item.amount.isEmpty { parts.append(item.amount) }
+                if !item.unit.isEmpty { parts.append(item.unit) }
+                if !item.name.isEmpty { parts.append(item.name) }
+                return parts.joined(separator: " ")
+            }
+            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    }
+    
+    private func instructionTextsForAI() -> [String] {
+        instructions.compactMap { $0.text.isEmpty ? nil : $0.text }
+    }
+    
     /// Generate a description for the recipe using AI
     func generateDescription() async {
+        descriptionUndoDebounceTask?.cancel()
         guard !title.isEmpty else { return }
         
         isGeneratingDescription = true
+        errorMessage = nil
         
         do {
-            // Convert ingredients to string format for API
-            let allIngredients = (dishIngredients + marinadeIngredients + seasoningIngredients + doughBatterFillingIngredients + sauceIngredients + toppingIngredients + garnishIngredients)
-                .map { item in
-                    var parts: [String] = []
-                    if !item.amount.isEmpty {
-                        parts.append(item.amount)
-                    }
-                    if !item.unit.isEmpty {
-                        parts.append(item.unit)
-                    }
-                    if !item.name.isEmpty {
-                        parts.append(item.name)
-                    }
-                    return parts.joined(separator: " ")
-                }
-                .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-            
-            let validInstructions = instructions.compactMap { $0.text.isEmpty ? nil : $0.text }
-            
             let generatedDescription = try await OpenAIService.generateRecipeDescription(
                 title: title,
-                ingredients: allIngredients,
-                instructions: validInstructions,
+                ingredients: ingredientStringsForAI(),
+                instructions: instructionTextsForAI(),
                 backgroundContext: nil // No background context for recipe editing
             )
             
             if !generatedDescription.isEmpty {
+                captureDescriptionSnapshotForUndo()
                 description = generatedDescription
+                descriptionCommitted = description
             }
         } catch {
-            print("Error generating description: \(error.localizedDescription)")
+            errorMessage = LocalizedString("Failed to generate description: \(error.localizedDescription)", comment: "Description generation error")
         }
         
         isGeneratingDescription = false
+    }
+    
+    /// Polishes description wording (Foundation Models when available, else OpenAI).
+    func polishDescriptionWithAI() async {
+        descriptionUndoDebounceTask?.cancel()
+        guard !description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            errorMessage = LocalizedString("Add description text to polish.", comment: "Need description text for polish")
+            return
+        }
+        
+        isGeneratingDescription = true
+        errorMessage = nil
+        
+        do {
+            let edited = try await RecipeInstructionAI.improveInstructionStrings([description])
+            guard let polished = edited.first else { return }
+            captureDescriptionSnapshotForUndo()
+            description = polished
+            descriptionCommitted = description
+        } catch {
+            errorMessage = String(format: LocalizedString("Failed to polish description: %@", comment: "AI description polish error"), error.localizedDescription)
+        }
+        
+        isGeneratingDescription = false
+    }
+    
+    func undoDescriptionAIEdit() {
+        descriptionUndoDebounceTask?.cancel()
+        guard let older = descriptionAIUndoStack.popLast() else { return }
+        pushDescriptionRedo(description)
+        suppressDescriptionUndoScheduling = true
+        description = older
+        descriptionCommitted = older
+        suppressDescriptionUndoScheduling = false
+        canUndoDescriptionAIEdit = !descriptionAIUndoStack.isEmpty
+        canRedoDescriptionAIEdit = !descriptionAIRedoStack.isEmpty
+    }
+    
+    func redoDescriptionAIEdit() {
+        descriptionUndoDebounceTask?.cancel()
+        guard let newer = descriptionAIRedoStack.popLast() else { return }
+        pushDescriptionUndo(description)
+        suppressDescriptionUndoScheduling = true
+        description = newer
+        descriptionCommitted = newer
+        suppressDescriptionUndoScheduling = false
+        canUndoDescriptionAIEdit = !descriptionAIUndoStack.isEmpty
+        canRedoDescriptionAIEdit = !descriptionAIRedoStack.isEmpty
+    }
+    
+    private func captureDescriptionSnapshotForUndo() {
+        descriptionUndoDebounceTask?.cancel()
+        descriptionAIRedoStack.removeAll()
+        canRedoDescriptionAIEdit = false
+        pushDescriptionUndo(description)
+        canUndoDescriptionAIEdit = true
+    }
+    
+    private func pushDescriptionUndo(_ snapshot: String) {
+        descriptionAIUndoStack.append(snapshot)
+        if descriptionAIUndoStack.count > maxDescriptionAIUndoDepth {
+            descriptionAIUndoStack.removeFirst(descriptionAIUndoStack.count - maxDescriptionAIUndoDepth)
+        }
+    }
+    
+    private func pushDescriptionRedo(_ snapshot: String) {
+        descriptionAIRedoStack.append(snapshot)
+        if descriptionAIRedoStack.count > maxDescriptionAIUndoDepth {
+            descriptionAIRedoStack.removeFirst(descriptionAIRedoStack.count - maxDescriptionAIUndoDepth)
+        }
+    }
+    
+    /// Polishes tip lines (Foundation Models when available, else OpenAI).
+    func polishTipsWithAI() async {
+        tipsUndoDebounceTask?.cancel()
+        let hasTip = tips.contains { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        guard hasTip else {
+            errorMessage = LocalizedString("Add at least one tip to polish.", comment: "Need tip text for polish")
+            return
+        }
+        
+        isTipsAILoading = true
+        errorMessage = nil
+        
+        do {
+            let edited = try await RecipeInstructionAI.improveInstructionStrings(tips)
+            captureTipsSnapshotForUndo()
+            suppressTipsUndoScheduling = true
+            defer { suppressTipsUndoScheduling = false }
+            for i in 0..<min(tips.count, edited.count) {
+                tips[i] = edited[i]
+            }
+            tipsCommitted = copyTipsForUndo(tips)
+        } catch {
+            errorMessage = String(format: LocalizedString("Failed to polish tips: %@", comment: "AI tips polish error"), error.localizedDescription)
+        }
+        
+        isTipsAILoading = false
+    }
+    
+    /// Generates suggested tips from recipe context (OpenAI).
+    func generateTipsWithOpenAI() async {
+        tipsUndoDebounceTask?.cancel()
+        guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            errorMessage = LocalizedString("Please enter a recipe title first", comment: "Title required for AI instructions")
+            return
+        }
+        
+        isTipsAILoading = true
+        errorMessage = nil
+        
+        do {
+            let generated = try await OpenAIService.generateRecipeTips(
+                title: title,
+                ingredients: ingredientStringsForAI(),
+                instructions: instructionTextsForAI(),
+                description: description
+            )
+            guard !generated.isEmpty else {
+                errorMessage = LocalizedString("No tips were generated. Try adding more recipe detail.", comment: "AI tips empty result")
+                isTipsAILoading = false
+                return
+            }
+            captureTipsSnapshotForUndo()
+            tips = generated
+            tipsCommitted = copyTipsForUndo(tips)
+        } catch {
+            errorMessage = String(format: LocalizedString("Failed to generate tips: %@", comment: "AI tips generation error"), error.localizedDescription)
+        }
+        
+        isTipsAILoading = false
+    }
+    
+    func undoTipsAIEdit() {
+        tipsUndoDebounceTask?.cancel()
+        guard let older = tipsAIUndoStack.popLast() else { return }
+        pushTipsRedo(copyTipsForUndo(tips))
+        suppressTipsUndoScheduling = true
+        tips = copyTipsForUndo(older)
+        tipsCommitted = copyTipsForUndo(tips)
+        suppressTipsUndoScheduling = false
+        canUndoTipsAIEdit = !tipsAIUndoStack.isEmpty
+        canRedoTipsAIEdit = !tipsAIRedoStack.isEmpty
+    }
+    
+    func redoTipsAIEdit() {
+        tipsUndoDebounceTask?.cancel()
+        guard let newer = tipsAIRedoStack.popLast() else { return }
+        pushTipsUndo(copyTipsForUndo(tips))
+        suppressTipsUndoScheduling = true
+        tips = copyTipsForUndo(newer)
+        tipsCommitted = copyTipsForUndo(tips)
+        suppressTipsUndoScheduling = false
+        canUndoTipsAIEdit = !tipsAIUndoStack.isEmpty
+        canRedoTipsAIEdit = !tipsAIRedoStack.isEmpty
+    }
+    
+    private func captureTipsSnapshotForUndo() {
+        tipsUndoDebounceTask?.cancel()
+        tipsAIRedoStack.removeAll()
+        canRedoTipsAIEdit = false
+        pushTipsUndo(copyTipsForUndo(tips))
+        canUndoTipsAIEdit = true
+    }
+    
+    private func pushTipsUndo(_ snapshot: [String]) {
+        tipsAIUndoStack.append(snapshot)
+        if tipsAIUndoStack.count > maxTipsAIUndoDepth {
+            tipsAIUndoStack.removeFirst(tipsAIUndoStack.count - maxTipsAIUndoDepth)
+        }
+    }
+    
+    private func pushTipsRedo(_ snapshot: [String]) {
+        tipsAIRedoStack.append(snapshot)
+        if tipsAIRedoStack.count > maxTipsAIUndoDepth {
+            tipsAIRedoStack.removeFirst(tipsAIRedoStack.count - maxTipsAIUndoDepth)
+        }
+    }
+    
+    private func copyTipsForUndo(_ items: [String]) -> [String] {
+        Array(items)
     }
 }
 

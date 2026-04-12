@@ -214,6 +214,20 @@ struct EditRecipeView: View {
             generateDescription: {
                 await viewModel.generateDescription()
             },
+            onPolishDescriptionWithAI: { await viewModel.polishDescriptionWithAI() },
+            onUndoDescriptionAIEdit: { viewModel.undoDescriptionAIEdit() },
+            canUndoDescriptionAIEdit: viewModel.canUndoDescriptionAIEdit,
+            onRedoDescriptionAIEdit: { viewModel.redoDescriptionAIEdit() },
+            canRedoDescriptionAIEdit: viewModel.canRedoDescriptionAIEdit,
+            onPolishTipsWithAI: { await viewModel.polishTipsWithAI() },
+            onGenerateTipsWithAI: { await viewModel.generateTipsWithOpenAI() },
+            isTipsAILoading: viewModel.isTipsAILoading,
+            canPolishTipsWithAI: viewModel.tips.contains { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty },
+            canGenerateTipsWithAI: !viewModel.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            onUndoTipsAIEdit: { viewModel.undoTipsAIEdit() },
+            canUndoTipsAIEdit: viewModel.canUndoTipsAIEdit,
+            onRedoTipsAIEdit: { viewModel.redoTipsAIEdit() },
+            canRedoTipsAIEdit: viewModel.canRedoTipsAIEdit,
             showCuisineSelection: $showCuisineSelection,
             showFullScreenImage: $showFullScreenImage,
             fullScreenImage: $fullScreenImage,
@@ -222,6 +236,28 @@ struct EditRecipeView: View {
             onSelectFromLibrary: nil,
             moveIngredientBetweenCategories: { fromCategory, fromIndex, toCategory, toIndex in
                 viewModel.moveIngredient(from: fromCategory, sourceIndex: fromIndex, to: toCategory, destinationIndex: toIndex)
+            },
+            onImproveInstructionsWithAI: {
+                await viewModel.improveInstructionsWithAI()
+            },
+            onGenerateInstructionsWithAI: {
+                await viewModel.generateInstructionsWithOpenAI()
+            },
+            isInstructionAILoading: viewModel.isEditingInstructions,
+            canImproveInstructionsWithAI: viewModel.instructions.contains { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty },
+            canGenerateInstructionsWithAI: !viewModel.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            onUndoLastInstructionAIEdit: {
+                viewModel.undoLastInstructionAIEdit()
+            },
+            canUndoLastInstructionAIEdit: viewModel.canUndoLastInstructionAIEdit,
+            onRedoLastInstructionAIEdit: {
+                viewModel.redoLastInstructionAIEdit()
+            },
+            canRedoLastInstructionAIEdit: viewModel.canRedoLastInstructionAIEdit,
+            nutritionInfo: viewModel.nutritionInfo,
+            isEstimatingNutrition: viewModel.isEstimatingNutrition,
+            onEstimateNutrition: {
+                await viewModel.estimateNutrition()
             },
             instructionsContent: {
                 makeInstructionsContent()

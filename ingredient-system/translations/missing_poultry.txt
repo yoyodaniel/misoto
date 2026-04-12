@@ -1,0 +1,257 @@
+Chicken Leg Quarter
+Chicken Half
+Chicken Quarter
+Boneless Skinless Chicken Breast
+Bone-In Chicken Breast
+Split Chicken Breast
+Boneless Skinless Chicken Thigh
+Bone-In Chicken Thigh
+Chicken Wingette
+Chicken Wing Tip
+Chicken Strip
+Chicken Cutlet
+Chicken Sausage
+Chicken Mince
+Chicken Neck
+Chicken Back
+Chicken Carcass
+Chicken Bones
+Smoked Chicken
+Chicken Fat
+Schmaltz
+Whole Turkey
+Boneless Turkey Breast
+Turkey Thigh
+Turkey Drumstick
+Turkey Wing
+Turkey Sausage
+Turkey Mince
+Turkey Cutlet
+Turkey Tenderloin
+Turkey Neck
+Turkey Giblets
+Smoked Turkey
+Smoked Turkey Leg
+Turkey Deli Meat
+Whole Duck
+Duck Thigh
+Duck Wing
+Rendered Duck Fat
+Duck Liver
+Duck Gizzard
+Duck Tongue
+Duck Neck
+Ground Duck
+Smoked Duck Breast
+Peking Duck
+Roast Duck
+Preserved Duck Egg
+Cornish Game Hen
+Poussin
+Spatchcock Chicken
+Whole Quail
+Quail Breast
+Goose Breast
+Goose Leg
+Goose Fat
+Goose Liver
+Guinea Fowl
+Partridge
+Emu
+Turkey Egg
+Goose Egg
+Ostrich Egg
+Chicken Egg
+Free-Range Egg
+Organic Egg
+Pasteurized Egg
+Egg Powder
+Dried Egg White
+Meringue Powder
+Liquid Egg
+Liquid Egg White
+Liquid Egg Substitute
+Chicken Oyster
+Chicken Supreme
+Chicken Ballotine
+Chicken Galantine
+Chicken Paillard
+Chicken Spatchcocked
+Chicken Maryland
+Chicken Katsu
+Chicken Karaage
+Chicken Tikka
+Tandoori Chicken Cut
+Chicken Yakitori
+Chicken Satay Meat
+Chicken Adobo Cut
+Chicken Rendang Meat
+Chicken Teriyaki Cut
+Cornish Hen Half
+Baby Chicken
+Spring Chicken
+Turkey Crown
+Turkey London Broil
+Turkey Scallopini
+Turkey Meatball Mix
+Turkey Pastrami
+Turkey Pepperoni
+Turkey Kielbasa
+Turkey Andouille
+Turkey Burger
+Smoked Turkey Wing
+Duck Crown
+Duck Magret
+Muscovy Duck Breast
+Barbary Duck Breast
+Duck Sausage
+Duck Prosciutto
+Duck Rillettes
+Duck Terrine
+Pekin Duck
+Long Island Duck
+Rouen Duck
+Duck Blood
+Duck Blood Cake
+Duck Tongue Dried
+Chukar Partridge
+Red-Legged Partridge
+Grey Partridge
+Ring-Necked Pheasant
+Pheasant Leg
+Pheasant Crown
+Wild Turkey
+Wild Turkey Breast
+Wild Turkey Leg
+Wood Pigeon
+Woodcock
+Snipe
+Teal
+Grouse
+Ptarmigan
+Guinea Fowl Breast
+Guinea Fowl Leg
+Guinea Fowl Supreme
+Egg Noodle Dough
+Egg Wash
+Pickled Egg
+Ajitsuke Tamago
+Ramen Egg
+Soy-Marinated Egg
+Onsen Tamago
+Scotch Egg
+Egg Custard Base
+Egg Tempura Batter
+Chicken Shawarma Meat
+Chicken Kebab Meat
+Chicken Tikka Cut
+Chicken Biryani Cut
+Chicken Curry Cut
+Chicken Rendang Cut
+Chicken Katsu Cut
+Chicken Nanban Cut
+Chicken Karaage Cut
+Chicken Tsukune Mix
+Chicken Soboro
+Turkey Shawarma Meat
+Turkey Kebab Meat
+Turkey Meatloaf Mix
+Duck Rillettes Prepared
+Duck Sausage Fresh
+Duck Leg Confit Prepared
+Smoked Duck Breast Sliced
+Duck Magret Sliced
+Bresse Chicken
+Poulet de Bresse
+Jidori Chicken
+Silkie Chicken
+Black Silkie
+White Silkie
+Ayam Cemani
+Kadaknath Chicken
+Cornish Cross Chicken
+Red Ranger Chicken
+Freedom Ranger Chicken
+Heritage Turkey
+Bourbon Red Turkey
+Narragansett Turkey
+Broad Breasted White Turkey
+Bronze Turkey
+Moulard Duck
+Khaki Campbell Duck
+Runner Duck
+Rouen Duck Meat
+Aylesbury Duck
+Muscovy Duck Whole
+Chicken Drumstick Bone-In
+Chicken Drumstick Boneless
+Chicken Oyster Cut
+Chicken Tenderloin Strip
+Chicken Supreme Cut
+Chicken Escalope
+Chicken Schnitzel Cut
+Chicken Kiev Cut
+Chicken Cordon Bleu Cut
+Chicken Saltimbocca Cut
+Chicken Roulade Cut
+Chicken Satay Cut
+Chicken Yakitori Cut
+Chicken Tsukune Base
+Chicken Tatsuta Cut
+Chicken Donburi Cut
+Oyakodon Chicken Cut
+Chicken Tandoori Cut
+Chicken Malai Cut
+Chicken Korma Cut
+Butter Chicken Cut
+Chicken Shawarma Cut
+Chicken Kebab Cut
+Chicken Kofta Ground
+Chicken Adana Cut
+Chicken Shish Cut
+Chicken Inasal Cut
+Chicken Tinola Cut
+Chicken Opor Cut
+Chicken Soto Cut
+Chicken Larb Cut
+Chicken Tom Kha Cut
+Chicken Panang Cut
+Duck Confit Leg
+Duck Confit Thigh
+Duck Rillettes Base
+Duck Breast Magret
+Duck Breast Smoked
+Duck Leg Braised
+Duck Wing Tip
+Smoked Duck Slice
+Duck Prosciutto Slice
+Turkey Drumstick Smoked
+Turkey Leg Roasted
+Turkey Tail
+Turkey Gizzard
+Turkey Heart
+Cornish Hen Whole
+Cornish Hen Halved
+Cornish Hen Spatchcocked
+Squab Whole
+Squab Breast
+Pigeon Whole
+Pheasant Whole
+Partridge Whole
+Partridge Breast
+Grouse Whole
+Grouse Breast
+Quail Egg Pickled
+Quail Egg Smoked
+Quail Egg Canned
+Quail Whole Deboned
+Quail Stuffed
+Quail Grilled
+Guinea Fowl Whole
+Goose Whole
+Goose Leg Confit
+Goose Fat Rendered
+Goose Schmaltz
+Chicken Schmaltz
+Chicken Fat Rendered
+Poultry Jus

@@ -1307,6 +1307,115 @@ class OpenAIService {
         return generatedInstructions
     }
     
+    /// Suggest practical additional tips (substitutions, storage, prep notes) from recipe context.
+    /// - Returns: Array of short tip strings (typically 3–8 items).
+    static func generateRecipeTips(
+        title: String,
+        ingredients: [String],
+        instructions: [String],
+        description: String
+    ) async throws -> [String] {
+        guard !apiKey.isEmpty else {
+            throw OpenAIError.apiKeyNotConfigured
+        }
+        
+        guard !title.isEmpty else {
+            return []
+        }
+        
+        guard let url = URL(string: "\(baseURL)/chat/completions") else {
+            throw OpenAIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let combinedText = title + " " + ingredients.joined(separator: " ")
+        let recognizer = NLLanguageRecognizer()
+        recognizer.processString(combinedText)
+        let detectedCode = recognizer.dominantLanguage?.rawValue ?? "en"
+        let languageName = getLanguageName(for: detectedCode)
+        
+        let ingredientsText = ingredients.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .joined(separator: ", ")
+        let instructionsText = instructions.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .joined(separator: " ")
+        let trimmedDescription = description.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        let systemPrompt = """
+        You are a professional home-cooking editor. Suggest helpful additional tips for the recipe: substitutions, advance prep, storage, reheating, common mistakes, or serving ideas.
+        Rules:
+        - Return 3 to 8 short tips, each one sentence when possible
+        - Do NOT repeat the full recipe steps; add value beyond the instructions
+        - Write entirely in \(languageName) — do NOT translate
+        - Return ONLY a JSON object with a "tips" array of strings
+        """
+        
+        var userPrompt = "Recipe title: \(title)"
+        if !ingredientsText.isEmpty {
+            userPrompt += "\n\nIngredients: \(ingredientsText)"
+        }
+        if !instructionsText.isEmpty {
+            let clipped = String(instructionsText.prefix(1200))
+            userPrompt += "\n\nInstructions summary: \(clipped)"
+        }
+        if !trimmedDescription.isEmpty {
+            let clipped = String(trimmedDescription.prefix(600))
+            userPrompt += "\n\nDescription: \(clipped)"
+        }
+        
+        let requestBody: [String: Any] = [
+            "model": "gpt-3.5-turbo",
+            "messages": [
+                ["role": "system", "content": systemPrompt],
+                ["role": "user", "content": userPrompt]
+            ],
+            "response_format": ["type": "json_object"],
+            "max_tokens": 1200,
+            "temperature": 0.65
+        ]
+        
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
+            throw OpenAIError.requestSerializationFailed
+        }
+        request.httpBody = httpBody
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let error = errorData["error"] as? [String: Any],
+               let message = error["message"] as? String {
+                throw OpenAIError.apiError(message)
+            }
+            throw OpenAIError.httpError(httpResponse.statusCode)
+        }
+        
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let message = firstChoice["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        guard let contentData = content.data(using: .utf8),
+              let contentJSON = try? JSONSerialization.jsonObject(with: contentData) as? [String: Any],
+              let tips = contentJSON["tips"] as? [String] else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        return tips
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
+    
     /// Generate search keywords for a recipe using OpenAI
     /// - Parameters:
     ///   - title: Recipe title
@@ -1938,7 +2047,7 @@ class OpenAIService {
     }
     
     /// Get language name from language code
-    private static func getLanguageName(for code: String) -> String {
+    static func getLanguageName(for code: String) -> String {
         let languageMap: [String: String] = [
             "nl": "Dutch",
             "es": "Spanish",
@@ -2020,6 +2129,243 @@ class OpenAIService {
         
         // For all other cases, return as-is
         return code
+    }
+    
+    // MARK: - Nutrition Estimation
+    
+    /// Estimate nutritional information for a recipe based on its ingredients
+    /// Returns values per serving
+    static func estimateNutrition(
+        title: String,
+        ingredients: [Ingredient],
+        servings: Int
+    ) async throws -> NutritionInfo {
+        guard !apiKey.isEmpty else {
+            throw OpenAIError.apiKeyNotConfigured
+        }
+        
+        guard !ingredients.isEmpty else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        // Create the request
+        guard let url = URL(string: "\(baseURL)/chat/completions") else {
+            throw OpenAIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Build a structured ingredient list with amounts, units, names, and canonical IDs
+        let ingredientsText = ingredients.enumerated().map { index, ingredient in
+            let amount = ingredient.amount.isEmpty ? "to taste" : ingredient.amount
+            let unit = ingredient.unit.isEmpty ? "" : " \(ingredient.unit)"
+            let canonical = ingredient.canonicalId.map { " [\($0)]" } ?? ""
+            return "\(index + 1). \(amount)\(unit) \(ingredient.name)\(canonical)"
+        }.joined(separator: "\n")
+        
+        let systemPrompt = """
+        You are a registered dietitian with access to the USDA FoodData Central database. \
+        Calculate the nutritional information for a recipe by analyzing EACH ingredient individually, \
+        then summing the totals and dividing by the number of servings.
+
+        CALCULATION METHOD — follow these steps exactly:
+        1. For EACH ingredient, convert the stated amount to grams using standard conversions:
+           - 1 cup flour ≈ 125g, 1 cup sugar ≈ 200g, 1 cup milk ≈ 244g, 1 cup rice (uncooked) ≈ 185g
+           - 1 tbsp oil ≈ 14g, 1 tbsp butter ≈ 14g, 1 tbsp soy sauce ≈ 18g
+           - 1 tsp salt ≈ 6g (≈ 2325mg sodium), 1 tsp sugar ≈ 4g
+           - 1 large egg ≈ 50g, 1 chicken breast ≈ 170g, 1 chicken thigh ≈ 115g
+           - 1 clove garlic ≈ 3g, 1 medium onion ≈ 150g, 1 medium potato ≈ 150g
+        2. Look up the nutrition per 100g for each ingredient from USDA data.
+        3. Calculate each ingredient's contribution: (weight_in_grams / 100) × nutrition_per_100g.
+        4. Sum ALL ingredients to get TOTAL recipe nutrition.
+        5. Divide the total by \(servings) to get PER SERVING values.
+
+        IMPORTANT RULES:
+        - Account for ALL calorie-contributing ingredients, especially oils, butter, sugar, rice, noodles, and sauces.
+        - For cooking oils: even if used for frying, assume ~70% is absorbed unless deep-frying (then ~10-15%).
+        - For sauces (soy sauce, fish sauce, oyster sauce): include their sodium content — these are major sodium sources.
+        - For "to taste" or "a pinch" items: use small but realistic amounts (e.g., 1/4 tsp salt, 1 tsp sugar).
+        - If a canonical ID is provided in [brackets], use it to identify the exact ingredient.
+        - Round protein, carbs, fat, fiber, sugar to 1 decimal place. Round calories and sodium to integers.
+
+        Return ONLY a JSON object with these exact fields (per serving values):
+        {
+            "calories": <integer, kcal>,
+            "protein": <number, grams>,
+            "carbohydrates": <number, grams>,
+            "fat": <number, grams>,
+            "saturatedFat": <number, grams>,
+            "fiber": <number, grams>,
+            "sugar": <number, grams>,
+            "sodium": <integer, milligrams>
+        }
+        """
+        
+        let userPrompt = """
+        Calculate the nutrition per serving for this recipe:
+
+        Dish: \(title)
+        Total servings: \(servings)
+
+        Ingredients (total amounts for the entire recipe, not per serving):
+        \(ingredientsText)
+
+        Calculate each ingredient's nutrition individually, sum everything, then divide by \(servings) servings.
+        """
+        
+        let requestBody: [String: Any] = [
+            "model": "gpt-4o-mini",
+            "messages": [
+                [
+                    "role": "system",
+                    "content": systemPrompt
+                ],
+                [
+                    "role": "user",
+                    "content": userPrompt
+                ]
+            ],
+            "response_format": ["type": "json_object"],
+            "max_tokens": 500,
+            "temperature": 0.1
+        ]
+        
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
+            throw OpenAIError.requestSerializationFailed
+        }
+        request.httpBody = httpBody
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let error = errorData["error"] as? [String: Any],
+               let message = error["message"] as? String {
+                throw OpenAIError.apiError(message)
+            }
+            throw OpenAIError.httpError(httpResponse.statusCode)
+        }
+        
+        // Parse the response
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let message = firstChoice["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        // Extract JSON from the response
+        let jsonString = extractJSON(from: content)
+        
+        guard let jsonData = jsonString.data(using: .utf8),
+              let nutritionDict = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
+            throw OpenAIError.jsonParsingFailed
+        }
+        
+        // Parse values with safe defaults
+        let calories = (nutritionDict["calories"] as? Int) ?? Int(nutritionDict["calories"] as? Double ?? 0)
+        let protein = (nutritionDict["protein"] as? Double) ?? Double(nutritionDict["protein"] as? Int ?? 0)
+        let carbohydrates = (nutritionDict["carbohydrates"] as? Double) ?? Double(nutritionDict["carbohydrates"] as? Int ?? 0)
+        let fat = (nutritionDict["fat"] as? Double) ?? Double(nutritionDict["fat"] as? Int ?? 0)
+        let saturatedFat = (nutritionDict["saturatedFat"] as? Double) ?? Double(nutritionDict["saturatedFat"] as? Int ?? 0)
+        let fiber = (nutritionDict["fiber"] as? Double) ?? Double(nutritionDict["fiber"] as? Int ?? 0)
+        let sugar = (nutritionDict["sugar"] as? Double) ?? Double(nutritionDict["sugar"] as? Int ?? 0)
+        let sodium = (nutritionDict["sodium"] as? Int) ?? Int(nutritionDict["sodium"] as? Double ?? 0)
+        
+        return NutritionInfo(
+            calories: calories,
+            protein: protein,
+            carbohydrates: carbohydrates,
+            fat: fat,
+            saturatedFat: saturatedFat,
+            fiber: fiber,
+            sugar: sugar,
+            sodium: sodium
+        )
+    }
+    
+    /// Estimate nutrition for a SUBSET of ingredients that couldn't be resolved via USDA.
+    /// Returns per-serving values for just these ingredients.
+    static func estimateNutritionForSubset(
+        title: String,
+        ingredients: [Ingredient],
+        totalServings: Int
+    ) async throws -> NutritionInfo {
+        guard !apiKey.isEmpty else { throw OpenAIError.apiKeyNotConfigured }
+        guard !ingredients.isEmpty else { throw OpenAIError.invalidResponse }
+        
+        guard let url = URL(string: "\(baseURL)/chat/completions") else {
+            throw OpenAIError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let ingredientsText = ingredients.map { ingredient in
+            let amount = ingredient.amount.isEmpty ? "to taste" : ingredient.amount
+            let unit = ingredient.unit.isEmpty ? "" : " \(ingredient.unit)"
+            return "- \(amount)\(unit) \(ingredient.name)"
+        }.joined(separator: "\n")
+        
+        let prompt = """
+        Calculate the TOTAL nutritional contribution of ONLY these ingredients (they are part of a \(totalServings)-serving recipe). \
+        Return per-serving values (total ÷ \(totalServings)). Use USDA reference data.
+        
+        Ingredients:
+        \(ingredientsText)
+        
+        Return ONLY JSON: {"calories":<int>,"protein":<num>,"carbohydrates":<num>,"fat":<num>,"saturatedFat":<num>,"fiber":<num>,"sugar":<num>,"sodium":<int>}
+        """
+        
+        let requestBody: [String: Any] = [
+            "model": "gpt-4o-mini",
+            "messages": [["role": "user", "content": prompt]],
+            "response_format": ["type": "json_object"],
+            "max_tokens": 200,
+            "temperature": 0.1
+        ]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: requestBody)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let choices = json["choices"] as? [[String: Any]],
+              let firstChoice = choices.first,
+              let message = firstChoice["message"] as? [String: Any],
+              let content = message["content"] as? String else {
+            throw OpenAIError.invalidResponse
+        }
+        
+        let jsonString = extractJSON(from: content)
+        guard let jsonData = jsonString.data(using: .utf8),
+              let d = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
+            throw OpenAIError.jsonParsingFailed
+        }
+        
+        return NutritionInfo(
+            calories: (d["calories"] as? Int) ?? Int(d["calories"] as? Double ?? 0),
+            protein: (d["protein"] as? Double) ?? Double(d["protein"] as? Int ?? 0),
+            carbohydrates: (d["carbohydrates"] as? Double) ?? Double(d["carbohydrates"] as? Int ?? 0),
+            fat: (d["fat"] as? Double) ?? Double(d["fat"] as? Int ?? 0),
+            saturatedFat: (d["saturatedFat"] as? Double) ?? Double(d["saturatedFat"] as? Int ?? 0),
+            fiber: (d["fiber"] as? Double) ?? Double(d["fiber"] as? Int ?? 0),
+            sugar: (d["sugar"] as? Double) ?? Double(d["sugar"] as? Int ?? 0),
+            sodium: (d["sodium"] as? Int) ?? Int(d["sodium"] as? Double ?? 0)
+        )
     }
 }
 

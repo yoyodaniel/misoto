@@ -21,6 +21,7 @@ struct ExtractMenuWithAIView: View {
     @State private var fullScreenImage: UIImage?
     @State private var showCameraForDishImage = false
     @State private var showPhotoPickerForDishImage = false
+    @State private var showPostVisibilitySheet = false
     
     let initialImage: UIImage?
     
@@ -178,14 +179,7 @@ struct ExtractMenuWithAIView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
                     dismissKeyboard()
-                    Task {
-                        // Don't pass selectedImage - it's the extraction image, not a main recipe image
-                        let success = await viewModel.saveRecipe(image: nil)
-                        if success {
-                            await authViewModel.reloadUserData()
-                            dismiss()
-                        }
-                    }
+                    showPostVisibilitySheet = true
                 }) {
                     HStack {
                         if viewModel.isLoading {
@@ -197,6 +191,23 @@ struct ExtractMenuWithAIView: View {
                 }
                 .disabled(viewModel.isLoading || viewModel.title.isEmpty)
             }
+        }
+        .sheet(isPresented: $showPostVisibilitySheet) {
+            PostVisibilitySaveSheet(
+                postSharing: $viewModel.postSharing,
+                navigationTitle: LocalizedString("Before you save", comment: "Sheet title before confirming recipe visibility"),
+                primaryButtonTitle: LocalizedString("Save", comment: "Save button"),
+                readError: { viewModel.errorMessage },
+                onCommit: {
+                    return await viewModel.saveRecipe(image: nil)
+                },
+                onSuccess: {
+                    Task {
+                        await authViewModel.reloadUserData()
+                        dismiss()
+                    }
+                }
+            )
         }
         .scrollDismissesKeyboard(.interactively)
         .sheet(isPresented: $showFullScreenImage) {
@@ -376,6 +387,20 @@ struct ExtractMenuWithAIView: View {
             generateDescription: {
                 await viewModel.generateDescription()
             },
+            onPolishDescriptionWithAI: { await viewModel.polishDescriptionWithAI() },
+            onUndoDescriptionAIEdit: { viewModel.undoDescriptionAIEdit() },
+            canUndoDescriptionAIEdit: viewModel.canUndoDescriptionAIEdit,
+            onRedoDescriptionAIEdit: { viewModel.redoDescriptionAIEdit() },
+            canRedoDescriptionAIEdit: viewModel.canRedoDescriptionAIEdit,
+            onPolishTipsWithAI: { await viewModel.polishTipsWithAI() },
+            onGenerateTipsWithAI: { await viewModel.generateTipsWithOpenAI() },
+            isTipsAILoading: viewModel.isTipsAILoading,
+            canPolishTipsWithAI: viewModel.tips.contains { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty },
+            canGenerateTipsWithAI: !viewModel.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            onUndoTipsAIEdit: { viewModel.undoTipsAIEdit() },
+            canUndoTipsAIEdit: viewModel.canUndoTipsAIEdit,
+            onRedoTipsAIEdit: { viewModel.redoTipsAIEdit() },
+            canRedoTipsAIEdit: viewModel.canRedoTipsAIEdit,
             showCuisineSelection: $showCuisineSelection,
             showFullScreenImage: $showFullScreenImage,
             fullScreenImage: $fullScreenImage,
@@ -391,6 +416,15 @@ struct ExtractMenuWithAIView: View {
             moveIngredientBetweenCategories: { fromCategory, fromIndex, toCategory, toIndex in
                 viewModel.moveIngredient(from: fromCategory, sourceIndex: fromIndex, to: toCategory, destinationIndex: toIndex)
             },
+            onImproveInstructionsWithAI: { await viewModel.improveInstructionsWithAI() },
+            onGenerateInstructionsWithAI: { await viewModel.generateInstructionsWithOpenAI() },
+            isInstructionAILoading: viewModel.isEditingInstructions,
+            canImproveInstructionsWithAI: viewModel.instructions.contains { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty },
+            canGenerateInstructionsWithAI: !viewModel.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            onUndoLastInstructionAIEdit: { viewModel.undoLastInstructionAIEdit() },
+            canUndoLastInstructionAIEdit: viewModel.canUndoLastInstructionAIEdit,
+            onRedoLastInstructionAIEdit: { viewModel.redoLastInstructionAIEdit() },
+            canRedoLastInstructionAIEdit: viewModel.canRedoLastInstructionAIEdit,
             instructionsContent: {
                 makeInstructionsContent()
             },

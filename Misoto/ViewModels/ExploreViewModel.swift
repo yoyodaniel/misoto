@@ -30,6 +30,15 @@ class ExploreViewModel: ObservableObject {
     @Published var isLoadingMoreWhatsNew = false
     @Published var hasMoreWhatsNew = false
     
+    /// Trending cuisines with a representative recipe for each
+    struct CuisineEntry: Identifiable {
+        var id: String { english }
+        let english: String
+        let count: Int
+        let representativeRecipe: Recipe  // latest or highest-scoring dish
+    }
+    @Published var trendingCuisines: [CuisineEntry] = []
+    
     private let recipeService = RecipeService.shared
     private var lastRecipesDocument: DocumentSnapshot?
     private var lastTodaysSpecialDocument: DocumentSnapshot?
@@ -181,11 +190,73 @@ class ExploreViewModel: ObservableObject {
             whatsNew = recipes
             lastWhatsNewDocument = lastDoc
             hasMoreWhatsNew = recipes.count >= whatsNewPerPage
+            
+            // Extract trending cuisines from recent recipes
+            extractTrendingCuisines(from: recipes)
         } catch {
             print("⚠️ Error loading what's new: \(error.localizedDescription)")
         }
         
         isLoadingWhatsNew = false
+    }
+    
+    /// Extract unique cuisines from recent recipes, picking the best representative dish for each
+    private func extractTrendingCuisines(from recipes: [Recipe]) {
+        var cuisineRecipes: [String: [Recipe]] = [:]
+        
+        for recipe in recipes {
+            if let cuisine = recipe.cuisineEnglish ?? recipe.cuisine,
+               !cuisine.isEmpty {
+                let normalized = cuisine.trimmingCharacters(in: .whitespacesAndNewlines)
+                cuisineRecipes[normalized, default: []].append(recipe)
+            }
+        }
+        
+        // For each cuisine, pick the best representative: prefer one with an image,
+        // then highest favoriteCount, then most recent
+        trendingCuisines = cuisineRecipes.compactMap { cuisine, recipes in
+            let best = recipes
+                .sorted { a, b in
+                    // Prefer recipes with images
+                    let aHasImage = !(a.imageURLs.isEmpty && (a.imageURL ?? "").isEmpty)
+                    let bHasImage = !(b.imageURLs.isEmpty && (b.imageURL ?? "").isEmpty)
+                    if aHasImage != bHasImage { return aHasImage }
+                    // Then by favorite count (highest scoring)
+                    if a.favoriteCount != b.favoriteCount { return a.favoriteCount > b.favoriteCount }
+                    // Then by most recent
+                    return a.createdAt > b.createdAt
+                }
+                .first
+            
+            guard let representative = best else { return nil }
+            return CuisineEntry(english: cuisine, count: recipes.count, representativeRecipe: representative)
+        }
+        .sorted { $0.count != $1.count ? $0.count > $1.count : $0.english < $1.english }
+    }
+    
+    /// Search recipes filtered by a specific cuisine
+    func searchByCuisine(_ cuisineEnglish: String) {
+        searchTask?.cancel()
+        isSearching = true
+        
+        searchTask = Task {
+            do {
+                let results = try await recipeService.fetchRecipesByCuisine(cuisine: cuisineEnglish)
+                
+                guard !Task.isCancelled else { return }
+                
+                await MainActor.run {
+                    searchResults = results
+                    isSearching = false
+                }
+            } catch {
+                print("⚠️ Error searching by cuisine: \(error.localizedDescription)")
+                await MainActor.run {
+                    searchResults = []
+                    isSearching = false
+                }
+            }
+        }
     }
     
     func loadMoreWhatsNew() async {

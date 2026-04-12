@@ -62,7 +62,7 @@ struct WriteNoteView: View {
             .padding(12)
             .navigationTitle(viewModel.existingNote != nil ? 
                             LocalizedString("Edit Note", comment: "Edit note title") :
-                            LocalizedString("Write Note", comment: "Write note title"))
+                            LocalizedString("Write a Note to Self", comment: "Write note title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {

@@ -20,16 +20,34 @@ class RecipeDetailViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var isLoadingMoreNotes: Bool = false
     @Published var hasMoreNotes: Bool = false
+    @Published var nutritionInfo: NutritionInfo?
+    @Published var isLoadingNutrition: Bool = false
+    @Published var nutritionError: String?
+    
+    // Comments
+    @Published var comments: [RecipeComment] = []
+    @Published var commentCount: Int = 0
+    @Published var averageRating: Double = 0
+    @Published var ratingCount: Int = 0
+    @Published var isLoadingComments: Bool = false
+    @Published var isLoadingMoreComments: Bool = false
+    @Published var hasMoreComments: Bool = false
+    @Published var existingUserComment: RecipeComment?
     
     private let recipeService = RecipeService.shared
     private let noteService = RecipeNoteService()
+    private let commentService = RecipeCommentService()
     private let notesPerPage = 5
+    private let commentsPerPage = 5
     private var lastNoteDocument: DocumentSnapshot?
+    private var lastCommentDocument: DocumentSnapshot?
     private let firestore = FirebaseManager.shared.firestore
     private var favoriteListener: ListenerRegistration?
     
     init(recipe: Recipe) {
         self.recipe = recipe
+        // Pre-populate nutritionInfo from stored recipe data if available
+        self.nutritionInfo = recipe.nutritionInfo
     }
     
     deinit {
@@ -79,6 +97,8 @@ class RecipeDetailViewModel: ObservableObject {
         await checkFavoriteStatus()
         await loadNoteCount()
         await loadUserNotes()
+        await loadComments()
+        await loadCommentStats()
         
         isLoading = false
     }
@@ -230,10 +250,12 @@ class RecipeDetailViewModel: ObservableObject {
                 // Lazy update: Refresh author info if stale (cost-effective approach)
                 updatedRecipe = try await recipeService.refreshRecipeAuthorInfoIfNeeded(updatedRecipe)
                 recipe = updatedRecipe
-                // Refresh related data (notes, favorite status) without re-fetching recipe
+                // Refresh related data (notes, comments, favorite status) without re-fetching recipe
                 await checkFavoriteStatus()
                 await loadNoteCount()
                 await loadUserNotes()
+                await loadComments()
+                await loadCommentStats()
             }
         } catch {
             errorMessage = error.localizedDescription
@@ -312,6 +334,203 @@ class RecipeDetailViewModel: ObservableObject {
             if let updatedRecipe = try? await recipeService.fetchRecipe(byID: recipe.id) {
                 recipe = updatedRecipe
             }
+        }
+    }
+    
+    // MARK: - Nutrition Estimation
+    
+    private let nutritionCalculator = NutritionCalculator()
+    
+    /// Estimate nutrition using USDA database (primary) with AI fallback, then persist to Firestore
+    func estimateNutrition() async {
+        guard !recipe.ingredients.isEmpty else { return }
+        guard !isLoadingNutrition else { return }
+        
+        isLoadingNutrition = true
+        nutritionError = nil
+        
+        // 1. Try USDA-based calculation (accurate, database-backed)
+        print("🍽️ Starting nutrition estimation for '\(recipe.title)' (\(recipe.ingredients.count) ingredients, \(recipe.servings) servings)")
+        if let usdaInfo = await nutritionCalculator.calculateNutrition(
+            title: recipe.title,
+            ingredients: recipe.ingredients,
+            servings: recipe.servings
+        ) {
+            print("✅ Nutrition calculated via USDA database: \(usdaInfo.calories) kcal | P:\(usdaInfo.protein)g C:\(usdaInfo.carbohydrates)g F:\(usdaInfo.fat)g")
+            nutritionInfo = usdaInfo
+            recipe.nutritionInfo = usdaInfo
+            
+            // Only persist to Firestore if user owns this recipe
+            if let uid = Auth.auth().currentUser?.uid, recipe.authorID == uid {
+                do {
+                    try await recipeService.saveNutritionInfo(recipeID: recipe.id, nutritionInfo: usdaInfo)
+                } catch {
+                    print("⚠️ Failed to persist nutrition to Firestore: \(error.localizedDescription)")
+                }
+            } else {
+                print("ℹ️ Not persisting nutrition — user is not the recipe author")
+            }
+            
+            isLoadingNutrition = false
+            return
+        }
+        
+        // 2. Fallback: AI estimation
+        print("ℹ️ Falling back to AI nutrition estimation")
+        do {
+            let info = try await OpenAIService.estimateNutrition(
+                title: recipe.title,
+                ingredients: recipe.ingredients,
+                servings: recipe.servings
+            )
+            nutritionInfo = info
+            recipe.nutritionInfo = info
+            
+            // Only persist to Firestore if user owns this recipe
+            if let uid = Auth.auth().currentUser?.uid, recipe.authorID == uid {
+                do {
+                    try await recipeService.saveNutritionInfo(recipeID: recipe.id, nutritionInfo: info)
+                } catch {
+                    print("⚠️ Failed to persist nutrition to Firestore: \(error.localizedDescription)")
+                }
+            } else {
+                print("ℹ️ Not persisting nutrition — user is not the recipe author")
+            }
+        } catch {
+            nutritionError = error.localizedDescription
+            print("⚠️ Error estimating nutrition: \(error.localizedDescription)")
+        }
+        
+        isLoadingNutrition = false
+    }
+    
+    // MARK: - Comment Management
+    
+    func loadComments() async {
+        lastCommentDocument = nil
+        comments = []
+        
+        do {
+            let result = try await commentService.fetchComments(
+                for: recipe.id,
+                limit: commentsPerPage,
+                startAfter: nil
+            )
+            comments = result.comments
+            lastCommentDocument = result.lastDocument
+            hasMoreComments = result.hasMore
+            
+            // Check if current user already commented
+            existingUserComment = try await commentService.hasUserCommented(recipeID: recipe.id)
+        } catch {
+            print("⚠️ Error loading comments: \(error.localizedDescription)")
+        }
+    }
+    
+    func loadMoreComments() async {
+        guard let lastDoc = lastCommentDocument, !isLoadingMoreComments else { return }
+        
+        isLoadingMoreComments = true
+        
+        do {
+            let result = try await commentService.fetchComments(
+                for: recipe.id,
+                limit: commentsPerPage,
+                startAfter: lastDoc
+            )
+            comments.append(contentsOf: result.comments)
+            lastCommentDocument = result.lastDocument
+            hasMoreComments = result.hasMore
+        } catch {
+            print("⚠️ Error loading more comments: \(error.localizedDescription)")
+        }
+        
+        isLoadingMoreComments = false
+    }
+    
+    func loadCommentStats() async {
+        do {
+            let stats = try await commentService.getAverageRating(for: recipe.id)
+            averageRating = stats.average
+            ratingCount = stats.count
+            commentCount = try await commentService.getCommentCount(for: recipe.id)
+        } catch {
+            print("⚠️ Error loading comment stats: \(error.localizedDescription)")
+        }
+    }
+    
+    func submitComment(content: String, rating: Int) async {
+        guard let user = Auth.auth().currentUser else { return }
+        
+        // Fetch full user profile for photo/username
+        var displayName = user.displayName ?? "Anonymous"
+        var username: String?
+        var profileImageURL: String?
+        
+        do {
+            let doc = try await firestore.collection("users").document(user.uid).getDocument()
+            if let appUser = try? doc.data(as: AppUser.self) {
+                displayName = appUser.displayName
+                username = appUser.username
+                profileImageURL = appUser.profileImageURL
+            }
+        } catch {
+            print("⚠️ Could not fetch user profile: \(error.localizedDescription)")
+        }
+        
+        let comment = RecipeComment(
+            recipeID: recipe.id,
+            userID: user.uid,
+            displayName: displayName,
+            username: username,
+            profileImageURL: profileImageURL,
+            content: String(content.prefix(250)),
+            rating: rating
+        )
+        
+        do {
+            let savedComment = try await commentService.createComment(comment)
+            // Insert at top since sorted by newest
+            comments.insert(savedComment, at: 0)
+            existingUserComment = savedComment
+            commentCount += 1
+            await loadCommentStats()
+        } catch {
+            errorMessage = error.localizedDescription
+            print("⚠️ Error submitting comment: \(error.localizedDescription)")
+        }
+    }
+    
+    func updateComment(comment: RecipeComment, content: String, rating: Int) async {
+        var updated = comment
+        updated.content = String(content.prefix(250))
+        updated.rating = rating
+        
+        do {
+            try await commentService.updateComment(updated)
+            // Update in local array
+            if let index = comments.firstIndex(where: { $0.id == comment.id }) {
+                updated.updatedAt = Date()
+                comments[index] = updated
+            }
+            existingUserComment = updated
+            await loadCommentStats()
+        } catch {
+            errorMessage = error.localizedDescription
+            print("⚠️ Error updating comment: \(error.localizedDescription)")
+        }
+    }
+    
+    func deleteComment(_ comment: RecipeComment) async {
+        do {
+            try await commentService.deleteComment(commentID: comment.id)
+            comments.removeAll { $0.id == comment.id }
+            existingUserComment = nil
+            commentCount = max(0, commentCount - 1)
+            await loadCommentStats()
+        } catch {
+            errorMessage = error.localizedDescription
+            print("⚠️ Error deleting comment: \(error.localizedDescription)")
         }
     }
     

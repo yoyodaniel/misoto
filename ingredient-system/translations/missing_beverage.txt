@@ -1,0 +1,519 @@
+Barley Tea
+Corn Tea
+Hojicha
+Oolong Tea
+Jasmine Tea
+Chai
+Soju
+Shochu
+Amazake
+Pork Broth
+Mushroom Broth
+Kelp Broth
+Anchovy Broth
+Sparkling Water
+Clam Juice
+Low-Sodium Chicken Broth
+Low-Sodium Beef Broth
+Mushroom Stock
+Dashi Stock
+Kombu Dashi
+Bonito Dashi
+Anchovy Stock
+Seafood Stock
+Clam Broth
+Court Bouillon
+Ham Stock
+Pork Stock
+Tonkotsu Broth
+Turkey Stock
+Lamb Stock
+Beef Bouillon
+Vegetable Bouillon
+Stock Concentrate
+Better Than Bouillon
+Dry White Wine
+Sauvignon Blanc
+Pinot Grigio
+Chardonnay
+Riesling
+Dry Red Wine
+Cabernet Sauvignon
+Merlot
+Pinot Noir
+Chianti
+Rosé Wine
+Sparkling Wine
+Prosecco
+Champagne
+Cava
+Marsala Wine
+Dry Marsala
+Sweet Marsala
+Madeira Wine
+Port Wine
+Ruby Port
+Tawny Port
+Sherry
+Fino Sherry
+Cream Sherry
+Amontillado Sherry
+Vermouth
+Dry Vermouth
+Sweet Vermouth
+Hon Mirin
+Aji Mirin
+Chinese Rice Wine
+Huangjiu
+Michiu
+Ryorishu
+Junmai Sake
+Korean Rice Wine
+Cheongju
+White Rum
+Dark Rum
+Spiced Rum
+Coconut Rum
+Bourbon
+Whiskey
+Scotch Whisky
+Rye Whiskey
+Irish Whiskey
+Cognac
+Armagnac
+Calvados
+Apple Brandy
+Pisco
+Tequila
+Blanco Tequila
+Reposado Tequila
+Mezcal
+Gin
+Dry Gin
+Sloe Gin
+Grand Marnier
+Cointreau
+Triple Sec
+Orange Liqueur
+Kahlúa
+Coffee Liqueur
+Amaretto
+Frangelico
+Limoncello
+Kirsch
+Kirschwasser
+Maraschino Liqueur
+Crème de Cassis
+Sambuca
+Anise Liqueur
+Pastis
+Ouzo
+Arak
+Raki
+Absinthe
+Chartreuse
+Bénédictine
+Baijiu
+Awamori
+Lager
+Pale Ale
+IPA
+Stout
+Porter
+Wheat Beer
+Belgian Ale
+Pilsner
+Amber Ale
+Brown Ale
+Dark Beer
+Fresh Lemon Juice
+Bottled Lemon Juice
+Fresh Lime Juice
+Key Lime Juice
+Fresh Orange Juice
+Grapefruit Juice
+Cranberry Juice
+Pomegranate Juice
+Apple Cider
+Pear Juice
+Grape Juice
+Tomato Juice
+Tamarind Juice
+Passion Fruit Juice
+Guava Juice
+Mango Juice
+Carrot Juice
+Celery Juice
+Beet Juice
+Ginger Juice
+Aloe Vera Juice
+Sugarcane Juice
+Ceremonial Matcha
+Culinary Matcha
+Earl Grey
+English Breakfast Tea
+Assam Tea
+Darjeeling Tea
+Chrysanthemum Tea
+Chamomile Tea
+Rooibos Tea
+Hibiscus Tea
+Butterfly Pea Flower Tea
+Thai Tea Mix
+Chai Tea
+Pu-erh Tea
+Genmaicha
+Instant Coffee
+Coffee Powder
+Cold Brew Coffee
+Turkish Coffee
+Vietnamese Coffee
+Chicory Coffee
+Decaf Coffee
+Soda Water
+Tonic Water
+Club Soda
+Plant Milk
+Rice Milk
+Horchata
+Agua de Jamaica
+Agua Fresca
+Phở Broth
+Tonkotsu Ramen Broth
+Shoyu Ramen Broth
+Miso Ramen Broth
+Shio Ramen Broth
+Tsukemen Broth
+Pork Bone Broth
+Chicken Bone Broth
+Beef Bone Broth
+Seolleongtang Broth
+Ox Bone Soup Broth
+Sagol Broth
+Samgyetang Broth
+Ginseng Chicken Broth
+Tom Yum Broth
+Tom Kha Broth
+Sinigang Broth Base
+Hainan Chicken Rice Broth
+Bakso Broth
+Soto Ayam Broth
+Laksa Broth
+Curry Laksa Base
+Assam Laksa Base
+Nabe Broth
+Japanese Hot Pot Broth
+Shabu Shabu Broth
+Sukiyaki Broth
+Oden Broth
+Chanko Nabe Broth
+Chinese Hot Pot Broth
+Sichuan Hot Pot Base
+Clear Hot Pot Broth
+Mushroom Hot Pot Base
+Tomato Hot Pot Base
+Congee Stock
+Jook Broth
+Gewürztraminer
+Muscadet
+Sancerre
+Pouilly-Fumé
+Albariño
+Verdejo
+Viura
+Txakoli
+Grüner Veltliner
+Zweigelt
+Blaufränkisch
+Barolo Wine
+Barbaresco Wine
+Brunello Wine
+Montepulciano Wine
+Amarone Wine
+Valpolicella Wine
+Lambrusco
+Sake Daiginjo
+Sake Ginjo
+Sake Junmai Daiginjo
+Sake Nigori
+Sake Sparkling
+Sweet Sake
+Mirin Substitute
+Glutinous Rice Wine
+Lao Jiu
+Fujian Red Rice Wine
+Sichuan Baijiu
+Maotai
+Wuliangye
+Erguotou
+Tuak
+Palm Wine
+Toddy
+Coyol Wine
+Pulque
+Aquavit
+Akavit
+Scandinavian Spirit
+Cachaça
+Brazilian Rum
+Rhum Agricole
+Grappa
+Marc
+Pomace Brandy
+Palinka
+Hungarian Fruit Brandy
+Slivovitz
+Plum Brandy
+Rakia
+Balkan Spirit
+Mastika
+Mastic Liqueur
+Limoncello Liqueur
+Nocino
+Walnut Liqueur
+Mirto
+Myrtle Liqueur
+Umeshu
+Plum Wine Japanese
+Yuzushu
+Yuzu Liqueur
+Sochu Imo
+Sweet Potato Shochu
+Mugi Shochu
+Barley Shochu
+Kome Shochu
+Rice Shochu
+Kokuto Shochu
+Brown Sugar Shochu
+Andong Soju
+Hwayo
+Premium Korean Soju
+Arrack
+Sri Lankan Spirit
+Batavia Arrack
+Feni
+Coconut Feni
+Cashew Feni
+Goan Spirit
+Toddy Spirit
+Lambanog
+Coconut Spirit Filipino
+Boricha
+Roasted Barley Water
+Mugicha
+Corn Silk Tea
+Oksusu Suyeom Cha
+Buckwheat Tea
+Memil Cha
+Citron Tea
+Yujacha
+Yuja Marmalade
+Korean Citron Syrup
+Jujube Tea
+Daechu Cha
+Ginger Tea Korean
+Saenggang Cha
+Ssanghwa Tea
+Korean Herbal Tonic
+Omija Tea
+Five Flavor Berry Tea
+Sikhye
+Sweet Rice Drink
+Korean Rice Punch
+Sujeonggwa
+Cinnamon Persimmon Punch
+Korean Fruit Punch
+Teh Tarik Base
+Pulled Tea Mix
+Kopi Base
+Malaysian Coffee Base
+Cendol Syrup
+Pandan Coconut Drink Base
+Bandung Syrup
+Rose Syrup
+Taho Syrup
+Taho Base
+Sago Drink Base
+Bubble Tea Base
+Boba Syrup
+Boba Pearl
+Grass Jelly
+Cincau
+Aiyu Jelly
+Lemon Aiyu
+Kvass
+Russian Bread Drink
+Kissel
+Russian Berry Drink
+Kompot
+Eastern European Fruit Drink
+Uzvar
+Ukrainian Dried Fruit Drink
+Boza
+Fermented Grain Drink
+Şalgam
+Turnip Juice Turkish
+Ayran Turkish
+Turkish Yogurt Drink
+Doogh Iranian
+Persian Yogurt Drink
+Sharbat
+Persian Fruit Drink
+Sekanjabin
+Persian Mint Vinegar Drink
+Jallab
+Levantine Grape Drink
+Limonana
+Frozen Mint Lemonade
+Qamar al-Din
+Apricot Leather Drink
+Tamarind Drink
+Tamr Hindi
+Karkadeh
+Hibiscus Drink Egyptian
+Sahlab
+Orchid Root Drink
+Lassi Sweet
+Lassi Salty
+Mango Lassi Base
+Rose Lassi Base
+Chaas Spiced
+Buttermilk Spiced Indian
+Jal Jeera
+Cumin Water Drink
+Aam Panna
+Green Mango Drink
+Nimbu Pani
+Indian Lemonade
+Thandai Base
+Almond Spice Milk Base
+Badam Milk
+Almond Milk Indian
+Turmeric Latte Base
+Haldi Doodh
+Golden Milk Base
+Masala Chai Concentrate Ready
+Kadak Chai Base
+Atole Base
+Mexican Corn Drink
+Champurrado Base
+Mexican Chocolate Corn
+Agua de Jamaica Base
+Hibiscus Water Mexican
+Agua de Tamarindo
+Agua de Horchata Base
+Rice Cinnamon Drink Base
+Agua de Piña
+Pineapple Water
+Agua de Sandía
+Watermelon Water
+Tepache Base
+Fermented Pineapple Drink
+Pulque Base
+Agave Wine
+Cendol Drink Base
+Pandan Coconut Base
+Es Campur Base
+Mixed Ice Base
+Es Teler Base
+Indonesian Fruit Cocktail
+Bajigur Base
+Palm Sugar Coconut
+Bandrek Base
+Ginger Coconut Drink
+Wedang Jahe
+Ginger Tea Indonesian
+Teh Tarik Concentrate
+Kopi O Base
+Kopi C Base
+Milo Drink
+Milo Powder
+Ovaltine
+Horlicks
+Dalgona Coffee Base
+Whipped Coffee Base
+Vietnamese Egg Coffee Base
+Cà Phê Trứng Base
+Vietnamese Coconut Coffee Base
+Cà Phê Cốt Dừa
+Thai Tea Concentrate
+Cha Yen Base
+Thai Iced Tea Base
+Taro Milk Tea Base
+Matcha Latte Base
+Hojicha Latte Base
+Tie Guan Yin
+Iron Goddess Oolong
+Da Hong Pao
+Big Red Robe Oolong
+Dong Ding Oolong
+Formosa Oolong
+Oriental Beauty Oolong
+Alishan Oolong
+Li Shan Oolong
+Milk Oolong
+Jin Xuan
+Phoenix Dan Cong
+Dancong Oolong
+Baozhong
+Pouchong
+Dragon Well
+Longjing Green Tea
+Bi Luo Chun
+Green Snail Spring
+Huangshan Maofeng
+Yellow Mountain Tea
+Liu An Gua Pian
+Melon Seed Tea
+Taiping Houkui
+Monkey King Tea
+Xinyang Maojian
+Anji Bai Cha
+Anji White Tea
+White Peony
+Bai Mu Dan
+Silver Needle
+Bai Hao Yin Zhen
+Shou Mei
+Longevity Eyebrow
+Pu-erh Sheng
+Raw Pu-erh
+Pu-erh Shou
+Ripe Pu-erh
+Pu-erh Cake
+Pu-erh Tuo Cha
+Pu-erh Brick
+Lapsang Souchong
+Smoked Black Tea
+Keemun
+Chinese Burgundy Tea
+Dian Hong
+Yunnan Red Tea
+Jin Jun Mei
+Golden Eyebrow
+Sencha
+Kabusecha
+Gyokuro
+Shade-Grown Green Tea
+Kukicha
+Twig Tea
+Bancha
+Everyday Green Tea
+Shincha
+New Harvest Tea
+Tamaryokucha
+Curly Green Tea
+Mugicha Tea
+Roasted Barley Tea Pack
+Sobacha Tea
+Buckwheat Tea Pack
+Kuromamecha
+Black Soybean Tea
+Azuki Tea
+Red Bean Tea
+Yeongeun Cha
+Lotus Root Tea
+Yulmu Cha
+Job's Tears Tea
+Ssanghwa Tang
+Korean Herbal Tonic Tea

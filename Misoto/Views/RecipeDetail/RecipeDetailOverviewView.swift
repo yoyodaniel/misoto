@@ -55,6 +55,13 @@ struct RecipeDetailOverviewView: View {
     @State private var isPreparingShare = false
     @State private var adjustedServings: Int = 1
     
+    // Comments
+    @State private var showWriteComment = false
+    @State private var showAllReviews = false
+    @State private var commentToEdit: RecipeComment?
+    @State private var commentToDelete: RecipeComment?
+    @State private var showDeleteCommentConfirmation = false
+    
     private var isAuthor: Bool {
         guard let userID = Auth.auth().currentUser?.uid else { return false }
         return viewModel.recipe.authorID == userID
@@ -143,15 +150,15 @@ struct RecipeDetailOverviewView: View {
                                             .font(.system(size: 28, weight: .bold))
                                             .foregroundColor(.white)
                                         
-                                        // Metadata Rows
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            // First Row: Time, Servings, Difficulty, Spicy Level, Cuisine (wraps if needed)
-                                            HStack(alignment: .top, spacing: 16) {
+                                        // Metadata Row — horizontally scrollable
+                                        ScrollView(.horizontal, showsIndicators: false) {
+                                            HStack(spacing: 16) {
                                                 // Time
                                                 HStack(spacing: 4) {
-                                                    Image(systemName: "clock")
+                                                    Image(systemName: durationIcon(for: viewModel.totalTime))
                                                         .font(.system(size: 14))
-                                                    Text("\(viewModel.totalTime) \(LocalizedString("min", comment: "Minutes abbreviation"))")
+                                                        .foregroundColor(viewModel.totalTime >= 1440 ? .yellow : .white)
+                                                    Text(formatDuration(viewModel.totalTime))
                                                         .font(.system(size: 14))
                                                 }
                                                 
@@ -182,7 +189,7 @@ struct RecipeDetailOverviewView: View {
                                                     }
                                                 }
                                                 
-                                                // Cuisine (if available) - now on same row
+                                                // Cuisine (if available)
                                                 if let cuisine = viewModel.recipe.displayCuisine {
                                                     HStack(spacing: 4) {
                                                         Image(systemName: "globe")
@@ -371,6 +378,13 @@ struct RecipeDetailOverviewView: View {
                                         }
                                     }
                                     
+                                    // Dotted Line Separator before Nutrition Section
+                                    dottedLineSeparator
+                                        .padding(.vertical, 20)
+                                    
+                                    // Nutrition Section
+                                    nutritionSection
+                                    
                                     // Dotted Line Separator before Chef Section
                                     dottedLineSeparator
                                         .padding(.vertical, 20)
@@ -477,6 +491,9 @@ struct RecipeDetailOverviewView: View {
                                             }
                                         }
                                     }
+                                    
+                                    // MARK: - Reviews Section
+                                    commentsSection
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -503,7 +520,7 @@ struct RecipeDetailOverviewView: View {
                                         .frame(maxWidth: .infinity)
                                         .padding(.vertical, 12)
                                         .background(Color(.systemGray6))
-                                        .cornerRadius(12)
+                                        .cornerRadius(24)
                                     }
                                 }
                                 
@@ -516,13 +533,13 @@ struct RecipeDetailOverviewView: View {
                                         showLoginSheet = true
                                     }
                                 }) {
-                                    Text(LocalizedString("Write a Note", comment: "Write note button"))
+                                    Text(LocalizedString("Write a Note to Self", comment: "Write note button"))
                                         .font(.system(size: 16, weight: .semibold))
                                         .foregroundColor(.primary)
                                         .frame(maxWidth: .infinity)
                                         .frame(height: 50)
                                         .background(Color(.systemGray6))
-                                        .cornerRadius(12)
+                                        .cornerRadius(24)
                                 }
                                 
                                 // Start Cooking Button (hidden for now)
@@ -576,7 +593,7 @@ struct RecipeDetailOverviewView: View {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     // Privacy Button (for own recipes) or Favorite/Like Button (for others)
                     if isAuthor {
-                        // Show eye button for own recipes to toggle privacy or view sharing
+                        // Show privacy button for own recipes to toggle privacy or view sharing
                         // If shared with users, show person.2.fill and open sharing view instead of toggling
                         Button(action: {
                             HapticFeedback.importantAction()
@@ -595,7 +612,7 @@ struct RecipeDetailOverviewView: View {
                         }) {
                             Image(systemName: viewModel.recipe.isPrivate 
                                 ? (!viewModel.recipe.sharedWith.isEmpty ? "person.2.fill" : "eye.slash.fill") 
-                                : "eye.fill")
+                                : "globe")
                                 .font(.system(size: 16))
                                 .foregroundColor(.white)
                                 .frame(width: 34, height: 34)
@@ -651,7 +668,7 @@ struct RecipeDetailOverviewView: View {
                                 }) {
                                     Label(
                                         viewModel.recipe.isPrivate ? LocalizedString("Make Public", comment: "Make recipe public") : LocalizedString("Make Private", comment: "Make recipe private"),
-                                        systemImage: viewModel.recipe.isPrivate ? "eye.fill" : "eye.slash.fill"
+                                        systemImage: viewModel.recipe.isPrivate ? "globe" : "eye.slash.fill"
                                     )
                                 }
                                 
@@ -904,6 +921,43 @@ struct RecipeDetailOverviewView: View {
             LoginView()
                 .environmentObject(authViewModel)
         }
+        .sheet(isPresented: $showWriteComment) {
+            WriteCommentView(
+                recipeID: viewModel.recipe.id,
+                existingComment: commentToEdit
+            ) { content, rating in
+                Task {
+                    if let existing = commentToEdit {
+                        await viewModel.updateComment(comment: existing, content: content, rating: rating)
+                    } else {
+                        await viewModel.submitComment(content: content, rating: rating)
+                    }
+                    commentToEdit = nil
+                }
+            }
+            .presentationDetents([.medium])
+        }
+        .sheet(isPresented: $showAllReviews) {
+            AllReviewsView(viewModel: viewModel, showLoginSheet: $showLoginSheet)
+        }
+        .alert(
+            LocalizedString("Delete Review", comment: "Delete review confirmation title"),
+            isPresented: $showDeleteCommentConfirmation
+        ) {
+            Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
+                commentToDelete = nil
+            }
+            Button(LocalizedString("Delete", comment: "Delete button"), role: .destructive) {
+                if let comment = commentToDelete {
+                    Task {
+                        await viewModel.deleteComment(comment)
+                        commentToDelete = nil
+                    }
+                }
+            }
+        } message: {
+            Text(LocalizedString("Are you sure you want to delete this review? This action cannot be undone.", comment: "Delete review confirmation message"))
+        }
         .sheet(isPresented: $showShareWithUsers) {
             NavigationStack {
                 ShareRecipeView(recipe: viewModel.recipe) { sharedUserIDs in
@@ -1039,6 +1093,428 @@ struct RecipeDetailOverviewView: View {
         
         formatter.locale = Locale(identifier: localeIdentifier)
         return formatter.string(from: date)
+    }
+    
+    // MARK: - Nutrition Section
+    
+    private var nutritionSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Header
+            HStack(alignment: .firstTextBaseline) {
+                Text(LocalizedString("Nutrition (BETA)", comment: "Nutrition section header"))
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                if viewModel.nutritionInfo == nil && !viewModel.isLoadingNutrition {
+                    Button(action: {
+                        HapticFeedback.buttonTap()
+                        Task {
+                            await viewModel.estimateNutrition()
+                        }
+                    }) {
+                        Text(LocalizedString("Estimate", comment: "Estimate nutrition button"))
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.blue, .purple],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                    }
+                }
+            }
+            
+            if viewModel.isLoadingNutrition {
+                // Loading state
+                HStack {
+                    Spacer()
+                    VStack(spacing: 8) {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                        Text(LocalizedString("Estimating nutrition…", comment: "Nutrition loading text"))
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                }
+                .padding(.vertical, 16)
+            } else if let nutrition = viewModel.nutritionInfo {
+                // Nutrition content
+                VStack(spacing: 16) {
+                    // Per serving disclaimer
+                    Text(LocalizedString("Per serving · AI estimated", comment: "Nutrition disclaimer"))
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    // Calories hero
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("\(nutrition.calories)")
+                                .font(.system(size: 36, weight: .bold))
+                                .foregroundColor(.primary)
+                            Text("kcal")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        // Macro rings (% of daily reference based on 2,000 kcal diet)
+                        HStack(spacing: 20) {
+                            macroRing(
+                                value: nutrition.protein,
+                                label: LocalizedString("Protein", comment: "Protein nutrient label"),
+                                dailyValueFraction: nutrition.proteinDV,
+                                color: .blue
+                            )
+                            macroRing(
+                                value: nutrition.carbohydrates,
+                                label: LocalizedString("Carbs", comment: "Carbs nutrient label"),
+                                dailyValueFraction: nutrition.carbsDV,
+                                color: .orange
+                            )
+                            macroRing(
+                                value: nutrition.fat,
+                                label: LocalizedString("Fat", comment: "Fat nutrient label"),
+                                dailyValueFraction: nutrition.fatDV,
+                                color: .red
+                            )
+                        }
+                    }
+                    
+                    // Detail rows
+                    VStack(spacing: 0) {
+                        nutritionRow(
+                            label: LocalizedString("Saturated Fat", comment: "Saturated fat nutrient label"),
+                            value: String(format: "%.1fg", nutrition.saturatedFat),
+                            dvPercent: Int(round(nutrition.saturatedFatDV * 100)),
+                            isLast: false
+                        )
+                        nutritionRow(
+                            label: LocalizedString("Fiber", comment: "Fiber nutrient label"),
+                            value: String(format: "%.1fg", nutrition.fiber),
+                            dvPercent: Int(round(nutrition.fiberDV * 100)),
+                            isLast: false
+                        )
+                        nutritionRow(
+                            label: LocalizedString("Sugar", comment: "Sugar nutrient label"),
+                            value: String(format: "%.1fg", nutrition.sugar),
+                            dvPercent: Int(round(nutrition.sugarDV * 100)),
+                            isLast: false
+                        )
+                        nutritionRow(
+                            label: LocalizedString("Sodium", comment: "Sodium nutrient label"),
+                            value: "\(nutrition.sodium)mg",
+                            dvPercent: Int(round(nutrition.sodiumDV * 100)),
+                            isLast: true
+                        )
+                    }
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                    
+                    // Daily value footnote + AI disclaimer
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(LocalizedString("% Daily Value based on a 2,000 kcal diet", comment: "Daily value footnote"))
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                        
+                        Text(LocalizedString("Nutritional values are AI-estimated and may not be accurate. For dietary or health-related decisions, always consult a qualified nutritionist or healthcare professional.", comment: "AI nutrition disclaimer"))
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary.opacity(0.8))
+                            .lineSpacing(2)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            } else if let error = viewModel.nutritionError {
+                // Error state
+                VStack(spacing: 8) {
+                    Text(LocalizedString("Could not estimate nutrition", comment: "Nutrition error title"))
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.secondary)
+                    
+                    Button(action: {
+                        HapticFeedback.buttonTap()
+                        Task {
+                            await viewModel.estimateNutrition()
+                        }
+                    }) {
+                        Text(LocalizedString("Try Again", comment: "Retry button"))
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.accentColor)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+            } else {
+                // Initial state - prompt to estimate
+                Text(LocalizedString("Tap Estimate to get AI-powered nutrition information for this recipe.", comment: "Nutrition prompt text"))
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+                    .lineSpacing(4)
+            }
+        }
+    }
+    
+    // MARK: - Nutrition Helper Views
+    
+    private func macroRing(value: Double, label: String, dailyValueFraction: Double, color: Color) -> some View {
+        let dvPercent = Int(round(dailyValueFraction * 100))
+        
+        return VStack(spacing: 4) {
+            ZStack {
+                Circle()
+                    .stroke(color.opacity(0.15), lineWidth: 5)
+                    .frame(width: 48, height: 48)
+                
+                Circle()
+                    .trim(from: 0, to: CGFloat(min(dailyValueFraction, 1.0)))
+                    .stroke(color, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                    .frame(width: 48, height: 48)
+                    .rotationEffect(.degrees(-90))
+                
+                Text("\(dvPercent)%")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(.primary)
+            }
+            
+            Text(label)
+                .font(.system(size: 10))
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: 52)
+            
+            Text(String(format: "%.0fg", value))
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(.primary)
+                .lineLimit(1)
+        }
+    }
+    
+    private func nutritionRow(label: String, value: String, dvPercent: Int, isLast: Bool) -> some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text(label)
+                    .font(.system(size: 14))
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Text(value)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.primary)
+                
+                Text("\(dvPercent)%")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.secondary)
+                    .frame(width: 44, alignment: .trailing)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            
+            if !isLast {
+                Divider()
+                    .padding(.horizontal, 16)
+            }
+        }
+    }
+    
+    // MARK: - Comments Section
+    
+    private var commentsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            dottedLineSeparator
+                .padding(.vertical, 20)
+            
+            // Header with review count and average rating
+            HStack(alignment: .center) {
+                HStack(spacing: 6) {
+                    Text(LocalizedString("Reviews", comment: "Reviews section header"))
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.primary)
+                    
+                    if viewModel.commentCount > 0 {
+                        Text("(\(viewModel.commentCount))")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                if viewModel.ratingCount > 0 {
+                    HStack(spacing: 4) {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(.orange)
+                        Text(String(format: "%.1f", viewModel.averageRating))
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
+            
+            // Write Review button (only if user hasn't commented yet and is not the author)
+            if Auth.auth().currentUser != nil && viewModel.existingUserComment == nil && !isAuthor {
+                Button(action: {
+                    HapticFeedback.buttonTap()
+                    commentToEdit = nil
+                    showWriteComment = true
+                }) {
+                    HStack {
+                        Image(systemName: "square.and.pencil")
+                            .font(.system(size: 14))
+                        Text(LocalizedString("Write a Review", comment: "Write review button"))
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.accentColor.opacity(0.1))
+                    .foregroundColor(.accentColor)
+                    .cornerRadius(12)
+                }
+            } else if Auth.auth().currentUser == nil {
+                Button(action: {
+                    showLoginSheet = true
+                }) {
+                    HStack {
+                        Image(systemName: "square.and.pencil")
+                            .font(.system(size: 14))
+                        Text(LocalizedString("Write a Review", comment: "Write review button"))
+                            .font(.system(size: 14, weight: .medium))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.accentColor.opacity(0.1))
+                    .foregroundColor(.accentColor)
+                    .cornerRadius(12)
+                }
+            }
+            
+            // Show only the latest comment
+            if viewModel.comments.isEmpty {
+                Text(LocalizedString("No reviews yet. Be the first to share your thoughts!", comment: "No reviews placeholder"))
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.vertical, 12)
+            } else {
+                // Latest comment
+                if let latestComment = viewModel.comments.first {
+                    commentCard(latestComment)
+                }
+                
+                // View All Reviews button
+                if viewModel.commentCount > 1 {
+                    Button(action: {
+                        HapticFeedback.buttonTap()
+                        showAllReviews = true
+                    }) {
+                        Text(String(format: LocalizedString("View All %d Reviews", comment: "View all reviews button"), viewModel.commentCount))
+                            .font(.system(size: 14, weight: .medium))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color(.systemGray5))
+                            .cornerRadius(12)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func commentCard(_ comment: RecipeComment) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            // Header: Profile photo, name, time
+            HStack(alignment: .top, spacing: 10) {
+                // Profile photo
+                if let imageURL = comment.profileImageURL, let url = URL(string: imageURL) {
+                    AsyncImage(url: url) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } placeholder: {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(width: 36, height: 36)
+                    .clipShape(Circle())
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .resizable()
+                        .foregroundColor(.secondary)
+                        .frame(width: 36, height: 36)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    // Display name
+                    Text(comment.displayName)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.primary)
+                    
+                    // Username
+                    if let username = comment.username, !username.isEmpty {
+                        Text("@\(username)")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                // Time ago
+                Text(comment.timeAgo)
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+            }
+            
+            // Star rating
+            if comment.rating > 0 {
+                HStack(spacing: 2) {
+                    ForEach(1...5, id: \.self) { star in
+                        Image(systemName: star <= comment.rating ? "star.fill" : "star")
+                            .font(.system(size: 12))
+                            .foregroundColor(star <= comment.rating ? .orange : .secondary.opacity(0.3))
+                    }
+                }
+            }
+            
+            // Comment text (using Caveat font, same as notes)
+            Text(comment.content)
+                .font(.custom("Caveat", size: 16))
+                .foregroundColor(.primary)
+                .lineSpacing(4)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+        .contextMenu {
+            // Only show edit/delete for own comments
+            if comment.userID == Auth.auth().currentUser?.uid {
+                Button(action: {
+                    HapticFeedback.buttonTap()
+                    commentToEdit = comment
+                    showWriteComment = true
+                }) {
+                    Label(LocalizedString("Edit", comment: "Edit button"), systemImage: "pencil")
+                }
+                
+                Button(role: .destructive, action: {
+                    HapticFeedback.buttonTap()
+                    commentToDelete = comment
+                    showDeleteCommentConfirmation = true
+                }) {
+                    Label(LocalizedString("Delete", comment: "Delete button"), systemImage: "trash")
+                }
+            }
+        }
     }
     
     // MARK: - Helper Methods
@@ -1383,8 +1859,9 @@ struct RecipeDetailOverviewView: View {
         isPreparingShare = true
         shareImage = nil
         
-        // Load recipe image if available
-        if let imageURL = viewModel.recipe.imageURL, let url = URL(string: imageURL) {
+        // Load the best available recipe image (prefer imageURLs array, fall back to imageURL)
+        let imageURLString = viewModel.recipe.imageURLs.first ?? viewModel.recipe.imageURL
+        if let urlString = imageURLString, let url = URL(string: urlString) {
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
                 if let image = UIImage(data: data) {
@@ -1399,18 +1876,17 @@ struct RecipeDetailOverviewView: View {
     }
     
     private func createShareItems() -> [Any] {
-        var items: [Any] = []
-        
-        // Add formatted recipe text
         let recipeText = formatRecipeForSharing()
-        items.append(recipeText)
         
-        // Add image if available
         if let image = shareImage {
-            items.append(image)
+            // Use custom item sources — image as primary, text as secondary caption
+            let imageItem = RecipeImageItemSource(image: image, caption: recipeText)
+            let textItem = RecipeTextItemSource(text: recipeText)
+            return [imageItem, textItem]
+        } else {
+            // No image — just share text
+            return [recipeText]
         }
-        
-        return items
     }
     
     private func formatRecipeForSharing() -> String {
@@ -1419,15 +1895,10 @@ struct RecipeDetailOverviewView: View {
         // Title
         text += "\(viewModel.recipe.title)\n\n"
         
-        // Description
-        if !viewModel.recipe.description.isEmpty {
-            text += "\(viewModel.recipe.description)\n\n"
-        }
-        
         // Recipe Info
-        text += "\(LocalizedString("Prep Time", comment: "Prep time label")): \(viewModel.recipe.prepTime) \(LocalizedString("min", comment: "Minutes abbreviation"))\n"
-        text += "\(LocalizedString("Cook Time", comment: "Cook time label")): \(viewModel.recipe.cookTime) \(LocalizedString("min", comment: "Minutes abbreviation"))\n"
-        text += "\(LocalizedString("Total Time", comment: "Total time label")): \(viewModel.totalTime) \(LocalizedString("min", comment: "Minutes abbreviation"))\n"
+        text += "\(LocalizedString("Prep Time", comment: "Prep time label")): \(formatDuration(viewModel.recipe.prepTime))\n"
+        text += "\(LocalizedString("Cook Time", comment: "Cook time label")): \(formatDuration(viewModel.recipe.cookTime))\n"
+        text += "\(LocalizedString("Total Time", comment: "Total time label")): \(formatDuration(viewModel.totalTime))\n"
         text += "\(LocalizedString("Servings", comment: "Servings label")): \(viewModel.recipe.servings)\n"
         text += "\(LocalizedString("Difficulty", comment: "Difficulty label")): \(viewModel.recipe.difficulty.rawValue)\n"
         
@@ -1476,15 +1947,72 @@ struct RecipeDetailOverviewView: View {
             }
         }
         
-        // App Store link - formatted as plain text with app name and link
-        text += "\n\n"
-        text += LocalizedString("Create your own recipe with", comment: "App store link prefix")
-        text += " 🍽️ Misoto App"
+        // App Store link
         text += "\n"
-        text += LocalizedString("AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!", comment: "Promotional text for sharing app")
+        text += "🍽️ "
+        text += LocalizedString("Shared via Misoto", comment: "Short sharing attribution")
         text += "\n"
         text += misotoAppStoreURL
         
+        return text
+    }
+}
+
+// MARK: - Recipe Image Share Item Source
+
+/// Custom UIActivityItemSource that presents an image as the primary share content
+/// with recipe text as a caption. This ensures WhatsApp, iMessage, etc. show the
+/// dish photo first instead of a wall of text.
+class RecipeImageItemSource: NSObject, UIActivityItemSource {
+    let image: UIImage
+    let caption: String
+    
+    init(image: UIImage, caption: String) {
+        self.image = image
+        self.caption = caption
+        super.init()
+    }
+    
+    // Placeholder tells the system what type of content to expect (image)
+    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
+        return image
+    }
+    
+    // Return the actual item — image for most apps, text for copy
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
+        // For copy-to-clipboard, provide the text instead
+        if activityType == .copyToPasteboard {
+            return caption
+        }
+        return image
+    }
+    
+    // Provide the recipe text as the subject line (used by Mail, some messaging apps)
+    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
+        // Return just the recipe title as subject
+        return caption.components(separatedBy: "\n").first ?? ""
+    }
+    
+    // Provide caption text for apps that support it (WhatsApp, iMessage, etc.)
+    func activityViewController(_ activityViewController: UIActivityViewController, dataTypeIdentifierForActivityType activityType: UIActivity.ActivityType?) -> String {
+        return "public.image"
+    }
+}
+
+/// Secondary text item source — provides the recipe text alongside the image
+class RecipeTextItemSource: NSObject, UIActivityItemSource {
+    let text: String
+    
+    init(text: String) {
+        self.text = text
+        super.init()
+    }
+    
+    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
+        return text
+    }
+    
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
         return text
     }
 }

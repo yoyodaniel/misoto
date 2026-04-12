@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import UIKit
 
 struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     // Unit mapping: singular form -> display name with abbreviation in brackets
@@ -182,6 +183,21 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     var addRecipeImage: (UIImage) -> Void
     var removeRecipeImage: (Int) -> Void
     var generateDescription: () async -> Void
+    let onPolishDescriptionWithAI: (() async -> Void)?
+    let onUndoDescriptionAIEdit: (() -> Void)?
+    let canUndoDescriptionAIEdit: Bool
+    let onRedoDescriptionAIEdit: (() -> Void)?
+    let canRedoDescriptionAIEdit: Bool
+    
+    let onPolishTipsWithAI: (() async -> Void)?
+    let onGenerateTipsWithAI: (() async -> Void)?
+    let isTipsAILoading: Bool
+    let canPolishTipsWithAI: Bool
+    let canGenerateTipsWithAI: Bool
+    let onUndoTipsAIEdit: (() -> Void)?
+    let canUndoTipsAIEdit: Bool
+    let onRedoTipsAIEdit: (() -> Void)?
+    let canRedoTipsAIEdit: Bool
     
     // External bindings
     @Binding var showCuisineSelection: Bool
@@ -198,10 +214,21 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     // Instructions content builder
     let instructionsContent: () -> InstructionsContent
     
-    // Optional AI Editor for instructions
-    let onEditInstructionsWithAI: (() async -> Void)?
-    let isEditingInstructions: Bool
-    let hasNonEmptyInstructions: Bool
+    // Optional AI for instructions: on-device/Foundation-backed improve vs OpenAI generation
+    let onImproveInstructionsWithAI: (() async -> Void)?
+    let onGenerateInstructionsWithAI: (() async -> Void)?
+    let isInstructionAILoading: Bool
+    let canImproveInstructionsWithAI: Bool
+    let canGenerateInstructionsWithAI: Bool
+    let onUndoLastInstructionAIEdit: (() -> Void)?
+    let canUndoLastInstructionAIEdit: Bool
+    let onRedoLastInstructionAIEdit: (() -> Void)?
+    let canRedoLastInstructionAIEdit: Bool
+    
+    // Optional Nutrition estimation (used in edit flow)
+    let nutritionInfo: NutritionInfo?
+    let isEstimatingNutrition: Bool
+    let onEstimateNutrition: (() async -> Void)?
     
     // Optional additional content (e.g., source section for extraction views)
     let optionalContent: (() -> OptionalContent)?
@@ -276,6 +303,20 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         addRecipeImage: @escaping (UIImage) -> Void,
         removeRecipeImage: @escaping (Int) -> Void,
         generateDescription: @escaping () async -> Void,
+        onPolishDescriptionWithAI: (() async -> Void)? = nil,
+        onUndoDescriptionAIEdit: (() -> Void)? = nil,
+        canUndoDescriptionAIEdit: Bool = false,
+        onRedoDescriptionAIEdit: (() -> Void)? = nil,
+        canRedoDescriptionAIEdit: Bool = false,
+        onPolishTipsWithAI: (() async -> Void)? = nil,
+        onGenerateTipsWithAI: (() async -> Void)? = nil,
+        isTipsAILoading: Bool = false,
+        canPolishTipsWithAI: Bool = false,
+        canGenerateTipsWithAI: Bool = false,
+        onUndoTipsAIEdit: (() -> Void)? = nil,
+        canUndoTipsAIEdit: Bool = false,
+        onRedoTipsAIEdit: (() -> Void)? = nil,
+        canRedoTipsAIEdit: Bool = false,
         showCuisineSelection: Binding<Bool>,
         showFullScreenImage: Binding<Bool>,
         fullScreenImage: Binding<UIImage?>,
@@ -283,9 +324,18 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         onTakePicture: (() -> Void)? = nil,
         onSelectFromLibrary: (() -> Void)? = nil,
         moveIngredientBetweenCategories: ((Ingredient.Category, Int, Ingredient.Category, Int) -> Void)? = nil,
-        onEditInstructionsWithAI: (() async -> Void)? = nil,
-        isEditingInstructions: Bool = false,
-        hasNonEmptyInstructions: Bool = false,
+        onImproveInstructionsWithAI: (() async -> Void)? = nil,
+        onGenerateInstructionsWithAI: (() async -> Void)? = nil,
+        isInstructionAILoading: Bool = false,
+        canImproveInstructionsWithAI: Bool = false,
+        canGenerateInstructionsWithAI: Bool = false,
+        onUndoLastInstructionAIEdit: (() -> Void)? = nil,
+        canUndoLastInstructionAIEdit: Bool = false,
+        onRedoLastInstructionAIEdit: (() -> Void)? = nil,
+        canRedoLastInstructionAIEdit: Bool = false,
+        nutritionInfo: NutritionInfo? = nil,
+        isEstimatingNutrition: Bool = false,
+        onEstimateNutrition: (() async -> Void)? = nil,
         @ViewBuilder instructionsContent: @escaping () -> InstructionsContent,
         optionalContent: (() -> OptionalContent)? = nil
     ) {
@@ -358,15 +408,38 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         self.addRecipeImage = addRecipeImage
         self.removeRecipeImage = removeRecipeImage
         self.generateDescription = generateDescription
+        self.onPolishDescriptionWithAI = onPolishDescriptionWithAI
+        self.onUndoDescriptionAIEdit = onUndoDescriptionAIEdit
+        self.canUndoDescriptionAIEdit = canUndoDescriptionAIEdit
+        self.onRedoDescriptionAIEdit = onRedoDescriptionAIEdit
+        self.canRedoDescriptionAIEdit = canRedoDescriptionAIEdit
+        self.onPolishTipsWithAI = onPolishTipsWithAI
+        self.onGenerateTipsWithAI = onGenerateTipsWithAI
+        self.isTipsAILoading = isTipsAILoading
+        self.canPolishTipsWithAI = canPolishTipsWithAI
+        self.canGenerateTipsWithAI = canGenerateTipsWithAI
+        self.onUndoTipsAIEdit = onUndoTipsAIEdit
+        self.canUndoTipsAIEdit = canUndoTipsAIEdit
+        self.onRedoTipsAIEdit = onRedoTipsAIEdit
+        self.canRedoTipsAIEdit = canRedoTipsAIEdit
         _showCuisineSelection = showCuisineSelection
         _showFullScreenImage = showFullScreenImage
         _fullScreenImage = fullScreenImage
         _selectedRecipePhotos = selectedRecipePhotos
         self.onTakePicture = onTakePicture
         self.onSelectFromLibrary = onSelectFromLibrary
-        self.onEditInstructionsWithAI = onEditInstructionsWithAI
-        self.isEditingInstructions = isEditingInstructions
-        self.hasNonEmptyInstructions = hasNonEmptyInstructions
+        self.onImproveInstructionsWithAI = onImproveInstructionsWithAI
+        self.onGenerateInstructionsWithAI = onGenerateInstructionsWithAI
+        self.isInstructionAILoading = isInstructionAILoading
+        self.canImproveInstructionsWithAI = canImproveInstructionsWithAI
+        self.canGenerateInstructionsWithAI = canGenerateInstructionsWithAI
+        self.onUndoLastInstructionAIEdit = onUndoLastInstructionAIEdit
+        self.canUndoLastInstructionAIEdit = canUndoLastInstructionAIEdit
+        self.onRedoLastInstructionAIEdit = onRedoLastInstructionAIEdit
+        self.canRedoLastInstructionAIEdit = canRedoLastInstructionAIEdit
+        self.nutritionInfo = nutritionInfo
+        self.isEstimatingNutrition = isEstimatingNutrition
+        self.onEstimateNutrition = onEstimateNutrition
         self.instructionsContent = instructionsContent
         self.optionalContent = optionalContent
     }
@@ -392,6 +465,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     @State private var isDifficultyExpanded = true
     @State private var isSpicyLevelExpanded = true
     @State private var isTipsExpanded = false
+    @State private var isNutritionExpanded = true
     
     // Dismiss all keyboards
     private func dismissKeyboard() {
@@ -416,6 +490,44 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     private func updateTip(_ text: String, at index: Int) {
         guard index >= 0 && index < tips.count else { return }
         tips[index] = text
+    }
+    
+    // MARK: - AI undo/redo circle buttons
+    
+    private func aiHistoryCircleButton(
+        systemName: String,
+        enabled: Bool,
+        isLoading: Bool,
+        accessibilityLabel: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button {
+            HapticFeedback.buttonTap()
+            action()
+        } label: {
+            Image(systemName: systemName)
+                .font(.system(size: 28, weight: .medium))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(
+                    enabled && !isLoading
+                    ? LinearGradient(
+                        colors: [.blue, .purple],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    : LinearGradient(
+                        colors: [
+                            Color.secondary.opacity(0.35),
+                            Color.secondary.opacity(0.35)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+        }
+        .buttonStyle(.plain)
+        .disabled(!enabled || isLoading)
+        .accessibilityLabel(accessibilityLabel)
     }
     
     private var tipsSection: some View {
@@ -453,8 +565,86 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     Label(LocalizedString("Add Tip", comment: "Add tip button"), systemImage: "plus.circle")
                 }
             } label: {
-                Text(LocalizedString("Additional Tips", comment: "Additional tips section"))
-                    .font(.headline)
+                HStack {
+                    Text(LocalizedString("Additional Tips", comment: "Additional tips section"))
+                        .font(.headline)
+                    
+                    if onPolishTipsWithAI != nil || onGenerateTipsWithAI != nil || onUndoTipsAIEdit != nil || onRedoTipsAIEdit != nil {
+                        Spacer()
+                        
+                        HStack(spacing: 10) {
+                            if let onUndo = onUndoTipsAIEdit {
+                                aiHistoryCircleButton(
+                                    systemName: "arrow.uturn.backward.circle",
+                                    enabled: canUndoTipsAIEdit,
+                                    isLoading: isTipsAILoading,
+                                    accessibilityLabel: LocalizedString("Undo tips AI edit", comment: "Accessibility: undo tips AI")
+                                ) {
+                                    onUndo()
+                                }
+                            }
+                            if let onRedo = onRedoTipsAIEdit {
+                                aiHistoryCircleButton(
+                                    systemName: "arrow.uturn.forward.circle",
+                                    enabled: canRedoTipsAIEdit,
+                                    isLoading: isTipsAILoading,
+                                    accessibilityLabel: LocalizedString("Redo tips AI edit", comment: "Accessibility: redo tips AI")
+                                ) {
+                                    onRedo()
+                                }
+                            }
+                            
+                            Menu {
+                                if let onPolish = onPolishTipsWithAI {
+                                    Button {
+                                        Task { await onPolish() }
+                                    } label: {
+                                        Label(
+                                            LocalizedString("Polish", comment: "AI menu: polish instruction wording on device when possible"),
+                                            systemImage: "wand.and.stars"
+                                        )
+                                    }
+                                    .disabled(!canPolishTipsWithAI || isTipsAILoading)
+                                }
+                                if let onGenerate = onGenerateTipsWithAI {
+                                    Button {
+                                        Task { await onGenerate() }
+                                    } label: {
+                                        Label(
+                                            LocalizedString("Auto-generate tips", comment: "AI menu: generate tips via OpenAI"),
+                                            systemImage: "sparkles"
+                                        )
+                                    }
+                                    .disabled(!canGenerateTipsWithAI || isTipsAILoading)
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    if isTipsAILoading {
+                                        ProgressView()
+                                            .controlSize(.small)
+                                            .tint(.purple)
+                                    } else {
+                                        Image(systemName: "sparkles")
+                                    }
+                                    Text(LocalizedString("AI", comment: "AI instructions menu label"))
+                                        .font(.subheadline.bold())
+                                }
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.blue, .purple],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(LavaLampBackground())
+                            }
+                            .disabled(isTipsAILoading)
+                            .opacity(isTipsAILoading ? 0.85 : 1)
+                        }
+                    }
+                }
             }
         }
     }
@@ -529,36 +719,91 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     
                     Spacer()
                     
-                    Button(action: {
-                        HapticFeedback.importantAction()
-                        Task {
-                            await generateDescription()
-                        }
-                    }) {
-                        HStack(spacing: 4) {
-                            if isGeneratingDescription {
-                                ProgressView()
-                                    .controlSize(.small)
-                                    .tint(.purple)
-                            } else {
-                                Image(systemName: "sparkles")
+                    let richDescriptionAI = onPolishDescriptionWithAI != nil
+                        || onUndoDescriptionAIEdit != nil
+                        || onRedoDescriptionAIEdit != nil
+                    
+                    if richDescriptionAI {
+                        HStack(spacing: 10) {
+                            if let onUndo = onUndoDescriptionAIEdit {
+                                aiHistoryCircleButton(
+                                    systemName: "arrow.uturn.backward.circle",
+                                    enabled: canUndoDescriptionAIEdit,
+                                    isLoading: isGeneratingDescription,
+                                    accessibilityLabel: LocalizedString("Undo description AI edit", comment: "Accessibility: undo description AI")
+                                ) {
+                                    onUndo()
+                                }
                             }
-                            Text(LocalizedString("AI", comment: "AI button for description"))
-                                .font(.subheadline.bold())
+                            if let onRedo = onRedoDescriptionAIEdit {
+                                aiHistoryCircleButton(
+                                    systemName: "arrow.uturn.forward.circle",
+                                    enabled: canRedoDescriptionAIEdit,
+                                    isLoading: isGeneratingDescription,
+                                    accessibilityLabel: LocalizedString("Redo description AI edit", comment: "Accessibility: redo description AI")
+                                ) {
+                                    onRedo()
+                                }
+                            }
+                            
+                            Menu {
+                                if let onPolish = onPolishDescriptionWithAI {
+                                    Button {
+                                        Task { await onPolish() }
+                                    } label: {
+                                        Label(
+                                            LocalizedString("Polish", comment: "AI menu: polish instruction wording on device when possible"),
+                                            systemImage: "wand.and.stars"
+                                        )
+                                    }
+                                    .disabled(
+                                        description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                        || isGeneratingDescription
+                                    )
+                                }
+                                Button {
+                                    Task { await generateDescription() }
+                                } label: {
+                                    Label(
+                                        LocalizedString("Auto-generate description", comment: "AI menu: generate recipe description"),
+                                        systemImage: "sparkles"
+                                    )
+                                }
+                                .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isGeneratingDescription)
+                            } label: {
+                                HStack(spacing: 4) {
+                                    if isGeneratingDescription {
+                                        ProgressView()
+                                            .controlSize(.small)
+                                            .tint(.purple)
+                                    } else {
+                                        Image(systemName: "sparkles")
+                                    }
+                                    Text(LocalizedString("AI", comment: "AI instructions menu label"))
+                                        .font(.subheadline.bold())
+                                }
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.blue, .purple],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(LavaLampBackground())
+                            }
+                            .disabled(isGeneratingDescription)
+                            .opacity(isGeneratingDescription ? 0.85 : 1)
                         }
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.blue, .purple],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(LavaLampBackground())
+                    } else {
+                        AIActionButton(
+                            isLoading: isGeneratingDescription,
+                            isDisabled: title.isEmpty
+                        ) {
+                            Task { await generateDescription() }
+                        }
                     }
-                    .disabled(isGeneratingDescription || title.isEmpty)
-                    .opacity((isGeneratingDescription || title.isEmpty) ? 0.4 : 1.0)
                 }
             }
         }
@@ -1180,14 +1425,16 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                         .font(.system(size: 14))
                         .foregroundColor(unit.wrappedValue.isEmpty ? .secondary : .primary)
                 }
-                .frame(width: 56, alignment: .leading)
+                .frame(width: 44, alignment: .leading)
             }
-            .frame(width: 56)
+            .frame(width: 44)
             
-            // Ingredient name field - wider, takes remaining space
-            TextField(LocalizedString("Ingredient", comment: "Ingredient placeholder"), text: name)
-                .autocapitalization(.words)
-                .focused($focusedIngredientNameField, equals: nameIndex)
+            // Ingredient name field with autocomplete - wider, takes remaining space
+            IngredientNameField(
+                text: name,
+                focusField: $focusedIngredientNameField,
+                focusIndex: nameIndex
+            )
             
             // Category picker button (only show if moveIngredientBetweenCategories is available)
             if let moveIngredient = moveIngredientBetweenCategories, let category = currentCategory {
@@ -1266,6 +1513,145 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         }
     }
     
+    // MARK: - Nutrition Section
+    
+    private var nutritionSection: some View {
+        Section {
+            DisclosureGroup(isExpanded: $isNutritionExpanded) {
+                if isEstimatingNutrition {
+                    HStack {
+                        Spacer()
+                        VStack(spacing: 8) {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                            Text(LocalizedString("Estimating nutrition…", comment: "Nutrition loading text"))
+                                .font(.system(size: 14))
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                    }
+                    .padding(.vertical, 12)
+                } else if let nutrition = nutritionInfo {
+                    // Show nutrition summary
+                    VStack(spacing: 12) {
+                        Text(LocalizedString("Per serving · AI estimated", comment: "Nutrition disclaimer"))
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        // Calories + macros row
+                        HStack(spacing: 0) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("\(nutrition.calories)")
+                                    .font(.system(size: 28, weight: .bold))
+                                    .foregroundColor(.primary)
+                                Text("kcal")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.secondary)
+                            }
+                            .frame(minWidth: 80, alignment: .leading)
+                            
+                            Spacer()
+                            
+                            HStack(spacing: 16) {
+                                nutritionMiniStat(
+                                    value: String(format: "%.0fg", nutrition.protein),
+                                    label: LocalizedString("Protein", comment: "Protein nutrient label"),
+                                    color: .blue
+                                )
+                                nutritionMiniStat(
+                                    value: String(format: "%.0fg", nutrition.carbohydrates),
+                                    label: LocalizedString("Carbs", comment: "Carbs nutrient label"),
+                                    color: .orange
+                                )
+                                nutritionMiniStat(
+                                    value: String(format: "%.0fg", nutrition.fat),
+                                    label: LocalizedString("Fat", comment: "Fat nutrient label"),
+                                    color: .red
+                                )
+                            }
+                        }
+                        
+                        // Detail rows
+                        VStack(spacing: 0) {
+                            nutritionEditRow(
+                                label: LocalizedString("Fiber", comment: "Fiber nutrient label"),
+                                value: String(format: "%.1fg", nutrition.fiber)
+                            )
+                            Divider()
+                            nutritionEditRow(
+                                label: LocalizedString("Sugar", comment: "Sugar nutrient label"),
+                                value: String(format: "%.1fg", nutrition.sugar)
+                            )
+                            Divider()
+                            nutritionEditRow(
+                                label: LocalizedString("Sodium", comment: "Sodium nutrient label"),
+                                value: "\(nutrition.sodium)mg"
+                            )
+                        }
+                        .padding(.vertical, 4)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        
+                        // AI disclaimer
+                        Text(LocalizedString("AI-estimated values — not a substitute for professional dietary advice.", comment: "AI nutrition short disclaimer"))
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary.opacity(0.8))
+                            .lineSpacing(2)
+                    }
+                } else {
+                    // Empty state – prompt to estimate
+                    Text(LocalizedString("Tap the AI button to estimate nutrition for this recipe.", comment: "Nutrition edit prompt"))
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 4)
+                }
+            } label: {
+                HStack {
+                    Text(LocalizedString("Nutrition", comment: "Nutrition section header"))
+                        .font(.headline)
+                    
+                    if let onEstimateNutrition = onEstimateNutrition {
+                        Spacer()
+                        
+                        AIActionButton(
+                            isLoading: isEstimatingNutrition,
+                            isDisabled: title.isEmpty
+                        ) {
+                            HapticFeedback.importantAction()
+                            Task { await onEstimateNutrition() }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func nutritionMiniStat(value: String, label: String, color: Color) -> some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(color)
+            Text(label)
+                .font(.system(size: 10))
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    private func nutritionEditRow(label: String, value: String) -> some View {
+        HStack {
+            Text(label)
+                .font(.system(size: 14))
+                .foregroundColor(.primary)
+            Spacer()
+            Text(value)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+    }
+    
     var body: some View {
         Form {
             titleSection
@@ -1294,24 +1680,64 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                         Text(LocalizedString("Instructions", comment: "Instructions section"))
                             .font(.headline)
                         
-                        if let onEditInstructionsWithAI = onEditInstructionsWithAI {
+                        if onImproveInstructionsWithAI != nil || onGenerateInstructionsWithAI != nil || onUndoLastInstructionAIEdit != nil || onRedoLastInstructionAIEdit != nil {
                             Spacer()
                             
-                            Button(action: {
-                                HapticFeedback.importantAction()
-                                Task {
-                                    await onEditInstructionsWithAI()
+                            HStack(spacing: 10) {
+                                if let onUndo = onUndoLastInstructionAIEdit {
+                                    aiHistoryCircleButton(
+                                        systemName: "arrow.uturn.backward.circle",
+                                        enabled: canUndoLastInstructionAIEdit,
+                                        isLoading: isInstructionAILoading,
+                                        accessibilityLabel: LocalizedString("Undo instruction AI edit", comment: "Accessibility: undo one instruction AI step")
+                                    ) {
+                                        onUndo()
+                                    }
                                 }
-                            }) {
+                                if let onRedo = onRedoLastInstructionAIEdit {
+                                    aiHistoryCircleButton(
+                                        systemName: "arrow.uturn.forward.circle",
+                                        enabled: canRedoLastInstructionAIEdit,
+                                        isLoading: isInstructionAILoading,
+                                        accessibilityLabel: LocalizedString("Redo instruction AI edit", comment: "Accessibility: redo one instruction AI step")
+                                    ) {
+                                        onRedo()
+                                    }
+                                }
+                            
+                            Menu {
+                                if let onImprove = onImproveInstructionsWithAI {
+                                    Button(action: {
+                                        Task { await onImprove() }
+                                    }) {
+                                        Label(
+                                            LocalizedString("Polish", comment: "AI menu: polish instruction wording on device when possible"),
+                                            systemImage: "wand.and.stars"
+                                        )
+                                    }
+                                    .disabled(!canImproveInstructionsWithAI || isInstructionAILoading)
+                                }
+                                if let onGenerate = onGenerateInstructionsWithAI {
+                                    Button(action: {
+                                        Task { await onGenerate() }
+                                    }) {
+                                        Label(
+                                            LocalizedString("Auto-generate steps", comment: "AI menu: auto-generate instruction steps via OpenAI"),
+                                            systemImage: "sparkles"
+                                        )
+                                    }
+                                    .disabled(!canGenerateInstructionsWithAI || isInstructionAILoading)
+                                }
+                            } label: {
                                 HStack(spacing: 4) {
-                                    if isEditingInstructions {
+                                    if isInstructionAILoading {
                                         ProgressView()
                                             .controlSize(.small)
                                             .tint(.purple)
                                     } else {
                                         Image(systemName: "sparkles")
                                     }
-                                    Text(LocalizedString("AI", comment: "AI button for instructions"))
+                                    Text(LocalizedString("AI", comment: "AI instructions menu label"))
                                         .font(.subheadline.bold())
                                 }
                                 .foregroundStyle(
@@ -1325,11 +1751,17 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                                 .padding(.vertical, 6)
                                 .background(LavaLampBackground())
                             }
-                            .disabled(isEditingInstructions || !hasNonEmptyInstructions)
-                            .opacity((isEditingInstructions || !hasNonEmptyInstructions) ? 0.4 : 1.0)
+                            .disabled(isInstructionAILoading)
+                            .opacity(isInstructionAILoading ? 0.85 : 1)
+                            }
                         }
                     }
                 }
+            }
+            
+            // Nutrition section (only shown in edit flow when callback is provided)
+            if onEstimateNutrition != nil {
+                nutritionSection
             }
             
             // Tips section
@@ -1497,53 +1929,100 @@ extension RecipeEditForm where OptionalContent == EmptyView {
             addRecipeImage: addRecipeImage,
             removeRecipeImage: removeRecipeImage,
             generateDescription: generateDescription,
+            onPolishDescriptionWithAI: nil,
+            onUndoDescriptionAIEdit: nil,
+            canUndoDescriptionAIEdit: false,
+            onRedoDescriptionAIEdit: nil,
+            canRedoDescriptionAIEdit: false,
+            onPolishTipsWithAI: nil,
+            onGenerateTipsWithAI: nil,
+            isTipsAILoading: false,
+            canPolishTipsWithAI: false,
+            canGenerateTipsWithAI: false,
+            onUndoTipsAIEdit: nil,
+            canUndoTipsAIEdit: false,
+            onRedoTipsAIEdit: nil,
+            canRedoTipsAIEdit: false,
             showCuisineSelection: showCuisineSelection,
             showFullScreenImage: showFullScreenImage,
             fullScreenImage: fullScreenImage,
             selectedRecipePhotos: selectedRecipePhotos,
             onTakePicture: nil,
             onSelectFromLibrary: nil,
-            onEditInstructionsWithAI: nil,
-            isEditingInstructions: false,
-            hasNonEmptyInstructions: false,
+            onImproveInstructionsWithAI: nil,
+            onGenerateInstructionsWithAI: nil,
+            isInstructionAILoading: false,
+            canImproveInstructionsWithAI: false,
+            canGenerateInstructionsWithAI: false,
+            onUndoLastInstructionAIEdit: nil,
+            canUndoLastInstructionAIEdit: false,
+            onRedoLastInstructionAIEdit: nil,
+            canRedoLastInstructionAIEdit: false,
+            nutritionInfo: nil,
+            isEstimatingNutrition: false,
+            onEstimateNutrition: nil,
             instructionsContent: instructionsContent,
             optionalContent: nil
         )
     }
 }
 
-
 // MARK: - Lava Lamp AI Button Background
+
+// MARK: - Reusable AI Button
+
+/// A reusable AI button with lava-lamp animated background.
+/// Used for description, nutrition, and instructions AI actions.
+struct AIActionButton: View {
+    let label: String
+    let isLoading: Bool
+    let isDisabled: Bool
+    let action: () -> Void
+    
+    init(
+        label: String = "AI",
+        isLoading: Bool,
+        isDisabled: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.label = label
+        self.isLoading = isLoading
+        self.isDisabled = isDisabled
+        self.action = action
+    }
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                if isLoading {
+                    ProgressView()
+                        .controlSize(.small)
+                        .tint(.purple)
+                } else {
+                    Image(systemName: "sparkles")
+                }
+                Text(LocalizedString(label, comment: "AI button"))
+                    .font(.subheadline.bold())
+            }
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [.blue, .purple],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(LavaLampBackground())
+        }
+        .disabled(isLoading || isDisabled)
+        .opacity((isLoading || isDisabled) ? 0.4 : 1.0)
+    }
+}
 
 struct LavaLampBackground: View {
     @State private var animate = false
-
-    // Randomised direction multipliers for each blob (-1 or 1)
-    @State private var blob1DirX: CGFloat = 1
-    @State private var blob1DirY: CGFloat = 1
-    @State private var blob2DirX: CGFloat = 1
-    @State private var blob2DirY: CGFloat = 1
-    @State private var blob3DirX: CGFloat = 1
-    @State private var blob3DirY: CGFloat = 1
-
-    // Randomised magnitude jitter (0.8...1.2) so distances vary
-    @State private var blob1Jitter: CGFloat = 1
-    @State private var blob2Jitter: CGFloat = 1
-    @State private var blob3Jitter: CGFloat = 1
-
-    // Randomised opacity multipliers (0.8...1.2 of base opacity)
-    @State private var blob1Opacity: CGFloat = 1
-    @State private var blob2Opacity: CGFloat = 1
-    @State private var blob3Opacity: CGFloat = 1
-
-    // Randomised size multipliers (0.8...1.2 of base size)
-    @State private var blob1Size: CGFloat = 1
-    @State private var blob2Size: CGFloat = 1
-    @State private var blob3Size: CGFloat = 1
-
-    // Randomised animation duration (0.8...1.2 of base 6s)
-    @State private var animationDuration: Double = 6.0
-
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -1553,86 +2032,60 @@ struct LavaLampBackground: View {
                     startPoint: .leading,
                     endPoint: .trailing
                 )
-
+                
                 // Blob 1 - large, slow
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [.blue.opacity(0.35 * blob1Opacity), .blue.opacity(0.0)],
+                            colors: [.blue.opacity(0.35), .blue.opacity(0.0)],
                             center: .center,
                             startRadius: 0,
-                            endRadius: geo.size.width * 0.4 * blob1Size
+                            endRadius: geo.size.width * 0.4
                         )
                     )
-                    .frame(width: geo.size.width * 0.7 * blob1Size, height: geo.size.height * 1.6 * blob1Size)
+                    .frame(width: geo.size.width * 0.7, height: geo.size.height * 1.6)
                     .offset(
-                        x: animate ? geo.size.width * 0.15 * blob1DirX * blob1Jitter : -geo.size.width * 0.25 * blob1DirX * blob1Jitter,
-                        y: animate ? -geo.size.height * 0.1 * blob1DirY * blob1Jitter : geo.size.height * 0.1 * blob1DirY * blob1Jitter
+                        x: animate ? geo.size.width * 0.15 : -geo.size.width * 0.25,
+                        y: animate ? -geo.size.height * 0.1 : geo.size.height * 0.1
                     )
-
+                
                 // Blob 2 - medium, opposite direction
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [.purple.opacity(0.4 * blob2Opacity), .purple.opacity(0.0)],
+                            colors: [.purple.opacity(0.4), .purple.opacity(0.0)],
                             center: .center,
                             startRadius: 0,
-                            endRadius: geo.size.width * 0.35 * blob2Size
+                            endRadius: geo.size.width * 0.35
                         )
                     )
-                    .frame(width: geo.size.width * 0.6 * blob2Size, height: geo.size.height * 1.4 * blob2Size)
+                    .frame(width: geo.size.width * 0.6, height: geo.size.height * 1.4)
                     .offset(
-                        x: animate ? -geo.size.width * 0.15 * blob2DirX * blob2Jitter : geo.size.width * 0.2 * blob2DirX * blob2Jitter,
-                        y: animate ? geo.size.height * 0.15 * blob2DirY * blob2Jitter : -geo.size.height * 0.1 * blob2DirY * blob2Jitter
+                        x: animate ? -geo.size.width * 0.15 : geo.size.width * 0.2,
+                        y: animate ? geo.size.height * 0.15 : -geo.size.height * 0.1
                     )
-
+                
                 // Blob 3 - small accent
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [.indigo.opacity(0.3 * blob3Opacity), .indigo.opacity(0.0)],
+                            colors: [.indigo.opacity(0.3), .indigo.opacity(0.0)],
                             center: .center,
                             startRadius: 0,
-                            endRadius: geo.size.width * 0.25 * blob3Size
+                            endRadius: geo.size.width * 0.25
                         )
                     )
-                    .frame(width: geo.size.width * 0.45 * blob3Size, height: geo.size.height * 1.2 * blob3Size)
+                    .frame(width: geo.size.width * 0.45, height: geo.size.height * 1.2)
                     .offset(
-                        x: animate ? geo.size.width * 0.1 * blob3DirX * blob3Jitter : -geo.size.width * 0.1 * blob3DirX * blob3Jitter,
-                        y: animate ? geo.size.height * 0.05 * blob3DirY * blob3Jitter : -geo.size.height * 0.15 * blob3DirY * blob3Jitter
+                        x: animate ? geo.size.width * 0.1 : -geo.size.width * 0.1,
+                        y: animate ? geo.size.height * 0.05 : -geo.size.height * 0.15
                     )
             }
         }
         .clipShape(Capsule())
         .onAppear {
-            // Randomise direction for each blob axis
-            blob1DirX = Bool.random() ? 1 : -1
-            blob1DirY = Bool.random() ? 1 : -1
-            blob2DirX = Bool.random() ? 1 : -1
-            blob2DirY = Bool.random() ? 1 : -1
-            blob3DirX = Bool.random() ? 1 : -1
-            blob3DirY = Bool.random() ? 1 : -1
-
-            // Randomise magnitude slightly so each instance looks different
-            blob1Jitter = CGFloat.random(in: 0.8...1.2)
-            blob2Jitter = CGFloat.random(in: 0.8...1.2)
-            blob3Jitter = CGFloat.random(in: 0.8...1.2)
-
-            // Randomise opacity (+/- 20% of base)
-            blob1Opacity = CGFloat.random(in: 0.8...1.2)
-            blob2Opacity = CGFloat.random(in: 0.8...1.2)
-            blob3Opacity = CGFloat.random(in: 0.8...1.2)
-
-            // Randomise size (+/- 20% of base)
-            blob1Size = CGFloat.random(in: 0.8...1.2)
-            blob2Size = CGFloat.random(in: 0.8...1.2)
-            blob3Size = CGFloat.random(in: 0.8...1.2)
-
-            // Randomise speed (+/- 20% of base 6s)
-            animationDuration = Double.random(in: 4.8...7.2)
-
             withAnimation(
-                .easeInOut(duration: animationDuration)
+                .easeInOut(duration: 3.0)
                 .repeatForever(autoreverses: true)
             ) {
                 animate = true

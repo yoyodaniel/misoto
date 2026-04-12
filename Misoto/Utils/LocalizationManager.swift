@@ -346,3 +346,51 @@ extension View {
     }
 }
 
+// MARK: - Time Formatting Helper
+
+/// Format minutes into a human-readable duration string.
+/// - < 60 min → "45 min"
+/// - 60..1439 min → "2 h 30 min" or "2 h"
+/// - >= 1440 min → "1 day" / "2 days 3 h"
+func formatDuration(_ totalMinutes: Int) -> String {
+    guard totalMinutes > 0 else {
+        return "0 \(LocalizedString("min", comment: "Minutes abbreviation"))"
+    }
+    
+    let days = totalMinutes / 1440
+    let remainingAfterDays = totalMinutes % 1440
+    let hours = remainingAfterDays / 60
+    let minutes = remainingAfterDays % 60
+    
+    let dayStr = LocalizedString("d", comment: "Day abbreviation")
+    let hourStr = LocalizedString("h", comment: "Hour abbreviation")
+    let minStr = LocalizedString("min", comment: "Minutes abbreviation")
+    
+    if days > 0 {
+        // 1 day, 2 days, 1 day 3 h, etc.
+        var result = "\(days) \(dayStr)"
+        if hours > 0 {
+            result += " \(hours) \(hourStr)"
+        }
+        return result
+    } else if hours > 0 {
+        // 2 h, 2 h 30 min, etc.
+        if minutes == 0 {
+            return "\(hours) \(hourStr)"
+        } else {
+            return "\(hours) \(hourStr) \(minutes) \(minStr)"
+        }
+    } else {
+        return "\(minutes) \(minStr)"
+    }
+}
+
+/// Returns the appropriate SF Symbol for a given duration in minutes.
+func durationIcon(for totalMinutes: Int) -> String {
+    if totalMinutes >= 1440 {
+        return "moon.stars.fill"
+    } else {
+        return "clock"
+    }
+}
+

@@ -120,7 +120,7 @@ struct ModernRecipeDetailView: View {
                                         .foregroundColor(.white)
                                     
                                     HStack(spacing: 16) {
-                                        Label("\(recipe.prepTime + recipe.cookTime) \(LocalizedString("min", comment: "Minutes abbreviation"))", systemImage: "clock")
+                                        Label(formatDuration(recipe.prepTime + recipe.cookTime), systemImage: durationIcon(for: recipe.prepTime + recipe.cookTime))
                                             .font(.system(size: 14))
                                         Label("\(recipe.servings)", systemImage: "person.2")
                                             .font(.system(size: 14))

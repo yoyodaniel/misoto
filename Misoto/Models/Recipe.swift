@@ -41,6 +41,7 @@ struct Recipe: Identifiable, Codable {
     var sharedWith: [String] // Array of user IDs who have access to this recipe when isPrivate is true
     var preservedSharedWith: [String]? // Preserved sharedWith list when making "Private to All" (allows restore later)
     var searchKeywords: [String] // Array of search keywords for improved search functionality
+    var nutritionInfo: NutritionInfo? // AI-estimated nutritional values per serving
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -75,6 +76,7 @@ struct Recipe: Identifiable, Codable {
         case sharedWith
         case preservedSharedWith
         case searchKeywords
+        case nutritionInfo
     }
     
     init(from decoder: Decoder) throws {
@@ -163,6 +165,7 @@ struct Recipe: Identifiable, Codable {
         sharedWith = try container.decodeIfPresent([String].self, forKey: .sharedWith) ?? []
         preservedSharedWith = try container.decodeIfPresent([String].self, forKey: .preservedSharedWith)
         searchKeywords = try container.decodeIfPresent([String].self, forKey: .searchKeywords) ?? []
+        nutritionInfo = try container.decodeIfPresent(NutritionInfo.self, forKey: .nutritionInfo)
         
         // Optional fields
         // Handle cuisine with backward compatibility
@@ -331,7 +334,8 @@ struct Recipe: Identifiable, Codable {
         isPrivate: Bool = false,
         sharedWith: [String] = [],
         preservedSharedWith: [String]? = nil,
-        searchKeywords: [String] = []
+        searchKeywords: [String] = [],
+        nutritionInfo: NutritionInfo? = nil
     ) {
         self.id = id
         
@@ -417,6 +421,7 @@ struct Recipe: Identifiable, Codable {
         self.sharedWith = sharedWith
         self.preservedSharedWith = preservedSharedWith
         self.searchKeywords = searchKeywords
+        self.nutritionInfo = nutritionInfo
     }
     
     /// Get the appropriate cuisine name based on the current language setting
@@ -442,6 +447,58 @@ struct Recipe: Identifiable, Codable {
     /// Check if recipe has any shared users (either active or preserved)
     var hasSharedUsers: Bool {
         return effectiveSharedCount > 0
+    }
+    
+    // MARK: - Ingredient Intelligence (powered by IngredientDatabase)
+    
+    /// Get all allergens present in this recipe's ingredients.
+    /// Works with both enriched (canonicalId set) and un-enriched ingredients.
+    var detectedAllergens: Set<Ingredient.Allergen> {
+        let db = IngredientDatabase.shared
+        var allergens = Set<Ingredient.Allergen>()
+        for ingredient in ingredients {
+            let canonicalId = ingredient.canonicalId ?? db.match(ingredient.name)?.canonicalId
+            if let id = canonicalId {
+                allergens.formUnion(db.allergens(for: id))
+            }
+        }
+        return allergens
+    }
+    
+    /// Check if the recipe is compatible with a dietary flag.
+    /// Returns true only if ALL matched ingredients are compatible.
+    /// Returns nil if no ingredients could be matched (unknown).
+    func isDietaryCompatible(_ flag: Ingredient.DietaryFlag) -> Bool? {
+        let db = IngredientDatabase.shared
+        var matchedCount = 0
+        var allCompatible = true
+        
+        for ingredient in ingredients {
+            let canonicalId = ingredient.canonicalId ?? db.match(ingredient.name)?.canonicalId
+            if let id = canonicalId {
+                matchedCount += 1
+                if !db.dietaryFlags(for: id).contains(flag) {
+                    allCompatible = false
+                }
+            }
+        }
+        
+        // If we couldn't match any ingredients, return nil (unknown)
+        guard matchedCount > 0 else { return nil }
+        return allCompatible
+    }
+    
+    /// Get a sorted array of all detected allergens for display.
+    var allergenList: [Ingredient.Allergen] {
+        return detectedAllergens.sorted { $0.rawValue < $1.rawValue }
+    }
+    
+    /// Get dietary compatibility summary for this recipe.
+    /// Returns only flags that are confirmed true.
+    var dietaryBadges: [Ingredient.DietaryFlag] {
+        return Ingredient.DietaryFlag.allCases.filter { flag in
+            isDietaryCompatible(flag) == true
+        }
     }
 }
 

@@ -20,6 +20,14 @@ class ExtractMenuWithAIViewModel: ObservableObject {
     @Published var isDetectingCuisine = false
     @Published var isExtractingTime = false
     @Published var isDetectingDifficulty = false
+    @Published var isEditingInstructions = false
+    @Published var isTipsAILoading = false
+    @Published var canUndoDescriptionAIEdit = false
+    @Published var canRedoDescriptionAIEdit = false
+    @Published var canUndoTipsAIEdit = false
+    @Published var canRedoTipsAIEdit = false
+    @Published var canUndoLastInstructionAIEdit = false
+    @Published var canRedoLastInstructionAIEdit = false
     
     // Recipe fields for editing
     @Published var title = ""
@@ -41,10 +49,12 @@ class ExtractMenuWithAIViewModel: ObservableObject {
     @Published var garnishIngredients: [RecipeTextParser.IngredientItem] = []
     @Published var instructions: [String] = []
     @Published var mainRecipeImages: [UIImage] = [] // Up to 5 images for the recipe
+    @Published var postSharing: AppSettings.DefaultPostSharing = AppSettings.shared.defaultPostSharing
     private var sourceImage: UIImage? = nil // Source image used for extraction
     
     private let recipeService = RecipeService.shared
     private let storageService = StorageService()
+    private lazy var extractStringInstructionUndoRedo = ExtractStringInstructionUndoRedoController<ExtractMenuWithAIViewModel>()
     
     // Cost optimization settings
     // Use cost-optimized extraction (iOS OCR + on-device parsing + optional OpenAI refinement)
@@ -197,6 +207,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             // This prevents counting extractions that aren't saved
             
             print("✅ ExtractMenuWithAIViewModel: Extraction completed, showing edit recipe view")
+            enableDebouncedUndoRedoAfterExtraction()
             showEditRecipe = true
             isLoading = false
         } catch {
@@ -677,7 +688,8 @@ class ExtractMenuWithAIViewModel: ObservableObject {
                 sourceImageURLs: sourceImageURLs,
                 authorID: userID,
                 authorName: authorName,
-                authorUsername: username
+                authorUsername: username,
+                isPrivate: postSharing.isPrivateRecipe
             )
             
             print("📝 Recipe created with sourceImageURLs count: \(recipe.sourceImageURLs.count)")
@@ -760,7 +772,9 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             )
             
             if !generatedDescription.isEmpty {
+                extractStringInstructionUndoRedo.recordDescriptionSnapshotBeforeAIReplaceIfEnabled()
                 description = generatedDescription
+                extractStringInstructionUndoRedo.syncDescriptionCommittedAfterAIReplaceIfEnabled()
             }
         } catch {
             errorMessage = LocalizedString("Failed to generate description: \(error.localizedDescription)", comment: "Description generation error")
@@ -863,4 +877,61 @@ class ExtractMenuWithAIViewModel: ObservableObject {
         
         isDetectingDifficulty = false
     }
+    
+    // MARK: - Post-extraction debounced undo / redo
+    
+    func enableDebouncedUndoRedoAfterExtraction() {
+        extractStringInstructionUndoRedo.enableAfterExtraction(
+            host: self,
+            descriptionChanges: $description.eraseToAnyPublisher(),
+            tipsChanges: $tips.eraseToAnyPublisher(),
+            instructionsChanges: $instructions.eraseToAnyPublisher()
+        )
+    }
+    
+    func polishDescriptionWithAI() async {
+        await extractStringInstructionUndoRedo.polishDescriptionWithAI()
+    }
+    
+    func undoDescriptionAIEdit() {
+        extractStringInstructionUndoRedo.undoDescriptionAIEdit()
+    }
+    
+    func redoDescriptionAIEdit() {
+        extractStringInstructionUndoRedo.redoDescriptionAIEdit()
+    }
+    
+    func polishTipsWithAI() async {
+        await extractStringInstructionUndoRedo.polishTipsWithAI()
+    }
+    
+    func generateTipsWithOpenAI() async {
+        await extractStringInstructionUndoRedo.generateTipsWithOpenAI()
+    }
+    
+    func undoTipsAIEdit() {
+        extractStringInstructionUndoRedo.undoTipsAIEdit()
+    }
+    
+    func redoTipsAIEdit() {
+        extractStringInstructionUndoRedo.redoTipsAIEdit()
+    }
+    
+    func improveInstructionsWithAI() async {
+        await extractStringInstructionUndoRedo.improveInstructionsWithAI()
+    }
+    
+    func generateInstructionsWithOpenAI() async {
+        await extractStringInstructionUndoRedo.generateInstructionsWithOpenAI()
+    }
+    
+    func undoLastInstructionAIEdit() {
+        extractStringInstructionUndoRedo.undoLastInstructionAIEdit()
+    }
+    
+    func redoLastInstructionAIEdit() {
+        extractStringInstructionUndoRedo.redoLastInstructionAIEdit()
+    }
 }
+
+extension ExtractMenuWithAIViewModel: ExtractStringInstructionUndoHost {}

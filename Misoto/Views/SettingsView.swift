@@ -274,6 +274,28 @@ struct SettingsView: View {
                 // MARK: - Privacy & Terms Section
                 Section {
                     DisclosureGroup(isExpanded: $isPrivacyTermsExpanded) {
+                        Toggle(isOn: Binding(
+                            get: { appSettings.defaultPostSharing == .public },
+                            set: { isPublic in
+                                appSettings.defaultPostSharing = isPublic ? .public : .private
+                            }
+                        )) {
+                            HStack {
+                                Image(systemName: "globe")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Start new posts as public", comment: "Settings: default visibility for new recipe drafts"))
+                            }
+                        }
+                        .onChange(of: appSettings.defaultPostSharing) {
+                            HapticFeedback.play(.selection)
+                        }
+                        
+                        Text(LocalizedString("When you create a recipe, you choose public or private before saving. This only sets the default for new drafts.", comment: "Settings footer explaining per-post visibility vs default"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+
                         Button(action: {
                             HapticFeedback.buttonTap()
                             showPrivacyPolicy = true

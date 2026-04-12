@@ -1,0 +1,817 @@
+Pomfret
+Prawn
+Crawfish
+Imitation Crab
+Conger Eel
+Sea Bream
+Yellowtail
+Whitebait
+Tobiko
+Mentaiko
+Skipjack Tuna
+Bonito
+Razor Clam
+Cockle
+Mantis Shrimp
+Whelk
+Turbot
+Perch
+Smelt
+Basa
+Snow Crab
+King Crab
+Soft-Shell Crab
+Langoustine
+Skate
+Atlantic Cod
+Pacific Cod
+Sablefish
+Lingcod
+Alaska Pollock
+Whiting
+Hake
+Silver Hake
+Pacific Halibut
+Atlantic Halibut
+California Halibut
+Dover Sole
+Lemon Sole
+Petrale Sole
+Summer Flounder
+Winter Flounder
+Fluke
+Chilean Sea Bass
+Black Sea Bass
+Striped Bass
+Branzino
+Loup de Mer
+Yellowtail Snapper
+Mutton Snapper
+Lane Snapper
+Black Grouper
+Red Grouper
+Goliath Grouper
+Nile Tilapia
+Channel Catfish
+Swai
+Pangasius
+Yellow Perch
+Ocean Perch
+Walleye
+Pike
+Northern Pike
+Pickerel
+John Dory
+Monkfish Tail
+Monkfish Liver
+Ankimo
+Rockfish
+Pacific Rockfish
+Striped Rockfish
+Dolphinfish
+Wahoo
+Ono
+Corvina
+Drum
+Redfish
+Red Drum
+Skate Wing
+Ray
+Silver Pomfret
+Black Pomfret
+Bangus
+Threadfin
+Tarakihi
+Blue Warehou
+Atlantic Salmon
+King Salmon
+Chinook Salmon
+Sockeye Salmon
+Coho Salmon
+Pink Salmon
+Chum Salmon
+Lox
+Gravlax
+Salmon Steak
+Salmon Belly
+Ikura
+Yellowfin Tuna
+Ahi Tuna
+Bigeye Tuna
+Albacore Tuna
+Bluefin Tuna
+Sashimi-Grade Tuna
+Tuna Belly
+Toro
+Atlantic Mackerel
+King Mackerel
+Japanese Mackerel
+Saba
+Fresh Sardine
+Canned Sardine
+Sardine Fillet
+Fresh Anchovy
+Anchovy Fillet
+White Anchovy
+Boquerón
+Pickled Herring
+Smoked Herring
+Kipper
+Bloater
+Brook Trout
+Steelhead Trout
+Smoked Trout
+Swordfish Steak
+Marlin
+Opah
+Moonfish
+Arctic Char
+Whitefish
+Lake Whitefish
+Smoked Whitefish
+Bluefish
+Shad
+Shad Roe
+Pompano
+Hamachi
+Kampachi
+Amberjack
+Common Carp
+Grass Carp
+Silver Carp
+Crucian Carp
+Bream
+Gilt-Head Bream
+Tai
+Madai
+Saltwater Eel
+Anago
+Smoked Eel
+Sturgeon
+Beluga Sturgeon
+Paddlefish
+Large Shrimp
+Jumbo Shrimp
+Medium Shrimp
+Small Shrimp
+Tiger Shrimp
+Black Tiger Shrimp
+White Shrimp
+Gulf Shrimp
+Rock Shrimp
+Spot Prawn
+Banana Prawn
+Bay Shrimp
+Cocktail Shrimp
+Cooked Shrimp
+Raw Shrimp
+Shell-On Shrimp
+Peeled Shrimp
+Deveined Shrimp
+Kapi
+Mam Tom
+Crawdad
+Scampi
+Blue Crab
+Dungeness Crab
+Stone Crab
+Crab Leg
+Crab Claw
+Lump Crab Meat
+Jumbo Lump Crab
+Claw Crab Meat
+Backfin Crab
+Mud Crab
+Swimmer Crab
+Spider Crab
+Horsehair Crab
+Canned Crab
+Crab Roe
+Crab Paste
+Crab Tomalley
+Maine Lobster
+Spiny Lobster
+Rock Lobster
+Lobster Claw
+Lobster Knuckle
+Lobster Meat
+Lobster Roe
+Lobster Tomalley
+Slipper Lobster
+Moreton Bay Bug
+Yabby
+Littleneck Clam
+Cherrystone Clam
+Quahog
+Manila Clam
+Surf Clam
+Blood Cockle
+Blue Mussel
+Green-Lipped Mussel
+Mediterranean Mussel
+Eastern Oyster
+Pacific Oyster
+Kumamoto Oyster
+Olympia Oyster
+Belon Oyster
+Sea Scallop
+Bay Scallop
+Diver Scallop
+Conpoy
+Baby Squid
+Squid Tube
+Squid Ring
+Squid Tentacle
+Cuttlefish Ink
+Octopus Tentacle
+Dried Octopus
+Fresh Abalone
+Canned Abalone
+Dried Abalone
+Queen Conch
+Periwinkle
+Sea Snail
+Dried Sea Cucumber
+Rehydrated Sea Cucumber
+Salted Jellyfish
+Sea Squirt
+Stockfish
+Bacalao
+Baccalà
+Narutomaki
+Chikuwa
+Surimi Stick
+Canned Salmon
+Canned Mackerel
+Canned Sardine in Oil
+Canned Sardine in Tomato
+Smoked Mackerel
+Sturgeon Caviar
+Salmon Caviar
+Masago
+Bottarga
+Dried Mullet Roe
+Karasumi
+Dried Bonito
+Dried Cuttlefish
+Dried Oyster
+Dried Fish Maw
+Shark Fin
+Dried Shark Fin
+Canned Clam
+Canned Oyster
+Smoked Oyster
+Canned Mussel
+Canned Octopus
+Acadian Redfish
+Alfonsino
+Amberjack Fillet
+Arctic Grayling
+Barracuda
+Barramundi Fillet
+Bigeye Tuna Loin
+Black Drum
+Blowfish
+Bluegill
+Bonefish
+Bowfin
+Buffalo Fish
+Burbot
+Butterfish
+Capelin
+Char
+Cisco
+Cobia
+Coney
+Corvina Fillet
+Croaker
+Dab
+Dogfish
+Dorado
+Escolar
+Eulachon
+Oolichan
+Filefish
+Flying Fish
+Garfish
+Giant Trevally
+Golden Tilefish
+Goosefish
+Gurnard
+Hoki
+Horse Mackerel
+Aji
+Jack Crevalle
+Jack Mackerel
+Jewfish
+John Dory Fillet
+Kingklip
+Knobbed Whelk
+Ladyfish
+Lake Sturgeon
+Largemouth Bass
+Lemon Fish
+Lookdown
+Mahi Mahi Fillet
+Mangrove Snapper
+Margate
+Meagre
+Mirror Dory
+Moonfish Fillet
+Mullet
+Red Mullet
+Grey Mullet
+Mutton Snapper Fillet
+Needlefish
+Nile Perch
+Northern Pike Fillet
+Orange Roughy
+Pacific Saury
+Sanma
+Parrotfish
+Patagonian Toothfish
+Permit
+Pilchard
+Plaice
+Porgy
+Queenfish
+Rainbow Runner
+Sablefish Fillet
+Sand Dab
+Saury
+Scad
+Sheepshead
+Silverside
+Spadefish
+Spot Fish
+Spotted Seatrout
+Sturgeon Fillet
+Sucker Fish
+Sunfish
+Surf Perch
+Tautog
+Blackfish
+Threadfin Bream
+Tilefish
+Triggerfish
+Tripletail
+Turbot Fillet
+Wahoo Fillet
+Weakfish
+Whitefish Fillet
+Wolffish
+Wreckfish
+Yellowtail Fillet
+Yellowfin Sole
+Zubaidi
+Silver Pomfret Fillet
+Ghol
+Rawas
+Surmai
+Kingfish Steak
+Bangda
+Indian Mackerel
+Hilsa
+Ilish
+Rohu
+Katla
+Mrigal
+Singi
+Magur
+Pabda
+Chingri
+Tangra
+Bhetki
+Barramundi Asian
+Snakehead
+Murrel
+Tilapia Fillet
+Basa Fillet
+Giant Tiger Prawn
+School Prawn
+King Prawn Cutlet
+Crystal Prawn
+Glass Shrimp
+Ghost Shrimp
+Fairy Shrimp
+Red Claw Crayfish
+Signal Crayfish
+Noble Crayfish
+Marron
+Red Swamp Crawfish
+White River Crawfish
+Jonah Crab
+Peekytoe Crab
+Tanner Crab
+Queen Crab
+Lady Crab
+Velvet Crab
+Brown Crab
+Mangrove Crab
+Flower Crab
+Blue Swimmer Crab
+Gazami Crab
+Lobster Mushroom Seafood
+Squat Lobster
+Langoustine Tail
+Scampi Tail
+Dublin Bay Prawn
+Ark Clam
+Atlantic Surf Clam
+Butter Clam
+Hard Clam
+Horse Clam
+Pismo Clam
+Soft Shell Clam
+Steamer Clam
+Venus Clam
+Warty Venus
+Pipi
+Tuatua
+Black Mussel
+Brown Mussel
+Chilean Mussel
+Horse Mussel
+Zebra Mussel
+Bearded Mussel
+Flat Oyster
+Rock Oyster
+Portuguese Oyster
+Sydney Rock Oyster
+Coffin Bay Oyster
+Bluepoint Oyster
+Wellfleet Oyster
+Malpeque Oyster
+Weathervane Scallop
+Queen Scallop
+Calico Scallop
+Pink Scallop
+Bigfin Reef Squid
+Humboldt Squid
+Japanese Flying Squid
+Loligo Squid
+Market Squid
+Shortfin Squid
+Stuffing Squid
+Arrow Squid
+Giant Pacific Octopus
+Curled Octopus
+Day Octopus
+Webfoot Octopus
+Nautilus
+Winkle
+Turban Shell
+Topshell
+Trumpet Shell
+Sazae
+Tsubugai
+Akagai
+Red Clam
+Mirugai
+Giant Clam
+Hotategai
+Japanese Scallop
+Hokki
+Surf Clam Sushi
+Canned Anchovy in Oil
+Anchovy in Salt
+Anchovy Fillet in Olive Oil
+Canned Tuna in Water
+Canned Tuna in Oil
+Tuna Ventresca
+Canned Salmon Pink
+Canned Salmon Red
+Salmon Jerky
+Canned Mackerel in Tomato
+Canned Mackerel in Brine
+Canned Sardine in Mustard
+Canned Sardine in Hot Sauce
+Canned Herring
+Rollmop Herring
+Matjes Herring
+Soused Herring
+Smoked Salmon Fillet
+Hot Smoked Salmon
+Cold Smoked Salmon
+Pastrami Salmon
+Smoked Trout Fillet
+Smoked Sablefish
+Smoked Haddock
+Finnan Haddie
+Stockfish Cod
+Salt Cod Fillet
+Brandade Ingredient
+Dried Anchovy Korean
+Myeolchi
+Large Dried Anchovy
+Small Dried Anchovy
+Dried Pollock
+Bugeopo
+Hwangtae
+Dried Yellow Corvina
+Dried Filefish
+Jwipo
+Cuttlefish Jerky
+Ojingeo Mareun
+Salmon Flake
+Sake Flake
+Salmon Furikake Base
+Tarako
+Cod Roe
+Pollack Roe
+Mentaiko Spicy
+Shirasu
+Baby Sardine
+Chirimen Jako
+Jako
+Niboshi
+Dried Baby Sardine
+Iriko
+Sakura Ebi
+Dried Sakura Shrimp
+Hoshi Ebi
+Dried Shrimp Large
+Ayu
+Sweetfish
+Japanese Sweetfish
+Salt-Grilled Ayu
+Tai Snapper
+Madai Snapper
+Kinmedai
+Splendid Alfonsino
+Isaki
+Chicken Grunt
+Nodoguro
+Blackthroat Seaperch
+Hirame
+Japanese Flounder
+Karei
+Japanese Flatfish
+Katsuo
+Skipjack Fresh
+Tataki Katsuo Cut
+Bonito Fresh
+Shime Saba
+Vinegar-Cured Mackerel
+Saba Misoni Cut
+Buri
+Japanese Yellowtail
+Kanpachi Fresh
+Greater Amberjack
+Iwashi
+Japanese Sardine
+Sanma Fresh
+Pacific Saury Fresh
+Mebaru
+Rockfish Japanese
+Monkfish Japanese
+Hamo
+Pike Conger
+Daggertooth Pike Conger
+Sawara
+Japanese Spanish Mackerel
+Suzuki
+Japanese Sea Bass
+Fugu
+Pufferfish
+Torafugu
+Tiger Pufferfish
+Kue
+Longtooth Grouper
+Ishidai
+Striped Beakfish
+Bangus Belly
+Milkfish Belly
+Tilapia Filipino
+Galunggong
+Round Scad
+Tulingan
+Eastern Little Tuna
+Dilis
+Fresh Anchovy Filipino
+Daing
+Dried Fish Filipino
+Tinapa
+Smoked Fish Filipino
+Tuyo
+Salted Dried Fish
+Pomfret White
+Pomfret Black
+Pomfret Chinese
+Butterfish Chinese
+Yellow Croaker
+Large Yellow Croaker
+Small Yellow Croaker
+Hairtail
+Ribbonfish
+Cutlassfish
+Mandarin Fish
+Chinese Perch
+Guiyu
+Grass Carp Fillet
+Silver Carp Head
+Bighead Carp
+Tilapia Chinese
+Hilsa Fillet
+Ilish Fillet
+Pabda Fillet
+Chitol
+Clown Knifefish
+Rui Fish
+Katla Fish
+Mrigel
+Bhetki Fillet
+Parshe
+Mullet Indian
+Lobster Medallion
+Lobster Thermidor Shell
+Lobster Bisque Base
+Crab Rangoon Filling
+Crab Cake Mix
+Soft Shell Crab Cleaned
+Shrimp Paste Block
+Shrimp Powder
+Dried Shrimp Floss
+Squid Ink
+Nero di Seppia
+Cuttlefish Ink Sachet
+Octopus Carpaccio
+Octopus Terrine Base
+Scallop Coral
+Scallop Skirt
+Scallop Adductor
+Oyster Sauce Base Ingredient
+Oyster Mushroom Sauce Base
+Sashimi Salmon
+Sashimi Tuna
+Sashimi Hamachi
+Sashimi Tai
+Sashimi Hirame
+Sashimi Ika
+Sashimi Ebi
+Sashimi Hotate
+Sashimi Uni
+Sashimi Tako
+Sashimi Akagai
+Sashimi Mirugai
+Sashimi Shimesaba
+Sashimi Engawa
+Sashimi Otoro
+Sashimi Chutoro
+Sashimi Akami
+Sashimi Negitoro
+Aji Sashimi
+Horse Mackerel Sushi
+Kohada
+Gizzard Shad
+Sayori
+Halfbeak
+Hokke
+Atka Mackerel
+Kinme
+Splendid Alfonsino Sushi
+Kurodai
+Black Sea Bream
+Kamasu
+Barracuda Japanese
+Kisu
+Sillago
+Kawahagi
+Filefish Sushi
+Tachiuo
+Cutlass Fish Japanese
+Shirako
+Milt
+Cod Milt
+Ankimo Sushi
+Monkfish Liver Sushi
+Shako
+Mantis Shrimp Sushi
+Kuruma Ebi
+Japanese Tiger Prawn
+Botan Ebi
+Botan Shrimp
+Ama Ebi
+Sweet Shrimp
+Shirauo
+Ice Fish
+Whitebait Sushi
+Inari Sushi Shell
+Sushi Rice Ball
+Temari Sushi Base
+Chirashi Topping Mix
+Sashimi Platter Fish
+Narezushi Base
+Fermented Sushi Fish
+Funazushi Base
+Fermented Carp
+Kusaya
+Fermented Dried Fish
+Shiokara
+Salted Fermented Seafood
+Ika no Shiokara
+Fermented Squid Gut
+Shutō
+Fermented Bonito Gut
+Anchovy Salted Italian
+Anchovy Colatura Drip
+Bottarga di Muggine
+Grey Mullet Bottarga
+Bottarga di Tonno
+Tuna Bottarga
+Karasumi Slice
+Dried Mullet Roe Slice
+Mojama
+Spanish Dried Tuna
+Bresaola di Tonno
+Tuna Bresaola
+Lakerda
+Cured Bonito Turkish
+Çiroz
+Dried Mackerel Turkish
+Ringa
+Smoked Herring Turkish
+Palamut
+Bonito Turkish
+Pastırma Fish
+Turkish Fish Pastırma
+Conch Meat
+Conch Fritter Meat
+Sea Cucumber Dried
+Sea Cucumber Rehydrated
+Bêche-de-mer
+Sea Urchin Roe Fresh
+Uni Sashimi Grade
+Sea Urchin Canned
+Geoduck Sashimi
+Geoduck Neck
+Razor Clam Whole
+Razor Clam Meat
+Cockle Meat Fresh
+Cockle Canned
+Whelk Meat
+Limpet
+Barnacle
+Percebes
+Goose Barnacle
+Sea Grape
+Green Caviar
+Sea Lettuce Fresh
+Ulva Lactuca
+Dulse Flake
+Dulse Whole
+Irish Moss Fresh
+Irish Sea Moss Gel
+Sea Moss Powder
+Ogo Seaweed
+Limu Seaweed
+Hawaiian Seaweed
+Mozuku Seaweed
+Okinawan Seaweed
+Mekabu Seaweed
+Tosaka Seaweed
+Suginori Seaweed
+Funori Seaweed
+Fried Whitebait
+Fried Smelt
+Fried Baby Sardine
+Ikan Bilis Fried
+Fried Anchovy Malaysian
+Crispy Ikan Bilis
+Dried Shrimp Paste Block
+Dried Cuttlefish Shredded
+Cuttlefish Snack
+Dried Squid Whole
+Dried Squid Shredded
+Squid Jerky
+Fish Cake Kamaboko
+Fish Cake Chikuwa
+Fish Cake Hanpen
+Fish Cake Naruto
+Fish Cake Satsuma-Age
+Fish Cake Gobo-Ten
+Fish Ball Thai
+Fish Ball Chinese
+Fish Ball Fuzhou
+Shrimp Ball
+Cuttlefish Ball
+Lobster Ball
+Crab Stick Imitation
+Kanikama
+Fish Tofu Cube
+Fish Skin Crispy
+Fish Skin Salted Egg
+Fish Maw Dried
+Fish Maw Fried
+Prawn Cracker Raw
+Prawn Cracker Fried
+Keropok
+Shrimp Chip Raw
+Shrimp Chip Fried
+Krupuk Udang
+Fish Cracker Raw
+Fish Cracker Fried
+Krupuk Ikan
+Squid Cracker
+Cuttlefish Cracker
+Emping Melinjo Cracker

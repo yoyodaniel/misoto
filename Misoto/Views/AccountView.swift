@@ -281,7 +281,7 @@ struct AccountView: View {
                                                 }) {
                                                     Label(
                                                         recipe.isPrivate ? LocalizedString("Make Public", comment: "Make recipe public") : LocalizedString("Make Private", comment: "Make recipe private"),
-                                                        systemImage: recipe.isPrivate ? "eye.fill" : "eye.slash.fill"
+                                                        systemImage: recipe.isPrivate ? "globe" : "eye.slash.fill"
                                                     )
                                                 }
                                                 
@@ -609,10 +609,19 @@ struct RecipeGridItem: View {
                 }
                 
                 // Privacy status indicator
-                // Show icon for private recipes (fully private or shared)
-                // Show person.2.fill if recipe has shared users (either active or preserved)
-                if recipe.isPrivate {
-                    Image(systemName: recipe.hasSharedUsers ? "person.2.fill" : "eye.slash.fill")
+                // Show globe for public recipes, person.2.fill for shared, nothing for private
+                if !recipe.isPrivate {
+                    // Public (shared globally)
+                    Image(systemName: "globe")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(6)
+                        .background(Color.black.opacity(0.6))
+                        .clipShape(Circle())
+                        .padding(8)
+                } else if recipe.hasSharedUsers {
+                    // Private but shared with specific users
+                    Image(systemName: "person.2.fill")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(6)
@@ -620,7 +629,7 @@ struct RecipeGridItem: View {
                         .clipShape(Circle())
                         .padding(8)
                 }
-                // Public recipes show no icon (or could show eye.fill if desired)
+                // Fully private recipes show no icon (default state)
             }
         }
         .aspectRatio(1, contentMode: .fit)

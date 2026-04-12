@@ -16,11 +16,12 @@ struct RecipeMetadataRow: View {
         HStack(spacing: 16) {
             // Time
             HStack(spacing: 4) {
-                Image(systemName: "clock")
+                Image(systemName: durationIcon(for: totalTime))
                     .font(.system(size: 14))
+                    .foregroundColor(totalTime >= 1440 ? .yellow : .primary)
                 Text(LocalizedString("Time", comment: "Time label"))
                     .font(.system(size: 14))
-                Text(formatTime(totalTime))
+                Text(formatDuration(totalTime))
                     .font(.system(size: 14, weight: .medium))
             }
             .foregroundColor(.primary)
@@ -51,21 +52,7 @@ struct RecipeMetadataRow: View {
         }
     }
     
-    private func formatTime(_ minutes: Int) -> String {
-        if minutes < 60 {
-            return LocalizedString("About %d minutes", comment: "Time format for minutes")
-                .replacingOccurrences(of: "%d", with: "\(minutes)")
-        } else {
-            let hours = minutes / 60
-            let remainingMinutes = minutes % 60
-            if remainingMinutes == 0 {
-                return LocalizedString("About %d hours", comment: "Time format for hours")
-                    .replacingOccurrences(of: "%d", with: "\(hours)")
-            } else {
-                return String(format: LocalizedString("About %d-%d minutes", comment: "Time range format"), minutes - 10, minutes)
-            }
-        }
-    }
+    // Time formatting now uses the shared formatDuration() helper
 }
 
 #Preview {

@@ -194,6 +194,26 @@
 "No users found" = "No users found";
 "Chef" = "Chef";
 
+/* Nutrition */
+"Nutrition" = "Nutrition";
+"Estimate" = "Estimate";
+"Estimating nutrition…" = "Estimating nutrition…";
+"Per serving · AI estimated" = "Per serving · AI estimated";
+"Protein" = "Protein";
+"Carbs" = "Carbs";
+"Fat" = "Fat";
+"Saturated Fat" = "Saturated Fat";
+"Fiber" = "Fiber";
+"Sugar" = "Sugar";
+"Sodium" = "Sodium";
+"Could not estimate nutrition" = "Could not estimate nutrition";
+"Try Again" = "Try Again";
+"Tap Estimate to get AI-powered nutrition information for this recipe." = "Tap Estimate to get AI-powered nutrition information for this recipe.";
+"% Daily Value based on a 2,000 kcal diet" = "% Daily Value based on a 2,000 kcal diet";
+"Nutritional values are AI-estimated and may not be accurate. For dietary or health-related decisions, always consult a qualified nutritionist or healthcare professional." = "Nutritional values are AI-estimated and may not be accurate. For dietary or health-related decisions, always consult a qualified nutritionist or healthcare professional.";
+"AI-estimated values — not a substitute for professional dietary advice." = "AI-estimated values — not a substitute for professional dietary advice.";
+"Tap the AI button to estimate nutrition for this recipe." = "Tap the AI button to estimate nutrition for this recipe.";
+
 /* Recipe */
 "Title" = "Title";
 "Recipe Title" = "Recipe Title";
@@ -232,6 +252,10 @@
 "Report" = "Report";
 "Report Recipe" = "Report Recipe";
 "min" = "min";
+"h" = "h";
+"d" = "d";
+"recipe" = "recipe";
+"recipes" = "recipes";
 "Difficulty" = "Difficulty";
 "Spicy Level" = "Spicy Level";
 "Add Dish Image" = "Add Dish Image";
@@ -408,12 +432,14 @@
 "Vegan" = "Vegan";
 "Other" = "Other";
 "Tips" = "Tips";
-"Write a Note" = "Write a Note";
-"Write Note" = "Write Note";
+"Write a Note to Self" = "Write a Note to Self";
 "Edit Note" = "Edit Note";
 "My Notes" = "My Notes";
+"All" = "All";
+"notes" = "notes";
 "Edited" = "Edited";
 "Create your own recipe with" = "Create your own recipe with";
+"Shared via Misoto" = "Shared via Misoto";
 "Delete Note" = "Delete Note";
 "Are you sure you want to delete this note? This action cannot be undone." = "Are you sure you want to delete this note? This action cannot be undone.";
 "Close" = "Close";
@@ -426,6 +452,15 @@
 "Privacy & Terms" = "Privacy & Terms";
 "Privacy Policy" = "Privacy Policy";
 "Terms of Service" = "Terms of Service";
+
+/* Explore More Apps */
+"Explore More Apps" = "Explore More Apps";
+"The #1 game timer for boardgames" = "The #1 game timer for boardgames";
+"Share & save great food finds" = "Share & save great food finds";
+"The easy date calculator" = "The easy date calculator";
+"Tipping made easier" = "Tipping made easier";
+"Track your clinical trials" = "Track your clinical trials";
+
 "Introduction" = "Introduction";
 "Privacy Policy Introduction" = "This Privacy Policy describes how Misoto collects, uses, and protects your personal information when you use our app.";
 "Data We Collect" = "Data We Collect";
@@ -512,6 +547,38 @@
 "Your account is completely private. Your profile and recipes are hidden from all users, including followers." = "Your account is completely private. Your profile and recipes are hidden from all users, including followers.";
 "Public" = "Public";
 "Private" = "Private";
+"Default post visibility" = "Default post visibility";
+"Share posts publicly" = "Share posts publicly";
+"Start new posts as public" = "Start new posts as public";
+"When you create a recipe, you choose public or private before saving. This only sets the default for new drafts." = "When you create a recipe, you choose public or private before saving. This only sets the default for new drafts.";
+"Who can see this recipe?" = "Who can see this recipe?";
+"Post publicly" = "Post publicly";
+"Share with the Misoto community and appear in Explore." = "Share with the Misoto community and appear in Explore.";
+"Post privately" = "Post privately";
+"Only you see it on your profile; it will not appear in Explore." = "Only you see it on your profile; it will not appear in Explore.";
+"Recommended" = "Recommended";
+"Public posts inspire others and help great home cooking spread around the world." = "Public posts inspire others and help great home cooking spread around the world.";
+"You can switch to public anytime from your recipe." = "You can switch to public anytime from your recipe.";
+"Before you save" = "Before you save";
+"Polish" = "Polish";
+"Auto-generate steps" = "Auto-generate steps";
+"Add at least one instruction step to polish." = "Add at least one instruction step to polish.";
+"Failed to polish instructions: %@" = "Failed to polish instructions: %@";
+"Undo instruction AI edit" = "Undo instruction AI edit";
+"Redo instruction AI edit" = "Redo instruction AI edit";
+"Undo description AI edit" = "Undo description AI edit";
+"Redo description AI edit" = "Redo description AI edit";
+"Auto-generate description" = "Auto-generate description";
+"Add description text to polish." = "Add description text to polish.";
+"Failed to polish description: %@" = "Failed to polish description: %@";
+"Auto-generate tips" = "Auto-generate tips";
+"Undo tips AI edit" = "Undo tips AI edit";
+"Redo tips AI edit" = "Redo tips AI edit";
+"Add at least one tip to polish." = "Add at least one tip to polish.";
+"Failed to polish tips: %@" = "Failed to polish tips: %@";
+"Failed to generate tips: %@" = "Failed to generate tips: %@";
+"No tips were generated. Try adding more recipe detail." = "No tips were generated. Try adding more recipe detail.";
+"Standardized ingredients library added" = "Standardized ingredients library added";
 "Completely Private" = "Completely Private";
 "Account Privacy" = "Account Privacy";
 "Your profile is visible to everyone" = "Your profile is visible to everyone";
@@ -536,6 +603,15 @@
 "Free" = "Free";
 "Premium" = "Premium";
 "Subscription" = "Subscription";
+"1 day" = "1 day";
+"%d days" = "%d days";
+"1 week" = "1 week";
+"%d weeks" = "%d weeks";
+"1 month" = "1 month";
+"%d months" = "%d months";
+"1 year" = "1 year";
+"%d years" = "%d years";
+"Collect" = "Collect";
 "Premium Subscription" = "Premium Subscription";
 "Account Type" = "Account Type";
 "Upgrade Now" = "Upgrade Now";
@@ -686,6 +762,95 @@
 /* Terms of Service - Last Updated */
 "OpenAI Service Not Available" = "OpenAI Service Not Available";
 "Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead." = "Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead.";
-"OpenAI Service Not Available" = "OpenAI Service Not Available";
-"Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead." = "Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead.";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!";
+
+/* Ingredient Browser */
+"Ingredients" = "Ingredients";
+"Search ingredients..." = "Search ingredients...";
+"Allergen Guide" = "Allergen Guide";
+"No ingredients found" = "No ingredients found";
+"Try a different search term" = "Try a different search term";
+"Browse all ingredients" = "Browse all ingredients";
+
+/* Allergens */
+"Dairy" = "Dairy";
+"Eggs" = "Eggs";
+"Fish" = "Fish";
+"Shellfish" = "Shellfish";
+"Tree Nuts" = "Tree Nuts";
+"Peanuts" = "Peanuts";
+"Gluten" = "Gluten";
+"Soy" = "Soy";
+"Sesame" = "Sesame";
+
+/* Dietary Flags */
+"Gluten-Free" = "Gluten-Free";
+"Dairy-Free" = "Dairy-Free";
+"Nut-Free" = "Nut-Free";
+
+/* Food Categories */
+"Produce" = "Produce";
+"Meat" = "Meat";
+"Poultry" = "Poultry";
+"Seafood" = "Seafood";
+"Dairy & Eggs" = "Dairy & Eggs";
+"Grains & Pasta" = "Grains & Pasta";
+"Legumes" = "Legumes";
+"Spices" = "Spices";
+"Herbs" = "Herbs";
+"Oils" = "Oils";
+"Vinegars" = "Vinegars";
+"Sauces" = "Sauces";
+"Condiments" = "Condiments";
+"Baking" = "Baking";
+"Nuts & Seeds" = "Nuts & Seeds";
+"Beverages" = "Beverages";
+"Other" = "Other";
+
+/* Reviews */
+"Reviews" = "Reviews";
+"Write a Review" = "Write a Review";
+"Edit Review" = "Edit Review";
+"No reviews yet. Be the first to share your thoughts!" = "No reviews yet. Be the first to share your thoughts!";
+"Share your thoughts about this recipe..." = "Share your thoughts about this recipe...";
+"Your Review" = "Your Review";
+"Rating" = "Rating";
+"Post" = "Post";
+"Update" = "Update";
+"Delete Review" = "Delete Review";
+"Are you sure you want to delete this review? This action cannot be undone." = "Are you sure you want to delete this review? This action cannot be undone.";
+"Poor" = "Poor";
+"Fair" = "Fair";
+"Good" = "Good";
+"Very Good" = "Very Good";
+"Excellent" = "Excellent";
+"Just now" = "Just now";
+"%d min ago" = "%d min ago";
+"%d h ago" = "%d h ago";
+"%d d ago" = "%d d ago";
+"%d w ago" = "%d w ago";
+"%d mo ago" = "%d mo ago";
+"%d y ago" = "%d y ago";
+"You have already left a review for this recipe" = "You have already left a review for this recipe";
+"Comment not found" = "Comment not found";
+"View All %d Reviews" = "View All %d Reviews";
+"%d reviews" = "%d reviews";
+"Version %@" = "Version %@";
+"Nutrition (BETA)" = "Nutrition (BETA)";
+"Posts are private by default" = "Posts are private by default";
+"Share posts globally with one tap" = "Share posts globally with one tap";
+"Users can now leave reviews and ratings" = "Users can now leave reviews and ratings";
+"Nutrition Info (BETA)" = "Nutrition Info (BETA)";
+"Cuisine cards added to sort by cuisine" = "Cuisine cards added to sort by cuisine";
+"Generate instructions automatically with AI" = "Generate instructions automatically with AI";
+"Dismiss" = "Dismiss";
+"Don't show again" = "Don't show again";
+
+/* Keys present in translations but missing from English base */
+"AI Extraction Limit Reached" = "AI Extraction Limit Reached";
+"AI descriptions are free. AI extractions (from images, links, or websites) share a combined monthly limit." = "AI descriptions are free. AI extractions (from images, links, or websites) share a combined monthly limit.";
+"Free Trial" = "Free Trial";
+"Monthly Usage" = "Monthly Usage";
+"Upgrade to Premium" = "Upgrade to Premium";
+"You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes.";
+"Your free monthly credits have been used. Upgrade to Premium now to continue extracting recipes without limits and unlock all premium features." = "Your free monthly credits have been used. Upgrade to Premium now to continue extracting recipes without limits and unlock all premium features.";
