@@ -10,6 +10,7 @@ import StoreKit
 import FirebaseFirestore
 import FirebaseAuth
 import Combine
+import OSLog
 
 @MainActor
 class SubscriptionService: ObservableObject {
@@ -100,7 +101,7 @@ class SubscriptionService: ObservableObject {
     // MARK: - Restore Purchases
     
     func restorePurchases() async throws {
-        guard let userID = Auth.auth().currentUser?.uid else {
+        guard Auth.auth().currentUser?.uid != nil else {
             throw SubscriptionError.unauthorized
         }
         
@@ -190,13 +191,14 @@ class SubscriptionService: ObservableObject {
     
     private func listenForTransactions() -> Task<Void, Error> {
         return Task.detached {
+            let log = Logger(subsystem: "com.miniadd.Misoto", category: "SubscriptionTransactions")
             for await result in StoreKit.Transaction.updates {
                 do {
                     let transaction = try await self.checkVerified(result)
                     await self.updateSubscriptionFromTransaction(transaction)
                     await transaction.finish()
                 } catch {
-                    print("❌ Transaction verification failed: \(error.localizedDescription)")
+                    log.error("Transaction verification failed: \(error.localizedDescription, privacy: .public)")
                 }
             }
         }

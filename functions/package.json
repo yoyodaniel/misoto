@@ -1,0 +1,22 @@
+{
+  "name": "misoto-functions",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": "24"
+  },
+  "scripts": {
+    "lint": "echo \"No lint configured\"",
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "NODE_OPTIONS=--max-old-space-size=16384 FUNCTIONS_DISCOVERY_TIMEOUT=180 ./node_modules/.bin/firebase deploy --only functions",
+    "deploy:npx": "NODE_OPTIONS=--max-old-space-size=16384 FUNCTIONS_DISCOVERY_TIMEOUT=180 npx firebase deploy --only functions"
+  },
+  "dependencies": {
+    "apn": "^2.2.0",
+    "firebase-admin": "^13.0.1",
+    "firebase-functions": "^6.1.0"
+  },
+  "devDependencies": {
+    "firebase-tools": "^15.17.0"
+  }
+}

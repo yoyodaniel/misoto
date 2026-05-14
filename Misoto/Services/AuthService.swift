@@ -23,6 +23,7 @@ class AuthService: ObservableObject {
     
     private let firestore = FirebaseManager.shared.firestore
     private let storage = Storage.storage()
+    private let xpService = XPService.shared
     private var currentNonce: String?
     private var authStateListener: AuthStateDidChangeListenerHandle?
     
@@ -518,6 +519,7 @@ class AuthService: ObservableObject {
         NotificationCenter.default.post(name: NSNotification.Name("UserProfileUpdated"), object: nil, userInfo: ["userID": userID])
         
         await reloadUserData()
+        await awardCompleteProfileIfEligible(userID: userID)
     }
     
     func uploadProfileImage(_ image: UIImage) async throws -> String {
@@ -565,6 +567,7 @@ class AuthService: ObservableObject {
         ])
         
         await reloadUserData()
+        await awardCompleteProfileIfEligible(userID: userID)
         return downloadURL.absoluteString
     }
     
@@ -615,6 +618,24 @@ class AuthService: ObservableObject {
         ])
         
         await reloadUserData()
+    }
+
+    private func awardCompleteProfileIfEligible(userID: String) async {
+        guard let userDoc = try? await firestore.collection("users").document(userID).getDocument(),
+              let data = userDoc.data() else { return }
+
+        let displayName = (data["displayName"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let username = (data["username"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let bio = (data["bio"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let profileImageURL = (data["profileImageURL"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        guard !displayName.isEmpty, !username.isEmpty, !bio.isEmpty, !profileImageURL.isEmpty else { return }
+
+        _ = try? await xpService.awardXPForAction(
+            receiverUserId: userID,
+            actorUserId: userID,
+            actionType: .completeProfile,
+            targetId: userID
+        )
     }
     
     // MARK: - Account Deletion

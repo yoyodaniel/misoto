@@ -7,9 +7,10 @@
 
 import UIKit
 import FirebaseCore
+import UserNotifications
 
 @objc(AppDelegate)
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     private var memoryWarningObserver: NSObjectProtocol?
     private var memoryMonitorTimer: Timer?
@@ -24,6 +25,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Start periodic memory monitoring to prevent memory buildup
         startMemoryMonitoring()
         
+        // Show notification banners while app is in foreground.
+        UNUserNotificationCenter.current().delegate = self
+        
         return true
     }
     
@@ -31,6 +35,24 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         // Handle URL schemes if needed
         return false
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let token = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+        print("✅ APNs device token received: \(token)")
+        NotificationCenter.default.post(
+            name: NSNotification.Name("APNsDeviceTokenUpdated"),
+            object: nil,
+            userInfo: ["token": token]
+        )
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("⚠️ Failed to register for remote notifications: \(error.localizedDescription)")
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        return [.banner, .sound, .badge]
     }
     
     // MARK: - Memory Warning Handling

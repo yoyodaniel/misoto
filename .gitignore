@@ -13,6 +13,7 @@ GoogleService-Info.plist
 **/GoogleService-Info.plist
 GoogleService-Info*.plist
 **/GoogleService-Info*.plist
+!GoogleService-Info.example.plist
 Misoto/Info.plist
 
 # macOS
@@ -34,3 +35,13 @@ Pods/
 *.swp
 *~.nib
 
+# Sensitive / local env (never commit)
+functions/.env
+.env
+**/.env
+!**/.env.example
+
+node_modules
+
+# Machine translation cache (regenerable)
+scripts/.translation_cache.json

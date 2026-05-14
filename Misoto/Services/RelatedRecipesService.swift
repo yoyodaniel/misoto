@@ -8,11 +8,18 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
+import OSLog
 
 @MainActor
 class RelatedRecipesService {
     private let firestore = FirebaseManager.shared.firestore
     private let recipesCollection = "recipes"
+    
+    private func publicRecipeExploreQuery() -> Query {
+        firestore.collection(recipesCollection)
+            .whereField("isPrivate", isEqualTo: false)
+            .whereField("isHidden", isEqualTo: false)
+    }
     
     // MARK: - Fetch Related Recipes
     
@@ -21,7 +28,7 @@ class RelatedRecipesService {
         
         // Strategy 1: Find recipes with same cuisine
         if let cuisineEnglish = recipe.cuisineEnglish, !cuisineEnglish.isEmpty {
-            let cuisineSnapshot = try await firestore.collection(recipesCollection)
+            let cuisineSnapshot = try await publicRecipeExploreQuery()
                 .whereField("cuisineEnglish", isEqualTo: cuisineEnglish)
                 .limit(to: limit + 1) // Fetch one extra to account for current recipe
                 .getDocuments()
@@ -57,7 +64,7 @@ class RelatedRecipesService {
         
         // Strategy 3: If still not enough, get recent popular recipes
         if relatedRecipes.count < limit {
-            let popularSnapshot = try await firestore.collection(recipesCollection)
+            let popularSnapshot = try await publicRecipeExploreQuery()
                 .order(by: "favoriteCount", descending: true)
                 .order(by: "createdAt", descending: true)
                 .limit(to: (limit - relatedRecipes.count) + 1) // Fetch one extra to account for current recipe
@@ -98,6 +105,7 @@ class RelatedRecipesService {
         await withTaskGroup(of: (String, Bool).self) { group in
             for authorID in authorIDs {
                 group.addTask {
+                    let log = Logger(subsystem: "com.miniadd.Misoto", category: "RelatedRecipesBanCheck")
                     do {
                         let userDoc = try await self.firestore.collection("users").document(authorID).getDocument()
                         if userDoc.exists, let userData = userDoc.data() {
@@ -106,7 +114,7 @@ class RelatedRecipesService {
                         }
                         return (authorID, false)
                     } catch {
-                        print("⚠️ Error checking ban status for user \(authorID): \(error.localizedDescription)")
+                        log.warning("Error checking ban status for user \(authorID, privacy: .public): \(error.localizedDescription, privacy: .public)")
                         return (authorID, false) // Err on the side of caution - don't filter if we can't verify
                     }
                 }
@@ -124,7 +132,8 @@ class RelatedRecipesService {
     }
     
     private func fetchAllRecipesExcept(recipeID: String, limit: Int) async throws -> [Recipe] {
-        let snapshot = try await firestore.collection(recipesCollection)
+        let snapshot = try await publicRecipeExploreQuery()
+            .order(by: "createdAt", descending: true)
             .limit(to: limit + 1) // Fetch one extra to account for current recipe
             .getDocuments()
         

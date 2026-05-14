@@ -66,9 +66,6 @@ struct NutrientsPer100g {
 class USDANutritionService {
     static let shared = USDANutritionService()
     
-    private let baseURL = "https://api.nal.usda.gov/fdc/v1"
-    private var apiKey: String { APIKeyProvider.usdaKey }
-    
     // In-memory cache: ingredient name → nutrients per 100g
     private var cache: [String: NutrientsPer100g] = [:]
     
@@ -153,38 +150,17 @@ class USDANutritionService {
     
     /// Perform a single USDA API search against specific data types
     private func performSearch(query: String, dataTypes: String?, requireQuality: Bool) async -> USDAFood? {
-        guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
-            return nil
-        }
-        
-        var urlString = "\(baseURL)/foods/search?query=\(encodedQuery)&pageSize=10&api_key=\(apiKey)"
-        if let dt = dataTypes {
-            urlString += "&dataType=\(dt)"
-        }
-        
+        let decodedDataTypes = dataTypes.flatMap { $0.removingPercentEncoding }
         let dtLabel = dataTypes ?? "All"
         print("🔍 USDA: Searching '\(query)' in [\(dtLabel)]")
-        
-        guard let url = URL(string: urlString) else {
-            print("⚠️ USDA: Invalid URL for '\(query)'")
-            return nil
-        }
-        
+
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            guard let httpResponse = response as? HTTPURLResponse else {
-                print("⚠️ USDA: No HTTP response for '\(query)'")
-                return nil
-            }
-            
-            guard httpResponse.statusCode == 200 else {
-                if let errorBody = String(data: data, encoding: .utf8) {
-                    print("⚠️ USDA API error (\(httpResponse.statusCode)) for '\(query)': \(errorBody.prefix(200))")
-                }
-                return nil
-            }
-            
+            let data = try await BackendAPIProxy.usdaFoodsSearch(
+                query: query,
+                dataTypes: decodedDataTypes,
+                pageSize: 10
+            )
+
             let searchResponse = try JSONDecoder().decode(USDASearchResponse.self, from: data)
             
             if searchResponse.totalHits == 0 {

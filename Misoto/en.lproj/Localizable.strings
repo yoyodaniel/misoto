@@ -137,6 +137,7 @@
 "Recipes" = "Recipes";
 "Followers" = "Followers";
 "Following" = "Following";
+"Search by name or username" = "Search by name or username";
 "Likes" = "Likes";
 "Sign Out" = "Sign Out";
 "Are you sure you want to sign out?" = "Are you sure you want to sign out?";
@@ -353,41 +354,28 @@
 "Cantonese" = "Cantonese";
 "Hunan" = "Hunan";
 "Shanghainese" = "Shanghainese";
-"Japanese" = "Japanese";
-"Korean" = "Korean";
-"Thai" = "Thai";
-"Vietnamese" = "Vietnamese";
 "Indian" = "Indian";
-"Indonesian" = "Indonesian";
 "Malaysian" = "Malaysian";
 "Singaporean" = "Singaporean";
-"Filipino" = "Filipino";
 "Burmese" = "Burmese";
 "Cambodian" = "Cambodian";
 "Laotian" = "Laotian";
 "Sri Lankan" = "Sri Lankan";
 "Pakistani" = "Pakistani";
 "Bangladeshi" = "Bangladeshi";
-"Italian" = "Italian";
-"French" = "French";
-"Spanish" = "Spanish";
 "Greek" = "Greek";
 "Turkish" = "Turkish";
-"German" = "German";
 "British" = "British";
 "Irish" = "Irish";
 "Scottish" = "Scottish";
 "Polish" = "Polish";
-"Russian" = "Russian";
 "Swedish" = "Swedish";
 "Norwegian" = "Norwegian";
 "Danish" = "Danish";
 "Finnish" = "Finnish";
-"Dutch" = "Dutch";
 "Belgian" = "Belgian";
 "Swiss" = "Swiss";
 "Austrian" = "Austrian";
-"Portuguese" = "Portuguese";
 "Czech" = "Czech";
 "Hungarian" = "Hungarian";
 "Romanian" = "Romanian";
@@ -450,7 +438,6 @@
 "Delete Account" = "Delete Account";
 "Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.\n\nYour account will be deleted after 30 days. To cancel the deletion, log back in within 30 days." = "Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your data.\n\nYour account will be deleted after 30 days. To cancel the deletion, log back in within 30 days.";
 "Privacy & Terms" = "Privacy & Terms";
-"Privacy Policy" = "Privacy Policy";
 "Terms of Service" = "Terms of Service";
 
 /* Explore More Apps */
@@ -560,7 +547,6 @@
 "Public posts inspire others and help great home cooking spread around the world." = "Public posts inspire others and help great home cooking spread around the world.";
 "You can switch to public anytime from your recipe." = "You can switch to public anytime from your recipe.";
 "Before you save" = "Before you save";
-"Polish" = "Polish";
 "Auto-generate steps" = "Auto-generate steps";
 "Add at least one instruction step to polish." = "Add at least one instruction step to polish.";
 "Failed to polish instructions: %@" = "Failed to polish instructions: %@";
@@ -616,7 +602,6 @@
 "Account Type" = "Account Type";
 "Upgrade Now" = "Upgrade Now";
 "AI Extractions" = "AI Extractions";
-"Recipes" = "Recipes";
 "Usage count format" = "%d / %d";
 "AI extractions (from images, links, or websites) share a combined monthly limit." = "AI extractions (from images, links, or websites) share a combined monthly limit.";
 "Misoto Premium" = "Misoto Premium";
@@ -762,7 +747,7 @@
 /* Terms of Service - Last Updated */
 "OpenAI Service Not Available" = "OpenAI Service Not Available";
 "Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead." = "Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead.";
-"AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!";
+"AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "Misoto is your home for recipes in 20 languages: save favorites, explore cooks worldwide, and turn photos, links, or websites into structured recipes with AI when you're signed in (handled securely on our servers). Get ratings, reviews, and nutrition (beta), then share dishes publicly, privately, or with friends. Download on the App Store.";
 
 /* Ingredient Browser */
 "Ingredients" = "Ingredients";
@@ -805,7 +790,6 @@
 "Baking" = "Baking";
 "Nuts & Seeds" = "Nuts & Seeds";
 "Beverages" = "Beverages";
-"Other" = "Other";
 
 /* Reviews */
 "Reviews" = "Reviews";
@@ -835,7 +819,6 @@
 "Comment not found" = "Comment not found";
 "View All %d Reviews" = "View All %d Reviews";
 "%d reviews" = "%d reviews";
-"Version %@" = "Version %@";
 "Nutrition (BETA)" = "Nutrition (BETA)";
 "Posts are private by default" = "Posts are private by default";
 "Share posts globally with one tap" = "Share posts globally with one tap";
@@ -845,6 +828,14 @@
 "Generate instructions automatically with AI" = "Generate instructions automatically with AI";
 "Dismiss" = "Dismiss";
 "Don't show again" = "Don't show again";
+
+/* What's New (app update sheet) */
+"Search with natural language." = "Find recipes with natural-language search—skip fiddly filters.";
+"RPG-style XP and level-ups as you cook." = "Level up as you cook, and read ratings & reviews on recipes you discover.";
+"Post publicly—or keep recipes private." = "Share recipes publicly, privately, or with hand-picked people—your kitchen, your rules.";
+"AI helps polish recipe text while you write." = "AI extraction and polish when you're signed in—handled securely on our servers.";
+"Don't show again until the next app update" = "Don't show again until the next app update";
+"Continue" = "Continue";
 
 /* Keys present in translations but missing from English base */
 "AI Extraction Limit Reached" = "AI Extraction Limit Reached";

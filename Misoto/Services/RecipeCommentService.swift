@@ -13,6 +13,7 @@ import FirebaseAuth
 class RecipeCommentService {
     private let firestore = FirebaseManager.shared.firestore
     private let commentsCollection = "recipeComments"
+    private let xpService = XPService.shared
     
     // MARK: - Fetch Comments
     
@@ -153,6 +154,26 @@ class RecipeCommentService {
         
         let commentRef = firestore.collection(commentsCollection).document(newComment.id)
         try commentRef.setData(from: newComment)
+
+        let trimmed = newComment.content.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.count >= 20 {
+            let recipeDoc = try await firestore.collection("recipes").document(newComment.recipeID).getDocument()
+            let recipeOwnerID = recipeDoc.data()?["authorID"] as? String
+            if let recipeOwnerID, !recipeOwnerID.isEmpty, recipeOwnerID != newComment.userID {
+                _ = try? await xpService.awardXPForAction(
+                    receiverUserId: recipeOwnerID,
+                    actorUserId: newComment.userID,
+                    actionType: .commentReceived,
+                    targetId: newComment.recipeID
+                )
+                _ = try? await xpService.awardXPForAction(
+                    receiverUserId: newComment.userID,
+                    actorUserId: newComment.userID,
+                    actionType: .commentWritten,
+                    targetId: newComment.recipeID
+                )
+            }
+        }
         
         print("✅ Comment saved successfully: \(newComment.id)")
         return newComment

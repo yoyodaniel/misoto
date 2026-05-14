@@ -11,11 +11,6 @@ import NaturalLanguage
 
 @MainActor
 class OpenAIService {
-    private static var apiKey: String {
-        APIKeyProvider.openAIKey
-    }
-    private static let baseURL = "https://api.openai.com/v1"
-    
     /// Extract recipe information from an image using OpenAI Vision API
     static func extractRecipe(from image: UIImage) async throws -> OpenAIRecipeResponse {
         return try await extractRecipe(from: [image])
@@ -23,10 +18,6 @@ class OpenAIService {
     
     /// Extract recipe information from multiple images using OpenAI Vision API
     static func extractRecipe(from images: [UIImage]) async throws -> OpenAIRecipeResponse {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !images.isEmpty else {
             throw OpenAIError.imageConversionFailed
         }
@@ -55,16 +46,6 @@ class OpenAIService {
         guard !imageContentItems.isEmpty else {
             throw OpenAIError.imageConversionFailed
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Create the prompt for recipe extraction (optimized for cost)
         let systemPrompt = """
@@ -232,27 +213,8 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -277,10 +239,6 @@ class OpenAIService {
     /// Parse recipe from extracted text (for cost-optimized flow: OCR -> local parsing -> optional OpenAI refinement)
     /// This is much cheaper than sending images to OpenAI Vision API
     static func parseRecipeFromText(_ extractedText: String) async throws -> OpenAIRecipeResponse {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !extractedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw OpenAIError.invalidResponse
         }
@@ -298,16 +256,6 @@ class OpenAIService {
         } else {
             truncatedText = extractedText
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Use the same system prompt as extractRecipe(fromURL:) since it's text-based
         let systemPrompt = """
@@ -468,26 +416,7 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (responseData, apiResponse) = try await URLSession.shared.data(for: request)
-        
-        guard let apiHTTPResponse = apiResponse as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard apiHTTPResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(apiHTTPResponse.statusCode)
-        }
+        let responseData = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
         
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
@@ -512,10 +441,6 @@ class OpenAIService {
     
     /// Extract recipe information from URL content (HTML/text) using OpenAI
     static func extractRecipe(fromURL urlString: String) async throws -> OpenAIRecipeResponse {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         // Fetch content from URL
         guard let url = URL(string: urlString) else {
             throw OpenAIError.invalidURL
@@ -536,16 +461,6 @@ class OpenAIService {
         // Extract plain text from HTML and limit to reasonable size (max ~15000 characters ≈ 3750 tokens)
         // Reduced from 20000 to save on input tokens
         let extractedText = extractTextFromHTML(htmlString, maxLength: 15000)
-        
-        // Create the request
-        guard let apiURL = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: apiURL)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Create the prompt for recipe extraction from text (optimized for cost)
         let systemPrompt = """
@@ -706,26 +621,7 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (responseData, apiResponse) = try await URLSession.shared.data(for: request)
-        
-        guard let apiHTTPResponse = apiResponse as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard apiHTTPResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(apiHTTPResponse.statusCode)
-        }
+        let responseData = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
         
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
@@ -948,23 +844,9 @@ class OpenAIService {
         instructions: [String] = [],
         backgroundContext: String? = nil
     ) async throws -> String {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !title.isEmpty else {
             return ""
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Build the prompt
         let ingredientsText = ingredients.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -1037,27 +919,8 @@ class OpenAIService {
             "temperature": 0.8 // Higher temperature for more creative, varied descriptions
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -1074,24 +937,10 @@ class OpenAIService {
     /// - Parameter instructions: Array of instruction strings to review
     /// - Returns: Array of corrected instruction strings (same order and count)
     static func editInstructions(_ instructions: [String]) async throws -> [String] {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         let validInstructions = instructions.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
         guard !validInstructions.isEmpty else {
             return instructions
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Detect the language of the instructions to preserve it
         let combinedText = validInstructions.joined(separator: " ")
@@ -1140,27 +989,8 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -1205,23 +1035,9 @@ class OpenAIService {
     ///   - ingredients: Array of ingredient strings
     /// - Returns: Array of instruction step strings
     static func generateInstructions(title: String, ingredients: [String]) async throws -> [String] {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !title.isEmpty else {
             return []
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Detect language from title and ingredients to preserve it
         let combinedText = title + " " + ingredients.joined(separator: " ")
@@ -1267,27 +1083,8 @@ class OpenAIService {
             "temperature": 0.7
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -1315,22 +1112,9 @@ class OpenAIService {
         instructions: [String],
         description: String
     ) async throws -> [String] {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !title.isEmpty else {
             return []
         }
-        
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let combinedText = title + " " + ingredients.joined(separator: " ")
         let recognizer = NLLanguageRecognizer()
@@ -1377,26 +1161,8 @@ class OpenAIService {
             "temperature": 0.65
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
               let firstChoice = choices.first,
@@ -1431,23 +1197,9 @@ class OpenAIService {
         authorUsername: String?,
         cuisine: String?
     ) async throws -> [String] {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !title.isEmpty else {
             return []
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Build ingredient names list
         let ingredientNames = ingredients.map { $0.name }.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
@@ -1502,27 +1254,8 @@ class OpenAIService {
             "temperature": 0.3
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -1552,23 +1285,9 @@ class OpenAIService {
         ingredients: [String],
         instructions: [String] = []
     ) async throws -> String? {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !title.isEmpty else {
             return nil
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Build the prompt with available cuisines
         let availableCuisines = CuisineTypes.allCuisines.joined(separator: ", ")
@@ -1604,27 +1323,8 @@ class OpenAIService {
             "temperature": 0.3
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -1653,23 +1353,9 @@ class OpenAIService {
         title: String,
         instructions: [String]
     ) async throws -> (prepTime: Int, cookTime: Int) {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !instructions.isEmpty else {
             return (15, 30) // Default values
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let instructionsText = instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
             .joined(separator: " ")
@@ -1719,27 +1405,8 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -1769,23 +1436,9 @@ class OpenAIService {
         ingredients: [String],
         instructions: [String] = []
     ) async throws -> Recipe.Difficulty {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !title.isEmpty else {
             return .c // Default
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let ingredientsText = ingredients.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
             .joined(separator: ", ")
@@ -1824,27 +1477,8 @@ class OpenAIService {
             "temperature": 0.3
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -1879,23 +1513,9 @@ class OpenAIService {
     ///   - sourceLanguage: Source language (optional, for better translation quality)
     /// - Returns: Translated text in English
     static func translateToEnglish(_ text: String, from sourceLanguage: NLLanguage? = nil) async throws -> String {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return text
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Build the prompt with language context if available
         let languageContext = sourceLanguage != nil ? " The text is in \(sourceLanguage!.rawValue)." : ""
@@ -1928,21 +1548,7 @@ class OpenAIService {
             "temperature": 0.3 // Lower temperature for more consistent translation
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (responseData, apiResponse) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = apiResponse as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
+        let responseData = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
         
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
@@ -1963,10 +1569,6 @@ class OpenAIService {
     ///   - targetLanguage: Target language code (e.g., "nl" for Dutch, "es" for Spanish)
     /// - Returns: Translated text in target language
     static func translateFromEnglish(_ text: String, to targetLanguage: String) async throws -> String {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return text
         }
@@ -1975,16 +1577,6 @@ class OpenAIService {
         if targetLanguage.lowercased() == "en" || targetLanguage.lowercased().hasPrefix("en-") {
             return text
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Get language name for better translation
         let languageName = getLanguageName(for: targetLanguage)
@@ -2017,21 +1609,7 @@ class OpenAIService {
             "temperature": 0.3
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        // Make the request
-        let (responseData, apiResponse) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = apiResponse as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
+        let responseData = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
         
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
@@ -2140,23 +1718,9 @@ class OpenAIService {
         ingredients: [Ingredient],
         servings: Int
     ) async throws -> NutritionInfo {
-        guard !apiKey.isEmpty else {
-            throw OpenAIError.apiKeyNotConfigured
-        }
-        
         guard !ingredients.isEmpty else {
             throw OpenAIError.invalidResponse
         }
-        
-        // Create the request
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         // Build a structured ingredient list with amounts, units, names, and canonical IDs
         let ingredientsText = ingredients.enumerated().map { index, ingredient in
@@ -2233,26 +1797,8 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw OpenAIError.requestSerializationFailed
-        }
-        request.httpBody = httpBody
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw OpenAIError.invalidResponse
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if let errorData = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let error = errorData["error"] as? [String: Any],
-               let message = error["message"] as? String {
-                throw OpenAIError.apiError(message)
-            }
-            throw OpenAIError.httpError(httpResponse.statusCode)
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -2299,17 +1845,7 @@ class OpenAIService {
         ingredients: [Ingredient],
         totalServings: Int
     ) async throws -> NutritionInfo {
-        guard !apiKey.isEmpty else { throw OpenAIError.apiKeyNotConfigured }
         guard !ingredients.isEmpty else { throw OpenAIError.invalidResponse }
-        
-        guard let url = URL(string: "\(baseURL)/chat/completions") else {
-            throw OpenAIError.invalidURL
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let ingredientsText = ingredients.map { ingredient in
             let amount = ingredient.amount.isEmpty ? "to taste" : ingredient.amount
@@ -2335,13 +1871,8 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        request.httpBody = try? JSONSerialization.data(withJSONObject: requestBody)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw OpenAIError.invalidResponse
-        }
-        
+        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
               let firstChoice = choices.first,
@@ -2393,6 +1924,7 @@ struct OpenAIRecipeResponse {
 
 enum OpenAIError: LocalizedError {
     case apiKeyNotConfigured
+    case notAuthenticated
     case imageConversionFailed
     case invalidURL
     case requestSerializationFailed
@@ -2405,7 +1937,9 @@ enum OpenAIError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .apiKeyNotConfigured:
-            return "OpenAI API key is not configured. Please set your API key in OpenAIService.swift"
+            return LocalizedString("AI features are temporarily unavailable.", comment: "Legacy case; keys live on server")
+        case .notAuthenticated:
+            return LocalizedString("Please sign in to use AI features.", comment: "OpenAI proxy requires signed-in user")
         case .imageConversionFailed:
             return "Failed to convert image to base64 format"
         case .invalidURL:

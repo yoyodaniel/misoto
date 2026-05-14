@@ -646,7 +646,7 @@ class EditRecipeViewModel: ObservableObject {
     
     // MARK: - Save Recipe
     
-    func updateRecipe() async -> Bool {
+    func updateRecipe(saveAsPrivate: Bool) async -> Bool {
         guard Auth.auth().currentUser != nil else {
             errorMessage = LocalizedString("You must be logged in to update a recipe", comment: "Not logged in error")
             return false
@@ -773,8 +773,9 @@ class EditRecipeViewModel: ObservableObject {
             // Save cuisine in English (translations are handled by CuisineTranslations)
             let cuisineEnglish: String? = cuisine?.trimmingCharacters(in: .whitespaces).isEmpty == false ? cuisine?.trimmingCharacters(in: .whitespaces) : nil
             
-            // Lazy update: Refresh author info if stale before creating updated recipe (cost-effective approach)
-            let recipeWithFreshAuthor = try await recipeService.refreshRecipeAuthorInfoIfNeeded(recipe)
+            // Best-effort refresh of author metadata. Saving the recipe itself should not
+            // fail just because author refresh could not be completed.
+            let recipeWithFreshAuthor = (try? await recipeService.refreshRecipeAuthorInfoIfNeeded(recipe)) ?? recipe
             
             // Create updated recipe with fresh author info
             let updatedRecipe = Recipe(
@@ -804,6 +805,12 @@ class EditRecipeViewModel: ObservableObject {
                 createdAt: recipe.createdAt, // Keep original creation date
                 updatedAt: Date(), // Update this
                 favoriteCount: recipe.favoriteCount, // Keep original favorite count
+                reportCount: recipe.reportCount,
+                isHidden: recipe.isHidden,
+                isPrivate: saveAsPrivate,
+                sharedWith: saveAsPrivate ? recipe.sharedWith : [],
+                preservedSharedWith: saveAsPrivate ? recipe.preservedSharedWith : nil,
+                searchKeywords: recipe.searchKeywords,
                 nutritionInfo: nutritionInfo // Carry forward or newly estimated nutrition
             )
             

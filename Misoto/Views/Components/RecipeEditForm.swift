@@ -23,7 +23,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         "g": "Gram (g)",
         "kg": "Kilogram (kg)",
         "ml": "Milliliter (ml)",
-        "l": "Liter (l)",
+        "l": "Liter (L)",
         "pinch": "Pinch",
         "pcs": "Pieces (pcs)",
         "pc": "Piece (pc)",

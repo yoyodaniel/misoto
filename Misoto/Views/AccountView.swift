@@ -9,6 +9,19 @@ import SwiftUI
 import FirebaseAuth
 
 struct AccountView: View {
+    private struct LevelUpBanner: Identifiable {
+        let id = UUID()
+        let fromLevel: Int
+        let toLevel: Int
+        let title: String
+    }
+    
+    private struct FollowListRoute: Identifiable {
+        let id = UUID()
+        let userID: String
+        let kind: FollowListKind
+    }
+    
     @Binding var showLoginSheet: Bool
     @StateObject private var viewModel = AccountViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -26,9 +39,17 @@ struct AccountView: View {
     @State private var recipeToMakePublic: Recipe?
     @State private var recipeToShare: Recipe?
     @State private var showSettings = false
+    @State private var showIncomingProposals = false
     @State private var showEditProfile = false
     @State private var recipeToEdit: Recipe?
     @State private var lastRefreshTime: Date?
+    @State private var isLevelBarMinimized = true
+    @State private var activeLevelUpBanner: LevelUpBanner?
+    @State private var levelUpDismissTask: Task<Void, Never>?
+    @State private var xpCatchupTask: Task<Void, Never>?
+    @State private var animatedTotalXP: Int?
+    @State private var previousAnimatedLevel: Int?
+    @State private var followListRoute: FollowListRoute?
     
     // Grid layout
     private let columns = [
@@ -39,7 +60,7 @@ struct AccountView: View {
     
     var body: some View {
         let _ = localizationManager.currentLanguage // Force view update when language changes
-        return NavigationView {
+        return NavigationStack {
             ZStack {
                 Color(.systemBackground)
                     .ignoresSafeArea()
@@ -133,7 +154,7 @@ struct AccountView: View {
                                         .multilineTextAlignment(.center)
                                         .padding(.horizontal, 40)
                                 }
-                                
+
                                 // Edit Profile and Settings Buttons
                                 HStack(spacing: 12) {
                                     Button(action: {
@@ -167,11 +188,49 @@ struct AccountView: View {
                                 // Stats
                                 HStack(spacing: 30) {
                                     StatItem(value: "\(user.recipeCount)", label: LocalizedString("Recipes", comment: "Recipes count"))
-                                    StatItem(value: "\(user.followerCount)", label: LocalizedString("Followers", comment: "Followers count"))
-                                    StatItem(value: "\(user.followingCount)", label: LocalizedString("Following", comment: "Following count"))
+                                    Button {
+                                        HapticFeedback.buttonTap()
+                                        followListRoute = FollowListRoute(userID: user.id, kind: .followers)
+                                    } label: {
+                                        StatItem(value: "\(user.followerCount)", label: LocalizedString("Followers", comment: "Followers count"))
+                                    }
+                                    .buttonStyle(.plain)
+                                    .contentShape(Rectangle())
+                                    Button {
+                                        HapticFeedback.buttonTap()
+                                        followListRoute = FollowListRoute(userID: user.id, kind: .following)
+                                    } label: {
+                                        StatItem(value: "\(user.followingCount)", label: LocalizedString("Following", comment: "Following count"))
+                                    }
+                                    .buttonStyle(.plain)
+                                    .contentShape(Rectangle())
                                     StatItem(value: "\(user.likesCount)", label: LocalizedString("Likes", comment: "Likes count"))
                                 }
                                 .padding(.top, 8)
+
+                                if let progressModel = viewModel.userProgress {
+                                    let displayedTotalXP = animatedTotalXP ?? progressModel.totalXP
+                                    let displayedProgress = XPLevelCalculator.getLevelProgress(totalXP: displayedTotalXP)
+                                    let displayedTitle = XPLevelCalculator.getLevelTitle(level: displayedProgress.currentLevel)
+                                    LevelProgressView(
+                                        progress: displayedProgress,
+                                        title: displayedTitle,
+                                        minimized: isLevelBarMinimized
+                                    )
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.vertical, 2)
+                                    .padding(.horizontal, 20)
+                                    .padding(.top, 8)
+                                    .contentShape(Rectangle())
+                                    .background(Color.black.opacity(0.001))
+                                    .zIndex(20)
+                                    .highPriorityGesture(TapGesture().onEnded {
+                                        HapticFeedback.buttonTap()
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            isLevelBarMinimized.toggle()
+                                        }
+                                    })
+                                }
                             }
                             .padding(.top, 20)
                             .padding(.bottom, 24)
@@ -342,16 +401,77 @@ struct AccountView: View {
                         }
                     }
                 }
+                
+                if let banner = activeLevelUpBanner {
+                    VStack {
+                        HStack(spacing: 12) {
+                            Image(systemName: "arrow.up.circle.fill")
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundColor(.white)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(LocalizedString("Level Up!", comment: "Level up notification title"))
+                                    .font(.system(size: 15, weight: .bold))
+                                    .foregroundColor(.white)
+                                Text(
+                                    String(
+                                        format: LocalizedString("Level %d -> Level %d", comment: "Level up notification body"),
+                                        banner.fromLevel,
+                                        banner.toLevel
+                                    )
+                                )
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.95))
+                                Text(banner.title)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.88))
+                            }
+                            
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 12)
+                        .background(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.12, green: 0.56, blue: 0.98),
+                                    Color(red: 0.05, green: 0.35, blue: 0.9)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                        )
+                        .shadow(color: .blue.opacity(0.25), radius: 12, x: 0, y: 5)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 10)
+                        
+                        Spacer()
+                    }
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .zIndex(100)
+                }
             }
             .refreshable {
                 await viewModel.loadUserRecipes()
+                await viewModel.loadIncomingChangeProposals()
+                await viewModel.loadUserProgress()
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {}) {
-                        Image(systemName: "bell")
+                    Button(action: {
+                        HapticFeedback.buttonTap()
+                        showIncomingProposals = true
+                        viewModel.markIncomingProposalsSeenNow()
+                    }) {
+                        Image(systemName: viewModel.unreadChangeProposalCount > 0 ? "bell.badge.fill" : "bell")
                             .font(.system(size: 20))
+                            .foregroundColor(viewModel.unreadChangeProposalCount > 0 ? .orange : .primary)
                     }
                 }
             }
@@ -359,8 +479,36 @@ struct AccountView: View {
         .task {
             // Set authViewModel reference for recipe deletion
             viewModel.authViewModel = authViewModel
+            viewModel.handleAuthUserChanged(userID: authViewModel.currentUser?.id)
             await viewModel.loadUserRecipes()
+            await viewModel.loadIncomingChangeProposals()
+            await viewModel.loadUserProgress()
             lastRefreshTime = Date()
+        }
+        .onChange(of: authViewModel.currentUser?.id) { _, newUserID in
+            xpCatchupTask?.cancel()
+            xpCatchupTask = nil
+            animatedTotalXP = nil
+            previousAnimatedLevel = nil
+            viewModel.handleAuthUserChanged(userID: newUserID)
+            Task {
+                guard newUserID != nil else { return }
+                await viewModel.loadUserRecipes()
+                await viewModel.loadIncomingChangeProposals()
+                await viewModel.loadUserProgress()
+                lastRefreshTime = Date()
+            }
+        }
+        .onChange(of: viewModel.userProgress?.totalXP) { _, _ in
+            syncAnimatedXPFromProgress()
+        }
+        .onChange(of: animatedTotalXP) { _, newXP in
+            guard let newXP else { return }
+            let newLevel = XPLevelCalculator.levelFromXP(newXP)
+            if let previousLevel = previousAnimatedLevel, newLevel > previousLevel {
+                presentLevelUpBanner(from: previousLevel, to: newLevel)
+            }
+            previousAnimatedLevel = newLevel
         }
         .onAppear {
             // Refresh recipes when view appears (e.g., returning from recipe creation)
@@ -370,6 +518,8 @@ struct AccountView: View {
                 if timeSinceLastRefresh > 1.0 {
                     Task {
                         await viewModel.loadUserRecipes()
+                        await viewModel.loadIncomingChangeProposals()
+                        await viewModel.loadUserProgress()
                         lastRefreshTime = Date()
                     }
                 }
@@ -377,6 +527,8 @@ struct AccountView: View {
                 // First appear - refresh
                 Task {
                     await viewModel.loadUserRecipes()
+                    await viewModel.loadIncomingChangeProposals()
+                    await viewModel.loadUserProgress()
                     lastRefreshTime = Date()
                 }
             }
@@ -385,6 +537,8 @@ struct AccountView: View {
             // Refresh when a recipe is saved
             Task {
                 await viewModel.loadUserRecipes()
+                await viewModel.loadIncomingChangeProposals()
+                await viewModel.loadUserProgress()
                 // Reload user data to update recipe count
                 await authViewModel.reloadUserData()
                 lastRefreshTime = Date()
@@ -395,6 +549,8 @@ struct AccountView: View {
             // Refresh user data when updated (e.g., after follow/unfollow)
             Task {
                 await authViewModel.reloadUserData()
+                await viewModel.loadIncomingChangeProposals()
+                await viewModel.loadUserProgress()
                 print("✅ AccountView: User data refreshed from notification")
             }
         }
@@ -410,6 +566,7 @@ struct AccountView: View {
                 
                 // Reload user recipes to ensure consistency
                 await viewModel.loadUserRecipes()
+                await viewModel.loadIncomingChangeProposals()
                 await authViewModel.reloadUserData()
                 print("✅ AccountView: Recipes refreshed after deletion")
             }
@@ -449,6 +606,7 @@ struct AccountView: View {
                 
                 // Reload to ensure consistency
                 await viewModel.loadUserRecipes()
+                await viewModel.loadIncomingChangeProposals()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeSharingChanged"))) { notification in
@@ -466,6 +624,7 @@ struct AccountView: View {
                 
                 // Reload to ensure consistency
                 await viewModel.loadUserRecipes()
+                await viewModel.loadIncomingChangeProposals()
             }
         }
         .sheet(isPresented: $showEditProfile) {
@@ -542,6 +701,103 @@ struct AccountView: View {
         .sheet(isPresented: $showSettings) {
             SettingsView()
                 .environmentObject(authViewModel)
+        }
+        .sheet(isPresented: $showIncomingProposals) {
+            IncomingRecipeProposalsView(
+                proposals: viewModel.incomingChangeProposals,
+                recipesByID: Dictionary(uniqueKeysWithValues: viewModel.userRecipes.map { ($0.id, $0) })
+            )
+        }
+        .sheet(item: $followListRoute) { route in
+            NavigationStack {
+                FollowListView(profileUserID: route.userID, kind: route.kind)
+                    .environmentObject(authViewModel)
+            }
+            .presentationDragIndicator(.visible)
+        }
+        .onDisappear {
+            levelUpDismissTask?.cancel()
+            levelUpDismissTask = nil
+            xpCatchupTask?.cancel()
+            xpCatchupTask = nil
+        }
+    }
+    
+    private func xpLastSeenKey(userID: String) -> String {
+        "xp.lastSeenTotalXP.\(userID)"
+    }
+    
+    private func syncAnimatedXPFromProgress() {
+        guard let userID = authViewModel.currentUser?.id,
+              let progress = viewModel.userProgress else {
+            return
+        }
+        
+        let targetXP = max(0, progress.totalXP)
+        let key = xpLastSeenKey(userID: userID)
+        let hasStoredValue = UserDefaults.standard.object(forKey: key) != nil
+        let storedXP = hasStoredValue ? UserDefaults.standard.integer(forKey: key) : targetXP
+        let startXP = max(0, animatedTotalXP ?? storedXP)
+        
+        // First-time hydration: show current value immediately, no catch-up replay.
+        if !hasStoredValue {
+            animatedTotalXP = targetXP
+            previousAnimatedLevel = XPLevelCalculator.levelFromXP(targetXP)
+            UserDefaults.standard.set(targetXP, forKey: key)
+            return
+        }
+        
+        if targetXP <= startXP {
+            animatedTotalXP = targetXP
+            previousAnimatedLevel = XPLevelCalculator.levelFromXP(targetXP)
+            UserDefaults.standard.set(targetXP, forKey: key)
+            return
+        }
+        
+        xpCatchupTask?.cancel()
+        xpCatchupTask = Task { @MainActor in
+            animatedTotalXP = startXP
+            previousAnimatedLevel = XPLevelCalculator.levelFromXP(startXP)
+            var cursorXP = startXP
+            
+            while cursorXP < targetXP {
+                let currentLevel = XPLevelCalculator.levelFromXP(cursorXP)
+                let nextLevelStartXP = XPLevelCalculator.totalXPRequiredForLevel(currentLevel + 1)
+                let segmentTargetXP = min(targetXP, nextLevelStartXP)
+                let crossesLevel = segmentTargetXP >= nextLevelStartXP && nextLevelStartXP <= targetXP
+                
+                animatedTotalXP = segmentTargetXP
+                cursorXP = segmentTargetXP
+                UserDefaults.standard.set(cursorXP, forKey: key)
+                
+                let delayNs: UInt64 = crossesLevel ? 1_050_000_000 : 450_000_000
+                try? await Task.sleep(nanoseconds: delayNs)
+                if Task.isCancelled { return }
+            }
+        }
+    }
+    
+    private func presentLevelUpBanner(from oldLevel: Int, to newLevel: Int) {
+        guard let progress = viewModel.userProgress else { return }
+        
+        levelUpDismissTask?.cancel()
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.86)) {
+            activeLevelUpBanner = LevelUpBanner(
+                fromLevel: oldLevel,
+                toLevel: newLevel,
+                title: progress.currentTitle
+            )
+        }
+        HapticFeedback.play(.success)
+        
+        levelUpDismissTask = Task {
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    activeLevelUpBanner = nil
+                }
+            }
         }
     }
 }
@@ -633,6 +889,136 @@ struct RecipeGridItem: View {
             }
         }
         .aspectRatio(1, contentMode: .fit)
+    }
+}
+
+private struct IncomingRecipeProposalsView: View {
+    private struct ProposalRecipeSelection: Identifiable {
+        let id = UUID()
+        let recipe: Recipe
+        let proposal: RecipeChangeProposal
+    }
+    
+    let proposals: [RecipeChangeProposal]
+    let recipesByID: [String: Recipe]
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedNavigation: ProposalRecipeSelection?
+    
+    var body: some View {
+        NavigationStack {
+            Group {
+                if proposals.isEmpty {
+                    ContentUnavailableView(
+                        LocalizedString("No update requests yet", comment: "No proposals title"),
+                        systemImage: "bell",
+                        description: Text(LocalizedString("When someone suggests a change to your recipe, it will appear here.", comment: "No proposals description"))
+                    )
+                } else {
+                    List(proposals) { proposal in
+                        Button {
+                            if let recipe = recipesByID[proposal.recipeID] {
+                                selectedNavigation = ProposalRecipeSelection(recipe: recipe, proposal: proposal)
+                            }
+                        } label: {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "lightbulb.fill")
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .foregroundColor(.orange)
+                                    Text(recipeTitle(for: proposal))
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .foregroundColor(.primary)
+                                }
+                                
+                                Text(contextTitle(for: proposal))
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.secondary)
+                                
+                                Text(proposal.contextSnapshot)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(3)
+                                
+                                Text(proposal.proposal)
+                                    .font(.system(size: 15))
+                                    .foregroundColor(.primary)
+                                    .lineLimit(5)
+                                
+                                HStack {
+                                    Text(proposerName(for: proposal))
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                    Spacer()
+                                    Text(timeAgo(from: proposal.createdAt))
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .listStyle(.plain)
+                }
+            }
+            .navigationTitle(LocalizedString("Recipe Updates", comment: "Incoming recipe proposal title"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(LocalizedString("Done", comment: "Done button")) {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .fullScreenCover(item: $selectedNavigation) { selection in
+            RecipeDetailOverviewView(
+                recipe: selection.recipe,
+                highlightedTargetKind: selection.proposal.targetKind,
+                highlightedTargetIndex: selection.proposal.targetIndex
+            )
+        }
+    }
+    
+    private func recipeTitle(for proposal: RecipeChangeProposal) -> String {
+        recipesByID[proposal.recipeID]?.title ?? LocalizedString("Recipe", comment: "Fallback recipe title")
+    }
+    
+    private func proposerName(for proposal: RecipeChangeProposal) -> String {
+        if let username = proposal.username, !username.isEmpty {
+            return "@\(username)"
+        }
+        return proposal.displayName
+    }
+    
+    private func contextTitle(for proposal: RecipeChangeProposal) -> String {
+        switch proposal.targetKind {
+        case .ingredient:
+            return LocalizedString("Ingredient", comment: "Proposal context ingredient")
+        case .instruction:
+            let step = (proposal.targetIndex ?? 0) + 1
+            return String(format: LocalizedString("Step %d", comment: "Proposal context step"), step)
+        case .tip:
+            return LocalizedString("Tip", comment: "Proposal context tip")
+        case .description:
+            return LocalizedString("Description", comment: "Proposal context description")
+        }
+    }
+    
+    private func timeAgo(from date: Date) -> String {
+        let interval = Int(Date().timeIntervalSince(date))
+        if interval < 60 { return LocalizedString("Just now", comment: "Time ago just now") }
+        let minutes = interval / 60
+        if minutes < 60 { return String(format: LocalizedString("%d min ago", comment: "Time ago minutes"), minutes) }
+        let hours = minutes / 60
+        if hours < 24 { return String(format: LocalizedString("%d h ago", comment: "Time ago hours"), hours) }
+        let days = hours / 24
+        if days < 7 { return String(format: LocalizedString("%d d ago", comment: "Time ago days"), days) }
+        let weeks = days / 7
+        if weeks < 5 { return String(format: LocalizedString("%d w ago", comment: "Time ago weeks"), weeks) }
+        let months = days / 30
+        if months < 12 { return String(format: LocalizedString("%d mo ago", comment: "Time ago months"), months) }
+        return String(format: LocalizedString("%d y ago", comment: "Time ago years"), max(1, days / 365))
     }
 }
 

@@ -66,7 +66,6 @@ struct IngredientNameField: View {
             
             if showSuggestions && !suggestions.isEmpty {
                 let screenWidth = UIScreen.main.bounds.width
-                let horizontalPadding: CGFloat = 0
                 let dropdownWidth = screenWidth
                 let xOffset = -fieldMinX
                 

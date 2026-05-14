@@ -61,15 +61,32 @@ struct RecipeDetailOverviewView: View {
     @State private var commentToEdit: RecipeComment?
     @State private var commentToDelete: RecipeComment?
     @State private var showDeleteCommentConfirmation = false
+    private let highlightedTargetKind: RecipeChangeProposal.TargetKind?
+    private let highlightedTargetIndex: Int?
+    @State private var didAutoScrollToHighlightedTarget = false
+    
+    /// When set, presents the structured “suggest a change” sheet.
+    @State private var suggestChangeDraft: RecipeChangeProposalDraft?
     
     private var isAuthor: Bool {
         guard let userID = Auth.auth().currentUser?.uid else { return false }
         return viewModel.recipe.authorID == userID
     }
     
-    init(recipe: Recipe) {
+    /// Swipe-to-suggest is only meaningful for viewers (not the recipe author).
+    private var canInteractWithRecipeSuggestions: Bool {
+        !isAuthor
+    }
+    
+    init(
+        recipe: Recipe,
+        highlightedTargetKind: RecipeChangeProposal.TargetKind? = nil,
+        highlightedTargetIndex: Int? = nil
+    ) {
         _viewModel = StateObject(wrappedValue: RecipeDetailViewModel(recipe: recipe))
         _adjustedServings = State(initialValue: recipe.servings)
+        self.highlightedTargetKind = highlightedTargetKind
+        self.highlightedTargetIndex = highlightedTargetIndex
     }
     
     var body: some View {
@@ -86,6 +103,7 @@ struct RecipeDetailOverviewView: View {
                     let dynamicImageHeight = max(minImageHeight, min(maxImageHeight, imageHeight - scrollOffset))
                     let stretchAmount = max(0, -scrollOffset) // Only stretch when dragging down
                     
+                    ScrollViewReader { proxy in
                     ScrollView {
                         VStack(spacing: 0) {
                             // Ensure full width constraint
@@ -258,26 +276,8 @@ struct RecipeDetailOverviewView: View {
                                     }
                                 }
                                 
-                                // Ingredients List grouped by category
-                                VStack(alignment: .leading, spacing: 20) {
-                                    let sortedCategories = groupedIngredients.keys.sorted(by: { categoryOrder($0) < categoryOrder($1) })
-                                    ForEach(Array(sortedCategories.enumerated()), id: \.offset) { index, category in
-                                        if let ingredients = groupedIngredients[category], !ingredients.isEmpty {
-                                            // Section Header
-                                            Text(sectionHeader(for: category))
-                                                .font(.system(size: 16, weight: .semibold))
-                                                .foregroundColor(.secondary)
-                                                .padding(.top, index == 0 ? 0 : 8)
-                                            
-                                            // Ingredients in this category
-                                            VStack(alignment: .leading, spacing: 12) {
-                                                ForEach(Array(ingredients.enumerated()), id: \.offset) { ingredientIndex, ingredient in
-                                                    IngredientRowView(ingredient: adjustedIngredient(ingredient))
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                // Ingredients List grouped by category (List enables swipe-to-suggest for viewers)
+                                ingredientsGroupedSection
                                 
                                 // Dotted Line Separator
                                 if !viewModel.recipe.instructions.isEmpty {
@@ -290,23 +290,7 @@ struct RecipeDetailOverviewView: View {
                                             .font(.system(size: 20, weight: .bold))
                                             .foregroundColor(.primary)
                                         
-                                        ForEach(Array(viewModel.recipe.instructions.enumerated()), id: \.offset) { index, instruction in
-                                            HStack(alignment: .top, spacing: 16) {
-                                                // Blue circle with number
-                                                Text("\(index + 1)")
-                                                    .font(.system(size: 18, weight: .bold))
-                                                    .foregroundColor(.white)
-                                                    .frame(width: 32, height: 32)
-                                                    .background(Color.accentColor)
-                                                    .clipShape(Circle())
-                                                
-                                                Text(adjustedInstructionText(instruction))
-                                                    .font(.system(size: 16))
-                                                    .foregroundColor(.primary)
-                                                    .lineSpacing(4)
-                                                    .fixedSize(horizontal: false, vertical: true)
-                                            }
-                                        }
+                                        instructionsStepsSection
                                     }
                                     
                                     // Dotted Line Separator before Tips
@@ -320,62 +304,14 @@ struct RecipeDetailOverviewView: View {
                                                 .font(.system(size: 20, weight: .bold))
                                                 .foregroundColor(.primary)
                                             
-                                            ForEach(Array(viewModel.recipe.tips.enumerated()), id: \.offset) { index, tip in
-                                                if !tip.trimmingCharacters(in: .whitespaces).isEmpty {
-                                                    HStack(alignment: .top, spacing: 12) {
-                                                        // Bullet point
-                                                        Text("•")
-                                                            .font(.system(size: 18, weight: .semibold))
-                                                            .foregroundColor(.secondary)
-                                                            .padding(.top, 2)
-                                                        
-                                                        Text(tip)
-                                                            .font(.system(size: 16))
-                                                            .foregroundColor(.primary)
-                                                            .lineSpacing(4)
-                                                            .fixedSize(horizontal: false, vertical: true)
-                                                    }
-                                                }
-                                            }
+                                            tipsSectionList
                                         }
                                         
                                         // Dotted Line Separator before Description
-                                        if !viewModel.recipe.description.trimmingCharacters(in: .whitespaces).isEmpty {
-                                            dottedLineSeparator
-                                                .padding(.vertical, 20)
-                                            
-                                            // Description Section
-                                            VStack(alignment: .leading, spacing: 12) {
-                                                Text(LocalizedString("Description", comment: "Description header"))
-                                                    .font(.system(size: 20, weight: .bold))
-                                                    .foregroundColor(.primary)
-                                                
-                                                Text(viewModel.recipe.description)
-                                                    .font(.system(size: 16))
-                                                    .foregroundColor(.primary)
-                                                    .lineSpacing(4)
-                                                    .fixedSize(horizontal: false, vertical: true)
-                                            }
-                                        }
+                                        descriptionSectionAfterTips
                                     } else {
-                                        // If no tips, show description directly after Chef section
-                                        if !viewModel.recipe.description.trimmingCharacters(in: .whitespaces).isEmpty {
-                                            dottedLineSeparator
-                                                .padding(.vertical, 20)
-                                            
-                                            // Description Section
-                                            VStack(alignment: .leading, spacing: 12) {
-                                                Text(LocalizedString("Description", comment: "Description header"))
-                                                    .font(.system(size: 20, weight: .bold))
-                                                    .foregroundColor(.primary)
-                                                
-                                                Text(viewModel.recipe.description)
-                                                    .font(.system(size: 16))
-                                                    .foregroundColor(.primary)
-                                                    .lineSpacing(4)
-                                                    .fixedSize(horizontal: false, vertical: true)
-                                            }
-                                        }
+                                        // If no tips, show description directly after steps
+                                        descriptionSectionAfterTips
                                     }
                                     
                                     // Dotted Line Separator before Nutrition Section
@@ -571,6 +507,19 @@ struct RecipeDetailOverviewView: View {
                     .coordinateSpace(name: "scroll")
                     .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
                         scrollOffset = value
+                    }
+                    .onAppear {
+                        guard !didAutoScrollToHighlightedTarget,
+                              let targetID = highlightedScrollTargetID else { return }
+                        didAutoScrollToHighlightedTarget = true
+                        Task { @MainActor in
+                            // Wait for layout pass so target rows exist before scrolling.
+                            try? await Task.sleep(nanoseconds: 350_000_000)
+                            withAnimation(.easeInOut(duration: 0.35)) {
+                                proxy.scrollTo(targetID, anchor: .center)
+                            }
+                        }
+                    }
                     }
                 }
             }
@@ -940,6 +889,12 @@ struct RecipeDetailOverviewView: View {
         .sheet(isPresented: $showAllReviews) {
             AllReviewsView(viewModel: viewModel, showLoginSheet: $showLoginSheet)
         }
+        .sheet(item: $suggestChangeDraft) { draft in
+            SuggestRecipeChangeView(draft: draft) { text in
+                await viewModel.submitChangeProposal(draft: draft, proposal: text)
+            }
+            .presentationDetents([.medium, .large])
+        }
         .alert(
             LocalizedString("Delete Review", comment: "Delete review confirmation title"),
             isPresented: $showDeleteCommentConfirmation
@@ -1229,7 +1184,7 @@ struct RecipeDetailOverviewView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-            } else if let error = viewModel.nutritionError {
+            } else if viewModel.nutritionError != nil {
                 // Error state
                 VStack(spacing: 8) {
                     Text(LocalizedString("Could not estimate nutrition", comment: "Nutrition error title"))
@@ -1536,6 +1491,261 @@ struct RecipeDetailOverviewView: View {
     private var groupedIngredients: [Ingredient.Category?: [Ingredient]] {
         Dictionary(grouping: viewModel.recipe.ingredients) { ingredient in
             ingredient.category
+        }
+    }
+    
+    private var sortedIngredientCategories: [Ingredient.Category?] {
+        groupedIngredients.keys.sorted(by: { categoryOrder($0) < categoryOrder($1) })
+    }
+    
+    // MARK: - Recipe change suggestions (swipe row + context menu; no trailing icon)
+    
+    private func openSuggestChange(draft: RecipeChangeProposalDraft) {
+        if Auth.auth().currentUser == nil {
+            showLoginSheet = true
+        } else {
+            suggestChangeDraft = draft
+        }
+    }
+    
+    /// Display line for ingredient snapshots (matches `IngredientRowView` formatting).
+    private func ingredientLineForSnapshot(_ ingredient: Ingredient) -> String {
+        var parts: [String] = []
+        if !ingredient.amount.isEmpty {
+            parts.append(ingredient.amount)
+        }
+        if !ingredient.unit.isEmpty {
+            parts.append(UnitTranslations.abbreviation(for: ingredient.unit, amount: ingredient.amount))
+        }
+        parts.append(ingredient.name)
+        return parts.joined(separator: " ")
+    }
+    
+    private func isHighlightedLine(kind: RecipeChangeProposal.TargetKind, index: Int?) -> Bool {
+        guard highlightedTargetKind == kind else { return false }
+        if kind == .description {
+            return true
+        }
+        return highlightedTargetIndex == index
+    }
+    
+    private func scrollID(for kind: RecipeChangeProposal.TargetKind, index: Int?) -> String {
+        switch kind {
+        case .ingredient:
+            return "highlight-ingredient-\(index ?? -1)"
+        case .instruction:
+            return "highlight-instruction-\(index ?? -1)"
+        case .tip:
+            return "highlight-tip-\(index ?? -1)"
+        case .description:
+            return "highlight-description"
+        }
+    }
+    
+    private var highlightedScrollTargetID: String? {
+        guard let kind = highlightedTargetKind else { return nil }
+        return scrollID(for: kind, index: highlightedTargetIndex)
+    }
+    
+    @ViewBuilder
+    private func recipeSuggestableRow<Content: View>(
+        showSuggestControls: Bool,
+        @ViewBuilder content: @escaping () -> Content,
+        onSuggest: @escaping () -> Void
+    ) -> some View {
+        if showSuggestControls {
+            SwipeToSuggestRow(onSuggest: onSuggest, content: content)
+        } else {
+            content()
+        }
+    }
+    
+    @ViewBuilder
+    private var ingredientsGroupedSection: some View {
+        let sortedCategories = sortedIngredientCategories
+        let showSuggest = canInteractWithRecipeSuggestions
+        VStack(alignment: .leading, spacing: 20) {
+            ForEach(Array(sortedCategories.enumerated()), id: \.offset) { index, category in
+                if let ingredients = groupedIngredients[category], !ingredients.isEmpty {
+                    Text(sectionHeader(for: category))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.secondary)
+                        .padding(.top, index == 0 ? 0 : 8)
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        ForEach(Array(ingredients.enumerated()), id: \.offset) { _, ingredient in
+                            let globalIndex = viewModel.recipe.ingredients.firstIndex(where: { $0 == ingredient })
+                            let isHighlighted = isHighlightedLine(kind: .ingredient, index: globalIndex)
+                            let rowScrollID = scrollID(for: .ingredient, index: globalIndex)
+                            recipeSuggestableRow(showSuggestControls: showSuggest) {
+                                HStack(alignment: .center, spacing: 8) {
+                                    IngredientRowView(ingredient: adjustedIngredient(ingredient))
+                                    Spacer(minLength: 0)
+                                    if isHighlighted {
+                                        Image(systemName: "lightbulb.fill")
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundColor(.orange)
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, isHighlighted ? 8 : 0)
+                                .padding(.vertical, isHighlighted ? 6 : 0)
+                                .background(isHighlighted ? Color.orange.opacity(0.14) : Color.clear)
+                                .cornerRadius(10)
+                                .id(rowScrollID)
+                            } onSuggest: {
+                                let adjusted = adjustedIngredient(ingredient)
+                                let line = ingredientLineForSnapshot(adjusted)
+                                openSuggestChange(draft: RecipeChangeProposalDraft(
+                                    targetKind: .ingredient,
+                                    targetIndex: globalIndex,
+                                    contextTitle: LocalizedString("Ingredient", comment: "Suggest change context title"),
+                                    contextSnapshot: line
+                                ))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var instructionsStepsSection: some View {
+        let showSuggest = canInteractWithRecipeSuggestions
+        ForEach(Array(viewModel.recipe.instructions.enumerated()), id: \.offset) { index, instruction in
+            let isHighlighted = isHighlightedLine(kind: .instruction, index: index)
+            let rowScrollID = scrollID(for: .instruction, index: index)
+            recipeSuggestableRow(showSuggestControls: showSuggest) {
+                HStack(alignment: .top, spacing: 16) {
+                    Text("\(index + 1)")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: 32, height: 32)
+                        .background(Color.accentColor)
+                        .clipShape(Circle())
+                    
+                    Text(adjustedInstructionText(instruction))
+                        .font(.system(size: 16))
+                        .foregroundColor(.primary)
+                        .lineSpacing(4)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    if isHighlighted {
+                        Image(systemName: "lightbulb.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.orange)
+                            .padding(.top, 8)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, isHighlighted ? 8 : 0)
+                .padding(.vertical, isHighlighted ? 6 : 0)
+                .background(isHighlighted ? Color.orange.opacity(0.14) : Color.clear)
+                .cornerRadius(10)
+                .id(rowScrollID)
+            } onSuggest: {
+                let body = adjustedInstructionText(instruction)
+                openSuggestChange(draft: RecipeChangeProposalDraft(
+                    targetKind: .instruction,
+                    targetIndex: index,
+                    contextTitle: String(format: LocalizedString("Step %d", comment: "Suggest change step title"), index + 1),
+                    contextSnapshot: body
+                ))
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var tipsSectionList: some View {
+        let showSuggest = canInteractWithRecipeSuggestions
+        ForEach(Array(viewModel.recipe.tips.enumerated()), id: \.offset) { index, tip in
+            if !tip.trimmingCharacters(in: .whitespaces).isEmpty {
+                let isHighlighted = isHighlightedLine(kind: .tip, index: index)
+                let rowScrollID = scrollID(for: .tip, index: index)
+                recipeSuggestableRow(showSuggestControls: showSuggest) {
+                    HStack(alignment: .top, spacing: 12) {
+                        Text("•")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.secondary)
+                            .padding(.top, 2)
+                        
+                        Text(tip)
+                            .font(.system(size: 16))
+                            .foregroundColor(.primary)
+                            .lineSpacing(4)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 0)
+                        if isHighlighted {
+                            Image(systemName: "lightbulb.fill")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.orange)
+                                .padding(.top, 3)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, isHighlighted ? 8 : 0)
+                    .padding(.vertical, isHighlighted ? 6 : 0)
+                    .background(isHighlighted ? Color.orange.opacity(0.14) : Color.clear)
+                    .cornerRadius(10)
+                    .id(rowScrollID)
+                } onSuggest: {
+                    let trimmed = tip.trimmingCharacters(in: .whitespacesAndNewlines)
+                    openSuggestChange(draft: RecipeChangeProposalDraft(
+                        targetKind: .tip,
+                        targetIndex: index,
+                        contextTitle: LocalizedString("Tip", comment: "Suggest change context title"),
+                        contextSnapshot: trimmed
+                    ))
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var descriptionSectionAfterTips: some View {
+        let desc = viewModel.recipe.description.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !desc.isEmpty {
+            dottedLineSeparator
+                .padding(.vertical, 20)
+            
+            VStack(alignment: .leading, spacing: 12) {
+                Text(LocalizedString("Description", comment: "Description header"))
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.primary)
+                
+                let isHighlighted = isHighlightedLine(kind: .description, index: nil)
+                let rowScrollID = scrollID(for: .description, index: nil)
+                recipeSuggestableRow(showSuggestControls: canInteractWithRecipeSuggestions) {
+                    HStack(alignment: .top, spacing: 8) {
+                        Text(desc)
+                            .font(.system(size: 16))
+                            .foregroundColor(.primary)
+                            .lineSpacing(4)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 0)
+                        if isHighlighted {
+                            Image(systemName: "lightbulb.fill")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.orange)
+                                .padding(.top, 3)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, isHighlighted ? 8 : 0)
+                    .padding(.vertical, isHighlighted ? 6 : 0)
+                    .background(isHighlighted ? Color.orange.opacity(0.14) : Color.clear)
+                    .cornerRadius(10)
+                    .id(rowScrollID)
+                } onSuggest: {
+                    openSuggestChange(draft: RecipeChangeProposalDraft(
+                        targetKind: .description,
+                        targetIndex: nil,
+                        contextTitle: LocalizedString("Description", comment: "Suggest change context title"),
+                        contextSnapshot: desc
+                    ))
+                }
+            }
         }
     }
     

@@ -15,25 +15,61 @@ class AccountViewModel: ObservableObject {
     @Published var userRecipes: [Recipe] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var incomingChangeProposals: [RecipeChangeProposal] = []
+    @Published var unreadChangeProposalCount: Int = 0
+    @Published var userProgress: UserProgress?
     
     private let recipeService = RecipeService.shared
+    private let changeProposalService = RecipeChangeProposalService()
     private let authService = AuthService()
+    private let localNotificationService = LocalNotificationService.shared
     private let firestore = FirebaseManager.shared.firestore
+    private let xpService = XPService.shared
     private var userListener: ListenerRegistration?
+    private var proposalListener: ListenerRegistration?
+    private var progressListener: ListenerRegistration?
+    private var tokenObserver: NSObjectProtocol?
+    private var hasInitializedProposalSnapshot = false
     var authViewModel: AuthViewModel?
+    private var currentObservedUserID: String?
+    
+    private var proposalSeenKey: String {
+        let userID = Auth.auth().currentUser?.uid ?? "unknown"
+        return "recipeChangeProposals.lastSeenAt.\(userID)"
+    }
+    
+    private var notifiedProposalIDsKey: String {
+        let userID = Auth.auth().currentUser?.uid ?? "unknown"
+        return "recipeChangeProposals.notifiedIDs.\(userID)"
+    }
     
     init() {
-        setupUserListener()
+        tokenObserver = NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("APNsDeviceTokenUpdated"),
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self = self else { return }
+            guard let token = notification.userInfo?["token"] as? String else { return }
+            Task { @MainActor in
+                await self.savePushTokenIfPossible(token)
+            }
+        }
     }
     
     deinit {
         userListener?.remove()
+        proposalListener?.remove()
+        progressListener?.remove()
+        if let tokenObserver {
+            NotificationCenter.default.removeObserver(tokenObserver)
+        }
     }
     
     // MARK: - Real-time User Stats Listener
     
-    private func setupUserListener() {
-        guard let userID = Auth.auth().currentUser?.uid else { return }
+    private func setupUserListener(for userID: String) {
+        userListener?.remove()
         
         let userRef = firestore.collection("users").document(userID)
         userListener = userRef.addSnapshotListener { [weak self] snapshot, error in
@@ -53,6 +89,126 @@ class AccountViewModel: ObservableObject {
                 print("✅ User data updated from real-time listener")
             }
         }
+    }
+    
+    /// Clears account-scoped state and rebinds listeners when auth user changes.
+    func handleAuthUserChanged(userID: String?) {
+        guard currentObservedUserID != userID else { return }
+        currentObservedUserID = userID
+        
+        // Always clear previous account data immediately to prevent cross-account leakage.
+        userRecipes = []
+        incomingChangeProposals = []
+        unreadChangeProposalCount = 0
+        userProgress = nil
+        errorMessage = nil
+        isLoading = false
+        
+        userListener?.remove()
+        userListener = nil
+        proposalListener?.remove()
+        proposalListener = nil
+        progressListener?.remove()
+        progressListener = nil
+        hasInitializedProposalSnapshot = false
+        
+        guard let userID else { return }
+        setupUserListener(for: userID)
+        setupIncomingProposalListener(for: userID)
+        setupUserProgressListener(for: userID)
+        Task {
+            await loadUserProgress()
+        }
+        
+        Task {
+            await localNotificationService.requestAuthorizationIfNeeded()
+        }
+    }
+
+    func loadUserProgress() async {
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        if let progress = try? await xpService.getUserProgress(userId: userID) {
+            let derivedLevel = XPLevelCalculator.levelFromXP(progress.totalXP)
+            let derivedTitle = XPLevelCalculator.getLevelTitle(level: derivedLevel)
+            userProgress = UserProgress(
+                userId: progress.userId,
+                totalXP: progress.totalXP,
+                currentLevel: derivedLevel,
+                currentTitle: derivedTitle,
+                createdAt: progress.createdAt,
+                updatedAt: progress.updatedAt
+            )
+        }
+    }
+
+    private func setupUserProgressListener(for userID: String) {
+        progressListener?.remove()
+        let ref = firestore.collection("userProgress").document(userID)
+        progressListener = ref.addSnapshotListener { [weak self] snapshot, error in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if let error {
+                    print("⚠️ User progress listener error: \(error.localizedDescription)")
+                    return
+                }
+                guard let snapshot, snapshot.exists,
+                      let progress = try? snapshot.data(as: UserProgress.self) else {
+                    return
+                }
+                let previousProgress = self.userProgress
+                let derivedLevel = XPLevelCalculator.levelFromXP(progress.totalXP)
+                let derivedTitle = XPLevelCalculator.getLevelTitle(level: derivedLevel)
+                self.userProgress = UserProgress(
+                    userId: progress.userId,
+                    totalXP: progress.totalXP,
+                    currentLevel: derivedLevel,
+                    currentTitle: derivedTitle,
+                    createdAt: progress.createdAt,
+                    updatedAt: progress.updatedAt
+                )
+                
+                if let previousProgress {
+                    let deltaXP = progress.totalXP - previousProgress.totalXP
+                    if deltaXP != 0 {
+                        let levelDelta = derivedLevel - previousProgress.currentLevel
+                        let previousToNext = XPLevelCalculator.getLevelProgress(totalXP: previousProgress.totalXP).xpNeededForNextLevel
+                        let currentToNext = XPLevelCalculator.getLevelProgress(totalXP: progress.totalXP).xpNeededForNextLevel
+                        print("🧪 XP DEBUG | delta=\(deltaXP > 0 ? "+" : "")\(deltaXP) | total: \(previousProgress.totalXP) -> \(progress.totalXP) | level: \(previousProgress.currentLevel) -> \(derivedLevel) | toNext: \(previousToNext) -> \(currentToNext)")
+                        if levelDelta > 0 {
+                            print("🧪 XP DEBUG | LEVEL UP x\(levelDelta) | new title: \(derivedTitle)")
+                        }
+                    }
+                } else {
+                    print("🧪 XP DEBUG | initial progress snapshot totalXP=\(progress.totalXP), level=\(derivedLevel), title=\(derivedTitle)")
+                }
+            }
+        }
+    }
+
+    private func savePushTokenIfPossible(_ token: String) async {
+        guard let userID = Auth.auth().currentUser?.uid, !token.isEmpty else { return }
+        let installationID = currentInstallationID()
+        do {
+            try await firestore.collection("users").document(userID).collection("devices").document(installationID).setData([
+                "pushToken": token,
+                "platform": "ios",
+                "notificationsEnabled": true,
+                "pushTokenUpdatedAt": Timestamp(date: Date())
+            ], merge: true)
+            print("✅ Saved APNs token for installation \(installationID)")
+        } catch {
+            print("⚠️ Failed to save APNs token: \(error.localizedDescription)")
+        }
+    }
+    
+    private func currentInstallationID() -> String {
+        let key = "push.installationID"
+        if let cached = UserDefaults.standard.string(forKey: key), !cached.isEmpty {
+            return cached
+        }
+        let generated = UUID().uuidString
+        UserDefaults.standard.set(generated, forKey: key)
+        return generated
     }
     
     // MARK: - Recipe Management
@@ -76,6 +232,90 @@ class AccountViewModel: ObservableObject {
         }
         
         isLoading = false
+    }
+    
+    // MARK: - Change Proposal Notifications
+    
+    func loadIncomingChangeProposals() async {
+        do {
+            incomingChangeProposals = try await changeProposalService.fetchIncomingProposals(limit: 100)
+            recalculateUnreadChangeProposalCount()
+        } catch {
+            print("⚠️ Error loading incoming change proposals: \(error.localizedDescription)")
+        }
+    }
+    
+    func markIncomingProposalsSeenNow() {
+        let now = Date()
+        UserDefaults.standard.set(now.timeIntervalSince1970, forKey: proposalSeenKey)
+        recalculateUnreadChangeProposalCount()
+    }
+    
+    private func recalculateUnreadChangeProposalCount() {
+        let lastSeenTimestamp = UserDefaults.standard.double(forKey: proposalSeenKey)
+        let lastSeenDate = lastSeenTimestamp > 0 ? Date(timeIntervalSince1970: lastSeenTimestamp) : .distantPast
+        
+        unreadChangeProposalCount = incomingChangeProposals.filter { proposal in
+            proposal.createdAt > lastSeenDate
+        }.count
+    }
+    
+    private func setupIncomingProposalListener(for userID: String) {
+        proposalListener?.remove()
+        
+        let query = firestore.collection("recipeChangeProposals")
+            .whereField("recipeAuthorID", isEqualTo: userID)
+            .order(by: "createdAt", descending: true)
+            .limit(to: 100)
+        
+        proposalListener = query.addSnapshotListener { [weak self] snapshot, error in
+            guard let self = self else { return }
+            
+            Task { @MainActor in
+                if let error = error {
+                    print("⚠️ Proposal listener failed (ordered query): \(error.localizedDescription)")
+                    // Keep existing behavior by falling back to one-time fetch.
+                    await self.loadIncomingChangeProposals()
+                    return
+                }
+                
+                guard let snapshot else { return }
+                let proposals: [RecipeChangeProposal] = snapshot.documents.compactMap { document in
+                    guard var proposal = try? document.data(as: RecipeChangeProposal.self) else { return nil }
+                    proposal.id = document.documentID
+                    return proposal
+                }
+                
+                self.incomingChangeProposals = proposals
+                self.recalculateUnreadChangeProposalCount()
+                self.handleIncomingProposalNotification(proposals)
+            }
+        }
+    }
+    
+    private func handleIncomingProposalNotification(_ proposals: [RecipeChangeProposal]) {
+        let storedIDs = Set(UserDefaults.standard.stringArray(forKey: notifiedProposalIDsKey) ?? [])
+        var nextStoredIDs = storedIDs
+        
+        // On first snapshot, establish baseline (don't notify for old items).
+        if !hasInitializedProposalSnapshot {
+            hasInitializedProposalSnapshot = true
+            nextStoredIDs.formUnion(proposals.map(\.id))
+            UserDefaults.standard.set(Array(nextStoredIDs), forKey: notifiedProposalIDsKey)
+            return
+        }
+        
+        // Notify only for fresh, unseen IDs.
+        let newProposals = proposals.filter { !storedIDs.contains($0.id) }
+        guard !newProposals.isEmpty else { return }
+        
+        // Remote APNs is now the source of truth for recommendation notifications.
+        // Keep local bookkeeping for unread state/idempotency, but don't emit local duplicates.
+        newProposals.forEach { proposal in
+            nextStoredIDs.insert(proposal.id)
+        }
+        
+        UserDefaults.standard.set(Array(nextStoredIDs), forKey: notifiedProposalIDsKey)
     }
     
     func toggleRecipePrivacy(recipe: Recipe, clearSharedWith: Bool = false) async {

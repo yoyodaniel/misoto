@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import Combine
+import FirebaseAuth
+import FirebaseFirestore
 
 @MainActor
 class SettingsViewModel: ObservableObject {
@@ -17,10 +19,12 @@ class SettingsViewModel: ObservableObject {
     @Published var feedbackSuccessMessage: String?
     @Published var isChangingLanguage = false
     @Published var pendingLanguage: AppLanguage?
+    @Published var notificationPreferences = NotificationPreferences.default
     
     private let feedbackService = FeedbackService()
     private let userDefaults = UserDefaults.standard
     private let appSettings = AppSettings.shared
+    private let firestore = FirebaseManager.shared.firestore
     private var cancellables = Set<AnyCancellable>()
     
     // Computed property that syncs with AppSettings
@@ -30,6 +34,56 @@ class SettingsViewModel: ObservableObject {
         }
         set {
             appSettings.isDarkModeEnabled = newValue
+        }
+    }
+    
+    // MARK: - Notification Preferences
+    
+    func loadNotificationPreferences() async {
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        
+        do {
+            let snapshot = try await firestore.collection("users").document(userID).getDocument()
+            if let data = snapshot.data(),
+               let raw = data["notificationPreferences"] as? [String: Any] {
+                notificationPreferences = NotificationPreferences(from: raw)
+            } else {
+                notificationPreferences = .default
+            }
+        } catch {
+            print("⚠️ Failed to load notification preferences: \(error.localizedDescription)")
+        }
+    }
+    
+    func updateMuteAll(_ isMuted: Bool) async {
+        notificationPreferences.muteAll = isMuted
+        await saveNotificationPreferences()
+    }
+    
+    func updateNotificationPreference(_ key: NotificationPreferenceKey, enabled: Bool) async {
+        switch key {
+        case .recipeRecommendations:
+            notificationPreferences.recipeRecommendations = enabled
+        case .comments:
+            notificationPreferences.comments = enabled
+        case .follows:
+            notificationPreferences.follows = enabled
+        case .likes:
+            notificationPreferences.likes = enabled
+        }
+        await saveNotificationPreferences()
+    }
+    
+    private func saveNotificationPreferences() async {
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        
+        do {
+            try await firestore.collection("users").document(userID).setData([
+                "notificationPreferences": notificationPreferences.toFirestoreMap(),
+                "updatedAt": Timestamp(date: Date())
+            ], merge: true)
+        } catch {
+            print("⚠️ Failed to save notification preferences: \(error.localizedDescription)")
         }
     }
     
@@ -142,6 +196,68 @@ class SettingsViewModel: ObservableObject {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? LocalizedString("Unknown", comment: "Unknown version")
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? LocalizedString("Unknown", comment: "Unknown build")
         return "\(version) (\(build))"
+    }
+}
+
+enum NotificationPreferenceKey {
+    case recipeRecommendations
+    case comments
+    case follows
+    case likes
+}
+
+struct NotificationPreferences: Codable {
+    var muteAll: Bool
+    var recipeRecommendations: Bool
+    var comments: Bool
+    var follows: Bool
+    var likes: Bool
+    /// Reserved for future per-thread or per-user mute controls.
+    var mutedThreadIDs: [String]
+    
+    static let `default` = NotificationPreferences(
+        muteAll: false,
+        recipeRecommendations: true,
+        comments: true,
+        follows: true,
+        likes: true,
+        mutedThreadIDs: []
+    )
+    
+    init(
+        muteAll: Bool,
+        recipeRecommendations: Bool,
+        comments: Bool,
+        follows: Bool,
+        likes: Bool,
+        mutedThreadIDs: [String]
+    ) {
+        self.muteAll = muteAll
+        self.recipeRecommendations = recipeRecommendations
+        self.comments = comments
+        self.follows = follows
+        self.likes = likes
+        self.mutedThreadIDs = mutedThreadIDs
+    }
+    
+    init(from map: [String: Any]) {
+        self.muteAll = map["muteAll"] as? Bool ?? false
+        self.recipeRecommendations = map["recipeRecommendations"] as? Bool ?? true
+        self.comments = map["comments"] as? Bool ?? true
+        self.follows = map["follows"] as? Bool ?? true
+        self.likes = map["likes"] as? Bool ?? true
+        self.mutedThreadIDs = map["mutedThreadIDs"] as? [String] ?? []
+    }
+    
+    func toFirestoreMap() -> [String: Any] {
+        [
+            "muteAll": muteAll,
+            "recipeRecommendations": recipeRecommendations,
+            "comments": comments,
+            "follows": follows,
+            "likes": likes,
+            "mutedThreadIDs": mutedThreadIDs
+        ]
     }
 }
 

@@ -23,6 +23,7 @@
 		7C7E21F62F09FA500030300D /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21EE2F09FA500030300D /* README.txt */; };
 		7C7E21FC2F0A00240030300D /* Inspiration-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21F92F0A00240030300D /* Inspiration-Regular.ttf */; };
 		7C7E28D32F13BB880030300D /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C7E28D22F13BB880030300D /* StoreKit.framework */; };
+		7C7E3A012EFC766E0083BFEC /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 7C7E3A002EFC766E0083BFEC /* FirebaseFunctions */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +102,7 @@
 				7C0556542EFC79200083BFEC /* GoogleSignInSwift in Frameworks */,
 				7C05564D2EFC766E0083BFEC /* FirebaseFirestore in Frameworks */,
 				7C0556472EFC766E0083BFEC /* FirebaseAuth in Frameworks */,
+				7C7E3A012EFC766E0083BFEC /* FirebaseFunctions in Frameworks */,
 				7C05564F2EFC766E0083BFEC /* FirebaseStorage in Frameworks */,
 				7C0556522EFC79200083BFEC /* GoogleSignIn in Frameworks */,
 			);
@@ -215,6 +217,7 @@
 			packageProductDependencies = (
 				7C0556442EFC766E0083BFEC /* FirebaseAnalytics */,
 				7C0556462EFC766E0083BFEC /* FirebaseAuth */,
+				7C7E3A002EFC766E0083BFEC /* FirebaseFunctions */,
 				7C0556482EFC766E0083BFEC /* FirebaseCore */,
 				7C05564A2EFC766E0083BFEC /* FirebaseDatabase */,
 				7C05564C2EFC766E0083BFEC /* FirebaseFirestore */,
@@ -280,7 +283,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2620;
-				LastUpgradeCheck = 2620;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					7C0555D92EFC44760083BFEC = {
 						CreatedOnToolsVersion = 26.2;
@@ -301,27 +304,25 @@
 			knownRegions = (
 				en,
 				Base,
-				es,
-				fr,
+				ar,
 				de,
+				es,
+				fil,
+				fr,
+				he,
+				hi,
+				id,
 				it,
-				pt,
-				nl,
-				ru,
 				ja,
 				ko,
+				ms,
+				nl,
+				pt,
+				ru,
 				th,
 				vi,
-				id,
-				ms,
-				fil,
-				hi,
-				"zh-Hans 3",
-				"zh-Hant 3",
-				"zh-Hant",
 				"zh-Hans",
-				ar,
-				he,
+				"zh-Hant",
 			);
 			mainGroup = 7C0555D12EFC44760083BFEC;
 			minimizedProjectReferenceProxies = 1;
@@ -415,6 +416,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -469,6 +471,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -479,6 +482,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -526,6 +530,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -538,7 +543,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Misoto/Misoto.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5MHPQQ7G2G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -548,6 +553,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to take pictures of recipes for extraction.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIBackgroundModes = "remote-notification";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -556,7 +562,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.miniadd.Misoto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -580,9 +586,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Misoto/Misoto.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5MHPQQ7G2G;
-				ENABLE_PREVIEWS = YES;
+				ENABLE_PREVIEWS = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Misoto/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Misoto;
@@ -590,6 +596,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to take pictures of recipes for extraction.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UIBackgroundModes = "remote-notification";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -598,7 +605,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.miniadd.Misoto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -799,6 +806,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7C0556502EFC79200083BFEC /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		7C7E3A002EFC766E0083BFEC /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7C0556432EFC766E0083BFEC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

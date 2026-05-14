@@ -24,10 +24,7 @@
 - [x] ✅ Retain cycles prevented (weak self used)
 - [ ] **Final Build**: Archive build succeeds without warnings
 - [ ] **Linter**: No critical warnings or errors
-- [ ] ⚠️ **Security Note**: OPENAI_API_KEY is in Info.plist (visible in app bundle)
-  - **Current**: API key is readable from app bundle (common practice)
-  - **Recommendation**: Move to backend service in future for better security
-  - **Action**: Ensure OpenAI API key has rate limits and usage restrictions
+- [ ] **Secrets**: Keep `GoogleService-Info.plist` and local `Misoto/Info.plist` out of git (see `.gitignore`). Optional keys in `GoogleService-Info.plist`: `OPENAI_API_KEY`, `USDA_API_KEY`, Algolia keys (see `ALGOLIA_SETUP.md`). Prefer a backend proxy for OpenAI in the long term; restrict keys in provider dashboards.
 
 ### App Configuration
 - [x] ✅ App Icon configured (AppIcon.appiconset)
@@ -63,7 +60,7 @@
   - Highlight key features: AI extraction, recipe sharing, 20 languages
 - [ ] **Keywords**: Add relevant keywords (100 characters max, comma-separated)
   - Example: "recipe, cooking, food, AI, photo, sharing, community"
-- [ ] **Promotional Text**: Optional (170 characters max)
+- [ ] **Promotional Text**: Optional (170 characters max) — **ready copy:** `APP_STORE_METADATA.md` → *Promotional Text*
 - [ ] **Support URL**: Your website or support page
 - [ ] **Marketing URL**: Optional
 
@@ -259,7 +256,7 @@
 ### Version Information
 - [ ] **Version**: 1.0
 - [ ] **Build**: Select uploaded build
-- [ ] **What's New**: Write release notes (up to 4000 characters)
+- [ ] **What's New**: Write release notes (up to 4000 characters) — **ready copy:** `APP_STORE_METADATA.md` → *What’s New in This Version*
   - First version: "Initial release of Misoto - Share and discover amazing recipes"
 
 ### App Review Information

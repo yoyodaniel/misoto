@@ -21,6 +21,7 @@ struct EditRecipeView: View {
     @State private var showDishImageOptions = false
     @State private var showCameraForDishImage = false
     @State private var showPhotoPickerForDishImage = false
+    @State private var showVisibilityChoice = false
     
     @FocusState private var focusedAmountField: Int?
     @FocusState private var isTitleFocused: Bool
@@ -77,16 +78,7 @@ struct EditRecipeView: View {
                         Button(action: {
                             HapticFeedback.importantAction()
                             dismissKeyboard()
-                            Task {
-                                let success = await viewModel.updateRecipe()
-                                if success {
-                                    HapticFeedback.play(.success)
-                                    await authViewModel.reloadUserData()
-                                    dismiss()
-                                } else {
-                                    HapticFeedback.play(.error)
-                                }
-                            }
+                            showVisibilityChoice = true
                         }) {
                             HStack {
                                 if viewModel.isLoading {
@@ -119,6 +111,21 @@ struct EditRecipeView: View {
                         showPhotoPickerForDishImage = true
                     }
                     Button("Cancel", role: .cancel) {}
+                }
+                .confirmationDialog(
+                    LocalizedString("Share this updated recipe as", comment: "Edit recipe visibility choice title"),
+                    isPresented: $showVisibilityChoice,
+                    titleVisibility: .visible
+                ) {
+                    Button(LocalizedString("Public", comment: "Save updated recipe as public")) {
+                        saveRecipe(saveAsPrivate: false)
+                    }
+                    Button(LocalizedString("Private", comment: "Save updated recipe as private")) {
+                        saveRecipe(saveAsPrivate: true)
+                    }
+                    Button(LocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {}
+                } message: {
+                    Text(LocalizedString("Choose who can see this updated recipe.", comment: "Edit recipe visibility choice message"))
                 }
                 .fullScreenCover(isPresented: $showCameraForDishImage) {
                     CameraCaptureView(onImageCaptured: { image in
@@ -572,6 +579,19 @@ struct EditRecipeView: View {
         formatter.dateFormat = "dd-MMM-yyyy"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter.string(from: date)
+    }
+    
+    private func saveRecipe(saveAsPrivate: Bool) {
+        Task {
+            let success = await viewModel.updateRecipe(saveAsPrivate: saveAsPrivate)
+            if success {
+                HapticFeedback.play(.success)
+                await authViewModel.reloadUserData()
+                dismiss()
+            } else {
+                HapticFeedback.play(.error)
+            }
+        }
     }
 }
 

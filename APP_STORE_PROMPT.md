@@ -15,6 +15,8 @@ I need you to write App Store listing texts for my iOS app called "Misoto". Plea
 5. **Promotional Text** (170 characters max, optional)
 6. **What's New** (for version updates, up to 4000 characters)
 
+**Ready-to-paste listing copy (promotional text, what’s new, subtitle):** see **`APP_STORE_METADATA.md`** in this repo.
+
 **App Overview:**
 Misoto is a recipe sharing and discovery app that helps users create, organize, and share amazing recipes with a global community of food lovers.
 

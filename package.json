@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "algoliasearch": "^5.52.1"
+  },
+  "devDependencies": {
+    "firebase-tools": "^15.17.0"
+  }
+}

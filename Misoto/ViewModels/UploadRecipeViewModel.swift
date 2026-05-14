@@ -697,7 +697,7 @@ class UploadRecipeViewModel: ObservableObject {
             guard let self else { return }
             try? await Task.sleep(nanoseconds: self.debouncedEditUndoDelayNanoseconds)
             guard !Task.isCancelled else { return }
-            await self.flushTipsUndoCheckpointIfNeeded()
+            self.flushTipsUndoCheckpointIfNeeded()
         }
     }
     

@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
+import OSLog
 
 @MainActor
 class UserReportService {
@@ -104,11 +105,12 @@ class UserReportService {
         await withTaskGroup(of: String?.self) { group in
             for userID in userIDs {
                 group.addTask {
+                    let log = Logger(subsystem: "com.miniadd.Misoto", category: "UserReportBanCheck")
                     do {
                         let isBanned = try await self.isUserBanned(userID: userID)
                         return isBanned ? nil : userID
                     } catch {
-                        print("⚠️ Error checking ban status for user \(userID): \(error.localizedDescription)")
+                        log.warning("Error checking ban status for user \(userID, privacy: .public): \(error.localizedDescription, privacy: .public)")
                         return nil // Err on the side of caution - exclude if we can't verify
                     }
                 }

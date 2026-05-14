@@ -1,0 +1,19 @@
+{
+  "name": "misoto-functions-algolia",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "node": "24"
+  },
+  "scripts": {
+    "deploy": "NODE_OPTIONS=--max-old-space-size=4096 FUNCTIONS_DISCOVERY_TIMEOUT=120 ./node_modules/.bin/firebase deploy --only functions:algolia",
+    "serve": "firebase emulators:start --only functions:algolia"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.1",
+    "firebase-functions": "^6.1.0"
+  },
+  "devDependencies": {
+    "firebase-tools": "^15.17.0"
+  }
+}

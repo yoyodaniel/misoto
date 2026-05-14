@@ -27,12 +27,19 @@ struct SettingsView: View {
     @State private var showPremium = false
     @State private var deleteAccountError: String?
     @State private var isDeletingAccount = false
+    @State private var isRunningFollowBackfill = false
+    @State private var followBackfillStatusMessage: String?
+    @State private var isRunningRecipeKeywordBackfill = false
+    @State private var recipeKeywordBackfillStatusMessage: String?
     @StateObject private var accountViewModel = AccountViewModel()
     @StateObject private var subscriptionViewModel = SubscriptionViewModel()
     private let authService = AuthService()
+    private let followIndexMigrationService = FollowIndexMigrationService()
+    private let recipeSearchKeywordMigrationService = RecipeSearchKeywordMigrationService()
     
     // Section expansion states
     @State private var isAppearanceExpanded = true
+    @State private var isNotificationsExpanded = true
     @State private var isLanguageExpanded = true
     @State private var isSubscriptionExpanded = true
     @State private var isShareExpanded = true
@@ -124,6 +131,123 @@ struct SettingsView: View {
                 } footer: {
                     if isLanguageExpanded {
                         Text(LocalizedString("The language selected will be used as the default writing language for recipe extractions.", comment: "Language selection footnote"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                // MARK: - Notifications Section
+                Section {
+                    DisclosureGroup(isExpanded: $isNotificationsExpanded) {
+                        Toggle(isOn: Binding(
+                            get: { viewModel.notificationPreferences.muteAll },
+                            set: { newValue in
+                                HapticFeedback.buttonTap()
+                                Task {
+                                    await viewModel.updateMuteAll(newValue)
+                                }
+                            }
+                        )) {
+                            HStack {
+                                Image(systemName: "bell.slash.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Mute All Notifications", comment: "Mute all notifications setting"))
+                            }
+                        }
+                        
+                        Toggle(isOn: Binding(
+                            get: { viewModel.notificationPreferences.recipeRecommendations },
+                            set: { newValue in
+                                HapticFeedback.buttonTap()
+                                Task {
+                                    await viewModel.updateNotificationPreference(.recipeRecommendations, enabled: newValue)
+                                }
+                            }
+                        )) {
+                            HStack {
+                                Image(systemName: "lightbulb.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Recipe update recommendations", comment: "Recipe recommendation notification setting"))
+                            }
+                        }
+                        .disabled(viewModel.notificationPreferences.muteAll)
+                        
+                        Toggle(isOn: Binding(
+                            get: { viewModel.notificationPreferences.comments },
+                            set: { newValue in
+                                HapticFeedback.buttonTap()
+                                Task {
+                                    await viewModel.updateNotificationPreference(.comments, enabled: newValue)
+                                }
+                            }
+                        )) {
+                            HStack {
+                                Image(systemName: "text.bubble.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Comments & reviews", comment: "Comments notification setting"))
+                            }
+                        }
+                        .disabled(viewModel.notificationPreferences.muteAll)
+                        
+                        Toggle(isOn: Binding(
+                            get: { viewModel.notificationPreferences.follows },
+                            set: { newValue in
+                                HapticFeedback.buttonTap()
+                                Task {
+                                    await viewModel.updateNotificationPreference(.follows, enabled: newValue)
+                                }
+                            }
+                        )) {
+                            HStack {
+                                Image(systemName: "person.badge.plus")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Follows", comment: "Follow notification setting"))
+                            }
+                        }
+                        .disabled(viewModel.notificationPreferences.muteAll)
+                        
+                        Toggle(isOn: Binding(
+                            get: { viewModel.notificationPreferences.likes },
+                            set: { newValue in
+                                HapticFeedback.buttonTap()
+                                Task {
+                                    await viewModel.updateNotificationPreference(.likes, enabled: newValue)
+                                }
+                            }
+                        )) {
+                            HStack {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(.blue)
+                                    .frame(width: 24)
+                                Text(LocalizedString("Likes", comment: "Likes notification setting"))
+                            }
+                        }
+                        .disabled(viewModel.notificationPreferences.muteAll)
+                        
+                        HStack {
+                            Image(systemName: "line.3.horizontal.decrease.circle")
+                                .foregroundColor(.blue)
+                                .frame(width: 24)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(LocalizedString("Muted Conversations", comment: "Muted conversations title"))
+                                    .foregroundColor(.primary)
+                                Text(LocalizedString("Coming soon: mute specific people and threads.", comment: "Muted conversations placeholder"))
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                        }
+                    } label: {
+                        Text(LocalizedString("Notifications", comment: "Notifications section header"))
+                            .font(.headline)
+                    }
+                } footer: {
+                    if isNotificationsExpanded {
+                        Text(LocalizedString("Control which notifications you receive. You can mute all now and add granular mute rules later.", comment: "Notifications footer"))
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -599,6 +723,107 @@ struct SettingsView: View {
                         Spacer()
                     }
                 }
+
+#if DEBUG
+                // MARK: - Debug Tools
+                Section {
+                    Button(action: {
+                        Task {
+                            await runFollowIndexBackfill()
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .foregroundColor(.orange)
+                                .frame(width: 24)
+                            Text(LocalizedString("Run Followers Index Backfill", comment: "Run followers index backfill button"))
+                            Spacer()
+                            if isRunningFollowBackfill {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            }
+                        }
+                    }
+                    .disabled(isRunningFollowBackfill)
+
+                    Button(role: .destructive, action: {
+                        followIndexMigrationService.resetCheckpoint()
+                        followBackfillStatusMessage = LocalizedString("Backfill checkpoint reset.", comment: "Backfill checkpoint reset status")
+                    }) {
+                        HStack {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                                .frame(width: 24)
+                            Text(LocalizedString("Reset Backfill Checkpoint", comment: "Reset backfill checkpoint button"))
+                        }
+                    }
+
+                    if let followBackfillStatusMessage {
+                        Text(followBackfillStatusMessage)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Divider()
+
+                    Button(action: {
+                        Task {
+                            await runRecipeKeywordBackfill()
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "text.magnifyingglass")
+                                .foregroundColor(.orange)
+                                .frame(width: 24)
+                            Text(LocalizedString("Run Recipe Search Keywords Backfill", comment: "Run recipe search keyword backfill button"))
+                            Spacer()
+                            if isRunningRecipeKeywordBackfill {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            }
+                        }
+                    }
+                    .disabled(isRunningRecipeKeywordBackfill)
+
+                    Button(role: .destructive, action: {
+                        recipeSearchKeywordMigrationService.resetCheckpoint()
+                        recipeKeywordBackfillStatusMessage = LocalizedString("Recipe keywords backfill checkpoint reset.", comment: "Recipe keyword backfill checkpoint reset status")
+                    }) {
+                        HStack {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                                .frame(width: 24)
+                            Text(LocalizedString("Reset Recipe Keywords Checkpoint", comment: "Reset recipe keyword backfill checkpoint button"))
+                        }
+                    }
+
+                    if let recipeKeywordBackfillStatusMessage {
+                        Text(recipeKeywordBackfillStatusMessage)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Divider()
+
+                    Button(action: {
+                        WhatsNewPromptStorage.clearAcknowledgedMarketingVersion()
+                        NotificationCenter.default.post(name: .showWhatsNewAgain, object: nil)
+                    }) {
+                        HStack {
+                            Image(systemName: "sparkles.rectangle.stack")
+                                .foregroundColor(.orange)
+                                .frame(width: 24)
+                            Text(LocalizedString("Show What's New Popup Again", comment: "Debug reset What's New popup"))
+                        }
+                    }
+                } header: {
+                    Text(LocalizedString("Debug Tools", comment: "Debug tools section header"))
+                } footer: {
+                    Text(LocalizedString("Use this only during migration. It copies legacy follows into indexed followers/following subcollections.", comment: "Debug tools footer for follow migration"))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+#endif
             }
             .navigationTitle(LocalizedString("Settings", comment: "Settings view title"))
             .navigationBarTitleDisplayMode(.inline)
@@ -614,11 +839,13 @@ struct SettingsView: View {
         .task {
             // Load subscription data and usage counts when view appears
             await subscriptionViewModel.loadData()
+            await viewModel.loadNotificationPreferences()
         }
         .onAppear {
             // Refresh usage counts when view appears (in case user created recipes/extractions)
             Task {
                 await subscriptionViewModel.loadUsageCounts()
+                await viewModel.loadNotificationPreferences()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("RecipeSaved"))) { _ in
@@ -725,6 +952,7 @@ struct SettingsView: View {
                 accountViewModel.authViewModel = authViewModel
                 Task {
                     await subscriptionViewModel.loadData()
+                    await viewModel.loadNotificationPreferences()
                 }
             }
         }
@@ -758,6 +986,87 @@ struct SettingsView: View {
             print("⚠️ Error deleting account: \(error.localizedDescription)")
         }
     }
+
+    private func runFollowIndexBackfill() async {
+        isRunningFollowBackfill = true
+        defer { isRunningFollowBackfill = false }
+
+        var totalWrites = 0
+        do {
+            for _ in 0..<100 {
+                let writes = try await followIndexMigrationService.runBackfill(batchSize: 200)
+                totalWrites += writes
+                if writes == 0 {
+                    break
+                }
+            }
+
+            if totalWrites == 0 {
+                followBackfillStatusMessage = LocalizedString("Backfill finished. No pending follow index writes were found.", comment: "Backfill no-op completion message")
+            } else {
+                followBackfillStatusMessage = String(format: LocalizedString("Backfill finished successfully. Wrote %d index documents.", comment: "Backfill completion message with write count"), totalWrites)
+            }
+        } catch {
+            followBackfillStatusMessage = String(format: LocalizedString("Backfill failed: %@", comment: "Backfill failure message"), error.localizedDescription)
+            logBackfillErrorDetails(error)
+        }
+    }
+
+    private func runRecipeKeywordBackfill() async {
+        isRunningRecipeKeywordBackfill = true
+        defer { isRunningRecipeKeywordBackfill = false }
+
+        var totalUpdates = 0
+        do {
+            for _ in 0..<100 {
+                let updates = try await recipeSearchKeywordMigrationService.runBackfill(batchSize: 200)
+                totalUpdates += updates
+                if updates == 0 {
+                    break
+                }
+            }
+
+            if totalUpdates == 0 {
+                recipeKeywordBackfillStatusMessage = LocalizedString("Recipe keywords backfill finished. No pending updates were found.", comment: "Recipe keyword backfill no-op completion message")
+            } else {
+                recipeKeywordBackfillStatusMessage = String(format: LocalizedString("Recipe keywords backfill finished successfully. Updated %d recipes.", comment: "Recipe keyword backfill completion message with count"), totalUpdates)
+            }
+        } catch {
+            recipeKeywordBackfillStatusMessage = String(format: LocalizedString("Recipe keywords backfill failed: %@", comment: "Recipe keyword backfill failure message"), error.localizedDescription)
+        }
+    }
+
+    private func logBackfillErrorDetails(_ error: Error) {
+        let nsError = error as NSError
+        let candidateText = [
+            error.localizedDescription,
+            String(describing: error),
+            String(describing: nsError.userInfo)
+        ].joined(separator: "\n")
+
+        print("❌ Follow backfill failed (detailed): \(candidateText)")
+
+        let links = extractURLs(from: candidateText)
+        if links.isEmpty {
+            print("ℹ️ No index URL found in error payload.")
+        } else {
+            for link in links {
+                print("🔗 Firestore index URL: \(link)")
+            }
+        }
+    }
+
+    private func extractURLs(from text: String) -> [String] {
+        let pattern = #"https?://[^\s"]+"#
+        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+            return []
+        }
+
+        let nsText = text as NSString
+        let matches = regex.matches(in: text, range: NSRange(location: 0, length: nsText.length))
+        let urls = matches.map { nsText.substring(with: $0.range) }
+        return Array(Set(urls)).sorted()
+    }
     
     // MARK: - Share App
     
@@ -765,7 +1074,7 @@ struct SettingsView: View {
         let appName = LocalizedString("Misoto", comment: "App name")
         let appStoreURL = "https://apps.apple.com/app/misoto/id6757369965"
         let promotionalText = LocalizedString("AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!", comment: "Promotional text for sharing app")
-        return "\(promotionalText)\n\n\(appStoreURL)"
+        return "\(appName)\n\n\(promotionalText)\n\n\(appStoreURL)"
     }
 }
 

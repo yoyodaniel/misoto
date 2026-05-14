@@ -11,8 +11,12 @@ import Foundation
 
 /// Shadows Swift's built-in `print` so that it becomes a no-op in Release builds.
 /// In Debug builds it forwards to `Swift.print` as usual.
+///
+/// `nonisolated` is required because the project uses default MainActor isolation; otherwise
+/// this global `print` would be MainActor-only and could not be used from concurrent contexts
+/// (e.g. `withTaskGroup` child tasks) in Swift 6.
 @inline(__always)
-func print(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+nonisolated func print(_ items: Any..., separator: String = " ", terminator: String = "\n") {
     #if DEBUG
     let output = items.map { "\($0)" }.joined(separator: separator)
     Swift.print(output, terminator: terminator)

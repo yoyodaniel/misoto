@@ -37,6 +37,7 @@ class RecipeDetailViewModel: ObservableObject {
     private let recipeService = RecipeService.shared
     private let noteService = RecipeNoteService()
     private let commentService = RecipeCommentService()
+    private let changeProposalService = RecipeChangeProposalService()
     private let notesPerPage = 5
     private let commentsPerPage = 5
     private var lastNoteDocument: DocumentSnapshot?
@@ -531,6 +532,63 @@ class RecipeDetailViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
             print("⚠️ Error deleting comment: \(error.localizedDescription)")
+        }
+    }
+    
+    // MARK: - Change Proposals (viewer suggestions)
+    
+    /// Submits a structured change proposal. Returns `nil` on success, otherwise a user-facing error string.
+    func submitChangeProposal(draft: RecipeChangeProposalDraft, proposal: String) async -> String? {
+        guard let user = Auth.auth().currentUser else {
+            return LocalizedString("You must be signed in to send a suggestion.", comment: "Suggestion not signed in")
+        }
+        
+        guard user.uid != recipe.authorID else {
+            return LocalizedString("You cannot suggest changes to your own recipe", comment: "Own recipe suggestion error")
+        }
+        
+        let trimmedProposal = proposal.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedProposal.isEmpty else {
+            return LocalizedString("Please enter your suggestion.", comment: "Empty proposal error")
+        }
+        
+        var displayName = user.displayName ?? "Anonymous"
+        var username: String?
+        var profileImageURL: String?
+        
+        do {
+            let doc = try await firestore.collection("users").document(user.uid).getDocument()
+            if let appUser = try? doc.data(as: AppUser.self) {
+                displayName = appUser.displayName
+                username = appUser.username
+                profileImageURL = appUser.profileImageURL
+            }
+        } catch {
+            print("⚠️ Could not fetch user profile for change proposal: \(error.localizedDescription)")
+        }
+        
+        let snapshot = String(draft.contextSnapshot.prefix(500))
+        
+        let model = RecipeChangeProposal(
+            recipeID: recipe.id,
+            recipeAuthorID: recipe.authorID,
+            userID: user.uid,
+            displayName: displayName,
+            username: username,
+            profileImageURL: profileImageURL,
+            targetKind: draft.targetKind,
+            targetIndex: draft.targetIndex,
+            contextSnapshot: snapshot,
+            proposal: String(trimmedProposal.prefix(1_000))
+        )
+        
+        do {
+            _ = try await changeProposalService.createProposal(model)
+            print("✅ Recipe change proposal saved: \(model.id)")
+            return nil
+        } catch {
+            print("⚠️ Error submitting change proposal: \(error.localizedDescription)")
+            return error.localizedDescription
         }
     }
     

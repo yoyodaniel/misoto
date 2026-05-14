@@ -112,30 +112,53 @@ struct MainTabView: View {
         return dateFormatter.string(from: nextMonthFirst)
     }
 
-    private var currentAppVersion: String {
-        let short = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
+    /// Display string for the What's New sheet (marketing + build).
+    private var whatsNewVersionDisplayString: String {
+        let short = AppVersionComparator.marketingVersion(from: .main)
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
         return "\(short) (\(build))"
     }
 
+    private func migrateLegacyWhatsNewKeysIfNeeded() {
+        let d = UserDefaults.standard
+        guard d.string(forKey: WhatsNewPromptStorage.acknowledgedMarketingVersionUserDefaultsKey) == nil else { return }
+
+        if d.bool(forKey: Self.whatsNewLegacyDisablePopupKey) {
+            d.set(AppVersionComparator.marketingVersion(from: .main), forKey: WhatsNewPromptStorage.acknowledgedMarketingVersionUserDefaultsKey)
+        }
+
+        d.removeObject(forKey: Self.whatsNewLegacyDisablePopupKey)
+        d.removeObject(forKey: Self.whatsNewLegacyLastSeenKey)
+    }
+
+    /// Called on cold launch: show What's New only after the marketing version increases vs last acknowledgment.
     private func checkAndPresentWhatsNewIfNeeded() {
+        migrateLegacyWhatsNewKeysIfNeeded()
+
+        let current = AppVersionComparator.marketingVersion(from: .main)
         let defaults = UserDefaults.standard
-        let disabledKey = "disableWhatsNewPopup"
+        let acknowledged = defaults.string(forKey: WhatsNewPromptStorage.acknowledgedMarketingVersionUserDefaultsKey)
 
-        // Legacy compatibility: keep this key updated if it existed before.
-        defaults.set(currentAppVersion, forKey: "lastSeenWhatsNewVersion")
+        if acknowledged == nil {
+            showWhatsNew = true
+            return
+        }
 
-        let isDisabled = defaults.bool(forKey: disabledKey)
-        if !isDisabled {
+        if AppVersionComparator.isMarketingVersionNewer(current, than: acknowledged!) {
             showWhatsNew = true
         }
     }
 
-    private func disableWhatsNewPopup() {
-        let defaults = UserDefaults.standard
-        defaults.set(true, forKey: "disableWhatsNewPopup")
-        defaults.set(currentAppVersion, forKey: "lastSeenWhatsNewVersion")
+    /// Marks the current marketing version as seen — sheet stays hidden until the next App Store version bump.
+    private func acknowledgeWhatsNewForCurrentVersion() {
+        UserDefaults.standard.set(
+            AppVersionComparator.marketingVersion(from: .main),
+            forKey: WhatsNewPromptStorage.acknowledgedMarketingVersionUserDefaultsKey
+        )
     }
+
+    private static let whatsNewLegacyDisablePopupKey = "disableWhatsNewPopup"
+    private static let whatsNewLegacyLastSeenKey = "lastSeenWhatsNewVersion"
     
     var body: some View {
         ZStack {
@@ -363,17 +386,19 @@ struct MainTabView: View {
         }
         .sheet(isPresented: $showWhatsNew) {
             WhatsNewView(
-                versionLabel: currentAppVersion,
-                onDismiss: {
-                    showWhatsNew = false
-                },
-                onDontShowAgain: {
-                    disableWhatsNewPopup()
+                versionLabel: whatsNewVersionDisplayString,
+                onContinue: { doNotShowAgain in
+                    if doNotShowAgain {
+                        acknowledgeWhatsNewForCurrentVersion()
+                    }
                     showWhatsNew = false
                 }
             )
-            .presentationDetents([.fraction(0.5)])
+            .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .showWhatsNewAgain)) { _ in
+            showWhatsNew = true
         }
         .task {
             // Load subscription data when view appears
