@@ -695,7 +695,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "If you delete your account, your subscription will not be automatically cancelled. You must cancel your subscription separately through Apple's systems. Deleting your account will result in the loss of all your data, but you will continue to be charged for your subscription until it is cancelled." = "如果您删除帐户，您的订阅不会自动取消。您必须通过 Apple 系统单独取消订阅。删除您的帐户将导致您的所有数据丢失，但您将继续向您收取订阅费用，直至订阅被取消。";
 "If you have questions about these terms, please contact us:" = "如果您对这些条款有疑问，请联系我们：";
 "If you have questions about this privacy policy or your data rights, please contact us:" = "如果您对此隐私政策或您的数据权利有疑问，请联系我们：";
-"Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead." = "Image extraction uses OpenAI's API but this is not available in your region.请手动输入您的食谱。";
+"Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead." = "图像提取使用 OpenAI 的 API，但这在您所在的地区不可用。请手动输入您的食谱。";
 "Impersonate others or provide false information" = "冒充他人或提供虚假信息";
 "Important: We do not collect or store your payment information. All payments are processed through Apple's App Store using StoreKit. Apple handles all payment processing, and we only receive transaction confirmations and subscription status information." = "重要提示：我们不会收集或存储您的付款信息。所有付款均通过 Apple 的 App Store 使用 StoreKit 进行处理。 Apple 处理所有付款处理，我们仅接收交易确认和订阅状态信息。";
 "Intellectual Property" = "知识产权";
