@@ -17,7 +17,7 @@ struct WhatsNewView: View {
     private let highlights: [String] = [
         LocalizedString("Search with natural language.", comment: "What's new release bullet"),
         LocalizedString("RPG-style XP and level-ups as you cook.", comment: "What's new release bullet"),
-        LocalizedString("Post publicly—or keep recipes private.", comment: "What's new release bullet"),
+        LocalizedString("Post publicly - or keep recipes private.", comment: "What's new release bullet"),
         LocalizedString("AI helps polish recipe text while you write.", comment: "What's new release bullet")
     ]
 

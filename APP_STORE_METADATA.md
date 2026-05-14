@@ -28,7 +28,6 @@ What’s new in Misoto
 • Natural-language recipe search—find dishes the way you talk.
 • Ratings & reviews on recipes in Explore—see what cooks think before you try.
 • Nutrition (BETA)—USDA-backed estimates with AI help when an ingredient needs a fill-in.
-• AI extraction & polish when you’re signed in—handled securely on our servers (no API keys stored on your device).
 • Localization tuned across 20 languages for a clearer experience worldwide.
 • Performance improvements and bug fixes.
 

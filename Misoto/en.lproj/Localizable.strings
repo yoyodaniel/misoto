@@ -747,7 +747,7 @@
 /* Terms of Service - Last Updated */
 "OpenAI Service Not Available" = "OpenAI Service Not Available";
 "Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead." = "Image extraction uses OpenAI's API but this is not available in your region. Please enter your recipe manually instead.";
-"AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "Misoto is your home for recipes in 20 languages: save favorites, explore cooks worldwide, and turn photos, links, or websites into structured recipes with AI when you're signed in (handled securely on our servers). Get ratings, reviews, and nutrition (beta), then share dishes publicly, privately, or with friends. Download on the App Store.";
+"AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "Misoto is your home for recipes in 20 languages: save favorites, explore cooks worldwide, and turn photos, links, or websites into structured recipes with AI. Get ratings, reviews, and nutrition (beta), then share dishes publicly, privately, or with friends. Download on the App Store.";
 
 /* Ingredient Browser */
 "Ingredients" = "Ingredients";
@@ -830,10 +830,10 @@
 "Don't show again" = "Don't show again";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "Find recipes with natural-language search—skip fiddly filters.";
+"Search with natural language." = "Find recipes with natural-language search";
 "RPG-style XP and level-ups as you cook." = "Level up as you cook, and read ratings & reviews on recipes you discover.";
-"Post publicly—or keep recipes private." = "Share recipes publicly, privately, or with hand-picked people—your kitchen, your rules.";
-"AI helps polish recipe text while you write." = "AI extraction and polish when you're signed in—handled securely on our servers.";
+"Post publicly - or keep recipes private." = "Share recipes publicly, privately, or with hand-picked people";
+"AI helps polish recipe text while you write." = "AI helps polish recipe text while you write.";
 "Don't show again until the next app update" = "Don't show again until the next app update";
 "Continue" = "Continue";
 
