@@ -287,6 +287,10 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
     /// Extract recipe from URL by loading website in background WKWebView
     /// Uses the same extraction approach as ExtractMenuFromWebsiteViewModel
     func extractRecipe(from urlString: String) async {
+        guard !isExtractingContent else {
+            print("⚠️ extractRecipe(from URL) ignored: extraction already in progress")
+            return
+        }
         isExtractingContent = true
         isLoading = true
         errorMessage = nil
@@ -307,6 +311,8 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             return
         }
         
+        print("🔗 ExtractMenuFromLinkViewModel: start extract url=\(url.absoluteString)")
+        
         // Create a hidden WKWebView to load the website in the background
         let webView = WKWebView(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
         webView.isHidden = true // Hide the webView so it's not visible
@@ -320,6 +326,10 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             containerView?.isHidden = true
             containerView?.addSubview(webView)
             window.addSubview(containerView!)
+        }
+        
+        if containerView == nil {
+            print("⚠️ ExtractMenuFromLinkViewModel: WKWebView not attached to a window — load may fail or return empty (no UIWindowScene / window)")
         }
         
         // Set up navigation delegate to detect when loading completes
@@ -352,6 +362,8 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             
             // Step 1: Extract raw text from web page (uses cloneNode, doesn't modify DOM)
             var rawText = try await WebContentExtractor.extractText(from: webView)
+            let rawHead = String(rawText.prefix(500)).replacingOccurrences(of: "\n", with: " ")
+            print("🔗 ExtractMenuFromLinkViewModel: loaded finalURL=\(webView.url?.absoluteString ?? "nil") rawText.count=\(rawText.count) preview=\(rawHead)")
             
             // Step 1.1: IMMEDIATELY extract original title from raw text (BEFORE any translation)
             // This is critical to preserve the original language (e.g., Dutch)
@@ -374,6 +386,7 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             print("🔍 Detecting language of extracted web content...")
             rawText = await TextTranslationService.translateToEnglish(rawText)
             print("✅ Web content ready for processing (translated to English if needed)")
+            print("🔗 ExtractMenuFromLinkViewModel: after translate, charCount=\(rawText.count)")
             
                 // Step 1.6: Extract recipe images from web page using Vision framework
                 do {
@@ -422,9 +435,11 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             // Step 2: Use on-device Foundation models to clean and process text
             // Note: rawText is already translated to English at this point
             let cleanedText = await textProcessor.processAndCorrectText(rawText)
+            print("🔗 ExtractMenuFromLinkViewModel: cleanedText.count=\(cleanedText.count)")
             
             // Step 3: Send to OpenAI API for parsing into recipe structure
             let response = try await OpenAIService.parseRecipeFromText(cleanedText)
+            print("🔗 ExtractMenuFromLinkViewModel: OpenAI parse OK — response.title.count=\(response.title.count) dishIng=\(response.dishIngredients.count) instructions=\(response.instructions.count)")
             
             // If we didn't extract the original title earlier, use the response title
             // (though it will be in English at this point)
@@ -445,6 +460,7 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
                 baseIngredients: response.baseIngredients,
                 doughIngredients: response.doughIngredients,
                 toppingIngredients: response.toppingIngredients,
+                garnishIngredients: response.garnishIngredients,
                 instructions: response.instructions,
                 tips: response.tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: nil // Will be detected later
@@ -461,6 +477,7 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             doughBatterFillingIngredients = translated.batterIngredients + translated.baseIngredients + translated.doughIngredients
             sauceIngredients = translated.sauceIngredients
             toppingIngredients = translated.toppingIngredients
+            garnishIngredients = translated.garnishIngredients
             instructions = translated.instructions.isEmpty ? [""] : translated.instructions
             tips = translated.tips
             
@@ -503,6 +520,12 @@ class ExtractMenuFromLinkViewModel: ObservableObject {
             
             // Clean up: remove webView from window hierarchy
             containerView?.removeFromSuperview()
+            
+            let errorType = String(describing: type(of: error))
+            print("❌ ExtractMenuFromLinkViewModel: extractRecipe FAILED — \(errorType): \(error.localizedDescription)")
+            if let oe = error as? OpenAIError {
+                print("   OpenAIError detail: \(String(describing: oe))")
+            }
             
             if let webError = error as? WebContentExtractorError {
                 errorMessage = webError.localizedDescription

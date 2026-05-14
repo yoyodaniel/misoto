@@ -20,42 +20,47 @@ class WebContentExtractor {
         // Clones the content area and removes non-content elements from the clone
         let extractScript = """
         (function() {
-            // Try to find main content area (common recipe website patterns)
-            const contentSelectors = [
-                'article', '.recipe-content', '.recipe', '.content', 
-                'main', '.main-content', '[role="main"]', '.post-content',
-                '.entry-content', '.recipe-details', '.recipe-body'
-            ];
-            
-            let mainContent = null;
-            for (const selector of contentSelectors) {
-                const element = document.querySelector(selector);
-                if (element) {
-                    mainContent = element;
-                    break;
-                }
+            // Clone the full body first, strip chrome from the CLONE only (never mutate the live page).
+            // Historically, stripping .sidebar/nav from the document *before* picking `article` made
+            // `querySelector('article')` resolve to the main recipe; picking `article` on the raw DOM
+            // often hits the first sidebar/teaser card. Reproduce that behavior on a body clone, then
+            // choose the richest matching content region (longest text) among recipe-like selectors.
+            const bodyClone = document.body ? document.body.cloneNode(true) : null;
+            if (!bodyClone) {
+                return '';
             }
             
-            // If no main content found, use body
-            const targetElement = mainContent || document.body;
-            
-            // Clone the element to avoid modifying the original DOM
-            const clone = targetElement.cloneNode(true);
-            
-            // Remove script, style, nav, header, footer, aside, and other non-content elements from clone
             const nonContentSelectors = [
-                'script', 'style', 'nav', 'header', 'footer', 'aside', 
+                'script', 'style', 'nav', 'header', 'footer', 'aside',
                 '.advertisement', '.ad', '.sidebar', '.menu', '.navigation',
                 '.social', '.share', '.comments', '.related', '.footer-content'
             ];
             
             nonContentSelectors.forEach(selector => {
-                const elements = clone.querySelectorAll(selector);
-                elements.forEach(el => el.remove());
+                bodyClone.querySelectorAll(selector).forEach(el => el.remove());
             });
             
-            // Extract text from the clone, preserving line breaks
-            const text = clone.innerText || clone.textContent || '';
+            const contentSelectors = [
+                '.recipe-content', '.recipe', '.recipe-details', '.recipe-body',
+                '[role="main"]', 'main', '.main-content', 'article',
+                '.entry-content', '.post-content', '.content'
+            ];
+            
+            let best = null;
+            let bestLen = 0;
+            for (const selector of contentSelectors) {
+                bodyClone.querySelectorAll(selector).forEach(el => {
+                    const raw = el.innerText || el.textContent || '';
+                    const len = raw.replace(/\\s+/g, ' ').trim().length;
+                    if (len > bestLen) {
+                        bestLen = len;
+                        best = el;
+                    }
+                });
+            }
+            
+            const targetElement = best || bodyClone;
+            const text = targetElement.innerText || targetElement.textContent || '';
             
             // Clean up excessive whitespace while preserving structure
             return text

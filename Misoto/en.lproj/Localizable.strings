@@ -830,11 +830,11 @@
 "Don't show again" = "Don't show again";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "Find recipes with natural-language search";
+"Search with natural language." = "Find recipes with natural-language search.";
 "RPG-style XP and level-ups as you cook." = "Level up as you cook, and read ratings & reviews on recipes you discover.";
-"Post publicly - or keep recipes private." = "Share recipes publicly, privately, or with hand-picked people";
+"Post publicly - or keep recipes private." = "Share recipes publicly, privately, or with hand-picked people.";
 "AI helps polish recipe text while you write." = "AI helps polish recipe text while you write.";
-"Don't show again until the next app update" = "Don't show again until the next app update";
+"Don't show again until the next app update" = "Don't show again until the next app update.";
 "Continue" = "Continue";
 
 /* Keys present in translations but missing from English base */

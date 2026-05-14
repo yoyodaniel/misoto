@@ -632,7 +632,7 @@ Ihr Konto wird nach 30 Tagen gelöscht. Um die Löschung abzubrechen, melden Sie
 /* What's New (app update sheet) */
 "Search with natural language." = "Suche mit natürlicher Sprache.";
 "RPG-style XP and level-ups as you cook." = "RPG-XP und Level-Ups beim Kochen.";
-"Post publicly—or keep recipes private." = "Öffentlich posten – oder Rezepte privat lassen.";
+"Post publicly - or keep recipes private." = "Öffentlich posten – oder Rezepte privat lassen.";
 "AI helps polish recipe text while you write." = "Die KI hilft beim Schreiben, den Rezepttext zu verfeinern.";
 "Don't show again until the next app update" = "Bis zum nächsten App-Update nicht mehr anzeigen";
 "Continue" = "Weiter";

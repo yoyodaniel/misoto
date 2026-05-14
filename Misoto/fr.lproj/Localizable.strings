@@ -632,7 +632,7 @@ Votre compte sera supprimé après 30 jours. Pour annuler la suppression, reconn
 /* What's New (app update sheet) */
 "Search with natural language." = "Recherchez en langage naturel.";
 "RPG-style XP and level-ups as you cook." = "XP façon RPG et montée en niveau en cuisinant.";
-"Post publicly—or keep recipes private." = "Publiez en public ou gardez les recettes privées.";
+"Post publicly - or keep recipes private." = "Publiez en public ou gardez les recettes privées.";
 "AI helps polish recipe text while you write." = "L’IA aide à peaufiner le texte pendant la rédaction.";
 "Don't show again until the next app update" = "Ne plus afficher jusqu’à la prochaine mise à jour";
 "Continue" = "Continuer";

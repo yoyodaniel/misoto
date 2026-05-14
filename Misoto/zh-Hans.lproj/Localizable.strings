@@ -632,7 +632,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 /* What's New (app update sheet) */
 "Search with natural language." = "使用自然语言搜索。";
 "RPG-style XP and level-ups as you cook." = "RPG式经验值，边做菜边升级。";
-"Post publicly—or keep recipes private." = "公开发布，或将食谱设为私密。";
+"Post publicly - or keep recipes private." = "公开发布，或将食谱设为私密。";
 "AI helps polish recipe text while you write." = "撰写时 AI 协助润色食谱文字。";
 "Don't show again until the next app update" = "在下次应用更新之前不再显示";
 "Continue" = "继续";

@@ -20,6 +20,11 @@ struct RecipeTextParser {
         }
     }
     
+    /// Parses one ingredient line when the model returns plain strings (e.g. `"2 tbsp olive oil"`).
+    static func ingredientItem(fromFreeformLine line: String) -> IngredientItem {
+        parseIngredientItem(line.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+    
     struct ParsedRecipe {
         var title: String
         var description: String

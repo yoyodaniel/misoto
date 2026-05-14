@@ -54,8 +54,9 @@ class OpenAIService {
         If ingredients mention other pages, those pages likely contain marinade/sauce/preparation recipes that must be included FIRST in the instructions.
         PRESERVE THE ORIGINAL LANGUAGE: Keep the same language as the text in the images. Do NOT translate to English unless the language is not supported. Preserve original terminology and key details. Return JSON only.
         
-        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions.
-        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch), name (Capitalized Words).
+        Sections: dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, fillingIngredients, garnishIngredients, instructions.
+        You may also use a single "ingredients" array (strings or objects) for the main list if sectioning is unclear; the app will map it to dishIngredients.
+        Ingredients: amount (number/decimals), unit (tbsp/tsp/cup/g/kg/ml/l/oz/fl_oz/lb/piece/pinch), name (Capitalized Words). Each ingredient object MUST use keys "amount", "unit", and "name" OR a single string line like "2 tbsp soy sauce".
         Note: "Oz" unit usage - CRITICAL DISTINCTION:
         - Use "fl_oz" (liquid ounces) ONLY for liquids: water, milk, oil, broth, juice, wine, vinegar, etc.
         - Use "oz" (weight ounces) ONLY for weight/solids: meat, flour, cheese, vegetables, fruits, etc.
@@ -209,11 +210,13 @@ class OpenAIService {
                 ]
             ],
             "response_format": ["type": "json_object"],
-            "max_tokens": 2000,
+            "max_tokens": 8192,
             "temperature": 0.1
         ]
         
+        print("🖼️ OpenAIService.extractRecipe(images): calling proxy, image parts=\(imageContentItems.count)")
         let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        print("🖼️ OpenAIService.extractRecipe(images): response bytes=\(data.count)")
 
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -221,15 +224,19 @@ class OpenAIService {
               let firstChoice = choices.first,
               let message = firstChoice["message"] as? [String: Any],
               let content = message["content"] as? String else {
+            let snippet = String(data: data.prefix(500), encoding: .utf8) ?? ""
+            print("❌ extractRecipe(images): invalid OpenAI envelope. Snippet: \(snippet)")
             throw OpenAIError.invalidResponse
         }
         
         // Extract JSON from the response (it might be wrapped in markdown code blocks)
         let jsonString = extractJSON(from: content)
+        print("🖼️ extractRecipe(images): model JSON string length=\(jsonString.count)")
         
         // Parse the recipe data
         guard let jsonData = jsonString.data(using: .utf8),
               let recipeDict = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
+            print("❌ extractRecipe(images): JSONSerialization failed. First 600 chars: \(String(jsonString.prefix(600)))")
             throw OpenAIError.jsonParsingFailed
         }
         
@@ -240,6 +247,7 @@ class OpenAIService {
     /// This is much cheaper than sending images to OpenAI Vision API
     static func parseRecipeFromText(_ extractedText: String) async throws -> OpenAIRecipeResponse {
         guard !extractedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            print("❌ parseRecipeFromText: empty extractedText")
             throw OpenAIError.invalidResponse
         }
         
@@ -256,6 +264,8 @@ class OpenAIService {
         } else {
             truncatedText = extractedText
         }
+        
+        print("📄 parseRecipeFromText: sending \(truncatedText.count) chars to OpenAI (raw was \(extractedText.count))")
         
         // Use the same system prompt as extractRecipe(fromURL:) since it's text-based
         let systemPrompt = """
@@ -417,6 +427,7 @@ class OpenAIService {
         ]
         
         let responseData = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        print("📄 parseRecipeFromText: received \(responseData.count) bytes from proxy")
         
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
@@ -424,15 +435,19 @@ class OpenAIService {
               let firstChoice = choices.first,
               let message = firstChoice["message"] as? [String: Any],
               let content = message["content"] as? String else {
+            let snippet = String(data: responseData.prefix(600), encoding: .utf8) ?? "<non-utf8>"
+            print("❌ parseRecipeFromText: invalid OpenAI envelope. Snippet: \(snippet)")
             throw OpenAIError.invalidResponse
         }
         
         // Extract JSON from the response
         let jsonString = extractJSON(from: content)
+        print("📄 parseRecipeFromText: model content length=\(content.count), extracted JSON length=\(jsonString.count)")
         
         // Parse the recipe data
         guard let jsonData = jsonString.data(using: .utf8),
               let recipeDict = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
+            print("❌ parseRecipeFromText: JSONSerialization failed on model JSON. First 800 chars:\n\(String(jsonString.prefix(800)))")
             throw OpenAIError.jsonParsingFailed
         }
         
@@ -703,43 +718,82 @@ class OpenAIService {
         return jsonString.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
+    /// Vision / text models sometimes wrap the recipe in `{"recipe":{...}}` instead of a flat object.
+    private static func unwrapNestedRecipeDict(_ dict: [String: Any]) -> [String: Any] {
+        for key in ["recipe", "data", "result", "extraction"] {
+            guard let inner = dict[key] as? [String: Any] else { continue }
+            if inner["dishIngredients"] != nil || inner["ingredients"] != nil || inner["instructions"] != nil {
+                print("📦 parseRecipeResponse: using nested object under \"\(key)\"")
+                return inner
+            }
+        }
+        return dict
+    }
+    
     /// Parse recipe response from dictionary
     private static func parseRecipeResponse(from dict: [String: Any]) throws -> OpenAIRecipeResponse {
-        let title = dict["title"] as? String ?? ""
-        let description = dict["description"] as? String ?? ""
+        let root = unwrapNestedRecipeDict(dict)
+        
+        let title = parseTitle(from: root)
+        let description = root["description"] as? String ?? ""
         
         // Parse servings (default to 0 if not found)
-        let servings = (dict["servings"] as? Int) ?? (dict["servings"] as? String).flatMap { Int($0) } ?? 0
+        let servings = (root["servings"] as? Int) ?? (root["servings"] as? String).flatMap { Int($0) } ?? 0
         
         // Parse prepTime and cookTime (in minutes, default to 0 if not found)
-        let prepTime = (dict["prepTime"] as? Int) ?? (dict["prepTime"] as? String).flatMap { Int($0) } ?? 0
-        let cookTime = (dict["cookTime"] as? Int) ?? (dict["cookTime"] as? String).flatMap { Int($0) } ?? 0
+        let prepTime = (root["prepTime"] as? Int) ?? (root["prepTime"] as? String).flatMap { Int($0) } ?? 0
+        let cookTime = (root["cookTime"] as? Int) ?? (root["cookTime"] as? String).flatMap { Int($0) } ?? 0
         
-        // Parse ingredients
-        let dishIngredients = parseIngredients(from: dict["dishIngredients"] as? [[String: Any]] ?? [])
-        let marinadeIngredients = parseIngredients(from: dict["marinadeIngredients"] as? [[String: Any]] ?? [])
-        let seasoningIngredients = parseIngredients(from: dict["seasoningIngredients"] as? [[String: Any]] ?? [])
-        let batterIngredients = parseIngredients(from: dict["batterIngredients"] as? [[String: Any]] ?? [])
-        let sauceIngredients = parseIngredients(from: dict["sauceIngredients"] as? [[String: Any]] ?? [])
-        let baseIngredients = parseIngredients(from: dict["baseIngredients"] as? [[String: Any]] ?? [])
-        let doughIngredients = parseIngredients(from: dict["doughIngredients"] as? [[String: Any]] ?? [])
-        let toppingIngredients = parseIngredients(from: dict["toppingIngredients"] as? [[String: Any]] ?? [])
+        // Parse ingredients (filling is merged into dough — UI consolidates dough/batter/filling)
+        var dishIngredients = parseIngredientsFromJSON(root["dishIngredients"], field: "dishIngredients")
+        let marinadeIngredients = parseIngredientsFromJSON(root["marinadeIngredients"], field: "marinadeIngredients")
+        let seasoningIngredients = parseIngredientsFromJSON(root["seasoningIngredients"], field: "seasoningIngredients")
+        let batterIngredients = parseIngredientsFromJSON(root["batterIngredients"], field: "batterIngredients")
+        let sauceIngredients = parseIngredientsFromJSON(root["sauceIngredients"], field: "sauceIngredients")
+        let baseIngredients = parseIngredientsFromJSON(root["baseIngredients"], field: "baseIngredients")
+        let doughParsed = parseIngredientsFromJSON(root["doughIngredients"], field: "doughIngredients")
+        let fillingParsed = parseIngredientsFromJSON(root["fillingIngredients"], field: "fillingIngredients")
+        let doughIngredients = doughParsed + fillingParsed
+        let toppingIngredients = parseIngredientsFromJSON(root["toppingIngredients"], field: "toppingIngredients")
+        let garnishIngredients = parseIngredientsFromJSON(root["garnishIngredients"], field: "garnishIngredients")
         
-        // Parse instructions and clean step prefixes
-        let rawInstructions = (dict["instructions"] as? [String]) ?? []
+        if dishIngredients.isEmpty {
+            for field in ["ingredients", "mainIngredients", "recipeIngredients"] {
+                let parsed = parseIngredientsFromJSON(root[field], field: field)
+                if !parsed.isEmpty {
+                    dishIngredients = parsed
+                    print("ℹ️ parseRecipeResponse: filled empty dishIngredients from '\(field)' (\(parsed.count) items)")
+                    break
+                }
+            }
+        }
+        
+        // Parse instructions and clean step prefixes (models sometimes return one string or [Any])
+        let rawInstructions = parseInstructionsList(from: root["instructions"])
         let instructions = rawInstructions.map { cleanInstructionText($0) }
         
         // Parse tips
-        let tips = (dict["tips"] as? [String]) ?? []
+        let tips = parseTipsList(from: root["tips"])
         
         // Check if no recipe was detected (empty title and no ingredients/instructions)
-        let allIngredients = dishIngredients + marinadeIngredients + seasoningIngredients + batterIngredients + sauceIngredients + baseIngredients + doughIngredients + toppingIngredients
+        let allIngredients = dishIngredients + marinadeIngredients + seasoningIngredients + batterIngredients + sauceIngredients + baseIngredients + doughIngredients + toppingIngredients + garnishIngredients
         let hasValidInstructions = !instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }.isEmpty
         
         if title.trimmingCharacters(in: .whitespaces).isEmpty && allIngredients.isEmpty && !hasValidInstructions {
+            let keys = root.keys.sorted().joined(separator: ", ")
+            let instrType = root["instructions"].map { String(describing: type(of: $0)) } ?? "nil"
+            let dishSample = String(describing: root["dishIngredients"]).prefix(240)
+            let ingSample = String(describing: root["ingredients"]).prefix(240)
+            print("❌ parseRecipeResponse: noRecipeDetected")
+            print("   top-level keys [\(keys)]")
+            print("   title len=\(title.count) description len=\(description.count)")
+            print("   instructions Swift type=\(instrType)")
+            print("   dishIngredients sample: \(dishSample)")
+            print("   ingredients sample: \(ingSample)")
             throw OpenAIError.noRecipeDetected
         }
         
+        print("✅ parseRecipeResponse: title len=\(title.count) total ingredients=\(allIngredients.count) instructions=\(instructions.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }.count)")
         return OpenAIRecipeResponse(
             title: title,
             description: description,
@@ -754,19 +808,139 @@ class OpenAIService {
             baseIngredients: baseIngredients,
             doughIngredients: doughIngredients,
             toppingIngredients: toppingIngredients,
+            garnishIngredients: garnishIngredients,
             instructions: instructions,
             tips: tips
         )
     }
-    
-    /// Parse ingredient array
-    private static func parseIngredients(from array: [[String: Any]]) -> [RecipeTextParser.IngredientItem] {
-        return array.compactMap { dict in
-            guard let name = dict["name"] as? String else { return nil }
-            let amount = dict["amount"] as? String ?? ""
-            let unit = dict["unit"] as? String ?? ""
-            return RecipeTextParser.IngredientItem(amount: amount, unit: unit, name: name)
+
+    private static func parseTitle(from dict: [String: Any]) -> String {
+        let keys = ["title", "recipeTitle", "name", "dishName"]
+        for key in keys {
+            if let s = dict[key] as? String {
+                let t = s.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !t.isEmpty { return t }
+            }
+            if let i = dict[key] as? Int {
+                return String(i)
+            }
+            if let d = dict[key] as? Double {
+                return String(d)
+            }
+            if let n = dict[key] as? NSNumber {
+                let t = n.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !t.isEmpty { return t }
+            }
         }
+        return ""
+    }
+
+    /// Accept JSON where `instructions` is `[String]`, a single string, `[Any]`, or a string-keyed map of steps.
+    private static func parseInstructionsList(from value: Any?) -> [String] {
+        if let arr = value as? [String] {
+            return arr
+        }
+        if let anyArr = value as? [Any] {
+            return anyArr.compactMap { $0 as? String }
+        }
+        if let str = value as? String {
+            return str
+                .components(separatedBy: .newlines)
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty }
+        }
+        if let map = value as? [String: Any] {
+            let pairs: [(Int, String)] = map.compactMap { key, val in
+                guard let s = val as? String else { return nil }
+                let trimmed = s.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty else { return nil }
+                if let idx = Int(key) {
+                    return (idx, trimmed)
+                }
+                return nil
+            }
+            if !pairs.isEmpty {
+                return pairs.sorted { $0.0 < $1.0 }.map { $0.1 }
+            }
+        }
+        return []
+    }
+    
+    private static func jsonScalarToString(_ value: Any?) -> String {
+        guard let value else { return "" }
+        if let s = value as? String { return s }
+        if let i = value as? Int { return String(i) }
+        if let d = value as? Double {
+            let rounded = d.rounded()
+            return abs(d - rounded) < 0.000_001 ? String(Int(d)) : String(d)
+        }
+        if let b = value as? Bool { return b ? "1" : "0" }
+        if let n = value as? NSNumber { return n.stringValue }
+        return ""
+    }
+    
+    private static func parseTipsList(from value: Any?) -> [String] {
+        if let arr = value as? [String] {
+            return arr.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        }
+        if let anyArr = value as? [Any] {
+            return anyArr
+                .map { jsonScalarToString($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+        }
+        if let str = value as? String {
+            return str
+                .components(separatedBy: .newlines)
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+        }
+        return []
+    }
+    
+    private static func parseIngredientObject(_ dict: [String: Any]) -> RecipeTextParser.IngredientItem? {
+        let rawName = (dict["name"] as? String) ?? (dict["item"] as? String) ?? (dict["ingredient"] as? String)
+        let name = rawName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        guard !name.isEmpty else { return nil }
+        let amount = jsonScalarToString(dict["amount"]).trimmingCharacters(in: .whitespacesAndNewlines)
+        let unitSource = dict["unit"]
+        let unit = ((unitSource as? String) ?? jsonScalarToString(unitSource)).trimmingCharacters(in: .whitespacesAndNewlines)
+        return RecipeTextParser.IngredientItem(amount: amount, unit: unit, name: name)
+    }
+    
+    /// Parses `dishIngredients` / etc. from OpenAI JSON — supports `[[String:Any]]`, `[String]`, and `[Any]` (mixed).
+    private static func parseIngredientsFromJSON(_ value: Any?, field: String) -> [RecipeTextParser.IngredientItem] {
+        guard let value else { return [] }
+        
+        if let dictRows = value as? [[String: Any]] {
+            let items = dictRows.compactMap { parseIngredientObject($0) }
+            if !dictRows.isEmpty && items.isEmpty {
+                let firstKeys = dictRows.first.map { $0.keys.sorted().joined(separator: ", ") } ?? "?"
+                print("⚠️ parseIngredientsFromJSON(\(field)): \(dictRows.count) dict rows but 0 parsed — first row keys: [\(firstKeys)]")
+            }
+            return items
+        }
+        
+        if let stringRows = value as? [String] {
+            return stringRows.map { RecipeTextParser.ingredientItem(fromFreeformLine: $0) }
+        }
+        
+        if let anyRows = value as? [Any] {
+            var out: [RecipeTextParser.IngredientItem] = []
+            for el in anyRows {
+                if let s = el as? String {
+                    out.append(RecipeTextParser.ingredientItem(fromFreeformLine: s))
+                } else if let d = el as? [String: Any], let item = parseIngredientObject(d) {
+                    out.append(item)
+                }
+            }
+            if !anyRows.isEmpty && out.isEmpty {
+                print("⚠️ parseIngredientsFromJSON(\(field)): [Any] count=\(anyRows.count) produced 0 items")
+            }
+            return out
+        }
+        
+        print("⚠️ parseIngredientsFromJSON(\(field)): unexpected type \(type(of: value)) — \(String(describing: value).prefix(200))")
+        return []
     }
     
     /// Clean instruction text by removing step prefixes (e.g., "Step 1:", "Step 2", "Étape 1", etc.)
@@ -1916,6 +2090,8 @@ struct OpenAIRecipeResponse {
     let baseIngredients: [RecipeTextParser.IngredientItem]
     let doughIngredients: [RecipeTextParser.IngredientItem]
     let toppingIngredients: [RecipeTextParser.IngredientItem]
+    /// Parsed from `garnishIngredients` in the model JSON (prompt asks for this section separately).
+    let garnishIngredients: [RecipeTextParser.IngredientItem]
     let instructions: [String]
     let tips: [String]
 }
@@ -1933,6 +2109,8 @@ enum OpenAIError: LocalizedError {
     case apiError(String)
     case jsonParsingFailed
     case noRecipeDetected
+    /// Firebase Callable / transport failure (wrong project, function not deployed, timeout, offline, etc.).
+    case backendConnectionFailed(String)
     
     var errorDescription: String? {
         switch self {
@@ -1956,6 +2134,8 @@ enum OpenAIError: LocalizedError {
             return "Failed to parse JSON response from OpenAI"
         case .noRecipeDetected:
             return LocalizedString("No recipe is detected, please try again.", comment: "No recipe detected error message")
+        case .backendConnectionFailed(let message):
+            return message
         }
     }
 }

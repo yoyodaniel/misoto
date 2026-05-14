@@ -614,7 +614,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 /* What's New (app update sheet) */
 "Search with natural language." = "Поиск на естественном языке.";
 "RPG-style XP and level-ups as you cook." = "Опыт в стиле RPG и уровни во время готовки.";
-"Post publicly—or keep recipes private." = "Публикуйте открыто или храните рецепты приватно.";
+"Post publicly - or keep recipes private." = "Публикуйте открыто или храните рецепты приватно.";
 "AI helps polish recipe text while you write." = "ИИ помогает улучшить текст рецепта при написании.";
 "Don't show again until the next app update" = "Не показывать до следующего обновления приложения";
 "Continue" = "Продолжить";

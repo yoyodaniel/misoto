@@ -84,6 +84,7 @@ class CostOptimizedRecipeExtractor {
             baseIngredients: [], // Will be populated by refinement if available
             doughIngredients: [], // Will be populated by refinement if available
             toppingIngredients: [], // Will be populated by refinement if available
+            garnishIngredients: [],
             instructions: parsed.instructions,
             tips: [] // Will be populated by refinement if available
         )
@@ -174,6 +175,7 @@ class CostOptimizedRecipeExtractor {
             baseIngredients: refined.baseIngredients,
             doughIngredients: refined.doughIngredients,
             toppingIngredients: refined.toppingIngredients,
+            garnishIngredients: refined.garnishIngredients.isEmpty ? original.garnishIngredients : refined.garnishIngredients,
             instructions: refined.instructions.isEmpty ? original.instructions : refined.instructions,
             tips: refined.tips
         )

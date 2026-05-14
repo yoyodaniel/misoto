@@ -716,7 +716,7 @@ Su cuenta se eliminará después de 30 días. Para cancelar la eliminación, ini
 /* What's New (app update sheet) */
 "Search with natural language." = "Busca con lenguaje natural.";
 "RPG-style XP and level-ups as you cook." = "XP estilo RPG y subes de nivel mientras cocinas.";
-"Post publicly—or keep recipes private." = "Publica en abierto o mantén las recetas privadas.";
+"Post publicly - or keep recipes private." = "Publica en abierto o mantén las recetas privadas.";
 "AI helps polish recipe text while you write." = "La IA te ayuda a pulir el texto mientras escribes.";
 "Don't show again until the next app update" = "No mostrar hasta la próxima actualización de la app";
 "Continue" = "Continuar";

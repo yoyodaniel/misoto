@@ -146,6 +146,7 @@ class RecipeTranslationService {
     ///   - baseIngredients: Base ingredients
     ///   - doughIngredients: Dough ingredients
     ///   - toppingIngredients: Topping ingredients
+    ///   - garnishIngredients: Garnish / finish ingredients
     ///   - instructions: Array of instruction strings
     ///   - tips: Array of tip strings
     ///   - cuisine: Cuisine name (optional)
@@ -161,6 +162,7 @@ class RecipeTranslationService {
         baseIngredients: [RecipeTextParser.IngredientItem],
         doughIngredients: [RecipeTextParser.IngredientItem],
         toppingIngredients: [RecipeTextParser.IngredientItem],
+        garnishIngredients: [RecipeTextParser.IngredientItem] = [],
         instructions: [String],
         tips: [String],
         cuisine: String?
@@ -175,6 +177,7 @@ class RecipeTranslationService {
         baseIngredients: [RecipeTextParser.IngredientItem],
         doughIngredients: [RecipeTextParser.IngredientItem],
         toppingIngredients: [RecipeTextParser.IngredientItem],
+        garnishIngredients: [RecipeTextParser.IngredientItem],
         instructions: [String],
         tips: [String],
         cuisine: String?
@@ -186,14 +189,14 @@ class RecipeTranslationService {
         switch selectedLanguage {
         case .english:
             // If English is selected, return as-is
-            return (title, description, dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions, tips, cuisine)
+            return (title, description, dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, garnishIngredients, instructions, tips, cuisine)
         case .system:
             // Get system language code (preserve full code including variants like zh-Hant, zh-Hans)
             if let preferredLanguage = Locale.preferredLanguages.first {
                 // Normalize Chinese regional variants to zh-Hans or zh-Hant
                 targetLanguageCode = normalizeChineseLanguageCode(preferredLanguage)
             } else {
-                return (title, description, dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions, tips, cuisine)
+                return (title, description, dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, garnishIngredients, instructions, tips, cuisine)
             }
         default:
             // Use the language code from the enum
@@ -202,7 +205,7 @@ class RecipeTranslationService {
         
         // Don't translate if target is English
         if targetLanguageCode.lowercased() == "en" || targetLanguageCode.lowercased().hasPrefix("en-") {
-            return (title, description, dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, instructions, tips, cuisine)
+            return (title, description, dishIngredients, marinadeIngredients, seasoningIngredients, batterIngredients, sauceIngredients, baseIngredients, doughIngredients, toppingIngredients, garnishIngredients, instructions, tips, cuisine)
         }
         
         print("🌍 Translating recipe to \(targetLanguageCode)...")
@@ -273,6 +276,7 @@ class RecipeTranslationService {
         let translatedBaseIngredients = await translateIngredients(baseIngredients)
         let translatedDoughIngredients = await translateIngredients(doughIngredients)
         let translatedToppingIngredients = await translateIngredients(toppingIngredients)
+        let translatedGarnishIngredients = await translateIngredients(garnishIngredients)
         print("✅ Translated all ingredients")
         
         // Translate instructions
@@ -319,7 +323,7 @@ class RecipeTranslationService {
         
         print("✅ Recipe translation complete")
         
-        return (translatedTitle, translatedDescription, translatedDishIngredients, translatedMarinadeIngredients, translatedSeasoningIngredients, translatedBatterIngredients, translatedSauceIngredients, translatedBaseIngredients, translatedDoughIngredients, translatedToppingIngredients, translatedInstructions, translatedTips, translatedCuisine)
+        return (translatedTitle, translatedDescription, translatedDishIngredients, translatedMarinadeIngredients, translatedSeasoningIngredients, translatedBatterIngredients, translatedSauceIngredients, translatedBaseIngredients, translatedDoughIngredients, translatedToppingIngredients, translatedGarnishIngredients, translatedInstructions, translatedTips, translatedCuisine)
     }
 }
 

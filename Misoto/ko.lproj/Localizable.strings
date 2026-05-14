@@ -632,7 +632,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 /* What's New (app update sheet) */
 "Search with natural language." = "자연어로 검색하세요.";
 "RPG-style XP and level-ups as you cook." = "RPG 스타일 XP와 요리하며 레벨 업.";
-"Post publicly—or keep recipes private." = "공개 게시 또는 비공개로 유지.";
+"Post publicly - or keep recipes private." = "공개 게시 또는 비공개로 유지.";
 "AI helps polish recipe text while you write." = "작성 중 AI가 레시피 텍스트를 다듬습니다.";
 "Don't show again until the next app update" = "다음 앱 업데이트까지 다시 표시 안 함";
 "Continue" = "계속";

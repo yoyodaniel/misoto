@@ -631,7 +631,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 /* What's New (app update sheet) */
 "Search with natural language." = "自然な言葉で検索。";
 "RPG-style XP and level-ups as you cook." = "RPG風のXPとレベルアップ。";
-"Post publicly—or keep recipes private." = "公開投稿、またはレシピを非公開に。";
+"Post publicly - or keep recipes private." = "公開投稿、またはレシピを非公開に。";
 "AI helps polish recipe text while you write." = "執筆中、AIがレシピ文を整えます。";
 "Don't show again until the next app update" = "次のアプリアップデートまで表示しない";
 "Continue" = "続ける";

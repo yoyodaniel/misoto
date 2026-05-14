@@ -304,6 +304,10 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
     /// Extract recipe from web content
     /// First uses on-device Foundation models to clean text, then sends to OpenAI for parsing
     func extractRecipe(from webView: WKWebView) async {
+        guard !isExtractingContent else {
+            print("⚠️ extractRecipe ignored: extraction already in progress")
+            return
+        }
         isExtractingContent = true
         isLoading = true
         errorMessage = nil
@@ -416,6 +420,7 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
                 baseIngredients: response.baseIngredients,
                 doughIngredients: response.doughIngredients,
                 toppingIngredients: response.toppingIngredients,
+                garnishIngredients: response.garnishIngredients,
                 instructions: response.instructions,
                 tips: response.tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: nil // Will be detected later
@@ -432,6 +437,7 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
             doughBatterFillingIngredients = translated.batterIngredients + translated.baseIngredients + translated.doughIngredients
             sauceIngredients = translated.sauceIngredients
             toppingIngredients = translated.toppingIngredients
+            garnishIngredients = translated.garnishIngredients
             instructions = translated.instructions.isEmpty ? [""] : translated.instructions
             tips = translated.tips
             

@@ -2,29 +2,28 @@
 //  RecipeDetector.swift
 //  Misoto
 //
-//  Service for detecting if a webpage contains recipe content using on-device Foundation models
+//  Service for detecting if a webpage contains recipe content using on-device heuristics
 //
 
 import Foundation
-import NaturalLanguage
 import WebKit
 
 @MainActor
 class RecipeDetector {
     
-    /// Detect if a webpage contains recipe content using on-device Foundation models
+    /// Detect if a webpage contains recipe content using on-device heuristics
     /// This method only reads content - it does NOT modify the webpage in any way
     /// Translates text to English first to support multilingual recipe detection
     static func detectRecipe(on webView: WKWebView) async -> Bool {
         do {
-            // Read text content from the webpage WITHOUT modifying it
-            let text = try await readTextOnly(from: webView)
+            // Use the same extraction path as recipe import so detection matches what the user will extract.
+            let text = try await WebContentExtractor.extractText(from: webView)
             
             // Translate text to English if needed (for multilingual recipe detection)
             // This ensures recipes in any language can be detected using English keywords
             let translatedText = await TextTranslationService.translateToEnglish(text)
             
-            // Use on-device Foundation models to detect recipe content
+            // Score translated text for recipe-like structure and vocabulary
             return detectRecipeInText(translatedText)
         } catch {
             // If we can't read text, assume no recipe
@@ -32,64 +31,7 @@ class RecipeDetector {
         }
     }
     
-    /// Read text content from WKWebView without modifying the DOM
-    /// This is a read-only operation that does not change the webpage
-    private static func readTextOnly(from webView: WKWebView) async throws -> String {
-        // JavaScript to ONLY read text content - does NOT modify the page
-        let readOnlyScript = """
-        (function() {
-            // Try to find main content area (common recipe website patterns)
-            const contentSelectors = [
-                'article', '.recipe-content', '.recipe', '.content', 
-                'main', '.main-content', '[role="main"]', '.post-content',
-                '.entry-content', '.recipe-details', '.recipe-body'
-            ];
-            
-            let mainContent = null;
-            for (const selector of contentSelectors) {
-                const element = document.querySelector(selector);
-                if (element) {
-                    mainContent = element;
-                    break;
-                }
-            }
-            
-            // If no main content found, use body
-            const targetElement = mainContent || document.body;
-            
-            // Extract text, preserving line breaks - READ ONLY, no modifications
-            const text = targetElement.innerText || targetElement.textContent || '';
-            
-            // Clean up excessive whitespace while preserving structure
-            return text
-                .replace(/\\s+/g, ' ')
-                .replace(/\\n\\s*\\n\\s*\\n/g, '\\n\\n')
-                .trim();
-        })();
-        """
-        
-        // Execute JavaScript and get result
-        let result = try await webView.evaluateJavaScript(readOnlyScript) as? String
-        
-        guard let extractedText = result, !extractedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            throw RecipeDetectionError.noContentFound
-        }
-        
-        return extractedText
-    }
-    
-    private enum RecipeDetectionError: LocalizedError {
-        case noContentFound
-        
-        var errorDescription: String? {
-            switch self {
-            case .noContentFound:
-                return "No content found on the webpage"
-            }
-        }
-    }
-    
-    /// Detect if text contains recipe content using NaturalLanguage framework and pattern matching
+    /// Detect if text contains recipe content using pattern matching
     /// Uses very lenient scoring system - requires minimal recipe indicators
     private static func detectRecipeInText(_ text: String) -> Bool {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {

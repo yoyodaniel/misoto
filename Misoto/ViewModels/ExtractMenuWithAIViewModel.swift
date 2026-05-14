@@ -162,6 +162,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
                 baseIngredients: response.baseIngredients,
                 doughIngredients: response.doughIngredients,
                 toppingIngredients: response.toppingIngredients,
+                garnishIngredients: response.garnishIngredients,
                 instructions: response.instructions,
                 tips: response.tips.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty },
                 cuisine: nil // Will be detected later
@@ -178,6 +179,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             doughBatterFillingIngredients = translated.batterIngredients + translated.baseIngredients + translated.doughIngredients
             sauceIngredients = translated.sauceIngredients
             toppingIngredients = translated.toppingIngredients
+            garnishIngredients = translated.garnishIngredients
             instructions = translated.instructions.isEmpty ? [""] : translated.instructions
             tips = translated.tips
             

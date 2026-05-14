@@ -613,7 +613,7 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 /* What's New (app update sheet) */
 "Search with natural language." = "חיפוש בשפה טבעית.";
 "RPG-style XP and level-ups as you cook." = "נקודות ניסיון בסגנון RPG ועליית רמה בזמן הבישול.";
-"Post publicly—or keep recipes private." = "פרסם בפומבי או שמור מתכונים פרטיים.";
+"Post publicly - or keep recipes private." = "פרסם בפומבי או שמור מתכונים פרטיים.";
 "AI helps polish recipe text while you write." = "בינה מלאכותית עוזרת ללטש את טקסט המתכון בזמן הכתיבה.";
 "Don't show again until the next app update" = "לא להציג שוב עד לעדכון האפליקציה הבא";
 "Continue" = "המשך";
