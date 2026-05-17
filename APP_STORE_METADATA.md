@@ -2,7 +2,7 @@
 
 Paste these into **App Store Connect** → your app → **App Store** tab → select the version → **Promotional Text** / **What’s New in This Version**.
 
-**Marketing version this copy targets:** 1.4 (adjust if your build differs).
+**Marketing version this copy targets:** 1.5 (adjust if your build differs). **Shipped 1.4:** see git tag `v1.4.0` on `main`.
 
 ---
 
