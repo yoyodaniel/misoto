@@ -6,15 +6,56 @@ Paste these into **App Store Connect** → your app → **App Store** tab → se
 
 ---
 
+## Subtitle (30 characters max)
+
+```
+AI recipes • 20 languages
+```
+
+*(29 characters.)*
+
+---
+
 ## Promotional Text (170 characters max)
 
 Apple shows this above your description and you can change it **without** submitting a new binary.
 
 ```
-Misoto: discover & save recipes. AI from photos, links & sites; 20 languages; reviews & nutrition (beta). Sign in to use AI. Private or public sharing—download now.
+Misoto 1.5: AI Enhance for recipe photos. Save recipes, extract from photos, links & sites, 20 languages. Reviews, nutrition (beta). Sign in for AI.
 ```
 
-**Character count:** 164 (including spaces; under Apple’s 170 limit).
+**Character count:** ~148 (under Apple’s 170 limit).
+
+---
+
+## Description (App Store Connect → Description)
+
+```
+Misoto is your home for recipes in 20 languages—save favorites, explore cooks worldwide, and turn inspiration into complete dishes in seconds.
+
+WHAT YOU CAN DO
+• Save and organize your recipes with photos, ingredients, and step-by-step instructions
+• Extract recipes from photos, links, or websites with AI (sign in required)
+• Polish dish photos with AI Enhance—pick a style and tap Enhance on uploads and edits (v1.5)
+• Search recipes with natural language
+• Read ratings and reviews on dishes in Explore
+• See nutrition estimates (beta) with USDA-backed data and AI help when needed
+• Share recipes publicly, keep them private, or share with selected people
+• Level up as you cook with XP and achievements
+• Use the app in 20 languages
+
+PREMIUM
+Misoto Premium unlocks unlimited recipes and higher limits on AI features. Subscriptions auto-renew unless cancelled at least 24 hours before the end of the current period. Manage or cancel in your Apple ID account settings after purchase.
+
+AI FEATURES
+Some features use AI and require you to sign in. Availability may vary by region. Free accounts have monthly limits; Premium includes expanded access.
+
+SUPPORT
+Questions or feedback: support@misoto.app
+
+Privacy Policy: https://misoto.app/privacy
+Terms of Use: https://misoto.app/terms
+```
 
 ---
 
@@ -32,13 +73,11 @@ What’s new in Misoto 1.5
 
 ---
 
-## Optional: Subtitle (30 characters max)
+## Keywords (100 characters max, optional)
 
 ```
-AI recipes • 20 languages
+recipe,cooking,food,AI,photo,recipes,share,kitchen,meal,chef,nutrition,extract,enhance
 ```
-
-*(29 characters.)*
 
 ---
 
