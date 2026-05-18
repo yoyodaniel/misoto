@@ -611,12 +611,44 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Standardized ingredients library added" = "تمت إضافة مكتبة مكونات موحدة";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "ابحث بلغة طبيعية.";
-"RPG-style XP and level-ups as you cook." = "نقاط خبرة بأسلوب لعبة أدوار وترقٍ أثناء الطبخ.";
-"Post publicly - or keep recipes private." = "انشر للعامة أو احتفظ بالوصفات خاصة.";
-"AI helps polish recipe text while you write." = "يساعدك الذكاء الاصطناعي على صقل نص الوصفة أثناء الكتابة.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "تحسين الذكاء الاصطناعي لصور الوصفات - اختر نمطًا واضغط على تحسين.";
+"Stronger security for your account and uploads." = "أمان أقوى لحسابك وعمليات التحميل.";
+"More reliable search, AI, and editing." = "بحث أكثر موثوقية، وذكاء اصطناعي، وتحرير.";
 "Don't show again until the next app update" = "لا تظهر مرة أخرى حتى تحديث التطبيق التالي";
 "Continue" = "متابعة";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "تطبيق وصفة نظيفة";
+"Modern patisserie" = "المعجنات الحديثة";
+"Rustic comfort" = "راحة ريفية";
+"Minimalist" = "الحد الأدنى";
+"Celebration" = "احتفال";
+"Premium dessert" = "حلوى متميزة";
+"Family cookbook" = "كتاب الطبخ العائلي";
+"Modern food blog" = "مدونة الغذاء الحديثة";
+"Bright, neutral, app-thumbnail ready." = "صورة مصغرة مشرقة ومحايدة للتطبيق جاهزة.";
+"Refined bakery finish and elegant plating." = "لمسة نهائية مخبوزات مصقولة وطلاء أنيق.";
+"Warm homestyle cookbook feel." = "يشعر كتاب الطبخ المنزلي الدافئ.";
+"Calm, uncluttered Scandinavian look." = "مظهر إسكندنافي هادئ ومرتب.";
+"Festive but tidy and photo-ready." = "احتفالي ولكنه مرتب وجاهز لالتقاط الصور.";
+"High-end dessert photography polish." = "طلاء تصوير الحلوى الراقية.";
+"Approachable, authentic home-baked warmth." = "ودود، الدفء المخبوز في المنزل الأصيل.";
+"Editorial color pop, still realistic." = "البوب ​​​​اللون التحريري، لا يزال واقعيا.";
+"Could not prepare the photo for enhancement." = "تعذر إعداد الصورة للتحسين.";
+"Invalid response from the photo enhancement service." = "استجابة غير صالحة من خدمة تحسين الصور.";
+"No enhanced image was returned. Please try again." = "لم يتم إرجاع أي صورة محسنة. يرجى المحاولة مرة أخرى.";
+"You have reached your free tier limit for AI photo enhancements" = "لقد وصلت إلى الحد الأقصى للطبقة المجانية لتحسينات الصور بالذكاء الاصطناعي";
+"Upgrade to Premium for unlimited AI photo enhancements" = "قم بالترقية إلى Premium للحصول على تحسينات غير محدودة للصور بتقنية الذكاء الاصطناعي";
+"Enhance dish photo" = "تعزيز صورة الطبق";
+"Style" = "أسلوب";
+"Enhance again" = "تعزيز مرة أخرى";
+"Enhance photo" = "تعزيز الصورة";
+"Use photo" = "استخدم الصورة";
+"AI Enhance" = "تعزيز الذكاء الاصطناعي";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "اضغط على العصا الموجودة على الصورة لتحسينها لبطاقات الوصفات. الحسابات المجانية لها حد شهري؛ قسط غير محدود.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "لم يتم العثور على ميزة الذكاء الاصطناعي هذه على الخادم. انشر وظيفة السحابة المطابقة إلى us-central1 (على سبيل المثال، openaiImageEdit لتحسين الصورة، وopenaiChatCompletions للوصفة AI)، وتأكد من أن التطبيق يستخدم مشروع Misoto-9cf71 Firebase.";
+"Dish photo preview" = "معاينة صورة الطبق";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(قريباً)";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "تطبيق مشاركة الوصفات المدعوم بالذكاء الاصطناعي. المكان المثالي لتخزين وصفاتك واكتشاف أطباق مذهلة من جميع أنحاء العالم وتحويل الإلهام إلى وصفات كاملة في ثوانٍ. قم بإنشاء وتنظيم ومشاركة إبداعاتك في الطهي مع مجتمع عالمي من محبي الطعام. قم بالتنزيل من متجر التطبيقات الآن!";

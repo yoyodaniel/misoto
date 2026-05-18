@@ -629,12 +629,44 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Standardized ingredients library added" = "標準化された食材ライブラリを追加";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "自然な言葉で検索。";
-"RPG-style XP and level-ups as you cook." = "RPG風のXPとレベルアップ。";
-"Post publicly - or keep recipes private." = "公開投稿、またはレシピを非公開に。";
-"AI helps polish recipe text while you write." = "執筆中、AIがレシピ文を整えます。";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "レシピ写真の AI 強化 - スタイルを選択して「強化」をタップします。";
+"Stronger security for your account and uploads." = "アカウントとアップロードのセキュリティが強化されます。";
+"More reliable search, AI, and editing." = "より信頼性の高い検索、AI、編集。";
 "Don't show again until the next app update" = "次のアプリアップデートまで表示しない";
 "Continue" = "続ける";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "クリーンレシピアプリ";
+"Modern patisserie" = "モダンなパティスリー";
+"Rustic comfort" = "素朴な快適さ";
+"Minimalist" = "ミニマリスト";
+"Celebration" = "お祝い";
+"Premium dessert" = "プレミアムデザート";
+"Family cookbook" = "家族の料理本";
+"Modern food blog" = "現代の食べ物ブログ";
+"Bright, neutral, app-thumbnail ready." = "明るくニュートラルな、アプリのサムネイル対応。";
+"Refined bakery finish and elegant plating." = "洗練されたベーカリー仕上げとエレガントなメッキ。";
+"Warm homestyle cookbook feel." = "温かい家庭料理のような雰囲気。";
+"Calm, uncluttered Scandinavian look." = "落ち着いた雰囲気の北欧風の佇まい。";
+"Festive but tidy and photo-ready." = "お祭り気分ですが、きちんとしていて写真撮影の準備ができています。";
+"High-end dessert photography polish." = "高級デザートの写真磨き。";
+"Approachable, authentic home-baked warmth." = "親しみやすい、本物の手作りの温かさ。";
+"Editorial color pop, still realistic." = "エディトリアルカラーはポップでありながらもリアル。";
+"Could not prepare the photo for enhancement." = "補正用の写真を準備できませんでした。";
+"Invalid response from the photo enhancement service." = "写真補正サービスからの無効な応答です。";
+"No enhanced image was returned. Please try again." = "強化された画像は返されませんでした。もう一度試してください。";
+"You have reached your free tier limit for AI photo enhancements" = "AI 写真補正の無料利用枠の制限に達しました";
+"Upgrade to Premium for unlimited AI photo enhancements" = "プレミアムにアップグレードすると、AI 写真を無制限に強化できます";
+"Enhance dish photo" = "料理の写真を補正する";
+"Style" = "スタイル";
+"Enhance again" = "再度強化";
+"Enhance photo" = "写真を補正する";
+"Use photo" = "写真を使用する";
+"AI Enhance" = "AIエンハンス";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "写真上の杖をタップすると、レシピカード用に強化されます。無料アカウントには月次制限があります。プレミアムは無制限です。";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "この AI 機能はサーバー上に見つかりませんでした。一致する Cloud Function を us-central1 にデプロイし (例: 写真強化の場合は openaiImageEdit、レシピ AI の場合は openaiChatCompletions)、アプリが mioto-9cf71 Firebase プロジェクトを使用していることを確認します。";
+"Dish photo preview" = "料理の写真プレビュー";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "AIを活用したレシピ共有アプリ。レシピを保存し、世界中の素晴らしい料理を発見し、インスピレーションを数秒で完全なレシピに変えるのに最適な場所です。自分の料理を作成、整理し、グルメ愛好家の世界的なコミュニティと共有しましょう。今すぐApp Storeからダウンロードしてください！";
 "Acceptable Use" = "許容される使用方法";

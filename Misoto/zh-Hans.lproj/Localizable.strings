@@ -630,12 +630,44 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Standardized ingredients library added" = "已添加标准化食材库";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "使用自然语言搜索。";
-"RPG-style XP and level-ups as you cook." = "RPG式经验值，边做菜边升级。";
-"Post publicly - or keep recipes private." = "公开发布，或将食谱设为私密。";
-"AI helps polish recipe text while you write." = "撰写时 AI 协助润色食谱文字。";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "针对菜谱照片的人工智能增强 - 选择一种风格并点击“增强”。";
+"Stronger security for your account and uploads." = "为您的帐户和上传提供更强的安全性。";
+"More reliable search, AI, and editing." = "更可靠的搜索、人工智能和编辑。";
 "Don't show again until the next app update" = "在下次应用更新之前不再显示";
 "Continue" = "继续";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "清洁食谱应用程序";
+"Modern patisserie" = "现代糕点店";
+"Rustic comfort" = "质朴的舒适";
+"Minimalist" = "极简主义者";
+"Celebration" = "庆典";
+"Premium dessert" = "高级甜品";
+"Family cookbook" = "家庭食谱";
+"Modern food blog" = "现代美食博客";
+"Bright, neutral, app-thumbnail ready." = "明亮、中性、应用程序缩略图就绪。";
+"Refined bakery finish and elegant plating." = "精致的烘焙饰面和优雅的镀层。";
+"Warm homestyle cookbook feel." = "温馨的家居风格食谱感觉。";
+"Calm, uncluttered Scandinavian look." = "平静、整洁的斯堪的纳维亚风格。";
+"Festive but tidy and photo-ready." = "喜庆但整洁且适合拍照。";
+"High-end dessert photography polish." = "高端甜点摄影抛光。";
+"Approachable, authentic home-baked warmth." = "平易近人、正宗的家常温暖。";
+"Editorial color pop, still realistic." = "编辑色彩流行，仍然现实。";
+"Could not prepare the photo for enhancement." = "无法准备照片进行增强。";
+"Invalid response from the photo enhancement service." = "照片增强服务的响应无效。";
+"No enhanced image was returned. Please try again." = "没有返回增强图像。请再试一次。";
+"You have reached your free tier limit for AI photo enhancements" = "您已达到 AI 照片增强的免费套餐限制";
+"Upgrade to Premium for unlimited AI photo enhancements" = "升级到高级版可无限使用 AI 照片增强功能";
+"Enhance dish photo" = "增强菜肴照片";
+"Style" = "风格";
+"Enhance again" = "再次增强";
+"Enhance photo" = "增强照片";
+"Use photo" = "使用照片";
+"AI Enhance" = "人工智能增强";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "点击照片上的魔杖可以增强食谱卡的效果。免费账户有每月限额；保费无限制。";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "服务器上未发现此 AI 功能。将匹配的 Cloud Function 部署到 us-central1（例如用于照片增强的 openaiImageEdit、用于菜谱 AI 的 openaiChatCompletions），并确认应用程序使用 misoto-9cf71 Firebase 项目。";
+"Dish photo preview" = "菜品照片预览";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "人工智能驱动的食谱共享应用程序。这是您存储食谱、发现世界各地令人惊叹的菜肴并在几秒钟内将灵感转化为完整食谱的完美场所。创建、整理并与全球美食爱好者社区分享您的烹饪作品。立即从 App Store 下载！";
 "Acceptable Use" = "可接受的使用";

@@ -612,12 +612,44 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Standardized ingredients library added" = "เพิ่มคลังวัตถุดิบมาตรฐานแล้ว";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "ค้นหาด้วยภาษาธรรมชาติ";
-"RPG-style XP and level-ups as you cook." = "XP สไตล์ RPG และเลเวลอัปขณะทำอาหาร";
-"Post publicly - or keep recipes private." = "โพสต์สาธารณะหรือเก็บสูตรเป็นส่วนตัว";
-"AI helps polish recipe text while you write." = "AI ช่วยขัดเกลาข้อความสูตรขณะเขียน";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "AI Enhance สำหรับรูปภาพสูตรอาหาร เลือกสไตล์แล้วแตะ Enhance";
+"Stronger security for your account and uploads." = "การรักษาความปลอดภัยที่แข็งแกร่งยิ่งขึ้นสำหรับบัญชีและการอัปโหลดของคุณ";
+"More reliable search, AI, and editing." = "การค้นหา AI และการแก้ไขที่เชื่อถือได้มากขึ้น";
 "Don't show again until the next app update" = "ไม่แสดงอีกจนกว่าจะอัปเดตแอปครั้งถัดไป";
 "Continue" = "ดำเนินการต่อ";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "แอพสูตรสะอาด";
+"Modern patisserie" = "ร้านขนมที่ทันสมัย";
+"Rustic comfort" = "ความสะดวกสบายแบบชนบท";
+"Minimalist" = "มินิมอลลิสต์";
+"Celebration" = "การเฉลิมฉลอง";
+"Premium dessert" = "ของหวานระดับพรีเมียม";
+"Family cookbook" = "ตำราอาหารสำหรับครอบครัว";
+"Modern food blog" = "บล็อกอาหารสมัยใหม่";
+"Bright, neutral, app-thumbnail ready." = "ภาพขนาดย่อของแอปที่สว่าง เป็นกลาง พร้อมแล้ว";
+"Refined bakery finish and elegant plating." = "ผิวเคลือบเบเกอรี่ที่ประณีตและการชุบที่หรูหรา";
+"Warm homestyle cookbook feel." = "ให้ความรู้สึกอบอุ่นเหมือนตำราอาหารแบบบ้านๆ";
+"Calm, uncluttered Scandinavian look." = "รูปลักษณ์สแกนดิเนเวียนที่สงบและกระจายตัว";
+"Festive but tidy and photo-ready." = "รื่นเริงแต่เป็นระเบียบเรียบร้อยและพร้อมถ่ายรูป";
+"High-end dessert photography polish." = "ขัดเกลาการถ่ายภาพของหวานระดับสูง";
+"Approachable, authentic home-baked warmth." = "ความอบอุ่นแบบโฮมเมดแท้ๆ ที่เข้าถึงได้";
+"Editorial color pop, still realistic." = "บทบรรณาธิการสีป๊อปยังคงสมจริง";
+"Could not prepare the photo for enhancement." = "ไม่สามารถเตรียมภาพถ่ายเพื่อการเพิ่มประสิทธิภาพได้";
+"Invalid response from the photo enhancement service." = "การตอบกลับจากบริการปรับปรุงภาพถ่ายไม่ถูกต้อง";
+"No enhanced image was returned. Please try again." = "ไม่มีการส่งคืนภาพที่ปรับปรุงแล้ว โปรดลองอีกครั้ง";
+"You have reached your free tier limit for AI photo enhancements" = "คุณถึงขีดจำกัดระดับฟรีสำหรับการปรับปรุงภาพถ่าย AI แล้ว";
+"Upgrade to Premium for unlimited AI photo enhancements" = "อัปเกรดเป็นพรีเมียมเพื่อเพิ่มประสิทธิภาพภาพถ่าย AI แบบไม่จำกัด";
+"Enhance dish photo" = "ปรับปรุงภาพจาน";
+"Style" = "สไตล์";
+"Enhance again" = "เสริมอีก";
+"Enhance photo" = "ปรับปรุงภาพถ่าย";
+"Use photo" = "ใช้รูปถ่าย";
+"AI Enhance" = "เพิ่มประสิทธิภาพ AI";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "แตะไม้กายสิทธิ์บนภาพถ่ายเพื่อเพิ่มประสิทธิภาพของการ์ดสูตรอาหาร บัญชีฟรีมีขีดจำกัดรายเดือน พรีเมี่ยมไม่จำกัด";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "ไม่พบคุณลักษณะ AI นี้บนเซิร์ฟเวอร์ ปรับใช้ฟังก์ชันคลาวด์ที่ตรงกันกับ us-central1 (เช่น openaiImageEdit สำหรับการปรับปรุงรูปภาพ, openaiChatCompletions สำหรับ AI สูตรอาหาร) และยืนยันว่าแอปใช้โปรเจ็กต์ misoto-9cf71 Firebase";
+"Dish photo preview" = "ตัวอย่างภาพถ่ายจาน";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(เร็วๆ นี้)";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "แอปแชร์สูตรอาหารที่ขับเคลื่อนด้วย AI สถานที่ที่เหมาะสำหรับคุณในการจัดเก็บสูตรอาหาร ค้นพบอาหารจานเด็ดจากทั่วโลก และเปลี่ยนแรงบันดาลใจให้เป็นสูตรอาหารที่สมบูรณ์ภายในไม่กี่วินาที สร้าง จัดระเบียบ และแบ่งปันการสร้างสรรค์อาหารของคุณกับชุมชนผู้รักอาหารทั่วโลก ดาวน์โหลดจาก App Store ได้เลย!";

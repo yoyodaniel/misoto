@@ -630,12 +630,44 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Standardized ingredients library added" = "표준화된 재료 라이브러리 추가";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "자연어로 검색하세요.";
-"RPG-style XP and level-ups as you cook." = "RPG 스타일 XP와 요리하며 레벨 업.";
-"Post publicly - or keep recipes private." = "공개 게시 또는 비공개로 유지.";
-"AI helps polish recipe text while you write." = "작성 중 AI가 레시피 텍스트를 다듬습니다.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "레시피 사진을 위한 AI 강화 - 스타일을 선택하고 강화를 탭하세요.";
+"Stronger security for your account and uploads." = "귀하의 계정과 업로드에 대한 보안이 강화되었습니다.";
+"More reliable search, AI, and editing." = "더욱 안정적인 검색, AI, 편집이 가능합니다.";
 "Don't show again until the next app update" = "다음 앱 업데이트까지 다시 표시 안 함";
 "Continue" = "계속";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "깔끔한 레시피 앱";
+"Modern patisserie" = "현대식 제과점";
+"Rustic comfort" = "소박한 편안함";
+"Minimalist" = "미니멀리스트";
+"Celebration" = "축하";
+"Premium dessert" = "프리미엄 디저트";
+"Family cookbook" = "가족 요리책";
+"Modern food blog" = "현대 음식 블로그";
+"Bright, neutral, app-thumbnail ready." = "밝고 중립적이며 앱 미리보기 이미지가 준비되어 있습니다.";
+"Refined bakery finish and elegant plating." = "세련된 베이커리 마감과 우아한 플레이팅.";
+"Warm homestyle cookbook feel." = "따뜻한 집밥 느낌의 요리책.";
+"Calm, uncluttered Scandinavian look." = "차분하고 깔끔한 스칸디나비아 스타일.";
+"Festive but tidy and photo-ready." = "축제 분위기지만 깔끔하고 사진을 찍을 준비가 되어 있습니다.";
+"High-end dessert photography polish." = "고급 디저트 사진 광택제.";
+"Approachable, authentic home-baked warmth." = "친근한 정통 가정에서 구운 따뜻함.";
+"Editorial color pop, still realistic." = "편집 컬러 팝, 여전히 현실적입니다.";
+"Could not prepare the photo for enhancement." = "향상을 위해 사진을 준비할 수 없습니다.";
+"Invalid response from the photo enhancement service." = "사진 보정 서비스의 응답이 잘못되었습니다.";
+"No enhanced image was returned. Please try again." = "향상된 이미지가 반환되지 않았습니다. 다시 시도해 주세요.";
+"You have reached your free tier limit for AI photo enhancements" = "AI 사진 향상을 위한 무료 등급 한도에 도달했습니다.";
+"Upgrade to Premium for unlimited AI photo enhancements" = "AI 사진을 무제한으로 향상하려면 프리미엄으로 업그레이드하세요.";
+"Enhance dish photo" = "요리 사진 향상";
+"Style" = "스타일";
+"Enhance again" = "다시 강화";
+"Enhance photo" = "사진 향상";
+"Use photo" = "사진 사용";
+"AI Enhance" = "AI 강화";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "레시피 카드용으로 사진을 향상하려면 사진에 막대를 탭하세요. 무료 계정에는 월별 한도가 있습니다. 프리미엄은 무제한입니다.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "이 AI 기능은 서버에서 찾을 수 없습니다. 일치하는 Cloud 함수를 us-central1(예: 사진 향상을 위한 openaiImageEdit, 레시피 AI를 위한 openaiChatCompletions)에 배포하고 앱이 misoto-9cf71 Firebase 프로젝트를 사용하는지 확인합니다.";
+"Dish photo preview" = "요리 사진 미리보기";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "AI 기반 레시피 공유 앱. 요리법을 저장하고, 전 세계의 놀라운 요리를 발견하고, 영감을 몇 초 만에 완전한 요리법으로 바꿀 수 있는 완벽한 장소입니다. 전 세계 음식 애호가 커뮤니티와 함께 ​​자신의 요리 창작물을 만들고, 정리하고, 공유하세요. 지금 App Store에서 다운로드하세요!";
 "Acceptable Use" = "허용되는 사용";

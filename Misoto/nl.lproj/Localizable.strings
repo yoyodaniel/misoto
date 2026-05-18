@@ -612,12 +612,44 @@ Uw account wordt na 30 dagen verwijderd. Om de verwijdering te annuleren, log bi
 "Standardized ingredients library added" = "Gestandaardiseerde ingrediëntenbibliotheek toegevoegd";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "Zoek met natuurlijke taal.";
-"RPG-style XP and level-ups as you cook." = "RPG-achtige XP en level-ups tijdens het koken.";
-"Post publicly - or keep recipes private." = "Openbaar plaatsen of recepten privé houden.";
-"AI helps polish recipe text while you write." = "AI helpt recepttekst te verfijnen tijdens het schrijven.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "AI Verbeteren voor receptfoto's: kies een stijl en tik op Verbeteren.";
+"Stronger security for your account and uploads." = "Betere beveiliging voor uw account en uploads.";
+"More reliable search, AI, and editing." = "Betrouwbaarder zoeken, AI en bewerken.";
 "Don't show again until the next app update" = "Niet opnieuw tonen tot de volgende app-update";
 "Continue" = "Doorgaan";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "Schone recepten-app";
+"Modern patisserie" = "Moderne patisserie";
+"Rustic comfort" = "Rustiek comfort";
+"Minimalist" = "Minimalistisch";
+"Celebration" = "Viering";
+"Premium dessert" = "Premium-dessert";
+"Family cookbook" = "Familie kookboek";
+"Modern food blog" = "Moderne foodblog";
+"Bright, neutral, app-thumbnail ready." = "Helder, neutraal, klaar voor app-miniatuur.";
+"Refined bakery finish and elegant plating." = "Verfijnde bakkerijafwerking en elegante beplating.";
+"Warm homestyle cookbook feel." = "Warm huiselijk kookboekgevoel.";
+"Calm, uncluttered Scandinavian look." = "Rustige, overzichtelijke Scandinavische look.";
+"Festive but tidy and photo-ready." = "Feestelijk maar netjes en fotoklaar.";
+"High-end dessert photography polish." = "Hoogwaardige dessertfotografielak.";
+"Approachable, authentic home-baked warmth." = "Toegankelijke, authentieke, zelfgebakken warmte.";
+"Editorial color pop, still realistic." = "Redactionele kleurenpop, nog steeds realistisch.";
+"Could not prepare the photo for enhancement." = "Kan de foto niet voorbereiden voor verbetering.";
+"Invalid response from the photo enhancement service." = "Ongeldig antwoord van de fotoverbeteringsservice.";
+"No enhanced image was returned. Please try again." = "Er is geen verbeterde afbeelding geretourneerd. Probeer het opnieuw.";
+"You have reached your free tier limit for AI photo enhancements" = "U heeft uw gratis niveaulimiet voor AI-fotoverbeteringen bereikt";
+"Upgrade to Premium for unlimited AI photo enhancements" = "Upgrade naar Premium voor onbeperkte AI-fotoverbeteringen";
+"Enhance dish photo" = "Verbeter de gerechtfoto";
+"Style" = "Stijl";
+"Enhance again" = "Opnieuw verbeteren";
+"Enhance photo" = "Verbeter foto";
+"Use photo" = "Gebruik foto";
+"AI Enhance" = "AI-verbetering";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "Tik met de toverstaf op een foto om deze te verbeteren voor receptkaarten. Gratis accounts hebben een maandelijkse limiet; Premie is onbeperkt.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "Deze AI-functie is niet gevonden op de server. Implementeer de bijbehorende cloudfunctie in us-central1 (bijvoorbeeld openaiImageEdit voor het verbeteren van foto's, openaiChatCompletions voor recept-AI) en bevestig dat de app het misoto-9cf71 Firebase-project gebruikt.";
+"Dish photo preview" = "Fotovoorbeeld gerecht";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(binnenkort beschikbaar)";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "AI-aangedreven app voor het delen van recepten. De perfecte plek om uw recepten op te slaan, fantastische gerechten van over de hele wereld te ontdekken en inspiratie binnen enkele seconden om te zetten in complete recepten. Creëer, organiseer en deel uw culinaire creaties met een wereldwijde gemeenschap van fijnproevers. Download nu vanuit de App Store!";

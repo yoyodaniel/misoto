@@ -937,6 +937,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                                     .buttonStyle(PlainButtonStyle())
 
                                     Button {
+                                        HapticFeedback.importantAction()
                                         dishImageEnhanceContext = DishImageEnhanceContext(index: index, image: image)
                                     } label: {
                                         Image(systemName: "wand.and.stars")

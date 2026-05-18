@@ -611,15 +611,47 @@ Ang iyong account ay tatanggalin pagkatapos ng 30 araw. Upang kanselahin ang pag
 "Don't show again" = "Huwag nang ipakita muli";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "Maghanap gamit ang natural na wika.";
-"RPG-style XP and level-ups as you cook." = "Estilong-RPG na XP at pag-level up habang nagluluto ka.";
-"Post publicly - or keep recipes private." = "Ipaskil nang pampubliko — o manatiling pribado ang mga recipe.";
-"AI helps polish recipe text while you write." = "Tinatulungan ka ng AI na polish ang teksto ng recipe habang nagsusulat ka.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "AI Enhance para sa mga larawan ng recipe—pumili ng istilo at i-tap ang Enhance.";
+"Stronger security for your account and uploads." = "Mas malakas na seguridad para sa iyong account at mga pag-upload.";
+"More reliable search, AI, and editing." = "Mas maaasahang paghahanap, AI, at pag-edit.";
 "Don't show again until the next app update" = "Huwag ipakitang muli hanggang sa susunod na update ng app";
 "Continue" = "Magpatuloy";
 
 "Share posts publicly" = "Ibahagi ang mga post nang pampubliko";
 "Standardized ingredients library added" = "Nagdagdag ng standardized na ingredient library";
+
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "Malinis na recipe app";
+"Modern patisserie" = "Modernong patisserie";
+"Rustic comfort" = "Rustic comfort";
+"Minimalist" = "Minimalist";
+"Celebration" = "pagdiriwang";
+"Premium dessert" = "Premium na dessert";
+"Family cookbook" = "Cookbook ng pamilya";
+"Modern food blog" = "Modernong blog ng pagkain";
+"Bright, neutral, app-thumbnail ready." = "Maliwanag, neutral, handa na ang thumbnail ng app.";
+"Refined bakery finish and elegant plating." = "Pinong bakery finish at eleganteng plating.";
+"Warm homestyle cookbook feel." = "Warm homestyle cookbook pakiramdam.";
+"Calm, uncluttered Scandinavian look." = "Kalmado, walang kalat na Scandinavian na hitsura.";
+"Festive but tidy and photo-ready." = "Maligaya ngunit maayos at handa sa larawan.";
+"High-end dessert photography polish." = "High-end na dessert photography polish.";
+"Approachable, authentic home-baked warmth." = "Malapitan, tunay na lutong bahay na init.";
+"Editorial color pop, still realistic." = "Editorial color pop, makatotohanan pa rin.";
+"Could not prepare the photo for enhancement." = "Hindi maihanda ang larawan para sa pagpapahusay.";
+"Invalid response from the photo enhancement service." = "Di-wastong tugon mula sa serbisyo sa pagpapahusay ng larawan.";
+"No enhanced image was returned. Please try again." = "Walang ibinalik na pinahusay na larawan. Pakisubukang muli.";
+"You have reached your free tier limit for AI photo enhancements" = "Naabot mo na ang iyong libreng antas ng limitasyon para sa mga pagpapahusay ng larawan ng AI";
+"Upgrade to Premium for unlimited AI photo enhancements" = "Mag-upgrade sa Premium para sa walang limitasyong mga pagpapahusay sa larawan ng AI";
+"Enhance dish photo" = "Pagandahin ang larawan ng ulam";
+"Style" = "Estilo";
+"Enhance again" = "Enhance ulit";
+"Enhance photo" = "Pagandahin ang larawan";
+"Use photo" = "Gumamit ng larawan";
+"AI Enhance" = "AI Enhance";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "I-tap ang wand sa isang larawan para pagandahin ito para sa mga recipe card. Ang mga libreng account ay may buwanang limitasyon; Ang premium ay walang limitasyon.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "Ang tampok na AI na ito ay hindi nakita sa server. I-deploy ang katugmang Cloud Function sa us-central1 (hal. openaiImageEdit para sa pagpapahusay ng larawan, openaiChatCompletions para sa recipe AI), at kumpirmahin na ginagamit ng app ang misoto-9cf71 Firebase na proyekto.";
+"Dish photo preview" = "Preview ng larawan ng ulam";
 
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(malapit na)";

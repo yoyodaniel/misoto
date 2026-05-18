@@ -714,12 +714,44 @@ Su cuenta se eliminará después de 30 días. Para cancelar la eliminación, ini
 "Standardized ingredients library added" = "Se agregó una biblioteca de ingredientes estandarizada";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "Busca con lenguaje natural.";
-"RPG-style XP and level-ups as you cook." = "XP estilo RPG y subes de nivel mientras cocinas.";
-"Post publicly - or keep recipes private." = "Publica en abierto o mantén las recetas privadas.";
-"AI helps polish recipe text while you write." = "La IA te ayuda a pulir el texto mientras escribes.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "Mejora AI para fotos de recetas: elige un estilo y toca Mejorar.";
+"Stronger security for your account and uploads." = "Mayor seguridad para su cuenta y sus cargas.";
+"More reliable search, AI, and editing." = "Búsqueda, IA y edición más confiables.";
 "Don't show again until the next app update" = "No mostrar hasta la próxima actualización de la app";
 "Continue" = "Continuar";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "Aplicación de recetas limpias";
+"Modern patisserie" = "pastelería moderna";
+"Rustic comfort" = "Confort rústico";
+"Minimalist" = "minimalista";
+"Celebration" = "Celebración";
+"Premium dessert" = "postre premium";
+"Family cookbook" = "Libro de cocina familiar";
+"Modern food blog" = "blog de comida moderna";
+"Bright, neutral, app-thumbnail ready." = "Brillante, neutral, lista para miniaturas de aplicaciones.";
+"Refined bakery finish and elegant plating." = "Acabado de panadería refinado y emplatado elegante.";
+"Warm homestyle cookbook feel." = "Cálida sensación de libro de cocina hogareño.";
+"Calm, uncluttered Scandinavian look." = "Aspecto escandinavo tranquilo y ordenado.";
+"Festive but tidy and photo-ready." = "Festivo pero ordenado y listo para tomar fotografías.";
+"High-end dessert photography polish." = "Esmalte fotográfico de postres de alta gama.";
+"Approachable, authentic home-baked warmth." = "Calidez cercana, auténtica y casera.";
+"Editorial color pop, still realistic." = "Color pop editorial, aún realista.";
+"Could not prepare the photo for enhancement." = "No se pudo preparar la foto para mejorarla.";
+"Invalid response from the photo enhancement service." = "Respuesta no válida del servicio de mejora de fotografías.";
+"No enhanced image was returned. Please try again." = "No se devolvió ninguna imagen mejorada. Por favor inténtalo de nuevo.";
+"You have reached your free tier limit for AI photo enhancements" = "Ha alcanzado su límite de nivel gratuito para mejoras fotográficas con IA";
+"Upgrade to Premium for unlimited AI photo enhancements" = "Actualice a Premium para obtener mejoras fotográficas ilimitadas con IA";
+"Enhance dish photo" = "Mejorar la foto del plato";
+"Style" = "Estilo";
+"Enhance again" = "Mejorar de nuevo";
+"Enhance photo" = "Mejorar foto";
+"Use photo" = "usar foto";
+"AI Enhance" = "Mejora de la IA";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "Toca la varita sobre una foto para mejorarla y crear tarjetas de recetas. Las cuentas gratuitas tienen un límite mensual; La prima es ilimitada.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "Esta función de IA no se encontró en el servidor. Implemente la función de nube correspondiente en us-central1 (por ejemplo, openaiImageEdit para mejorar fotos, openaiChatCompletions para recetas AI) y confirme que la aplicación usa el proyecto Misoto-9cf71 Firebase.";
+"Dish photo preview" = "Vista previa de la foto del plato";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "Aplicación para compartir recetas impulsada por IA. El lugar perfecto para almacenar tus recetas, descubrir platos increíbles de todo el mundo y convertir la inspiración en recetas completas en segundos. Crea, organiza y comparte tus creaciones culinarias con una comunidad global de amantes de la comida. ¡Descárgalo desde la App Store ahora!";
 "Acceptable Use" = "Uso Aceptable";

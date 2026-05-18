@@ -612,12 +612,44 @@ Akaun anda akan dipadam selepas 30 hari. Untuk membatalkan pemadaman, log masuk 
 "Standardized ingredients library added" = "Perpustakaan ramuan piawai ditambah";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "Cari dalam bahasa semula jadi.";
-"RPG-style XP and level-ups as you cook." = "XP gaya RPG dan naik tahap semasa memasak.";
-"Post publicly - or keep recipes private." = "Siar secara terbuka atau kekalkan resipi peribadi.";
-"AI helps polish recipe text while you write." = "AI membantu memperhalus teks resipi semasa menulis.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "AI Enhance untuk foto resipi—pilih gaya dan ketik Enhance.";
+"Stronger security for your account and uploads." = "Keselamatan yang lebih kukuh untuk akaun dan muat naik anda.";
+"More reliable search, AI, and editing." = "Carian, AI dan penyuntingan yang lebih dipercayai.";
 "Don't show again until the next app update" = "Jangan tunjuk lagi sehingga kemas kini apl seterusnya";
 "Continue" = "Teruskan";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "Aplikasi resipi bersih";
+"Modern patisserie" = "Patisserie moden";
+"Rustic comfort" = "Keselesaan desa";
+"Minimalist" = "Minimalis";
+"Celebration" = "Perayaan";
+"Premium dessert" = "Pencuci mulut premium";
+"Family cookbook" = "Buku masakan keluarga";
+"Modern food blog" = "Blog makanan moden";
+"Bright, neutral, app-thumbnail ready." = "Cerah, neutral, lakaran kenit apl sedia.";
+"Refined bakery finish and elegant plating." = "Kemasan bakeri yang halus dan penyaduran yang elegan.";
+"Warm homestyle cookbook feel." = "Rasa buku masakan gaya rumah yang hangat.";
+"Calm, uncluttered Scandinavian look." = "Pandangan Scandinavia yang tenang dan rapi.";
+"Festive but tidy and photo-ready." = "Meriah tetapi kemas dan sedia bergambar.";
+"High-end dessert photography polish." = "Penggilap fotografi pencuci mulut mewah.";
+"Approachable, authentic home-baked warmth." = "Kehangatan buatan rumah yang boleh didekati dan asli.";
+"Editorial color pop, still realistic." = "Pop warna editorial, masih realistik.";
+"Could not prepare the photo for enhancement." = "Tidak dapat menyediakan foto untuk peningkatan.";
+"Invalid response from the photo enhancement service." = "Respons tidak sah daripada perkhidmatan peningkatan foto.";
+"No enhanced image was returned. Please try again." = "Tiada imej yang dipertingkatkan dikembalikan. Sila cuba lagi.";
+"You have reached your free tier limit for AI photo enhancements" = "Anda telah mencapai had peringkat percuma anda untuk peningkatan foto AI";
+"Upgrade to Premium for unlimited AI photo enhancements" = "Naik taraf kepada Premium untuk peningkatan foto AI tanpa had";
+"Enhance dish photo" = "Tingkatkan foto hidangan";
+"Style" = "Gaya";
+"Enhance again" = "Tingkatkan lagi";
+"Enhance photo" = "Tingkatkan foto";
+"Use photo" = "Gunakan foto";
+"AI Enhance" = "AI Meningkatkan";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "Ketik tongkat pada foto untuk meningkatkannya bagi kad resipi. Akaun percuma mempunyai had bulanan; Premium tidak terhad.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "Ciri AI ini tidak ditemui pada pelayan. Gunakan Fungsi Awan yang sepadan kepada us-central1 (cth. openaiImageEdit untuk peningkatan foto, openaiChatCompletions untuk AI resipi) dan sahkan apl menggunakan projek misoto-9cf71 Firebase.";
+"Dish photo preview" = "Pratonton foto hidangan";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(akan datang)";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "Apl perkongsian resipi Dikuasakan AI. Tempat yang sesuai untuk anda menyimpan resipi anda, menemui hidangan yang menakjubkan dari seluruh dunia dan menukar inspirasi kepada resipi lengkap dalam beberapa saat. Cipta, atur dan kongsi ciptaan masakan anda dengan komuniti pencinta makanan global. Muat turun dari App Store sekarang!";

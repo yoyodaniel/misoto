@@ -23,15 +23,11 @@ Misoto: discover & save recipes. AI from photos, links & sites; 20 languages; re
 Use the full block below for **What’s New** (well under Apple’s limit). Trim bullets if you prefer a shorter list.
 
 ```
-What’s new in Misoto
+What’s new in Misoto 1.5
 
-• Natural-language recipe search—find dishes the way you talk.
-• Ratings & reviews on recipes in Explore—see what cooks think before you try.
-• Nutrition (BETA)—USDA-backed estimates with AI help when an ingredient needs a fill-in.
-• Localization tuned across 20 languages for a clearer experience worldwide.
-• Performance improvements and bug fixes.
-
-Thank you for cooking with Misoto—share feedback anytime from Settings.
+• AI Enhance for recipe photos—pick a style and tap Enhance.
+• Stronger security for your account and uploads.
+• More reliable search, AI, and editing.
 ```
 
 ---
@@ -48,6 +44,6 @@ AI recipes • 20 languages
 
 ## In-app alignment
 
-The **What’s New** sheet inside the app uses the same four highlight strings as in `en.lproj` under `/* What's New (app update sheet) */`. After changing English, run your localization workflow (e.g. `scripts/sync_machine_translations.py`) to refresh other languages, or update `Localizable.strings` per locale manually.
+The **What’s New** sheet inside the app uses the same three highlight strings as in `en.lproj` under `/* What's New (app update sheet) */` (v1.5: AI Enhance, security, reliability). After changing English, run your localization workflow (e.g. `scripts/sync_machine_translations.py`) to refresh other languages, or update `Localizable.strings` per locale manually.
 
 The **Share App** text in Settings uses the long `AI-Powered recipe sharing app...` key in `Localizable.strings`; that English string is updated alongside this doc so invite copy matches the product story.

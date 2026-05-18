@@ -612,12 +612,44 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Standardized ingredients library added" = "मानकीकृत सामग्री लाइब्रेरी जोड़ी गई";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "प्राकृतिक भाषा में खोजें।";
-"RPG-style XP and level-ups as you cook." = "RPG-शैली XP, पकाते समय लेवल अप।";
-"Post publicly - or keep recipes private." = "सार्वजनिक पोस्ट करें या रेसिपी निजी रखें।";
-"AI helps polish recipe text while you write." = "लिखते समय AI रेसिपी टेक्स्ट को निखारता है।";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "रेसिपी फ़ोटो के लिए AI एन्हांस—एक शैली चुनें और एन्हांस पर टैप करें।";
+"Stronger security for your account and uploads." = "आपके खाते और अपलोड के लिए मजबूत सुरक्षा।";
+"More reliable search, AI, and editing." = "अधिक विश्वसनीय खोज, AI और संपादन।";
 "Don't show again until the next app update" = "अगले ऐप अपडेट तक फिर से न दिखाएँ";
 "Continue" = "जारी रखें";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "स्वच्छ नुस्खा ऐप";
+"Modern patisserie" = "आधुनिक पेस्ट्री";
+"Rustic comfort" = "देहाती आराम";
+"Minimalist" = "minimalist";
+"Celebration" = "उत्सव";
+"Premium dessert" = "प्रीमियम मिठाई";
+"Family cookbook" = "पारिवारिक रसोई की किताब";
+"Modern food blog" = "आधुनिक खाद्य ब्लॉग";
+"Bright, neutral, app-thumbnail ready." = "उज्ज्वल, तटस्थ, ऐप-थंबनेल तैयार।";
+"Refined bakery finish and elegant plating." = "परिष्कृत बेकरी फिनिश और सुंदर प्लेटिंग।";
+"Warm homestyle cookbook feel." = "गर्म घरेलू शैली की कुकबुक का अहसास।";
+"Calm, uncluttered Scandinavian look." = "शांत, सुव्यवस्थित स्कैंडिनेवियाई लुक।";
+"Festive but tidy and photo-ready." = "उत्सवपूर्ण लेकिन साफ़-सुथरा और फ़ोटो के लिए तैयार।";
+"High-end dessert photography polish." = "हाई-एंड डेज़र्ट फोटोग्राफी पॉलिश।";
+"Approachable, authentic home-baked warmth." = "स्वीकार्य, प्रामाणिक घर-पकी हुई गर्माहट।";
+"Editorial color pop, still realistic." = "संपादकीय रंग पॉप, फिर भी यथार्थवादी.";
+"Could not prepare the photo for enhancement." = "एन्हांसमेंट के लिए फ़ोटो तैयार नहीं किया जा सका.";
+"Invalid response from the photo enhancement service." = "फ़ोटो एन्हांसमेंट सेवा से अमान्य प्रतिक्रिया.";
+"No enhanced image was returned. Please try again." = "कोई उन्नत छवि वापस नहीं की गई. कृपया पुन: प्रयास करें।";
+"You have reached your free tier limit for AI photo enhancements" = "आप एआई फोटो एन्हांसमेंट के लिए अपनी निःशुल्क स्तर की सीमा तक पहुंच गए हैं";
+"Upgrade to Premium for unlimited AI photo enhancements" = "असीमित AI फोटो संवर्द्धन के लिए प्रीमियम में अपग्रेड करें";
+"Enhance dish photo" = "डिश फोटो बढ़ाएँ";
+"Style" = "शैली";
+"Enhance again" = "फिर से बढ़ाएँ";
+"Enhance photo" = "फ़ोटो बढ़ाएँ";
+"Use photo" = "फोटो का प्रयोग करें";
+"AI Enhance" = "एआई एन्हांस";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "रेसिपी कार्ड के लिए फोटो को बेहतर बनाने के लिए उस पर छड़ी को टैप करें। मुफ़्त खातों की एक मासिक सीमा होती है; प्रीमियम असीमित है.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "यह AI सुविधा सर्वर पर नहीं मिली. मेल खाने वाले क्लाउड फ़ंक्शन को us-central1 पर तैनात करें (उदाहरण के लिए फोटो बढ़ाने के लिए openaiImageEdit, रेसिपी AI के लिए openaiChatCompletions), और पुष्टि करें कि ऐप मिसोटो-9cf71 फायरबेस प्रोजेक्ट का उपयोग करता है।";
+"Dish photo preview" = "डिश फोटो पूर्वावलोकन";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(जल्द आ रहा है)";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "एआई-पावर्ड रेसिपी शेयरिंग ऐप। आपके लिए अपने व्यंजनों को संग्रहीत करने, दुनिया भर के अद्भुत व्यंजनों की खोज करने और प्रेरणा को सेकंडों में संपूर्ण व्यंजनों में बदलने के लिए बिल्कुल सही जगह। भोजन प्रेमियों के वैश्विक समुदाय के साथ अपनी पाक कृतियों को बनाएं, व्यवस्थित करें और साझा करें। अभी ऐप स्टोर से डाउनलोड करें!";

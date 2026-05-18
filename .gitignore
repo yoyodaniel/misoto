@@ -45,3 +45,5 @@ node_modules
 
 # Machine translation cache (regenerable)
 scripts/.translation_cache.json
+scripts/.v15_translation_cache.json
+firepit-log.txt

@@ -612,12 +612,44 @@ Tài khoản của bạn sẽ bị xóa sau 30 ngày. Để hủy xóa, vui lòn
 "Standardized ingredients library added" = "Đã thêm thư viện nguyên liệu tiêu chuẩn hóa";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "Tìm kiếm bằng ngôn ngữ tự nhiên.";
-"RPG-style XP and level-ups as you cook." = "XP kiểu RPG và lên cấp khi nấu ăn.";
-"Post publicly - or keep recipes private." = "Đăng công khai hoặc giữ công thức riêng tư.";
-"AI helps polish recipe text while you write." = "AI hỗ trợ chỉnh sửa nội dung khi viết công thức.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "Cải tiến AI cho ảnh công thức nấu ăn—chọn một kiểu và nhấn vào Nâng cao.";
+"Stronger security for your account and uploads." = "Bảo mật mạnh mẽ hơn cho tài khoản và nội dung tải lên của bạn.";
+"More reliable search, AI, and editing." = "Tìm kiếm, AI và chỉnh sửa đáng tin cậy hơn.";
 "Don't show again until the next app update" = "Không hiển thị lại đến bản cập nhật tiếp theo";
 "Continue" = "Tiếp tục";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "Ứng dụng công thức sạch";
+"Modern patisserie" = "tiệm bánh hiện đại";
+"Rustic comfort" = "Thoải mái mộc mạc";
+"Minimalist" = "tối giản";
+"Celebration" = "Lễ ăn mừng";
+"Premium dessert" = "món tráng miệng cao cấp";
+"Family cookbook" = "Sách dạy nấu ăn gia đình";
+"Modern food blog" = "Blog ẩm thực hiện đại";
+"Bright, neutral, app-thumbnail ready." = "Sáng sủa, trung tính, hình thu nhỏ của ứng dụng đã sẵn sàng.";
+"Refined bakery finish and elegant plating." = "Lớp hoàn thiện bánh tinh tế và lớp mạ trang nhã.";
+"Warm homestyle cookbook feel." = "Cảm giác ấm áp của sách dạy nấu ăn theo phong cách gia đình.";
+"Calm, uncluttered Scandinavian look." = "Vẻ ngoài Scandinavia bình tĩnh, gọn gàng.";
+"Festive but tidy and photo-ready." = "Lễ hội nhưng gọn gàng và sẵn sàng để chụp ảnh.";
+"High-end dessert photography polish." = "Sơn bóng chụp ảnh món tráng miệng cao cấp.";
+"Approachable, authentic home-baked warmth." = "Sự ấm áp chân thực, dễ tiếp cận như món nướng tại nhà.";
+"Editorial color pop, still realistic." = "Màu sắc biên tập nổi bật, vẫn thực tế.";
+"Could not prepare the photo for enhancement." = "Không thể chuẩn bị ảnh để nâng cao.";
+"Invalid response from the photo enhancement service." = "Phản hồi không hợp lệ từ dịch vụ nâng cao ảnh.";
+"No enhanced image was returned. Please try again." = "Không có hình ảnh nâng cao nào được trả lại. Vui lòng thử lại.";
+"You have reached your free tier limit for AI photo enhancements" = "Bạn đã đạt đến giới hạn bậc miễn phí để cải thiện ảnh bằng AI";
+"Upgrade to Premium for unlimited AI photo enhancements" = "Nâng cấp lên Premium để cải thiện ảnh AI không giới hạn";
+"Enhance dish photo" = "Nâng cao hình ảnh món ăn";
+"Style" = "Phong cách";
+"Enhance again" = "Tăng cường lại";
+"Enhance photo" = "Cải thiện ảnh";
+"Use photo" = "Sử dụng ảnh";
+"AI Enhance" = "Tăng cường AI";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "Nhấn vào cây đũa phép trên ảnh để nâng cao ảnh cho thẻ công thức. Tài khoản miễn phí có giới hạn hàng tháng; Phí bảo hiểm là không giới hạn.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "Tính năng AI này không được tìm thấy trên máy chủ. Triển khai Chức năng đám mây phù hợp cho us-central1 (ví dụ: openaiImageEdit để nâng cao ảnh, openaiChatCompletions cho công thức AI) và xác nhận ứng dụng sử dụng dự án Firebase misoto-9cf71.";
+"Dish photo preview" = "Xem trước ảnh món ăn";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(sắp ra mắt)";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "Ứng dụng chia sẻ công thức được hỗ trợ bởi AI. Nơi hoàn hảo để bạn lưu trữ công thức nấu ăn của mình, khám phá những món ăn tuyệt vời từ khắp nơi trên thế giới và biến nguồn cảm hứng thành công thức nấu ăn hoàn chỉnh chỉ trong vài giây. Tạo, sắp xếp và chia sẻ những sáng tạo ẩm thực của bạn với cộng đồng những người yêu thích ẩm thực trên toàn cầu. Tải xuống từ App Store ngay bây giờ!";

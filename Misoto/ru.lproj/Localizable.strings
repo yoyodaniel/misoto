@@ -612,12 +612,44 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Standardized ingredients library added" = "Добавлена стандартизированная библиотека ингредиентов";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "Поиск на естественном языке.";
-"RPG-style XP and level-ups as you cook." = "Опыт в стиле RPG и уровни во время готовки.";
-"Post publicly - or keep recipes private." = "Публикуйте открыто или храните рецепты приватно.";
-"AI helps polish recipe text while you write." = "ИИ помогает улучшить текст рецепта при написании.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "AI Enhance для фотографий рецептов: выберите стиль и нажмите «Улучшить».";
+"Stronger security for your account and uploads." = "Повышенная безопасность вашей учетной записи и загрузок.";
+"More reliable search, AI, and editing." = "Более надежный поиск, искусственный интеллект и редактирование.";
 "Don't show again until the next app update" = "Не показывать до следующего обновления приложения";
 "Continue" = "Продолжить";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "Чистое приложение для рецептов";
+"Modern patisserie" = "Современная кондитерская";
+"Rustic comfort" = "Деревенский комфорт";
+"Minimalist" = "Минималистский";
+"Celebration" = "Праздник";
+"Premium dessert" = "Премиальный десерт";
+"Family cookbook" = "Семейная кулинарная книга";
+"Modern food blog" = "Блог о современной еде";
+"Bright, neutral, app-thumbnail ready." = "Яркий, нейтральный, готовый эскиз приложения.";
+"Refined bakery finish and elegant plating." = "Изысканное хлебобулочное послевкусие и элегантное покрытие.";
+"Warm homestyle cookbook feel." = "Теплая домашняя кулинарная книга.";
+"Calm, uncluttered Scandinavian look." = "Спокойный, лаконичный скандинавский образ.";
+"Festive but tidy and photo-ready." = "Празднично, но аккуратно и готово к фото.";
+"High-end dessert photography polish." = "Высококлассный лак для десертной фотографии.";
+"Approachable, authentic home-baked warmth." = "Доступное, настоящее домашнее тепло.";
+"Editorial color pop, still realistic." = "Редакционная цветовая гамма, по-прежнему реалистичная.";
+"Could not prepare the photo for enhancement." = "Не удалось подготовить фотографию к улучшению.";
+"Invalid response from the photo enhancement service." = "Неверный ответ от службы улучшения фотографий.";
+"No enhanced image was returned. Please try again." = "Улучшенное изображение не возвращено. Пожалуйста, попробуйте еще раз.";
+"You have reached your free tier limit for AI photo enhancements" = "Вы достигли предела бесплатного уровня для улучшения фотографий с помощью ИИ.";
+"Upgrade to Premium for unlimited AI photo enhancements" = "Перейдите на Премиум и получите неограниченное количество улучшений фотографий с помощью ИИ.";
+"Enhance dish photo" = "Улучшить фото блюда";
+"Style" = "Стиль";
+"Enhance again" = "Улучшить снова";
+"Enhance photo" = "Улучшить фото";
+"Use photo" = "Использовать фото";
+"AI Enhance" = "Улучшение искусственного интеллекта";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "Коснитесь фотографии палочкой, чтобы улучшить ее для карточек с рецептами. Бесплатные аккаунты имеют ежемесячный лимит; Премиум не ограничен.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "Эта функция ИИ не была найдена на сервере. Разверните соответствующую облачную функцию в us-central1 (например, openaiImageEdit для улучшения фотографий, openaiChatCompletions для AI рецептов) и убедитесь, что приложение использует проект Firebase мисото-9cf71.";
+"Dish photo preview" = "Превью фото блюда";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(вскоре)";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "Приложение для обмена рецептами на базе искусственного интеллекта. Идеальное место, где вы сможете хранить свои рецепты, открывать для себя удивительные блюда со всего мира и превращать вдохновение в полноценные рецепты за считанные секунды. Создавайте, систематизируйте и делитесь своими кулинарными творениями с мировым сообществом любителей еды. Загрузите из App Store прямо сейчас!";

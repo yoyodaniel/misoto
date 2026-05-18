@@ -15,10 +15,9 @@ struct WhatsNewView: View {
     @State private var doNotShowAgain = false
 
     private let highlights: [String] = [
-        LocalizedString("Search with natural language.", comment: "What's new release bullet"),
-        LocalizedString("RPG-style XP and level-ups as you cook.", comment: "What's new release bullet"),
-        LocalizedString("Post publicly - or keep recipes private.", comment: "What's new release bullet"),
-        LocalizedString("AI helps polish recipe text while you write.", comment: "What's new release bullet")
+        LocalizedString("AI Enhance for recipe photos—pick a style and tap Enhance.", comment: "What's new release bullet"),
+        LocalizedString("Stronger security for your account and uploads.", comment: "What's new release bullet"),
+        LocalizedString("More reliable search, AI, and editing.", comment: "What's new release bullet")
     ]
 
     var body: some View {

@@ -612,12 +612,44 @@ Akun Anda akan dihapus setelah 30 hari. Untuk membatalkan penghapusan, masuk kem
 "Standardized ingredients library added" = "Pustaka bahan terstandarisasi ditambahkan";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "Cari dengan bahasa alami.";
-"RPG-style XP and level-ups as you cook." = "XP bergaya RPG dan naik level saat memasak.";
-"Post publicly - or keep recipes private." = "Unggah ke publik atau simpan resep sebagai pribadi.";
-"AI helps polish recipe text while you write." = "AI membantu memoles teks resep saat menulis.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "AI Enhance untuk foto resep—pilih gaya dan ketuk Sempurnakan.";
+"Stronger security for your account and uploads." = "Keamanan yang lebih kuat untuk akun dan unggahan Anda.";
+"More reliable search, AI, and editing." = "Pencarian, AI, dan pengeditan yang lebih andal.";
 "Don't show again until the next app update" = "Jangan tampilkan lagi hingga pembaruan apl berikutnya";
 "Continue" = "Lanjutkan";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "Aplikasi resep bersih";
+"Modern patisserie" = "Toko kue modern";
+"Rustic comfort" = "Kenyamanan pedesaan";
+"Minimalist" = "Minimalis";
+"Celebration" = "Perayaan";
+"Premium dessert" = "Makanan penutup premium";
+"Family cookbook" = "Buku masak keluarga";
+"Modern food blog" = "Blog makanan masa kini";
+"Bright, neutral, app-thumbnail ready." = "Cerah, netral, thumbnail aplikasi siap.";
+"Refined bakery finish and elegant plating." = "Hasil akhir roti yang halus dan pelapisan yang elegan.";
+"Warm homestyle cookbook feel." = "Nuansa buku masak gaya rumahan yang hangat.";
+"Calm, uncluttered Scandinavian look." = "Tampilan Skandinavia yang tenang dan rapi.";
+"Festive but tidy and photo-ready." = "Meriah namun rapi dan siap berfoto.";
+"High-end dessert photography polish." = "Polesan fotografi makanan penutup kelas atas.";
+"Approachable, authentic home-baked warmth." = "Kehangatan buatan rumah yang autentik dan mudah didekati.";
+"Editorial color pop, still realistic." = "Warna editorialnya pop, masih realistis.";
+"Could not prepare the photo for enhancement." = "Tidak dapat menyiapkan foto untuk penyempurnaan.";
+"Invalid response from the photo enhancement service." = "Respons tidak valid dari layanan penyempurnaan foto.";
+"No enhanced image was returned. Please try again." = "Tidak ada gambar yang disempurnakan yang dikembalikan. Silakan coba lagi.";
+"You have reached your free tier limit for AI photo enhancements" = "Anda telah mencapai batas tingkat gratis untuk penyempurnaan foto AI";
+"Upgrade to Premium for unlimited AI photo enhancements" = "Tingkatkan ke Premium untuk penyempurnaan foto AI tanpa batas";
+"Enhance dish photo" = "Sempurnakan foto hidangan";
+"Style" = "Gaya";
+"Enhance again" = "Tingkatkan lagi";
+"Enhance photo" = "Sempurnakan foto";
+"Use photo" = "Gunakan foto";
+"AI Enhance" = "Peningkatan AI";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "Ketuk tongkat pada foto untuk menyempurnakannya pada kartu resep. Akun gratis memiliki batas bulanan; Premium tidak terbatas.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "Fitur AI ini tidak ditemukan di server. Terapkan Cloud Function yang cocok ke us-central1 (misalnya openaiImageEdit untuk penyempurnaan foto, openaiChatCompletions untuk AI resep), dan konfirmasikan bahwa aplikasi tersebut menggunakan proyek Firebase misoto-9cf71.";
+"Dish photo preview" = "Pratinjau foto hidangan";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(segera hadir)";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "Aplikasi berbagi resep yang didukung AI. Tempat sempurna bagi Anda untuk menyimpan resep, menemukan hidangan menakjubkan dari seluruh dunia, dan mengubah inspirasi menjadi resep lengkap dalam hitungan detik. Buat, atur, dan bagikan kreasi kuliner Anda dengan komunitas pecinta makanan global. Unduh dari App Store sekarang!";

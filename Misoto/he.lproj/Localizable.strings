@@ -611,12 +611,44 @@ Your account will be deleted after 30 days. To cancel the deletion, log back in 
 "Standardized ingredients library added" = "נוספה ספריית מרכיבים מתוקננת";
 
 /* What's New (app update sheet) */
-"Search with natural language." = "חיפוש בשפה טבעית.";
-"RPG-style XP and level-ups as you cook." = "נקודות ניסיון בסגנון RPG ועליית רמה בזמן הבישול.";
-"Post publicly - or keep recipes private." = "פרסם בפומבי או שמור מתכונים פרטיים.";
-"AI helps polish recipe text while you write." = "בינה מלאכותית עוזרת ללטש את טקסט המתכון בזמן הכתיבה.";
+
+"AI Enhance for recipe photos—pick a style and tap Enhance." = "שיפור AI לתמונות מתכונים - בחר סגנון והקש על שפר.";
+"Stronger security for your account and uploads." = "אבטחה חזקה יותר עבור החשבון וההעלאות שלך.";
+"More reliable search, AI, and editing." = "חיפוש, AI ועריכה אמינים יותר.";
 "Don't show again until the next app update" = "לא להציג שוב עד לעדכון האפליקציה הבא";
 "Continue" = "המשך";
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "אפליקציית מתכונים נקייה";
+"Modern patisserie" = "פטיסרי מודרני";
+"Rustic comfort" = "נוחות כפרית";
+"Minimalist" = "מינימליסטי";
+"Celebration" = "חֲגִיגָה";
+"Premium dessert" = "קינוח פרימיום";
+"Family cookbook" = "ספר בישול משפחתי";
+"Modern food blog" = "בלוג אוכל מודרני";
+"Bright, neutral, app-thumbnail ready." = "בהיר, ניטרלי, מוכן לתמונה ממוזערת של אפליקציה.";
+"Refined bakery finish and elegant plating." = "גימור מאפייה מעודן וציפוי אלגנטי.";
+"Warm homestyle cookbook feel." = "תחושה חמה של ספר בישול בסגנון ביתי.";
+"Calm, uncluttered Scandinavian look." = "מראה סקנדינבי רגוע ולא עמוס.";
+"Festive but tidy and photo-ready." = "חגיגי אבל מסודר ומוכן לצילום.";
+"High-end dessert photography polish." = "לק לצילום קינוחים ברמה גבוהה.";
+"Approachable, authentic home-baked warmth." = "חמימות ביתית נגישה, אותנטית.";
+"Editorial color pop, still realistic." = "צבעוני עריכה, עדיין מציאותי.";
+"Could not prepare the photo for enhancement." = "לא ניתן היה להכין את התמונה לשיפור.";
+"Invalid response from the photo enhancement service." = "תגובה לא חוקית משירות שיפור התמונות.";
+"No enhanced image was returned. Please try again." = "לא הוחזרה תמונה מוגברת. אנא נסה שוב.";
+"You have reached your free tier limit for AI photo enhancements" = "הגעת למגבלת השכבה החינמית שלך לשיפורי תמונות AI";
+"Upgrade to Premium for unlimited AI photo enhancements" = "שדרג ל-Premium לקבלת שיפורי תמונות AI ללא הגבלה";
+"Enhance dish photo" = "שפר את תמונת המנה";
+"Style" = "סִגְנוֹן";
+"Enhance again" = "שפר שוב";
+"Enhance photo" = "שפר את התמונה";
+"Use photo" = "השתמש בתמונה";
+"AI Enhance" = "שיפור בינה מלאכותית";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "הקש על השרביט על תמונה כדי לשפר אותו עבור כרטיסי מתכונים. לחשבונות בחינם יש מגבלה חודשית; פרימיום הוא ללא הגבלה.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "תכונת AI זו לא נמצאה בשרת. פרוס את פונקציית הענן התואמת ל-us-central1 (למשל openaiImageEdit לשיפור התמונות, openaiChatCompletions עבור מתכון AI), ואשר שהאפליקציה משתמשת בפרויקט misoto-9cf71 Firebase.";
+"Dish photo preview" = "תצוגה מקדימה של תמונת מנה";
+
 /* Auto-synced from en — translate when convenient; English fallback until then */
 "(coming soon)" = "(בקרוב)";
 "AI-Powered recipe sharing app. Perfect place for you to store your recipes, discover amazing dishes from around the world, and turn inspiration into complete recipes in seconds. Create, organize, and share your culinary creations with a global community of food lovers. Download from the App Store now!" = "אפליקציית שיתוף מתכונים מבוססת בינה מלאכותית. מקום מושלם בשבילך לאחסן את המתכונים שלך, לגלות מנות מדהימות מרחבי העולם ולהפוך השראה למתכונים שלמים תוך שניות. צור, ארגן ושתף את היצירות הקולינריות שלך עם קהילה גלובלית של אוהבי אוכל. הורד מ-App Store עכשיו!";
