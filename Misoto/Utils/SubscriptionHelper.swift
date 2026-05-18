@@ -90,12 +90,31 @@ struct SubscriptionHelper {
             print("ℹ️ User is premium, skipping tracking")
         }
     }
+
+    static func checkAIImageEditLimit() async throws -> Bool {
+        let subscriptionService = SubscriptionService.shared
+        await subscriptionService.loadSubscriptionStatus()
+        if subscriptionService.hasPremium {
+            return true
+        }
+        let count = try await UsageTrackingService.shared.getAIImageEditCountThisMonth()
+        return count < FreeTierLimits.maxAIImageEditsPerMonth
+    }
+
+    static func trackAIImageEdit() async throws {
+        let subscriptionService = SubscriptionService.shared
+        await subscriptionService.loadSubscriptionStatus()
+        if !subscriptionService.hasPremium {
+            try await UsageTrackingService.shared.trackAIImageEdit()
+        }
+    }
 }
 
 enum SubscriptionLimitError: LocalizedError {
     case recipeLimitReached
     case aiDescriptionLimitReached
     case aiImageExtractionLimitReached
+    case aiImageEditLimitReached
     
     var errorDescription: String? {
         switch self {
@@ -105,6 +124,8 @@ enum SubscriptionLimitError: LocalizedError {
             return NSLocalizedString("You have reached your free tier limit for AI descriptions", comment: "AI description limit error")
         case .aiImageExtractionLimitReached:
             return NSLocalizedString("You have reached your free tier limit for AI image extractions", comment: "AI image extraction limit error")
+        case .aiImageEditLimitReached:
+            return NSLocalizedString("You have reached your free tier limit for AI photo enhancements", comment: "AI image edit limit error")
         }
     }
 }

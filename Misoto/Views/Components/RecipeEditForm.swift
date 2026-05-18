@@ -9,6 +9,12 @@ import SwiftUI
 import PhotosUI
 import UIKit
 
+private struct DishImageEnhanceContext: Identifiable {
+    let id = UUID()
+    let index: Int
+    let image: UIImage
+}
+
 struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     // Unit mapping: singular form -> display name with abbreviation in brackets
     private let unitDisplayNames: [String: String] = [
@@ -208,8 +214,11 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
     // Optional callbacks for when add image button is tapped
     let onTakePicture: (() -> Void)?
     let onSelectFromLibrary: (() -> Void)?
+    /// When set (e.g. edit recipe), replaces image and clears stored URL mapping for re-upload.
+    let onDishImageReplaced: ((Int, UIImage) -> Void)?
     
     @State private var showImageSourceOptions = false
+    @State private var dishImageEnhanceContext: DishImageEnhanceContext?
     
     // Instructions content builder
     let instructionsContent: () -> InstructionsContent
@@ -323,6 +332,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         selectedRecipePhotos: Binding<[PhotosPickerItem]>,
         onTakePicture: (() -> Void)? = nil,
         onSelectFromLibrary: (() -> Void)? = nil,
+        onDishImageReplaced: ((Int, UIImage) -> Void)? = nil,
         moveIngredientBetweenCategories: ((Ingredient.Category, Int, Ingredient.Category, Int) -> Void)? = nil,
         onImproveInstructionsWithAI: (() async -> Void)? = nil,
         onGenerateInstructionsWithAI: (() async -> Void)? = nil,
@@ -428,6 +438,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
         _selectedRecipePhotos = selectedRecipePhotos
         self.onTakePicture = onTakePicture
         self.onSelectFromLibrary = onSelectFromLibrary
+        self.onDishImageReplaced = onDishImageReplaced
         self.onImproveInstructionsWithAI = onImproveInstructionsWithAI
         self.onGenerateInstructionsWithAI = onGenerateInstructionsWithAI
         self.isInstructionAILoading = isInstructionAILoading
@@ -911,19 +922,35 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                         // Display existing images as 80x80 previews
                         ForEach(Array(mainRecipeImages.enumerated()), id: \.offset) { index, image in
                             ZStack(alignment: .topTrailing) {
-                                Button(action: {
-                                    fullScreenImage = image
-                                    showFullScreenImage = true
-                                }) {
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 80, height: 80)
-                                        .clipped()
-                                        .cornerRadius(8)
+                                ZStack(alignment: .bottomLeading) {
+                                    Button(action: {
+                                        fullScreenImage = image
+                                        showFullScreenImage = true
+                                    }) {
+                                        Image(uiImage: image)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 80, height: 80)
+                                            .clipped()
+                                            .cornerRadius(8)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+
+                                    Button {
+                                        dishImageEnhanceContext = DishImageEnhanceContext(index: index, image: image)
+                                    } label: {
+                                        Image(systemName: "wand.and.stars")
+                                            .font(.system(size: 12, weight: .semibold))
+                                            .foregroundColor(.white)
+                                            .padding(5)
+                                            .background(Color.accentColor.opacity(0.92))
+                                            .clipShape(Circle())
+                                    }
+                                    .buttonStyle(.plain)
+                                    .padding(4)
+                                    .accessibilityLabel(LocalizedString("Enhance dish photo", comment: "Enhance photo accessibility"))
                                 }
-                                .buttonStyle(PlainButtonStyle())
-                                
+
                                 Button(action: {
                                     removeRecipeImage(index)
                                 }) {
@@ -1004,7 +1031,7 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     .font(.headline)
             }
         } footer: {
-            Text(LocalizedString("Dish images can be added later as required", comment: "Dish images footer"))
+            Text(LocalizedString("Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited.", comment: "Dish images footer with enhance hint"))
         }
     }
     
@@ -1777,6 +1804,15 @@ struct RecipeEditForm<InstructionsContent: View, OptionalContent: View>: View {
                     Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.caption)
+                }
+            }
+        }
+        .sheet(item: $dishImageEnhanceContext) { context in
+            RecipeImageEditorSheet(sourceImage: context.image) { newImage in
+                if let onDishImageReplaced {
+                    onDishImageReplaced(context.index, newImage)
+                } else if context.index < mainRecipeImages.count {
+                    mainRecipeImages[context.index] = newImage
                 }
             }
         }

@@ -829,7 +829,7 @@ class ExtractMenuFromWebsiteViewModel: ObservableObject {
             // Upload all recipe images (up to 5)
             var allImageURLs: [String] = []
             for image in mainRecipeImages {
-                let imagePath = "recipes/\(UUID().uuidString).jpg"
+                let imagePath = StoragePaths.recipeImage(userID: userID)
                 if let url = try? await storageService.uploadImage(image, path: imagePath) {
                     allImageURLs.append(url)
                 }

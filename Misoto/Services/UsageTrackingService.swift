@@ -68,18 +68,7 @@ class UsageTrackingService {
     // MARK: - Track AI Description Generation
     
     func trackAIDescriptionGeneration() async throws {
-        guard let userID = Auth.auth().currentUser?.uid else {
-            throw UsageTrackingError.unauthorized
-        }
-        
-        let monthKey = getCurrentMonthKey()
-        // Structure: users/{userId}/usage/aiDescriptionCount/{monthKey}
-        let userRef = firestore.collection("users").document(userID)
-        
-        try await userRef.setData([
-            "usage.aiDescriptionCount.\(monthKey)": FieldValue.increment(Int64(1)),
-            "updatedAt": Timestamp(date: Date())
-        ], merge: true)
+        // Enforced server-side when calling openaiChatCompletions (usageType: description).
     }
     
     func getAIDescriptionCountThisMonth() async throws -> Int {
@@ -114,45 +103,7 @@ class UsageTrackingService {
     // MARK: - Track AI Image Extraction
     
     func trackAIImageExtraction() async throws {
-        guard let userID = Auth.auth().currentUser?.uid else {
-            throw UsageTrackingError.unauthorized
-        }
-        
-        let monthKey = getCurrentMonthKey()
-        // Structure: users/{userId}/usage/aiImageExtractionCount/{monthKey}
-        let userRef = firestore.collection("users").document(userID)
-        
-        print("📊 Tracking AI image extraction for user \(userID), month: \(monthKey)")
-        print("📊 Using nested path: usage.aiImageExtractionCount.\(monthKey)")
-        
-        // Try updateData first (works better with FieldValue.increment() for nested paths)
-        // If document doesn't exist, fall back to setData with merge
-        do {
-            try await userRef.updateData([
-                "usage.aiImageExtractionCount.\(monthKey)": FieldValue.increment(Int64(1)),
-                "updatedAt": Timestamp(date: Date())
-            ])
-        } catch {
-            // If updateData fails (e.g., document doesn't exist), use setData with merge
-            print("⚠️ updateData failed, trying setData with merge: \(error.localizedDescription)")
-            try await userRef.setData([
-                "usage.aiImageExtractionCount.\(monthKey)": FieldValue.increment(Int64(1)),
-            "updatedAt": Timestamp(date: Date())
-        ], merge: true)
-        }
-        
-        print("✅ Successfully incremented AI image extraction count in Firestore")
-        
-        // Verify the update by reading it back
-        let document = try await userRef.getDocument()
-        if let data = document.data(),
-           let usage = data["usage"] as? [String: Any],
-           let aiImageExtractionCount = usage["aiImageExtractionCount"] as? [String: Any],
-           let count = aiImageExtractionCount[monthKey] {
-            print("✅ Verified: usage.aiImageExtractionCount.\(monthKey) = \(count)")
-        } else {
-            print("⚠️ Warning: Could not verify the update")
-        }
+        // Enforced server-side when calling openaiChatCompletions (usageType: imageExtraction).
     }
     
     func getAIImageExtractionCountThisMonth() async throws -> Int {
@@ -186,6 +137,32 @@ class UsageTrackingService {
             }
         }
         
+        return 0
+    }
+
+    // MARK: - Track AI dish-photo edit
+
+    func trackAIImageEdit() async throws {
+        // Enforced server-side when calling openaiImageEdit.
+    }
+
+    func getAIImageEditCountThisMonth() async throws -> Int {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            throw UsageTrackingError.unauthorized
+        }
+
+        let monthKey = getCurrentMonthKey()
+        let userRef = firestore.collection("users").document(userID)
+        let document = try await userRef.getDocument()
+        guard let data = document.data(),
+              let usage = data["usage"] as? [String: Any],
+              let aiImageEditCount = usage["aiImageEditCount"] as? [String: Any],
+              let monthData = aiImageEditCount[monthKey] else {
+            return 0
+        }
+        if let intValue = monthData as? Int { return intValue }
+        if let numberValue = monthData as? NSNumber { return numberValue.intValue }
+        if let stringValue = monthData as? String, let intValue = Int(stringValue) { return intValue }
         return 0
     }
     

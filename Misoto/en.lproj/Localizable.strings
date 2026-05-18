@@ -845,3 +845,36 @@
 "Upgrade to Premium" = "Upgrade to Premium";
 "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes." = "You have reached the maximum number of recipes. Upgrade to Premium now to save unlimited recipes, or create more space by deleting old recipes.";
 "Your free monthly credits have been used. Upgrade to Premium now to continue extracting recipes without limits and unlock all premium features." = "Your free monthly credits have been used. Upgrade to Premium now to continue extracting recipes without limits and unlock all premium features.";
+
+/* Dish photo AI enhance (1.5) */
+"Clean recipe app" = "Clean recipe app";
+"Modern patisserie" = "Modern patisserie";
+"Rustic comfort" = "Rustic comfort";
+"Minimalist" = "Minimalist";
+"Celebration" = "Celebration";
+"Premium dessert" = "Premium dessert";
+"Family cookbook" = "Family cookbook";
+"Modern food blog" = "Modern food blog";
+"Bright, neutral, app-thumbnail ready." = "Bright, neutral, app-thumbnail ready.";
+"Refined bakery finish and elegant plating." = "Refined bakery finish and elegant plating.";
+"Warm homestyle cookbook feel." = "Warm homestyle cookbook feel.";
+"Calm, uncluttered Scandinavian look." = "Calm, uncluttered Scandinavian look.";
+"Festive but tidy and photo-ready." = "Festive but tidy and photo-ready.";
+"High-end dessert photography polish." = "High-end dessert photography polish.";
+"Approachable, authentic home-baked warmth." = "Approachable, authentic home-baked warmth.";
+"Editorial color pop, still realistic." = "Editorial color pop, still realistic.";
+"Could not prepare the photo for enhancement." = "Could not prepare the photo for enhancement.";
+"Invalid response from the photo enhancement service." = "Invalid response from the photo enhancement service.";
+"No enhanced image was returned. Please try again." = "No enhanced image was returned. Please try again.";
+"You have reached your free tier limit for AI photo enhancements" = "You have reached your free tier limit for AI photo enhancements";
+"Upgrade to Premium for unlimited AI photo enhancements" = "Upgrade to Premium for unlimited AI photo enhancements";
+"Enhance dish photo" = "Enhance dish photo";
+"Style" = "Style";
+"Enhance again" = "Enhance again";
+"Enhance photo" = "Enhance photo";
+"Use photo" = "Use photo";
+"AI Enhance" = "AI Enhance";
+"Enhance dish photo" = "Enhance dish photo";
+"Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited." = "Tap the wand on a photo to enhance it for recipe cards. Free accounts have a monthly limit; Premium is unlimited.";
+"This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project." = "This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project.";
+"Dish photo preview" = "Dish photo preview";

@@ -12,6 +12,7 @@
     "deploy:npx": "NODE_OPTIONS=--max-old-space-size=16384 FUNCTIONS_DISCOVERY_TIMEOUT=180 npx firebase deploy --only functions"
   },
   "dependencies": {
+    "@apple/app-store-server-library": "^1.6.0",
     "apn": "^2.2.0",
     "firebase-admin": "^13.0.1",
     "firebase-functions": "^6.1.0"

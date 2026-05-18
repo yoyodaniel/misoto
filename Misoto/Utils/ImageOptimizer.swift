@@ -77,6 +77,67 @@ class ImageOptimizer {
         
         return imageData
     }
+
+    // MARK: - Display
+
+    /// Renders EXIF orientation into pixels so SwiftUI `Image` does not appear stretched or rotated.
+    static func normalizedForDisplay(_ image: UIImage) -> UIImage {
+        guard image.imageOrientation != .up else { return image }
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = image.scale
+        format.opaque = false
+        let renderer = UIGraphicsImageRenderer(size: image.size, format: format)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: image.size))
+        }
+    }
+
+    // MARK: - AI dish-photo enhancement
+
+    /// Center-crop to 1:1 by using the full shorter side and cropping the longer side (zoomed fill, no letterboxing).
+    static func squareCenterFilled(_ image: UIImage) -> UIImage {
+        let normalized = normalizedForDisplay(image)
+        guard let cgImage = normalized.cgImage else { return normalized }
+        let width = CGFloat(cgImage.width)
+        let height = CGFloat(cgImage.height)
+        let side = min(width, height)
+        let originX = (width - side) / 2
+        let originY = (height - side) / 2
+        let cropRect = CGRect(x: originX, y: originY, width: side, height: side)
+        guard let cropped = cgImage.cropping(to: cropRect) else { return normalized }
+        return UIImage(cgImage: cropped, scale: normalized.scale, orientation: .up)
+    }
+
+    /// Center square crop for 1:1 recipe cards (`ModernRecipeCard`).
+    static func squareCropForRecipeCard(_ image: UIImage) -> UIImage {
+        squareCenterFilled(image)
+    }
+
+    /// JPEG base64 for OpenAI Images edit API — kept small for Firebase Callable payload limits (~10 MB).
+    static func jpegBase64ForImageEdit(_ image: UIImage) -> (base64: String, mimeType: String)? {
+        let square = squareCropForRecipeCard(image)
+        // Callable carries base64 in JSON; PNG at 1024² often exceeds the 8 MB string cap.
+        let maxBase64Characters = 4 * 1024 * 1024
+        var maxDimension: CGFloat = 768
+        var quality: CGFloat = 0.82
+
+        while maxDimension >= 480 {
+            var currentQuality = quality
+            let sized = resizeImage(square, maxDimension: maxDimension)
+            while currentQuality >= 0.45 {
+                guard let jpegData = sized.jpegData(compressionQuality: currentQuality) else {
+                    break
+                }
+                let encoded = jpegData.base64EncodedString()
+                if encoded.count <= maxBase64Characters {
+                    return (encoded, "image/jpeg")
+                }
+                currentQuality -= 0.08
+            }
+            maxDimension -= 128
+        }
+        return nil
+    }
 }
 
 

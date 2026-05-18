@@ -563,7 +563,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             // Upload all recipe images (up to 5)
             var allImageURLs: [String] = []
             for image in mainRecipeImages {
-                let imagePath = "recipes/\(UUID().uuidString).jpg"
+                let imagePath = StoragePaths.recipeImage(userID: userID)
                 if let url = try? await storageService.uploadImage(image, path: imagePath) {
                     allImageURLs.append(url)
                 }
@@ -576,7 +576,7 @@ class ExtractMenuWithAIViewModel: ObservableObject {
             var sourceImageURLs: [String] = []
             if let sourceImage = sourceImage {
                 print("📸 Starting source image upload")
-                let sourceImagePath = "source-images/\(UUID().uuidString).jpg"
+                let sourceImagePath = StoragePaths.sourceImage(userID: userID)
                 do {
                     let url = try await storageService.uploadImage(sourceImage, path: sourceImagePath)
                     sourceImageURLs.append(url)

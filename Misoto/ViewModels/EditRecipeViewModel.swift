@@ -642,12 +642,21 @@ class EditRecipeViewModel: ObservableObject {
         }
         imageIndexToURL = newMapping
     }
+
+    func replaceRecipeImage(at index: Int, with image: UIImage) {
+        guard index >= 0, index < mainRecipeImages.count else { return }
+        if let url = imageIndexToURL[index] {
+            deletedImageURLs.insert(url)
+            imageIndexToURL.removeValue(forKey: index)
+        }
+        mainRecipeImages[index] = ImageOptimizer.resizeForDisplay(image, maxDimension: 1200)
+    }
     
     
     // MARK: - Save Recipe
     
     func updateRecipe(saveAsPrivate: Bool) async -> Bool {
-        guard Auth.auth().currentUser != nil else {
+        guard let userID = Auth.auth().currentUser?.uid else {
             errorMessage = LocalizedString("You must be logged in to update a recipe", comment: "Not logged in error")
             return false
         }
@@ -727,7 +736,7 @@ class EditRecipeViewModel: ObservableObject {
                     finalImageURLs.append(existingURL)
                 } else {
                     // New image, upload it
-                    let imagePath = "recipes/\(UUID().uuidString).jpg"
+                    let imagePath = StoragePaths.recipeImage(userID: userID)
                     let url = try await storageService.uploadImage(image, path: imagePath)
                     finalImageURLs.append(url)
                 }
@@ -744,13 +753,13 @@ class EditRecipeViewModel: ObservableObject {
                 
                 // Upload new image if present
                 if let image = instructionItem.image {
-                    let imagePath = "recipe-instructions/\(UUID().uuidString).jpg"
+                    let imagePath = StoragePaths.recipeInstructionImage(userID: userID)
                     imageURL = try await storageService.uploadImage(image, path: imagePath)
                 }
                 
                 // Upload new video if present
                 if let videoURLToUpload = instructionItem.videoURL {
-                    let videoPath = "recipe-instructions/\(UUID().uuidString).mp4"
+                    let videoPath = StoragePaths.recipeInstructionVideo(userID: userID)
                     videoURL = try await storageService.uploadVideo(videoURLToUpload, path: videoPath)
                 }
                 
@@ -1017,6 +1026,19 @@ class EditRecipeViewModel: ObservableObject {
         errorMessage = nil
         
         do {
+            let canGenerate = try await SubscriptionHelper.checkAIDescriptionLimit()
+            if !canGenerate {
+                errorMessage = LocalizedString(
+                    "You have reached your free tier limit for AI descriptions",
+                    comment: "AI description limit error"
+                ) + "\n" + LocalizedString(
+                    "Upgrade to Premium for unlimited AI descriptions",
+                    comment: "Upgrade prompt for AI descriptions"
+                )
+                isGeneratingDescription = false
+                return
+            }
+
             let generatedDescription = try await OpenAIService.generateRecipeDescription(
                 title: title,
                 ingredients: ingredientStringsForAI(),

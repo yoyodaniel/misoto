@@ -484,7 +484,7 @@ class UploadRecipeViewModel: ObservableObject {
             // Upload all recipe images (up to 5)
             var allImageURLs: [String] = []
             for image in mainRecipeImages {
-                let imagePath = "recipes/\(UUID().uuidString).jpg"
+                let imagePath = StoragePaths.recipeImage(userID: userID)
                 if let url = try? await storageService.uploadImage(image, path: imagePath) {
                     allImageURLs.append(url)
                 }
@@ -501,13 +501,13 @@ class UploadRecipeViewModel: ObservableObject {
                 
                 // Upload image if present
                 if let image = instructionItem.image {
-                    let imagePath = "recipe-instructions/\(UUID().uuidString).jpg"
+                    let imagePath = StoragePaths.recipeInstructionImage(userID: userID)
                     imageURL = try await storageService.uploadImage(image, path: imagePath)
                 }
                 
                 // Upload video if present
                 if let videoURLToUpload = instructionItem.videoURL {
-                    let videoPath = "recipe-instructions/\(UUID().uuidString).mp4"
+                    let videoPath = StoragePaths.recipeInstructionVideo(userID: userID)
                     videoURL = try await storageService.uploadVideo(videoURLToUpload, path: videoPath)
                 }
                 

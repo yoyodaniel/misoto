@@ -13,6 +13,7 @@
 		7C05564B2EFC766E0083BFEC /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 7C05564A2EFC766E0083BFEC /* FirebaseDatabase */; };
 		7C05564D2EFC766E0083BFEC /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 7C05564C2EFC766E0083BFEC /* FirebaseFirestore */; };
 		7C05564F2EFC766E0083BFEC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 7C05564E2EFC766E0083BFEC /* FirebaseStorage */; };
+		7C7E3B012EFC766E0083BFEC /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = 7C7E3B002EFC766E0083BFEC /* FirebaseAppCheck */; };
 		7C0556522EFC79200083BFEC /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 7C0556512EFC79200083BFEC /* GoogleSignIn */; };
 		7C0556542EFC79200083BFEC /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7C0556532EFC79200083BFEC /* GoogleSignInSwift */; };
 		7C7E21F02F09FA500030300D /* Caveat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7E21E92F09FA500030300D /* Caveat-Regular.ttf */; };
@@ -104,6 +105,7 @@
 				7C0556472EFC766E0083BFEC /* FirebaseAuth in Frameworks */,
 				7C7E3A012EFC766E0083BFEC /* FirebaseFunctions in Frameworks */,
 				7C05564F2EFC766E0083BFEC /* FirebaseStorage in Frameworks */,
+				7C7E3B012EFC766E0083BFEC /* FirebaseAppCheck in Frameworks */,
 				7C0556522EFC79200083BFEC /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -222,6 +224,7 @@
 				7C05564A2EFC766E0083BFEC /* FirebaseDatabase */,
 				7C05564C2EFC766E0083BFEC /* FirebaseFirestore */,
 				7C05564E2EFC766E0083BFEC /* FirebaseStorage */,
+				7C7E3B002EFC766E0083BFEC /* FirebaseAppCheck */,
 				7C0556512EFC79200083BFEC /* GoogleSignIn */,
 				7C0556532EFC79200083BFEC /* GoogleSignInSwift */,
 			);
@@ -811,6 +814,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7C0556432EFC766E0083BFEC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFunctions;
+		};
+		7C7E3B002EFC766E0083BFEC /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7C0556432EFC766E0083BFEC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -525,7 +525,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             // Upload all recipe images (up to 5)
             var allImageURLs: [String] = []
             for image in mainRecipeImages {
-                let imagePath = "recipes/\(UUID().uuidString).jpg"
+                let imagePath = StoragePaths.recipeImage(userID: userID)
                 if let url = try? await storageService.uploadImage(image, path: imagePath) {
                     allImageURLs.append(url)
                 }
@@ -538,7 +538,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
             var sourceImageURLs: [String] = []
             print("📸 Starting source image upload. Count: \(sourceImages.count)")
             for (index, sourceImage) in sourceImages.enumerated() {
-                let sourceImagePath = "source-images/\(UUID().uuidString).jpg"
+                let sourceImagePath = StoragePaths.sourceImage(userID: userID)
                 do {
                     let url = try await storageService.uploadImage(sourceImage, path: sourceImagePath)
                     sourceImageURLs.append(url)
@@ -558,7 +558,7 @@ class ExtractMenuFromImageViewModel: ObservableObject {
                 
                 // Upload instruction image if present
                 if let image = instructionItem.image {
-                    let imagePath = "instructions/\(UUID().uuidString).jpg"
+                    let imagePath = StoragePaths.legacyInstructionImage(userID: userID)
                     do {
                         imageURL = try await storageService.uploadImage(image, path: imagePath)
                     } catch {

@@ -9,6 +9,13 @@ import FirebaseAuth
 import FirebaseFunctions
 import Foundation
 
+// MARK: - OpenAI usage kinds (enforced server-side on Cloud Functions)
+
+enum OpenAIProxyUsageKind: String {
+    case description
+    case imageExtraction
+}
+
 // MARK: - Backend API proxy
 
 enum BackendAPIProxy {
@@ -38,14 +45,17 @@ enum BackendAPIProxy {
             return callable
         }
 
-        func perform(requestBody: [String: Any]) async throws -> Data {
+        func perform(requestBody: [String: Any], usageKind: OpenAIProxyUsageKind) async throws -> Data {
             let token = String(UUID().uuidString.prefix(8))
             print("🔐 OpenAI callable gate BEGIN \(token)")
             defer { print("🔐 OpenAI callable gate END \(token)") }
 
             let result: HTTPSCallableResult
             do {
-                result = try await openAICallable().call(["openaiRequest": requestBody])
+                result = try await openAICallable().call([
+                    "openaiRequest": requestBody,
+                    "usageType": usageKind.rawValue,
+                ])
             } catch {
                 throw BackendAPIProxy.mapCallableTransportError(error)
             }
@@ -67,11 +77,41 @@ enum BackendAPIProxy {
         }
     }
 
-    static func openAIChatCompletions(requestBody: [String: Any]) async throws -> Data {
+    static func openAIChatCompletions(
+        requestBody: [String: Any],
+        usageKind: OpenAIProxyUsageKind
+    ) async throws -> Data {
         guard Auth.auth().currentUser != nil else {
             throw OpenAIError.notAuthenticated
         }
-        return try await OpenAIChatCompletionsGate.shared.perform(requestBody: requestBody)
+        return try await OpenAIChatCompletionsGate.shared.perform(
+            requestBody: requestBody,
+            usageKind: usageKind
+        )
+    }
+
+    static func openAIImageEdit(imageBase64: String, presetId: String, mimeType: String = "image/jpeg") async throws -> Data {
+        guard Auth.auth().currentUser != nil else {
+            throw OpenAIError.notAuthenticated
+        }
+        let callable = functions.httpsCallable("openaiImageEdit")
+        callable.timeoutInterval = 180
+        let result: HTTPSCallableResult
+        do {
+            result = try await callable.call([
+                "imageBase64": imageBase64,
+                "presetId": presetId,
+                "mimeType": mimeType,
+            ])
+        } catch {
+            throw mapCallableTransportError(error)
+        }
+        return try decodePayload(
+            result.data,
+            httpError: OpenAIError.httpError,
+            apiError: OpenAIError.apiError,
+            invalid: OpenAIError.invalidResponse
+        )
     }
 
     /// Maps Firebase Callable / URL errors into `OpenAIError` so the UI is not stuck on opaque messages like "NOT FOUND".
@@ -85,7 +125,7 @@ enum BackendAPIProxy {
             switch code {
             case .notFound, .unimplemented:
                 let hint = LocalizedString(
-                    "The recipe AI service was not found on the server. The project may need the openaiChatCompletions function deployed to us-central1, or the app may be pointed at the wrong Firebase project.",
+                    "This AI feature was not found on the server. Deploy the matching Cloud Function to us-central1 (e.g. openaiImageEdit for photo enhance, openaiChatCompletions for recipe AI), and confirm the app uses the misoto-9cf71 Firebase project.",
                     comment: "Firebase callable NOT_FOUND / unimplemented"
                 )
                 return OpenAIError.backendConnectionFailed(hint)

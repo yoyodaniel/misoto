@@ -241,6 +241,9 @@ struct EditRecipeView: View {
             selectedRecipePhotos: $selectedRecipePhotos,
             onTakePicture: nil,
             onSelectFromLibrary: nil,
+            onDishImageReplaced: { index, image in
+                viewModel.replaceRecipeImage(at: index, with: image)
+            },
             moveIngredientBetweenCategories: { fromCategory, fromIndex, toCategory, toIndex in
                 viewModel.moveIngredient(from: fromCategory, sourceIndex: fromIndex, to: toCategory, destinationIndex: toIndex)
             },

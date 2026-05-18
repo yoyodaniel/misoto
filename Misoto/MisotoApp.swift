@@ -15,6 +15,7 @@ struct MisotoApp: App {
     
     // Configure Firebase first, before creating view models
     init() {
+        AppCheckConfigurator.configureIfNeeded()
         FirebaseApp.configure()
         // Configure image cache for better performance
         _ = ImageCache.shared

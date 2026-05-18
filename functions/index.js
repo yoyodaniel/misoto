@@ -20,6 +20,10 @@ const algoliaAdminApiKeySecret = defineSecret("ALGOLIA_ADMIN_API_KEY");
 const algoliaIndexNameSecret = defineSecret("ALGOLIA_INDEX_NAME");
 const searchBackfillAdminKeySecret = defineSecret("SEARCH_BACKFILL_ADMIN_KEY");
 
+const aiSecurity = require("./aiSecurity");
+const { withAppCheck } = require("./appCheckEnforcement");
+const appStoreVerification = require("./appStoreVerification");
+
 const XP = Object.freeze({
   RECIPE_PUBLISHED: 20,
   MAIN_PHOTO_ADDED: 5,
@@ -915,23 +919,40 @@ exports.backfillRecipesToAlgolia = onRequest(
 // --- Authenticated HTTPS proxies (secrets never ship in the iOS client) ---
 
 exports.openaiChatCompletions = onCall(
-  {
+  withAppCheck({
     region: REGION,
     timeoutSeconds: 540,
     memory: "1GiB",
     secrets: [openaiApiKeySecret],
-  },
+  }),
   async (request) => {
     if (!request.auth?.uid) {
       throw new HttpsError("unauthenticated", "Sign in required.");
     }
+    const uid = request.auth.uid;
+    const usageType = request.data?.usageType;
+    if (typeof usageType !== "string" || (usageType !== "description" && usageType !== "imageExtraction")) {
+      throw new HttpsError(
+        "invalid-argument",
+        "usageType must be \"description\" or \"imageExtraction\"."
+      );
+    }
     const openaiRequest = request.data?.openaiRequest;
-    if (!openaiRequest || typeof openaiRequest !== "object") {
+    let sanitizedRequest;
+    try {
+      sanitizedRequest = aiSecurity.sanitizeOpenAIRequest(openaiRequest);
+    } catch (err) {
+      if (err instanceof HttpsError) {
+        throw err;
+      }
       throw new HttpsError("invalid-argument", "openaiRequest object required.");
     }
+
+    await aiSecurity.assertAIQuotaAndIncrement(uid, usageType);
+
     let payloadStr;
     try {
-      payloadStr = JSON.stringify(openaiRequest);
+      payloadStr = JSON.stringify(sanitizedRequest);
     } catch (e) {
       throw new HttpsError("invalid-argument", "openaiRequest must be JSON-serializable.");
     }
@@ -955,22 +976,171 @@ exports.openaiChatCompletions = onCall(
   }
 );
 
-exports.usdaFoodsSearchProxy = onCall(
-  {
+const IMAGE_EDIT_BASE_PROMPT = `You are a professional food-photography retoucher. Return ONE polished version of this dish photo, ready for a cookbook, recipe app, or social-media grid. No text, borders, watermarks, or extra graphics—only the enhanced photograph.
+
+1. Framing
+• Center the main bowl/plate with even breathing room.
+• Zoom out slightly so the dish sits a little farther from the camera, with more space around the plate or bowl—avoid tight close-up framing.
+• Default output: square (1:1). Keep the whole dish visible; no awkward crop.
+• Unless instructed otherwise, use 1:1 for Misoto recipe cards.
+
+2. Lighting & Color
+• Brighten exposure and set a clean, neutral white balance (remove yellow/blue cast).
+• Boost contrast moderately so highlights pop and shadows deepen.
+• Gently enrich key food colors (greens, reds, yolks, sauces) while staying natural.
+
+3. Texture & Clarity
+• Sharpen the food itself—sauces glossy, grains distinct, herbs crisp.
+• Preserve soft depth-of-field so background props remain subtle.
+
+4. Background & Distractions
+• Remove or blur UI elements, on-screen text, harsh reflections, crumbs, or stains.
+• Keep backdrop minimal: light marble, warm wood, or neutral slate—whichever suits the dish best.
+
+5. Authenticity
+• Do not distort portion sizes or ingredient shapes.
+• Keep existing garnishes; add gentle steam only if it looks realistic.
+
+6. Deliverable
+• Output only the final enhanced food photograph—realistic photography, not illustration.`;
+
+const IMAGE_EDIT_PRESET_APPEND = Object.freeze({
+  recipeApp: "Style override: clean recipe-app grid look; neutral bright backdrop (light marble or soft white); minimal props.",
+  modernPatisserie: "Style override: modern patisserie; smooth bakery polish; refined plating; light marble or studio white background.",
+  rusticComfort: "Style override: rustic comfort cookbook; warm wood or homestyle surface; cozy natural light.",
+  minimalist: "Style override: minimalist Scandinavian; very clean white or pale marble; extremely uncluttered.",
+  celebration: "Style override: celebration-friendly; keep festive elements tidy and photo-ready.",
+  premiumDessert: "Style override: premium dessert book; glossy patisserie finish; elegant highlights.",
+  familyCookbook: "Style override: family cookbook warmth; authentic home-baked feel; approachable not overly styled.",
+  foodBlog: "Style override: modern food blog; slightly editorial color pop; appetizing and realistic.",
+});
+
+function buildImageEditPrompt(presetId) {
+  const append = IMAGE_EDIT_PRESET_APPEND[presetId] || IMAGE_EDIT_PRESET_APPEND.recipeApp;
+  return `${IMAGE_EDIT_BASE_PROMPT}\n\n${append}`;
+}
+
+exports.openaiImageEdit = onCall(
+  withAppCheck({
     region: REGION,
-    timeoutSeconds: 60,
-    memory: "256MiB",
-    secrets: [usdaApiKeySecret],
-  },
+    timeoutSeconds: 180,
+    memory: "1GiB",
+    secrets: [openaiApiKeySecret],
+  }),
   async (request) => {
     if (!request.auth?.uid) {
       throw new HttpsError("unauthenticated", "Sign in required.");
     }
+    await aiSecurity.assertAIQuotaAndIncrement(request.auth.uid, "imageEdit");
+
+    const imageBase64 = request.data?.imageBase64;
+    const presetId = request.data?.presetId;
+    const mimeTypeRaw = request.data?.mimeType;
+    if (!imageBase64 || typeof imageBase64 !== "string") {
+      throw new HttpsError("invalid-argument", "imageBase64 string required.");
+    }
+    if (!presetId || typeof presetId !== "string" || !IMAGE_EDIT_PRESET_APPEND[presetId]) {
+      throw new HttpsError("invalid-argument", "Unknown or missing presetId.");
+    }
+    const mimeType = mimeTypeRaw === "image/png" ? "image/png" : "image/jpeg";
+    const fileName = mimeType === "image/png" ? "image.png" : "image.jpg";
+    // Callable request limit is ~10 MB JSON; base64 expands ~4/3 vs raw bytes.
+    if (imageBase64.length > 9 * 1024 * 1024) {
+      throw new HttpsError(
+        "invalid-argument",
+        "Image payload too large. Use a smaller photo or try again after updating the app."
+      );
+    }
+
+    let imageBuffer;
+    try {
+      imageBuffer = Buffer.from(imageBase64, "base64");
+    } catch (e) {
+      throw new HttpsError("invalid-argument", "imageBase64 must be valid base64.");
+    }
+    if (!imageBuffer.length) {
+      throw new HttpsError("invalid-argument", "Empty image data.");
+    }
+    const maxDecodedBytes = 6 * 1024 * 1024;
+    if (imageBuffer.length > maxDecodedBytes) {
+      throw new HttpsError(
+        "invalid-argument",
+        "Image file too large after upload. The app should compress automatically—please update and retry."
+      );
+    }
+
+    const apiKey = openaiApiKeySecret.value();
+    if (!apiKey) {
+      throw new HttpsError("failed-precondition", "OPENAI_API_KEY secret is not configured.");
+    }
+
+    const prompt = buildImageEditPrompt(presetId);
+    const form = new FormData();
+    const blob = new Blob([imageBuffer], { type: mimeType });
+    form.append("image", blob, fileName);
+    form.append("prompt", prompt);
+    form.append("model", "gpt-image-1");
+    form.append("size", "1024x1024");
+    form.append("n", "1");
+
+    logger.info("openaiImageEdit", { uid: request.auth.uid, presetId, bytes: imageBuffer.length });
+
+    const r = await fetch("https://api.openai.com/v1/images/edits", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}` },
+      body: form,
+    });
+    const body = await r.text();
+    return { status: r.status, body };
+  }
+);
+
+exports.syncPremiumSubscription = onCall(
+  withAppCheck({
+    region: REGION,
+    secrets: appStoreVerification.APP_STORE_SECRETS,
+  }),
+  async (request) => {
+    if (!request.auth?.uid) {
+      throw new HttpsError("unauthenticated", "Sign in required.");
+    }
+    return aiSecurity.syncPremiumSubscriptionFromClient(request.auth.uid, request.data || {});
+  }
+);
+
+exports.ensureSubscriptionRecord = onCall(
+  withAppCheck({ region: REGION }),
+  async (request) => {
+    if (!request.auth?.uid) {
+      throw new HttpsError("unauthenticated", "Sign in required.");
+    }
+    await aiSecurity.ensureFreeSubscriptionRecord(request.auth.uid);
+    const hasPremium = await aiSecurity.isPremiumUser(request.auth.uid);
+    return { hasPremium };
+  }
+);
+
+exports.usdaFoodsSearchProxy = onCall(
+  withAppCheck({
+    region: REGION,
+    timeoutSeconds: 60,
+    memory: "256MiB",
+    secrets: [usdaApiKeySecret],
+  }),
+  async (request) => {
+    if (!request.auth?.uid) {
+      throw new HttpsError("unauthenticated", "Sign in required.");
+    }
+    await aiSecurity.assertRateLimit(request.auth.uid);
+
     const query = request.data?.query;
     const dataTypes = request.data?.dataTypes;
     const pageSize = Math.min(Math.max(Number(request.data?.pageSize) || 10, 1), 50);
-    if (!query || typeof query !== "string") {
+    if (!query || typeof query !== "string" || query.trim().length === 0) {
       throw new HttpsError("invalid-argument", "query required.");
+    }
+    if (query.length > 200) {
+      throw new HttpsError("invalid-argument", "query too long.");
     }
     const apiKey = usdaApiKeySecret.value();
     if (!apiKey) {
@@ -988,20 +1158,25 @@ exports.usdaFoodsSearchProxy = onCall(
 );
 
 exports.algoliaRecipeSearchProxy = onCall(
-  {
+  withAppCheck({
     region: REGION,
     timeoutSeconds: 30,
     memory: "256MiB",
     secrets: [algoliaAppIdSecret, algoliaAdminApiKeySecret, algoliaIndexNameSecret],
-  },
+  }),
   async (request) => {
     if (!request.auth?.uid) {
       throw new HttpsError("unauthenticated", "Sign in required.");
     }
+    await aiSecurity.assertRateLimit(request.auth.uid);
+
     const query = request.data?.query;
     const limit = Math.min(Math.max(Number(request.data?.limit) || 20, 1), 100);
-    if (!query || typeof query !== "string") {
+    if (!query || typeof query !== "string" || query.trim().length === 0) {
       throw new HttpsError("invalid-argument", "query required.");
+    }
+    if (query.length > 200) {
+      throw new HttpsError("invalid-argument", "query too long.");
     }
     const appId = algoliaAppIdSecret.value();
     const adminKey = algoliaAdminApiKeySecret.value();

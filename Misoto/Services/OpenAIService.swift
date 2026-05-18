@@ -11,6 +11,13 @@ import NaturalLanguage
 
 @MainActor
 class OpenAIService {
+    private static func chatCompletions(
+        requestBody: [String: Any],
+        usage: OpenAIProxyUsageKind
+    ) async throws -> Data {
+        try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody, usageKind: usage)
+    }
+
     /// Extract recipe information from an image using OpenAI Vision API
     static func extractRecipe(from image: UIImage) async throws -> OpenAIRecipeResponse {
         return try await extractRecipe(from: [image])
@@ -215,7 +222,7 @@ class OpenAIService {
         ]
         
         print("🖼️ OpenAIService.extractRecipe(images): calling proxy, image parts=\(imageContentItems.count)")
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .imageExtraction)
         print("🖼️ OpenAIService.extractRecipe(images): response bytes=\(data.count)")
 
         // Parse the response
@@ -426,7 +433,7 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        let responseData = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let responseData = try await chatCompletions(requestBody: requestBody, usage: .imageExtraction)
         print("📄 parseRecipeFromText: received \(responseData.count) bytes from proxy")
         
         // Parse the response
@@ -636,7 +643,7 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        let responseData = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let responseData = try await chatCompletions(requestBody: requestBody, usage: .imageExtraction)
         
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
@@ -1093,7 +1100,7 @@ class OpenAIService {
             "temperature": 0.8 // Higher temperature for more creative, varied descriptions
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -1163,7 +1170,7 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -1257,7 +1264,7 @@ class OpenAIService {
             "temperature": 0.7
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -1335,7 +1342,7 @@ class OpenAIService {
             "temperature": 0.65
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
@@ -1428,7 +1435,7 @@ class OpenAIService {
             "temperature": 0.3
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -1497,7 +1504,7 @@ class OpenAIService {
             "temperature": 0.3
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -1579,7 +1586,7 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -1651,7 +1658,7 @@ class OpenAIService {
             "temperature": 0.3
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -1722,7 +1729,7 @@ class OpenAIService {
             "temperature": 0.3 // Lower temperature for more consistent translation
         ]
         
-        let responseData = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let responseData = try await chatCompletions(requestBody: requestBody, usage: .description)
         
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
@@ -1783,7 +1790,7 @@ class OpenAIService {
             "temperature": 0.3
         ]
         
-        let responseData = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let responseData = try await chatCompletions(requestBody: requestBody, usage: .description)
         
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: responseData) as? [String: Any],
@@ -1971,7 +1978,7 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         // Parse the response
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -2045,7 +2052,7 @@ class OpenAIService {
             "temperature": 0.1
         ]
         
-        let data = try await BackendAPIProxy.openAIChatCompletions(requestBody: requestBody)
+        let data = try await chatCompletions(requestBody: requestBody, usage: .description)
 
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
